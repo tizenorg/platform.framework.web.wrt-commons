@@ -1,0 +1,102 @@
+<policy-set id="Policy-3" combine="deny-overrides">
+    <target>      
+        <subject>
+            <subject-match attr="id" match="subject7" />
+        </subject>                                 
+    </target>
+    <policy>   
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="and">
+                    <condition combine="or">
+                        <subject-match attr="version" match="7" />
+                        <subject-match attr="version" match="6" />
+                    </condition>
+                    <resource-match attr="author" match="author2" />
+                </condition>
+            </condition>
+        </rule>
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="and">
+                    <condition combine="or">
+                        <subject-match attr="version" match="7" />
+                        <subject-match attr="version" match="6" />
+                    </condition>
+                    <environment-match attr="author" match="author2" />
+                </condition>
+            </condition>
+        </rule>
+
+
+    </policy>   
+    <policy>   
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <subject-match attr="version" match="1" />
+                        <subject-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <subject-match attr="version" match="1" />
+                        <subject-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+
+
+
+    </policy> 
+    <policy>   
+        <rule effect="deny">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <subject-match attr="version" match="1" />
+                        <environment-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+         <rule effect="deny">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <environment-match attr="ver" match="1" />
+                        <subject-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+   </policy> 
+ </policy-set>

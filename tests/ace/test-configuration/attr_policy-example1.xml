@@ -1,0 +1,97 @@
+ <policy-set id="Policy-1" combine="first-matching-target">
+    
+
+	<policy>
+          <target>
+             <subject>
+                 <subject-match attr="uri.host" match="freebeer.evil.com" />
+				<subject-match attr="version" match="4" />
+                
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+				<resource-match attr="r8v2" match="2" />
+             </condition>
+         </rule>
+
+     </policy>        
+
+
+
+	<policy>
+          <target>
+             <subject>
+                 <subject-match attr="key-root-trust" match="manufacturer" />
+               
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+ 					<resource-match attr="author" match="author3" />              
+            </condition>
+         </rule>
+
+     </policy>        
+
+	<policy>
+          <target>
+             <subject>
+                 <subject-match attr="id" match="urn:megacorp:widget:anapp" />
+                
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+   					<resource-match attr="r9a.scheme" match="http://onet.pl:80/test.html" />               
+            </condition>
+         </rule>
+
+     </policy>        
+
+	<policy>
+          <target>
+             <subject>
+                <subject-match attr="signer-id" match="7zha89%49x£$" />
+               
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+				<resource-match attr="r9b.authority" match="http://onet.pl:80/test.html" />         
+             </condition>
+         </rule>
+
+     </policy>        
+  
+	<policy>
+          <target>
+             <subject>
+                 <subject-match attr="id" match="urn:megacorp:widget:anapp" />
+                
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+   					<resource-match attr="r9a.scheme" match="http://onet.pl:80/test.html" />               
+            </condition>
+         </rule>
+
+     </policy>        
+
+	<policy>
+          <target>
+             <subject>
+                <subject-match attr="signer-id" match="7zha89%49x£$" />
+               
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+              		<resource-match attr="r9c.scheme-authority" match="http://onet.pl" />
+			 </condition>
+         </rule>
+
+     </policy>   
+
+    </policy-set>

@@ -1,0 +1,199 @@
+<!ENTITY % Object.ANY ''>
+<!ENTITY % Method.ANY ''>
+<!ENTITY % Transform.ANY ''>
+<!ENTITY % SignatureProperty.ANY ''>
+<!ENTITY % KeyInfo.ANY ''>
+<!ENTITY % KeyValue.ANY ''> <!-- TODO ECDSA IS NOT HANDLED YET -->
+<!ENTITY % PGPData.ANY ''>
+<!ENTITY % X509Data.ANY ''>
+<!ENTITY % SPKIData.ANY ''>
+
+
+<!ELEMENT signed-policy (Signature, ( policy-set | policy )* ) >
+<!-- Start Core Signature declarations, these should NOT be altered -->
+
+<!ELEMENT Signature (SignedInfo, SignatureValue, KeyInfo?, Object*)  >
+<!ATTLIST Signature  
+	xmlns	CDATA	#FIXED 'http://www.w3.org/2000/09/xmldsig#'
+	Id  	ID	#IMPLIED >
+
+<!ELEMENT SignatureValue (#PCDATA) >
+<!ATTLIST SignatureValue  
+         Id  ID      #IMPLIED>
+
+<!ELEMENT SignedInfo (CanonicalizationMethod, 
+	SignatureMethod,  Reference+)  >
+<!ATTLIST SignedInfo  
+	Id	 ID 	 #IMPLIED 
+>
+
+<!ELEMENT CanonicalizationMethod (#PCDATA %Method.ANY;)* > 
+<!ATTLIST CanonicalizationMethod 
+	Algorithm CDATA #REQUIRED > 
+
+<!ELEMENT SignatureMethod (#PCDATA|HMACOutputLength %Method.ANY;)* >
+<!ATTLIST SignatureMethod 
+	Algorithm CDATA #REQUIRED > 
+
+<!ELEMENT Reference (DigestMethod, DigestValue)  >
+<!ATTLIST Reference
+	Id	ID	#IMPLIED
+	URI	CDATA	#IMPLIED
+	Type	CDATA	#IMPLIED>
+
+
+<!ELEMENT XPath (#PCDATA) >
+
+<!ELEMENT DigestMethod (#PCDATA %Method.ANY;)* >
+<!ATTLIST DigestMethod  
+	Algorithm		CDATA	#REQUIRED >
+
+<!ELEMENT DigestValue  (#PCDATA)  >
+
+<!ELEMENT KeyInfo	(#PCDATA|KeyName|KeyValue|RetrievalMethod|
+           X509Data|PGPData|SPKIData|MgmtData %KeyInfo.ANY;)* >
+<!ATTLIST KeyInfo
+	Id	ID	 #IMPLIED >
+
+<!-- Key Information -->
+
+<!ELEMENT KeyName (#PCDATA) >
+<!ELEMENT KeyValue (#PCDATA|DSAKeyValue|RSAKeyValue %KeyValue.ANY;)* >
+<!ELEMENT MgmtData (#PCDATA) >
+
+<!ELEMENT RetrievalMethod EMPTY>
+<!ATTLIST RetrievalMethod
+  URI	CDATA #REQUIRED 
+  Type	CDATA #IMPLIED > 
+
+<!-- X.509 Data -->
+
+<!ELEMENT X509Data ((X509IssuerSerial | X509SKI | X509SubjectName |
+                    X509Certificate | X509CRL )+ %X509Data.ANY;)>
+<!ELEMENT X509IssuerSerial (X509IssuerName, X509SerialNumber) >
+<!ELEMENT X509IssuerName (#PCDATA) >
+<!ELEMENT X509SubjectName (#PCDATA) >
+<!ELEMENT X509SerialNumber (#PCDATA) >
+<!ELEMENT X509SKI (#PCDATA) >
+<!ELEMENT X509Certificate (#PCDATA) >
+<!ELEMENT X509CRL (#PCDATA) >
+
+<!-- PGPData -->
+
+<!ELEMENT PGPData ((PGPKeyID, PGPKeyPacket?) | (PGPKeyPacket) %PGPData.ANY;) >
+<!ELEMENT PGPKeyPacket  (#PCDATA)  >
+<!ELEMENT PGPKeyID  (#PCDATA)  >
+
+<!-- SPKI Data -->
+
+<!ELEMENT SPKIData (SPKISexp %SPKIData.ANY;)  >
+<!ELEMENT SPKISexp  (#PCDATA)  >
+
+<!-- Extensible Content -->
+
+<!ELEMENT Object (#PCDATA|Signature|SignatureProperties|Manifest %Object.ANY;)* >
+<!ATTLIST Object  
+	Id	ID	#IMPLIED
+	MimeType	CDATA	#IMPLIED
+	Encoding	CDATA	#IMPLIED >
+
+<!ELEMENT Manifest (Reference+)  >
+<!ATTLIST Manifest  
+	Id	ID	#IMPLIED >
+
+<!ELEMENT SignatureProperties (SignatureProperty+)  >
+<!ATTLIST SignatureProperties  
+	Id	ID	 #IMPLIED  >
+
+<!ELEMENT SignatureProperty (#PCDATA %SignatureProperty.ANY;)* >
+<!ATTLIST SignatureProperty  
+	Target 	CDATA	 #REQUIRED
+	Id	ID	 #IMPLIED  >
+
+<!-- Algorithm Parameters -->
+
+<!ELEMENT HMACOutputLength (#PCDATA) >
+
+<!ELEMENT DSAKeyValue ((P, Q)?, G?, Y, J?, (Seed, PgenCounter)?) >
+<!ELEMENT P (#PCDATA) >
+<!ELEMENT Q (#PCDATA) >
+<!ELEMENT G (#PCDATA) >
+<!ELEMENT Y (#PCDATA) >
+<!ELEMENT J (#PCDATA) >
+<!ELEMENT Seed (#PCDATA) >
+<!ELEMENT PgenCounter (#PCDATA) >
+
+<!ELEMENT RSAKeyValue (Modulus, Exponent) > 
+<!ELEMENT Modulus (#PCDATA) >
+<!ELEMENT Exponent (#PCDATA) >
+
+
+
+
+
+
+
+
+<!ELEMENT policy-set (target?, assert*, (policy-set | policy)*) >
+<!ATTLIST policy-set
+    combine (deny-overrides|permit-overrides|first-matching-target) "deny-overrides"
+   id	 ID	 #IMPLIED 
+>
+
+<!ELEMENT policy (target?, assert*, rule*) >
+<!ATTLIST policy 
+    combine (deny-overrides|permit-overrides|first-applicable) "deny-overrides"
+    description CDATA #IMPLIED
+    id	  ID	 #IMPLIED 
+>
+
+<!ELEMENT assert (condition?, set*) >
+
+<!ELEMENT set EMPTY >
+<!ATTLIST set attr CDATA #REQUIRED >
+<!ATTLIST set value CDATA #REQUIRED >
+
+<!ELEMENT rule (condition?) >
+<!ATTLIST rule
+    effect (permit|prompt-blanket|prompt-session|prompt-oneshot|deny) "permit"
+>
+
+<!ELEMENT target (subject+) >
+
+<!ELEMENT subject (subject-match+) >
+
+<!ELEMENT condition ((condition | subject-match | resource-match | environment-match)+) >
+<!ATTLIST condition
+    combine (and|or) "and"
+>
+
+<!ENTITY % match-attrs '
+    attr CDATA #REQUIRED
+    match CDATA #IMPLIED
+    func (equal|glob|regexp) "glob"
+'>
+
+<!ELEMENT subject-match (#PCDATA)>
+<!ATTLIST subject-match %match-attrs; >
+
+<!ENTITY % match-model '
+    (#PCDATA | subject-attr | resource-attr | environment-attr)*
+'>
+
+<!ELEMENT resource-match %match-model;>
+<!ATTLIST resource-match %match-attrs;>
+
+<!ELEMENT environment-match %match-model;>
+<!ATTLIST environment-match %match-attrs;>
+
+<!ENTITY % attr-attrs 'attr CDATA #REQUIRED'>
+
+<!ELEMENT subject-attr EMPTY>
+<!ATTLIST subject-attr %attr-attrs;>
+
+<!ELEMENT resource-attr EMPTY>
+<!ATTLIST resource-attr %attr-attrs;>
+
+<!ELEMENT environment-attr EMPTY>
+<!ATTLIST environment-attr %attr-attrs;>
+

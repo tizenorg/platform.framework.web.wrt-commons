@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/dpl-elf
+
+Name: dpl-aco-dao-rw
+Description: dpl-ace-dao-rw
+Version: @VERSION@
+Requires: dpl-ace-dao-ro
+Libs: -ldpl-ace-dao-rw -L${libdir}
+Cflags: -I${includedir}

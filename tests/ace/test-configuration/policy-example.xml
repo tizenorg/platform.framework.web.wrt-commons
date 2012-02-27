@@ -1,0 +1,95 @@
+ <policy-set id="Policy-1" combine="first-matching-target">
+     <!---
+     <policy>
+         <rule effect="permit"/>
+     </policy>
+     -->
+    <policy>
+          <target>
+             <subject>
+                 <subject-match attr="name" match="analogclock"/>		 
+             </subject>
+         </target>
+	  <rule effect="permit">
+             <condition>
+                 <resource-match attr="api-feature">
+                     devicestatus 
+                 </resource-match>
+                 <!--
+                 <resource-match attr="feature-install-uri">
+             	     ww.samsung.com1
+                 </resource-match>
+                 -->
+             </condition>
+         </rule>
+     </policy>        
+     
+    <policy>
+          <target>
+             <subject>
+                 <subject-match attr="name" match="batteryMonitor"/>		 
+             </subject>
+         </target>
+	  <rule effect="permit">
+          <condition>
+                 <resource-match attr="api-feature">
+                     devicestatus 
+                 </resource-match>
+             </condition>
+         </rule>
+     </policy>        
+    
+    <policy>
+          <target>
+             <subject>
+                 <subject-match attr="name" match="appconfig"/>		 
+             </subject>
+         </target>
+	  <rule effect="deny">
+             <condition>
+                 <resource-match attr="api-feature">
+                     http://bondi.omtp.org/api.appconfig 
+                 </resource-match>
+             </condition>
+         </rule>
+     </policy>        
+    
+    
+     <policy>
+         <rule effect="permit"/>
+     </policy>
+     
+     
+     <policy>
+         <target>
+             <subject>
+                 <subject-match attr="name" match="memo" />		 
+             </subject>
+         </target>
+         <rule effect="permit">
+             <condition>
+                 <resource-match attr="resource-id">
+                    file.write 
+                 </resource-match>
+                 <subject-match attr="name" match="memo" />
+             </condition>
+         </rule>
+     </policy>   
+   
+     <policy>
+         <target>
+             <subject>
+                 <subject-match attr="name" match="phonesearch" />		 
+             </subject>
+         </target>
+         <rule effect="permit">
+             <condition>
+                 <resource-match attr="resource-id">
+                     pim.contact 
+                 </resource-match>
+                 <subject-match attr="name" match="phonesearch" />
+             </condition>
+         </rule>
+     </policy> 
+
+ </policy-set>

@@ -1,0 +1,43 @@
+<policy-set id="Policy-3" combine="deny-overrides">
+
+ <policy>
+          <target>
+             <subject>
+                 <subject-match attr="name" match="analogclock"/>
+                 <subject-match attr="uri.host" match="freebeer.evil.com" />
+                 <subject-match attr="key-root-trust" match="manufacturer" />
+                 <subject-match attr="id" match="urn:megacorp:widget:anapp" />
+                 <subject-match attr="signer-id" match="7zha89%49xL$" />
+                 <subject-match attr="version" match="5"/>
+
+          </subject>
+         </target>
+      <rule effect="permit">
+             <condition>
+               <resource-match attr="resource-id">device.simcard</resource-match>
+               <resource-match attr="r8v2" match="2" />
+               <resource-match attr="author" match="author3" />
+	       <resource-match attr="r9a.scheme" match="http://onet.pl:80/test.html" />
+               <resource-match attr="r9b.authority" match="http://onet.pl:80/test.html" />
+               <resource-match attr="r9c.scheme-authority" match="http://onet.pl" />
+               
+	       <environment-match attr="resource-id">device.simcard</environment-match>
+               <environment-match attr="r8v2" match="2" />
+               <environment-match attr="author" match="author3" />
+	       <environment-match attr="r9a.scheme" match="http://onet.pl:80/test.html" />
+               <environment-match attr="r9b.authority" match="http://onet.pl:80/test.html" />
+               <environment-match attr="r9c.scheme-authority" match="http://onet.pl" />
+ 				
+	       <subject-match attr="resource-id">device.simcard</subject-match>
+               <subject-match attr="r8v2" match="2" />
+               <subject-match attr="author" match="author3" />
+	       <subject-match attr="r9a.scheme" match="http://onet.pl:80/test.html" />
+               <subject-match attr="r9b.authority" match="http://onet.pl:80/test.html" />
+               <subject-match attr="r9c.scheme-authority" match="http://onet.pl" />
+
+	    </condition>
+         </rule>
+     </policy>
+
+
+</policy-set>

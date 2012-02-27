@@ -1,0 +1,41 @@
+<policy-set id="Policy-4" combine="first-matching-target">
+<policy>
+	<target>
+		<subject>
+			<subject-match attr="id">a1</subject-match>
+		</subject>  
+	</target>
+	
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">b1</resource-match>    
+			</condition>
+        	</rule>
+	</policy>
+<policy>
+	<target>
+		<subject>
+			<subject-match attr="id">aa2</subject-match>
+		</subject>  
+	</target>
+	
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">bb2</resource-match>    
+			</condition>
+	        </rule>
+	</policy>
+
+<policy>
+	<target>
+		<subject>
+			<subject-match attr="id">c3</subject-match>
+		</subject>  
+	</target>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">d3</resource-match>    
+			</condition>
+	        </rule>
+	</policy>
+</policy-set>

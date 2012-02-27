@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/dpl-efl
+
+Name: dpl-ace
+Description: dpl-ace
+Version: @VERSION@
+Requires: dpl-efl openssl
+Libs: -ldpl-ace -L${libdir}
+Cflags: -I${includedir}

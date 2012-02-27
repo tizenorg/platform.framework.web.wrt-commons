@@ -1,0 +1,83 @@
+Source: wrt-commons
+Section: devel
+Priority: extra
+Maintainer: Lukasz Wrzosek<l.wrzosek@samsung.com>,  Taejeong.lee <taejeong.lee@samsung.com>
+Standards-Version: 3.7.2
+Uploaders: Yunchan Cho <yunchan.cho@samsung.com>,Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>, Pawel Sikorski <p.sikorski@samsung.com>, Zbigniew Kostrzewa <z.kostrzewa@samsung.com>
+Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev, libicu-dev, libxmlsec1-dev, openssl, libxml2-dev, libsoup2.4-dev, libcert-svc-dev, libiri-dev, libidn11-dev, libslp-tapi-dev
+# If you want to build version of gtk, comment out above one live and use the following one line
+#Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), libgtk2.0-dev, zlib1g-dev, libpcre-dev, libicu-dev
+
+Package: wrt-commons
+Section: libs
+Provides: dpl-efl
+Conflicts: dpl-efl
+Replaces: dpl-efl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Design patterns library - EFL based
+ Design patterns library is a collection of useful C++ utilities
+ to easily develop window applications.
+
+# If you want to build version of gtk, comment out the following lines
+#Package: dpl-gtk
+#Section: libs
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}
+#Description: Design patterns library - GTK based
+# Design patterns library is a collection of useful C++ utilities
+# to easily develop window applications.
+
+Package: wrt-commons-dev
+XB-Public-Package: no
+Section: devel
+Provides: dpl-efl-dev
+Conflicts: dpl-efl-dev
+Replaces: dpl-efl-dev
+Architecture: any
+Depends: wrt-commons (= ${Source-Version}), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev
+Description: Design patterns library - EFL based developer files
+ Design patterns library is a collection of useful C++ utilities
+ to easily develop window applications. The most important part of
+ library is full MVC support. It also supports event-based architecture,
+ adds wrappers for many packages and provides many basic C++ utilities
+ as RAII objects, singletons, and many other.
+
+# If you want to build version of gtk, comment out the following lines
+#Package: dpl-gtk-dev
+#XB-Public-Package: no
+#Section: devel
+#Architecture: any
+#Depends: dpl-gtk (= ${Source-Version}), libglib2.0-dev, libgtk2.0-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev
+#Description: Design patterns library - GTK based developer files
+# Design patterns library is a collection of useful C++ utilities
+# to easily develop window applications. The most important part of
+# library is full MVC support. It also supports event-based architecture,
+# adds wrappers for many packages and provides many basic C++ utilities
+# as RAII objects, singletons, and many other.
+
+#Package: wrt-commons-test
+#Section: libs
+#Provides: dpl-test
+#Conflicts: dpl-test
+#Replaces: dpl-test
+#Architecture: any
+#Depends: wrt-commons (= ${Source-Version})
+#Description: Test programs.
+
+Package: wrt-commons-dbg
+Section: debug
+Provides: dpl-dbg
+Conflicts: dpl-dbg
+Replaces: dpl-dbg
+Architecture: any
+Depends: wrt-commons (= ${Source-Version})
+# If you want to build version of gtk, comment out above one live and use the following one line
+#Depends: wrt-commons (= ${Source-Version}), dpl-gtk (= ${Source-Version})
+Description: Design patterns library - Debug files
+ Design patterns library is a collection of useful C++ utilities
+ to easily develop window applications. The most important part of
+ library is full MVC support. It also supports event-based architecture,
+ adds wrappers for many packages and provides many basic C++ utilities
+ as RAII objects, singletons, and many other.
+

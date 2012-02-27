@@ -1,0 +1,26 @@
+wrt-commons (0.2.18) unstable; urgency=low
+
+  * Boilerplate update
+
+  * Git : tizen2/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.18
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Thu, 23 Feb 2012 16:12:49 +0900
+
+wrt-commons (0.2.17) unstable; urgency=low
+
+  * debianize
+
+  * Git : tizen2/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.17
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 22 Feb 2012 16:57:31 +0900
+
+wrt-commons (0.2.16) unstable; urgency=low
+
+  * Init changelog
+
+  * Git : tizen2/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.16
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 13 Feb 2012 16:04:58 +0100

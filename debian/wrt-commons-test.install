@@ -1,0 +1,13 @@
+/usr/bin/dpl-test*
+/usr/bin/dpl-dbus-test-service
+/usr/etc/ace/policy*
+/usr/etc/ace/attr*
+/usr/etc/ace/general*
+/usr/etc/ace/undefined*
+/usr/etc/ace/CMTest/*
+/opt/apps/widget/tests/vcore_widget_uncompressed/*
+/opt/apps/widget/tests/vcore_keys/*
+/opt/apps/widget/tests/vcore_certs/*
+/opt/apps/wrt/wrt-commons/tests/*
+/usr/share/dbus-1/services/org.tizen.DBusTestService.service
+/opt/apps/widget/tests/localization/*

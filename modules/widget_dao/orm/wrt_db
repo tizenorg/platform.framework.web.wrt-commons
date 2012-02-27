@@ -1,0 +1,359 @@
+SQL(
+    PRAGMA foreign_keys = ON;
+    BEGIN TRANSACTION;
+)
+/*TODO: secure_by_default should be 0 by default*/
+CREATE_TABLE(GlobalProperties)
+    COLUMN_NOT_NULL(developer_mode,          INT,          DEFAULT 0)
+    COLUMN_NOT_NULL(parental_mode,           INT,          DEFAULT 0)
+    COLUMN(parental_allowed_age,             INT,          DEFAULT NULL)
+    COLUMN_NOT_NULL(secure_by_default,       INT,          DEFAULT 1)
+    COLUMN_NOT_NULL(home_network_data_usage, TINYINT,      DEFAULT 1)
+    COLUMN_NOT_NULL(roaming_data_usage,      TINYINT,      DEFAULT 1)
+    COLUMN_NOT_NULL(compliance_mode,         TINYINT,      DEFAULT 0)
+    COLUMN_NOT_NULL(compliance_fake_imei,    VARCHAR(256), DEFAULT '')
+    COLUMN_NOT_NULL(compliance_fake_meid,    VARCHAR(256), DEFAULT '')
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO GlobalProperties DEFAULT VALUES;
+)
+
+CREATE_TABLE(WidgetInfo)
+    COLUMN_NOT_NULL(app_id,         INTEGER,         PRIMARY KEY AUTOINCREMENT)
+    COLUMN(widget_type,               INT,  DEFAULT 1)
+    COLUMN(widget_id,               VARCHAR(256),  DEFAULT '')
+    COLUMN(widget_version,          VARCHAR(256),  DEFAULT '')
+    COLUMN(widget_width,            INT,           DEFAULT 0)
+    COLUMN(widget_height,           INT,           DEFAULT 0)
+    COLUMN(author_name,             VARCHAR(256),  DEFAULT '')
+    COLUMN(author_email,            VARCHAR(256),  DEFAULT '')
+    COLUMN(author_href,             VARCHAR(256),  DEFAULT '')
+    COLUMN(base_folder,             VARCHAR(256),  DEFAULT '')
+    COLUMN(webkit_plugins_required, TINYINT,       DEFAULT 0)
+    COLUMN(security_domain,         INT,           DEFAULT 0)
+    COLUMN_NOT_NULL(child_protection,INT,          DEFAULT 0)
+    COLUMN(recognized,              INT,           DEFAULT 0)
+    COLUMN(wac_signed,              INT,           DEFAULT 0)
+    COLUMN(distributor_signed,      INT,           DEFAULT 0)
+    COLUMN(min_version,             VARCHAR(16),   DEFAULT '1.0')
+    COLUMN_NOT_NULL(back_supported, TINYINT,       DEFAULT 0)
+    COLUMN(access_network,          TINYINT,       DEFAULT 0)
+    COLUMN(defaultlocale,           VARCHAR(256),  DEFAULT 0)
+    COLUMN(pkgname,             VARCHAR(256),  DEFAULT 0)
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetCertificate)
+    COLUMN_NOT_NULL(app_id,                 INT,)
+    COLUMN_NOT_NULL(encoded_chain,          VARCHAR(16000),)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetWindowModes)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(window_mode,    VARCHAR(256),)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetUserAgentLocales)
+    COLUMN_NOT_NULL(id,             INTEGER,        PRIMARY KEY AUTOINCREMENT)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(language_tag,   TEXT,)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(LocalizedWidgetInfo)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(widget_locale,  TEXT,)
+    COLUMN(widget_name,             TEXT,)
+    COLUMN(widget_shortname,        TEXT,)
+    COLUMN(widget_description,      TEXT,)
+    COLUMN(widget_license,          TEXT,)
+    COLUMN(widget_license_file,     TEXT,)
+    COLUMN(widget_license_href,     TEXT,)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY (app_id, widget_locale),
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetExtendedInfo)
+    COLUMN_NOT_NULL(app_id,     INTEGER,        PRIMARY KEY)
+    COLUMN(last_update_time,    BIGINT,         DEFAULT 0)
+    COLUMN(install_time,        BIGINT,         DEFAULT 0)
+    COLUMN(option_state,        INT,            DEFAULT 0)
+    COLUMN(share_href,          VARCHAR(256),   DEFAULT '')
+    COLUMN(signature_type,      INT,            DEFAULT 0)
+    COLUMN(factory_widget,      INT,            DEFAULT 0)
+    COLUMN(updated,             INT,            DEFAULT 0)
+    COLUMN(update_policy,       INT,            DEFAULT 0)
+    COLUMN_NOT_NULL(test_widget, INT, CHECK(test_widget between 0 and 1) DEFAULT 0)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetPreference)
+    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(key_name,   VARCHAR(256),)
+    COLUMN(key_value,           VARCHAR(8000),  DEFAULT '')
+    COLUMN(readonly,            INT,            DEFAULT 0)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, key_name),
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetFeature)
+    COLUMN_NOT_NULL(widget_feature_id,  INTEGER,        primary key autoincrement)
+    COLUMN_NOT_NULL(app_id,             INT,)
+    COLUMN_NOT_NULL(name,               VARCHAR(256),)
+    COLUMN_NOT_NULL(required,           INT,)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(FeatureParam)
+    COLUMN_NOT_NULL(widget_feature_id,  INTEGER,)
+    COLUMN_NOT_NULL(name,         TEXT,)
+    COLUMN_NOT_NULL(value,        TEXT,)
+
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (widget_feature_id) REFERENCES WidgetFeature (widget_feature_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetIcon)
+    COLUMN_NOT_NULL(icon_id,        INTEGER,   primary key autoincrement)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(icon_src,       VARCHAR(256),)
+    COLUMN(icon_width,              INT,            DEFAULT 0)
+    COLUMN(icon_height,             INT,            DEFAULT 0)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetLocalizedIcon)
+    COLUMN_NOT_NULL(app_id,         INT,)   /* TODO key duplicated for efficiency - ORM doesn't support JOIN */
+    COLUMN_NOT_NULL(icon_id,        INTEGER,)
+    COLUMN_NOT_NULL(widget_locale,  TEXT,)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY(icon_id) REFERENCES WidgetIcon (icon_id) ON DELETE CASCADE,
+        PRIMARY KEY(icon_id, widget_locale)
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetStartFile)
+    COLUMN_NOT_NULL(start_file_id,  INTEGER,   primary key autoincrement)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(src,            VARCHAR(256),)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetLocalizedStartFile)
+    COLUMN_NOT_NULL(app_id,         INT,)   /* TODO key duplicated for efficiency - ORM doesn't support JOIN */
+    COLUMN_NOT_NULL(start_file_id,  INTEGER,)
+    COLUMN_NOT_NULL(widget_locale,  TEXT,)
+    COLUMN_NOT_NULL(type,           TEXT,)
+    COLUMN_NOT_NULL(encoding,       TEXT,)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY(start_file_id) REFERENCES WidgetStartFile (start_file_id) ON DELETE CASCADE,
+        PRIMARY KEY(start_file_id, widget_locale)
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetAccessHost)
+    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(host,       VARCHAR(256),)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, host)
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE)
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetCertificateFingerprint)
+    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(owner,      INT,)
+    COLUMN_NOT_NULL(chainid,    INT,)
+    COLUMN_NOT_NULL(type,       INT,)
+    COLUMN(md5_fingerprint,     VARCHAR(64),)
+    COLUMN(sha1_fingerprint,    VARCHAR(64),)
+    COLUMN(common_name,         VARCHAR(64),)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, chainid, owner, type)
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetWARPInfo)
+    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(iri,        VARCHAR(65536),)
+    COLUMN(subdomain_access,    INT,        CHECK(subdomain_access between 0 and 1))
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, iri)
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(FeaturesList)
+    COLUMN_NOT_NULL(FeatureUUID,            INTEGER,    primary key autoincrement)
+    COLUMN_NOT_NULL(FeatureName,            TEXT,       unique)
+    COLUMN_NOT_NULL(PluginPropertiesId,     INT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(PluginProperties)
+    COLUMN_NOT_NULL(PluginPropertiesId,     INTEGER,    primary key autoincrement)
+    COLUMN_NOT_NULL(InstallationState,      INTEGER,    DEFAULT 0)
+    COLUMN_NOT_NULL(PluginLibraryName,      TEXT,       unique)
+    COLUMN(PluginLibraryPath,               TEXT,)
+    COLUMN(InstallURI,                      TEXT,)
+    COLUMN(KeyCN,                           TEXT,)
+    COLUMN(RootKeyCN,                       TEXT,)
+    COLUMN(RootKeyFingerprint,              TEXT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(PluginDependencies)
+    COLUMN_NOT_NULL(PluginPropertiesId,              INTEGER,    not null)
+    COLUMN_NOT_NULL(RequiredPluginPropertiesId,      INTEGER,    not null)
+CREATE_TABLE_END()
+
+CREATE_TABLE(PluginImplementedObjects)
+    COLUMN_NOT_NULL(PluginObject,           TEXT,       unique)
+    COLUMN_NOT_NULL(PluginPropertiesId,     INTEGER,    not null)
+CREATE_TABLE_END()
+
+CREATE_TABLE(PluginRequiredObjects)
+    COLUMN_NOT_NULL(PluginPropertiesId,     INTEGER,    not null)
+    COLUMN_NOT_NULL(PluginObject,           TEXT,       not null)
+CREATE_TABLE_END()
+
+CREATE_TABLE(DeviceCapabilities)
+    COLUMN_NOT_NULL(DeviceCapID,            INTEGER,    primary key autoincrement)
+    COLUMN_NOT_NULL(DeviceCapName,          TEXT,       unique)
+    COLUMN(DeviceCapDefaultValue,           INT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(FeatureDeviceCapProxy)
+    COLUMN_NOT_NULL(FeatureUUID,            INT,        not null)
+    COLUMN_NOT_NULL(DeviceCapID,            INT,        not null)
+
+    TABLE_CONSTRAINTS(PRIMARY KEY(FeatureUUID,DeviceCapID))
+CREATE_TABLE_END()
+
+CREATE_TABLE(PowderLevels)
+    COLUMN_NOT_NULL(app_id,       INT,       )
+    COLUMN_NOT_NULL(id,           INTEGER,   primary key autoincrement)
+    COLUMN_NOT_NULL(category,     TEXT,      )
+    COLUMN_NOT_NULL(level,        INTEGER,   )
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(PowderLevelContexts)
+    COLUMN_NOT_NULL(levelId,      INTEGER,   )
+    COLUMN_NOT_NULL(context,      TEXT,      )
+
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (levelId) REFERENCES PowderLevels (id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(ChildProtectionBlacklist)
+    COLUMN_NOT_NULL(url,        TEXT,       unique)
+CREATE_TABLE_END()
+
+CREATE_TABLE(PowderRules)
+    COLUMN_NOT_NULL(id,           INTEGER,   primary key autoincrement)
+    COLUMN_NOT_NULL(category,     TEXT,      )
+    COLUMN_NOT_NULL(level,        INTEGER,   )
+    COLUMN(context,               TEXT,      )
+    TABLE_CONSTRAINTS(unique(category,context))
+CREATE_TABLE_END()
+
+CREATE_TABLE(DefferedWidgetPackageInstallation)
+    COLUMN_NOT_NULL(path,        TEXT,       unique)
+CREATE_TABLE_END()
+
+CREATE_TABLE(OCSPResponseStorage)
+    COLUMN_NOT_NULL(cert_chain,        TEXT,       primary key)
+    COLUMN(end_entity_check,           INT,)
+    COLUMN(ocsp_status,                INT,)
+    COLUMN(next_update_time,           BIGINT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(CRLResponseStorage)
+    COLUMN_NOT_NULL(distribution_point,TEXT,       primary key)
+    COLUMN_NOT_NULL(crl_body,          TEXT,)
+    COLUMN(next_update_time,           BIGINT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(AutoSaveIdPasswd)
+    COLUMN_NOT_NULL(address,    VARCHAR(256), unique)
+    COLUMN_NOT_NULL(userId,     VARCHAR(128),)
+    COLUMN_NOT_NULL(passwd,     VARCHAR(128),)
+CREATE_TABLE_END()
+
+CREATE_TABLE(SettginsList)
+    COLUMN_NOT_NULL(appId,         INT,)
+    COLUMN_NOT_NULL(settingName,               TEXT,   )
+    COLUMN_NOT_NULL(settingValue,        TEXT,   )
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (appId) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(ApplicationServiceInfo)
+    COLUMN_NOT_NULL(app_id,    INT,)
+    COLUMN_NOT_NULL(src,       TEXT,)
+    COLUMN_NOT_NULL(operation, TEXT,)
+    COLUMN_NOT_NULL(scheme,    TEXT,)
+    COLUMN_NOT_NULL(mime,      TEXT,)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, operation, scheme, mime)
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetWhiteURIList)
+    COLUMN_NOT_NULL(uri,        VARCHAR(65536), primary key)
+    COLUMN_NOT_NULL(subdomain_access,    INT,        CHECK(subdomain_access between 0 and 1))
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO WidgetWhiteURIList VALUES("http://samsung.com", 1);
+    INSERT INTO WidgetWhiteURIList VALUES("http://orange.fr", 1);
+    INSERT INTO WidgetWhiteURIList VALUES("http://orange.co.uk", 1);
+)
+
+/*TODO: It will be removed when user agent is fixed. User agent MUST be configurable in development...*/
+CREATE_TABLE(UserAgents)
+    COLUMN_NOT_NULL(key_name,   VARCHAR(256),)
+    COLUMN(key_value,           VARCHAR(8000),  DEFAULT '')
+
+    TABLE_CONSTRAINTS(PRIMARY KEY(key_name))
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO UserAgents VALUES("Tizen", "Mozilla/5.0 (Linux; U; Tizen 1.0; en-us) AppleWebKit/534.46 (KHTML, like Gecko) Mobile Tizen Browser/1.0");
+    INSERT INTO UserAgents VALUES("Chrome 16", "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20110706 Firefox/5.0");
+)
+
+SQL(
+    COMMIT;
+)

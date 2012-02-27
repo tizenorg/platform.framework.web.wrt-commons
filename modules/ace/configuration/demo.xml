@@ -1,0 +1,15 @@
+<policy-set id="Policy-1" combine="first-matching-target">
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="name" match="demoMSG" />
+            </subject>
+        </target>
+        <rule effect="deny" />
+    </policy>
+
+	<policy>
+		<rule effect="permit" />
+	</policy>
+</policy-set>
+

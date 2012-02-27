@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+/*
+ * @file        singleton.h
+ * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
+ * @version     1.0
+ * @brief       This file is the implementation file of singleton
+ */
+#ifndef DPL_SINGLETON_H
+#define DPL_SINGLETON_H
+
+#include <dpl/optional.h>
+#include <dpl/thread.h>
+#include <dpl/assert.h>
+
+namespace DPL
+{
+template<typename Class>
+class Singleton
+    : private Class
+{
+    //
+    // Note:
+    //
+    // To remove posibility of instantiating directly Class,
+    // make Class' default constructor protected
+    //
+
+private:
+    Singleton()
+    {
+    }
+
+    typedef Optional<Thread *> OptionalThreadPtr;
+    OptionalThreadPtr m_guard;
+
+    static Singleton &InternalInstance();
+
+public:
+    virtual ~Singleton()
+    {
+    }
+
+    static Class &Instance();
+
+    // Thread guarding
+    static void SetThreadGuard(Thread *thread);
+    static void ResetThreadGuard();
+};
+
+//This is needed for backward compatibility
+#ifndef SEPARATED_SINGLETON_IMPLEMENTATION
+template<typename Class>
+Singleton<Class>& Singleton<Class>::InternalInstance()
+{
+    static Singleton<Class> instance;
+    return instance;
+}
+
+template<typename Class>
+Class &Singleton<Class>::Instance()
+{
+    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
+
+    if (!!instance.m_guard)
+    {
+        Assert(Thread::GetCurrentThread() == *instance.m_guard &&
+               "Singleton thread guard failed. A forbidden call from foreign thread was detected!");
+    }
+
+    return instance;
+}
+
+// Thread guarding
+template<typename Class>
+void Singleton<Class>::SetThreadGuard(Thread *thread)
+{
+    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
+    instance.m_guard = OptionalThreadPtr(thread);
+}
+
+template<typename Class>
+void Singleton<Class>::ResetThreadGuard()
+{
+    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
+    instance.m_guard = OptionalThreadPtr::Null;
+}
+
+#endif
+
+} // namespace DPL
+
+#endif // DPL_SINGLETON_H

@@ -1,0 +1,103 @@
+<policy-set id="Policy-1" combine="first-matching-target">
+ <policy description="WAC">
+
+     <!-- permit access to private filesystem -->
+     <rule effect="permit">
+         <condition>
+             <resource-match attr="device-cap" match="messaging.write"/>
+         </condition>
+     </rule>
+     <!-- permit access to camera preview -->
+     <rule effect="permit">
+         <condition>
+             <resource-match attr="device-cap" match="camera.show"/>
+         </condition>
+
+     </rule>
+     <!-- prompt-blanket access to IMEI -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="devicestatus.networkinfo"/>
+             <resource-match attr="param:property" match="imei"/>
+         </condition>
+     </rule>
+     <!-- prompt-session access to messging when roaming -->
+     <rule effect="prompt-session">
+         <condition>
+             <resource-match attr="device-cap" match="messaging.send"/>
+             <environment-match attr="roaming" match="true"/>
+         </condition>
+     </rule>
+     <!-- prompt-session access to network when roaming -->
+     <rule effect="prompt-session">
+         <condition>
+             <condition combine="or">
+                 <resource-match attr="device-cap" match="XMLHttpRequest"/>
+                 <resource-match attr="device-cap" match="externalNetworkAccess"/>
+             </condition>
+             <environment-match attr="roaming" match="true"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to camera capture -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="camera.capture"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to contacts -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="pim.contact.*"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to calendar -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="pim.calendar.*"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to task -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="pim.task.*"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to devicestatus -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="devicestatus.*"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to geolocation -->
+     <rule effect="prompt-oneshot">
+         <condition>
+             <resource-match attr="device-cap" match="geolocation"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to networking -->
+     <rule effect="prompt-session">
+         <condition combine="or">
+             <resource-match attr="device-cap" match="XMLHttpRequest"/>
+             <resource-match attr="device-cap" match="externalNetworkAccess"/>
+         </condition>
+     </rule>
+     <!-- prompt-blanket access to filesystem -->
+     <rule effect="prompt-blanket">
+         <condition>
+             <resource-match attr="device-cap" match="filesystem.*"/>
+         </condition>
+     </rule>
+     <rule effect="deny">
+         <condition>
+             <resource-match attr="device-cap" match="messaging.subscribe"/>
+         </condition>
+     </rule>
+     <!-- permit access to all remaining deviceapis -->
+     <rule effect="permit">
+         <condition>
+             <resource-match attr="device-cap" match="*"/>
+         </condition>
+     </rule>
+     <rule effect="permit"/>
+</policy>
+</policy-set>

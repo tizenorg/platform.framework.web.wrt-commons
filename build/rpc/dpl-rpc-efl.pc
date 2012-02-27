@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-rpc-efl
+Description: DPL RPC - EFL based
+Version: 1.0.0
+Requires: dpl-efl dpl-event-efl dpl-socket-efl
+Libs: -L${libdir} -ldpl-rpc-efl
+Cflags: -I${includedir}/dpl-efl

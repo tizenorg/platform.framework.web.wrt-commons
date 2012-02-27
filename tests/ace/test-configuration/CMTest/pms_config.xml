@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<!DOCTYPE manager-settings SYSTEM "../config.dtd">
+<manager-settings>
+  <storage-path>/usr/etc/ace/CMTest/active</storage-path>
+  <policy-files>
+    <file active="true">pms_general-test.xml</file>
+  </policy-files>
+</manager-settings>
+
+

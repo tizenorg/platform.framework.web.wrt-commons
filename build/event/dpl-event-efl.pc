@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-event-efl
+Description: DPL Event - EFL based
+Version: 1.0.0
+Requires: dpl-efl ecore appcore-efl vconf heynoti
+Libs: -L${libdir} -ldpl-event-efl
+Cflags: -I${includedir}/dpl-efl

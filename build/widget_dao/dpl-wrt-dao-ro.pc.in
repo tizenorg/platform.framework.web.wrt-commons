@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: dpl-wrt-dao-ro
+Description: dpl-wrt-dao-ro
+
+Version: @VERSION@
+Requires: dpl-efl libxml-2.0
+Libs: -ldpl-wrt-dao-ro -L${libdir}
+Cflags: -I${includedir}/dpl-efl

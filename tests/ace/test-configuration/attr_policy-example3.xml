@@ -1,0 +1,128 @@
+<policy-set id="Policy-1">      
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">
+                subject
+            </subject-match>
+        </subject>
+        <subject>
+            <subject-match attr="id" match="subject2" />
+        </subject>
+    </target>
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id" match="subject" />
+            </subject>
+        </target>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource
+                </resource-match>
+                <subject-match attr="version" match="3" />
+            </condition>
+        </rule>
+    </policy>        
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id" match="subject2" />
+            </subject>
+        </target>
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>    
+</policy-set>
+<policy-set >
+    <target>
+        <subject>
+            <subject-match attr="id">
+                subject3
+            </subject-match>                    
+        </subject>  
+        <subject>
+            <subject-match attr="id" match="subject4" />
+        </subject>                 
+    </target>
+    <policy>             
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource2
+                </resource-match>                
+            </condition>
+        </rule>
+    </policy>        
+    <policy>            
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource2
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy> 
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id">
+                    subject4
+                </subject-match>                    
+                <subject-match attr="version" match="4" />
+            </subject>  
+        </target>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set>   
+   
+<policy-set id="Policy-2" combine="first-matching-target">
+    <target>      
+        <subject>
+            <subject-match attr="id" match="subject5" />
+        </subject>                 
+        <subject>
+            <subject-match attr="id" match="subject6" />
+        </subject>                 
+    </target>
+    <policy>    
+        <target>
+            <subject>
+                <subject-match attr="id">
+                    subject5
+                </subject-match>                    
+            </subject>              
+        </target>
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource5
+                </resource-match>                
+                <subject-match attr="version" match="5" />
+            </condition>
+        </rule>
+    </policy> 
+    <policy>             
+        <rule effect="permit">
+            <condition combine="or">
+                <resource-match attr="author">
+                    resource6
+                </resource-match>                
+                <subject-match attr="version" match="6" />
+            </condition>
+        </rule>
+    </policy>  
+</policy-set>
+</policy-set>

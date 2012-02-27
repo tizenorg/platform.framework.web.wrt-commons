@@ -1,0 +1,50 @@
+ <policy-set id="Policy-1" combine="first-matching-target">
+    
+    <policy>
+          <target>
+             <subject>
+                 <subject-match attr="name" match="analogclock" />		 
+             </subject>
+         </target>
+	  <rule effect="prompt-blanket">
+             <condition>
+                 <resource-match attr="resource-id">
+                     device.simcard 
+                 </resource-match>
+             </condition>
+         </rule>
+     </policy>        
+     
+     <policy>
+         <target>
+             <subject>
+                 <subject-match attr="name" match="memo" />		 
+             </subject>
+         </target>
+         <rule effect="permit">
+             <condition>
+                 <resource-match attr="resource-id">
+                      file.write
+                 </resource-match>
+                 <subject-match attr="name" match="memo" />
+             </condition>
+         </rule>
+     </policy>   
+   
+     <policy>
+         <target>
+             <subject>
+                 <subject-match attr="name" match="phonesearch" />		 
+             </subject>
+         </target>
+         <rule effect="permit">
+             <condition>
+                 <resource-match attr="resource-id">
+                     pim.contact 
+                 </resource-match>
+                 <subject-match attr="name" match="phonesearch" />
+             </condition>
+         </rule>
+     </policy> 
+
+ </policy-set>

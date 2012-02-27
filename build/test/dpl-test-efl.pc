@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-test-efl
+Description: DPL Test Engine - EFL based
+Version: 1.0.0
+Requires: dpl-efl
+Libs: -L${libdir} -ldpl-test-efl
+Cflags: -I${includedir}/dpl-efl

@@ -1,0 +1,2621 @@
+<policy-set id="Policy-1" combine="first-matching-target" >      
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">
+                subject
+            </subject-match>
+        </subject>
+        <subject>
+            <subject-match attr="id" match="subject2" />
+        </subject>
+    </target>
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id" match="subject" />
+            </subject>
+        </target>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource
+                </resource-match>
+                <subject-match attr="version" match="3" />
+            </condition>
+        </rule>
+    </policy>        
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id" match="subject2" />
+            </subject>
+        </target>
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>    
+</policy-set>
+<policy-set >
+    <target>
+        <subject>
+            <subject-match attr="id">
+                subject3
+            </subject-match>                    
+        </subject>  
+        <subject>
+            <subject-match attr="id" match="subject4" />
+        </subject>                 
+    </target>
+    <policy>             
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource2
+                </resource-match>                
+            </condition>
+        </rule>
+    </policy>        
+    <policy>            
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource2
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy> 
+    <policy>
+        <target>
+            <subject>
+                <subject-match attr="id">
+                    subject4
+                </subject-match>                    
+                <subject-match attr="version" match="4" />
+            </subject>  
+        </target>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set>    
+<policy-set id="Policy-2" combine="first-matching-target">
+    <target>      
+        <subject>
+            <subject-match attr="id" match="subject5" />
+        </subject>                 
+        <subject>
+            <subject-match attr="id" match="subject6" />
+        </subject>                 
+    </target>
+    <policy>    
+        <target>
+            <subject>
+                <subject-match attr="id">
+                    subject5
+                </subject-match>                    
+            </subject>              
+        </target>
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource5
+                </resource-match>                
+                <subject-match attr="version" match="5" />
+            </condition>
+        </rule>
+    </policy> 
+    <policy>             
+        <rule effect="permit">
+            <condition combine="or">
+                <resource-match attr="resource-id">
+                    resource6
+                </resource-match>                
+                <subject-match attr="version" match="6" />
+            </condition>
+        </rule>
+    </policy>  
+</policy-set>
+
+<policy-set id="Policy-3" combine="deny-overrides">
+    <target>      
+        <subject>
+            <subject-match attr="id" match="subject7" />
+        </subject>                                 
+    </target>
+    <policy>   
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="and">
+                    <condition combine="or">
+                        <subject-match attr="version" match="7" />
+                        <subject-match attr="version" match="6" />
+                    </condition>
+                    <resource-match attr="author" match="author2" />
+                </condition>
+            </condition>
+        </rule>
+    </policy>   
+    <policy>   
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <subject-match attr="version" match="1" />
+                        <subject-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+    </policy> 
+    <policy>   
+        <rule effect="deny">
+            <condition combine="and">
+                <resource-match attr="resource-id">
+                    resource7
+                </resource-match>    
+                <condition combine="or">
+                    <condition combine="or">
+                        <subject-match attr="version" match="1" />
+                        <subject-match attr="version" match="2" />
+                    </condition>
+                    <resource-match attr="author" match="author3" />
+                </condition>
+            </condition>
+        </rule>
+    </policy> 
+ </policy-set>
+
+<policy-set id="Policy-4" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s8a</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r8</resource-match>    
+				<resource-match attr="r8v1" match="1" />
+			</condition>
+        </rule>
+	</policy>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r8</resource-match>    
+				<resource-match attr="r8v2" match="2" />
+			</condition>
+        </rule>
+	</policy>
+</policy-set>
+
+<policy-set id="Policy-5" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s8b</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r8</resource-match>    
+				<resource-match attr="r8v2" match="2" />
+			</condition>
+        </rule>
+	</policy>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r8</resource-match>    
+				<resource-match attr="r8v1" match="1" />
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set id="Policy-6" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s8c</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r8</resource-match>
+				<resource-match attr="r8v1" match="1" />
+				<resource-match attr="r8v2" match="1" />
+			</condition>
+        </rule>
+    </policy>
+	<policy>
+		<rule effect="deny" />
+	</policy> 
+</policy-set>
+
+<policy-set id="Policy-7" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9a</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable" >
+ 		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9a.scheme" match="http" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>
+				<resource-match attr="r9a" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>  
+</policy-set>
+
+<policy-set id="Policy-8" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9b</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable" >
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9b.authority" match="onet.pl:80" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9b" match="777" func="equal" />
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set  id="Policy-9"  combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9c</subject-match>
+        </subject>  
+	</target>
+	<policy combine="permit-overrides" >
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>  
+				<resource-match attr="r9c.scheme" match="http" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9c.authority" match="onet.pl:80" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9c.scheme-authority" match="http://onet.pl:80" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9c" match="*" func="glob" />
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set  id="Policy-10" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9d</subject-match>
+        </subject>  
+    </target>
+	<policy combine="first-applicable" >
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9d.scheme" match="http://onet.pl:80/test.html" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9d.authority" match="http://onet.pl:80/test.html" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9d" match="*" func="glob" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9d.scheme-authority" match="http://onet.pl:80/test.html" />
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set id="Policy-11" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9e</subject-match>
+    	</subject>  
+    </target>
+	<policy combine="first-applicable" >
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9e.host" match="onet.pl" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9e" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set  id="Policy-12" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9f</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable" >
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9e.scheme-authority" match="http://onet.pl:80" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9e" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set id="Policy-13" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9g</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable" >
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9g.path" match="test.html" />
+			</condition>
+        </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9g" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set  id="Policy-14" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s9h</subject-match>
+        </subject>  
+	</target>
+	<policy combine="first-applicable" >
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9g.path" match="test.html" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r9</resource-match>    
+				<resource-match attr="r9g" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set id="Policy-15" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s10a</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>    
+				<resource-match attr="r10a" match="[1234567890]+[ab]+" func="regexp" />
+			</condition>
+        </rule>
+	</policy>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>
+				<resource-match attr="r10a" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<policy-set id="Policy-16" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s10b</subject-match>
+        </subject>  
+    </target>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>    
+				<resource-match attr="r10a" match="[1234567890]+[ab]+" func="regexp" />
+			</condition>
+        </rule>
+	</policy>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>
+				<resource-match attr="r10a" match="*" func="glob"/>
+			</condition>
+        </rule>
+    </policy>  
+</policy-set>
+
+<policy-set id="Policy-17" combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s10c</subject-match>
+        </subject>  
+    </target>
+	<policy combine="first-applicable" >
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>    
+				<resource-match attr="r10c2" match="[1234567890]+[ab]+" func="regexp" />
+			</condition>
+        </rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r10</resource-match>
+				<resource-match attr="r10c" match="*" func="glob"/> 
+			</condition>
+        </rule>
+    </policy>  
+</policy-set>
+
+
+<!-- justyna -->
+
+<!---    test 13    (old name: test 100)-->
+
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s13</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="uri.authority" match="buu.com.pl"/>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+ 
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s16</subject-match>
+			<subject-match attr="uri.authority" match="v.com.pl"/>
+			
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 17    (old name: test 104)-->
+
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+                <subject-match attr="id">s17a</subject-match>                    
+                <subject-match attr="version" match="4" />
+            </subject>  
+        </target>
+<policy>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+                <subject-match attr="id">s17b</subject-match>                    
+                <subject-match attr="version" match="4" />
+            </subject>  
+        </target>
+<policy>
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+<!---    test 18    (old name: test 105)-->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="uri" match="buu.com.pl"/>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id" match="s18b"/>
+			<subject-match attr="uri" match="buu.s18b.pl"/>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id" match="s18c"/>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="uri" match="buu.s18c.pl"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 19    (old name: test 106)-->
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+                <subject-match attr="id">s19.1</subject-match>                    
+                 <subject-match attr="key-root-trust" match="voperator"/>
+            </subject>  
+        </target>
+<policy>
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+                <subject-match attr="id">s19.2</subject-match>                    
+                <subject-match attr="key-root-trust" match="voperator"/>
+            </subject>  
+        </target>
+<policy>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+
+
+<!---    test 20    (old name: test 107)-->
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+                <subject-match attr="id">s20.1</subject-match>                    
+                <subject-match attr="signer-id" match="v7zha89%49x£$"/>
+            </subject>  
+        </target>
+<policy>
+        <rule effect="deny">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+<policy-set combine="first-matching-target">
+        <target>
+            <subject>
+               <subject-match attr="id">s20.2</subject-match>                    
+               <subject-match attr="signer-id" match="v7zha89%49x£$"/>
+            </subject>  
+        </target>
+<policy>
+        <rule effect="permit">
+            <condition>
+                <resource-match attr="resource-id">
+                    resource4
+                </resource-match>                    
+            </condition>
+        </rule>
+    </policy>
+</policy-set> 
+
+<!-- justyna -->
+
+
+<!---    test 21    (old name: test 103 U)-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s21</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s21a</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="undetermined"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 23    (old name: test 105 U)-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s23</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 24    (old name: test 106 U)-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s24</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="or">
+				<subject-match attr="version" match="5"/>
+				<resource-match attr="resource-id"  match="device:pim"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 25.1    (old name: test 107 U)-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s25.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<environment-match attr="roaming"  match="off"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 25.2    (old name: test 107 a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s25.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 25.3    (old name: test 107 b U -->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s25.3</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			<condition combine="and">
+				<subject-match attr="version" match="9"/>				
+			</condition>
+			
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 25.4    (old name: test 107 c U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s25.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			
+			
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 26.1    (old name: test 108 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s26.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 26.2    (old name: test 108 a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s26.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 26.3    (old name: test 108 b U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s26.3</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 26.4    (old name: test 108 c U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s26.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>			
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 27.1    (old name: test 109 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s27.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 27.2    (old name: test 109a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s27.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 27.3    (old name: test 109b U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s27.3</subject-match>
+			 <subject-match attr="version" match="5"/>			 
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 27.4    (old name: test 109c U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s27.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 28    (old name: test 110 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s28</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 29    (old name: test 111 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s29</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 30.1    (old name: test 112 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s30.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 30.2    (old name: test 112a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s30.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 30.3    (old name: test 112b U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s30.3</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 30.4    (old name: test 112c U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s30.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			
+		</condition>
+       		 </rule>
+	</policy>
+	
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+	
+</policy-set>
+
+
+
+<!---    test 31.1    (old name: test 113 U -->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s31.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 31.2.1    (old name: test 113a U -->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s31.2.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 31.2.2    (old name: test 113aa U -->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s31.2.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 31.3    (old name: test 113b U -->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s31.3</subject-match>
+        	</subject>  
+   	</target>
+
+	
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+</policy-set>
+
+<!---    test 32.1    (old name: test 114 U -->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s32.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 32.2.1    (old name: test 114a U -->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s32.2.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 32.2.2    (old name: test 114aa U -->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s32.2.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 32.3    (old name: test 114b U -->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s32.3</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="deny">
+		<condition combine="or">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+
+	<policy>
+		<rule effect="deny">
+		<condition combine="and">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 33.1    (old name: test 115 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s33.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy combine="first-applicable">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 33.2    (old name: test 115a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s33.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy combine="first-applicable">
+		<rule effect="permit">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 33.3    (old name: test 115b U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s33.3</subject-match>
+        	</subject>  
+   	</target>
+	<policy combine="first-applicable">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		</rule>
+		<rule effect="permit">
+			<condition combine="or">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 34.1    (old name: test 116 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s34.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy  combine="permit-overrides">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>		
+			</condition>
+		</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 34.2    (old name: test 116 a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s34.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy  combine="permit-overrides">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>		
+			</condition>
+		</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+<!---    test 35.1    (old name: test 117 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s35.1</subject-match>
+        	</subject>  
+   	</target>
+	<policy combine="deny-overrides">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		 </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 35.2    (old name: test 117 a U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s35.2</subject-match>
+        	</subject>  
+   	</target>
+	<policy combine="deny-overrides">
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+		 </rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device"/>
+				<subject-match attr="version" match="5"/>
+				
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set>
+	<target>
+		<subject>
+			<subject-match attr="id">org.tizen.widget.analogclock</subject-match>
+		</subject>  
+   	</target>
+	<policy combine="first-applicable">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="http://helloheloo/"/>
+			</condition>
+		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 36    (old name: test 102 U -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s36</subject-match>
+			<subject-match attr="version" match="5"/>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id"  match="device:pim.contacts"/>
+				<subject-match attr="version" match="5"/>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+
+
+<!---    test 37    (old name: test 108 -->
+<!-- mbialota modified -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s37</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="prompt-oneshot">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!---    test 38    (old name: test 109 -->
+<!-- mbialota modified -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s38</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="prompt-session">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s38.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="prompt-session">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<!---    test 39    (old name: test 110 -->
+<!-- mbialota modified -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s39</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="prompt-blanket">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s39.4</subject-match>
+        	</subject>  
+   	</target>
+	<policy>
+		<rule effect="prompt-blanket">
+			<condition combine="and">
+				<resource-match attr="resource-id">device:pim.contacts.read</resource-match>
+			</condition>
+       		 </rule>
+	</policy>
+</policy-set>
+
+
+<!-- Maria -->
+<!-- testing different methods of policies and rules combining-->
+<!---    test 40    (old name: test 200 -->
+
+<!--- two opposite rules put into different policies in one policy set -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s40</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r40</resource-match>    
+			</condition>
+        </rule>
+	</policy>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r40</resource-match>    
+			</condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<!---    test 41    (old name: test 201 -->
+
+<!--- two different rules put into different policies in one policy set-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s41</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r41</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r41.2</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+<!---    test 42.1    (old name: test 202 -->
+<!--- two opposite rules put into one policy in one policy set-->
+<!--- this case will have the result of deny because of default rules combining==deny override, which is not the same as policies combining -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s42.1</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r42.1</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r42.1</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+<!---    test 42.2    (old name: test 202b -->
+<!--- two opposite rules put into one policy in one policy set-->
+<!--- this case will have the result of deny because of default rules combining==deny override, which is not the same as policies combining -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s42.2</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r42.2</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r42.2</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+<!---    test 43.1    (old name: test 203 -->
+
+<!--- two opposite rules put into different policies in one policy set-->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s43.1</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r43.1</resource-match>    
+			</condition>
+        	</rule>
+	</policy>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r43.1</resource-match>    
+			</condition>
+        	</rule>
+    </policy>
+</policy-set>
+<!---    test 43.2    (old name: test 203b -->
+
+<!--- two opposite rules put into different policies in one policy set-->
+<policy-set combine="deny-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s43.2</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r43.2</resource-match>    
+			</condition>
+        	</rule>
+	</policy>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r43.2</resource-match>    
+			</condition>
+        	</rule>
+    </policy>
+</policy-set>
+
+<!---    test 44.1    (old name: test 204 -->
+<!--- two different rules put into different policies in one policy set-->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s44.1</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r44.1</resource-match>    
+			</condition>
+        	</rule>
+	</policy>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r44.1</resource-match>    
+			</condition>
+        	</rule>
+    </policy>
+</policy-set>
+
+<!---    test 44.2    (old name: test 204b -->
+<!--- two different rules put into different policies in one policy set-->
+<policy-set combine="permit-overrides">
+	<target>
+		<subject>
+			<subject-match attr="id">s44.2</subject-match>
+		</subject>  
+	</target>
+	<policy>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r44.2</resource-match>    
+			</condition>
+        	</rule>
+	</policy>
+	<policy>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r44.2</resource-match>    
+			</condition>
+        	</rule>
+    </policy>
+</policy-set>
+
+<!---    test 45.1    (old name: test 205 -->
+<!--- two opposite rules put into one policy -->
+<!--- testing rules combining methods-->
+<!--- this case should have the result of permit in contradiction to test 202 -->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s45.1</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r45.1</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r45.1</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+<!---    test 45.2    (old name: test 205b -->
+<!--- two opposite rules put into one policy -->
+<!--- testing rules combining methods-->
+<!--- this case should have the result of deny-->
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s45.2</subject-match>
+		</subject>  
+	</target>
+	<policy combine="first-applicable">
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r45.2</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r45.2</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+<!---    test 46.1    (old name: test 206 -->
+<!--- two opposite rules put into one policy -->
+
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s46.1</subject-match>
+		</subject>  
+	</target>
+	<policy combine="permit-overrides">
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r46.1</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r46.1</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+<!---    test 46.2    (old name: test 206b -->
+<!--- two opposite rules put into one policy -->
+
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s46.2</subject-match>
+		</subject>  
+	</target>
+	<policy combine="permit-overrides">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r46.2</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r46.2</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+<!---    test 47.1    (old name: test 207 -->
+<!--- two opposite rules put into one policy -->
+
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s47.1</subject-match>
+		</subject>  
+	</target>
+	<policy combine="deny-overrides">
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r47.1</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r47.1</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+<!---    test 47.2    (old name: test 207b -->
+<!--- two opposite rules put into one policy -->
+
+<policy-set combine="first-matching-target">
+	<target>
+		<subject>
+			<subject-match attr="id">s47.2</subject-match>
+		</subject>  
+	</target>
+	<policy combine="deny-overrides">
+		<rule effect="deny">
+			<condition combine="and">
+				<resource-match attr="resource-id">r47.2</resource-match>    
+			</condition>
+        	</rule>
+		<rule effect="permit">
+			<condition combine="and">
+				<resource-match attr="resource-id">r47.2</resource-match>    
+			</condition>
+        	</rule>
+    	</policy>
+</policy-set>
+
+
+<!---    test 48 (old name: test 101)-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">s48</subject-match>
+            <subject-match attr="uri.host" match="www.test.pl"/>
+        </subject>
+    </target>
+    <policy>
+        <rule effect="permit">
+            <condition combine="and">
+                <resource-match attr="resource-id" match="device:pim.contacts"/>
+                <!--<subject-match attr="uri" match="http://www.test.pl:80"/>-->
+            </condition>
+        </rule>
+    </policy>
+</policy-set>
+
+<!---    test 51 - BugFest00-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">BF00</subject-match>
+        </subject>
+    </target>
+        <policy>
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR00"/>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR00"/>
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+
+
+<!---    test 52 - BugFest01-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">BF01</subject-match>
+        </subject>
+    </target>
+    <policy-set combine="first-matching-target">
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR01"/>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR01"/>
+                </condition>
+            </rule>
+        </policy>
+    </policy-set>
+</policy-set>
+
+
+<!---    test 53 - BugFest02-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">BF02</subject-match>
+        </subject>
+    </target>
+    <policy-set combine="first-matching-target">
+        <policy combine="permit-overrides">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR02"/>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR02"/>
+                </condition>
+            </rule>
+        </policy>
+    </policy-set>
+</policy-set>
+
+<!---    test 54 - BugFest03-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">BF03</subject-match>
+        </subject>
+    </target>
+    <policy-set combine="first-matching-target">
+        <policy combine="deny-overrides">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR03"/>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id" match="BFR03"/>
+                </condition>
+            </rule>
+        </policy>
+    </policy-set>
+</policy-set>
+
+
+<!---    test 55 - BugFest04-->
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">BF04</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id">BFR04</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id">BFR04</resource-match>
+
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">s61a</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61a</resource-match>
+                    <resource-match attr="param:name">type</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61a</resource-match>
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">s61b</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61b</resource-match>
+                    <resource-match attr="param:name">type</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61b</resource-match>
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">s61c</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61c</resource-match>
+                    <resource-match attr="param:name">type</resource-match>
+                    <resource-match attr="param:name">port</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61c</resource-match>
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">s61d</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61d</resource-match>
+                    <resource-match attr="param:name">type</resource-match>
+                    <resource-match attr="param:name">port</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="resource-id">r61d</resource-match>
+                </condition>
+            </rule>
+        </policy>
+</policy-set>
+
+
+<policy-set combine="first-matching-target">
+    <target>
+        <subject>
+            <subject-match attr="id">paramTestSubject</subject-match>
+        </subject>
+    </target>
+        <policy combine="first-applicable">
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="dev-cap">messaging</resource-match>
+                    <resource-match attr="param:recipients" func="glob" >+4409*</resource-match>
+                </condition>
+            </rule>
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="dev-cap">messaging</resource-match>
+                    <resource-match attr="param:recipients" func="glob" >+4408*</resource-match>
+                </condition>
+            </rule>
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="dev-cap">messaging</resource-match>
+                    <resource-match attr="param:recipients" func="glob" >+48*</resource-match>
+                </condition>
+            </rule>
+            <rule effect="permit">
+                <condition combine="and">
+                    <resource-match attr="dev-cap">camera</resource-match>
+                    <resource-match attr="param:quality">high</resource-match>
+                </condition>
+            </rule>
+            <rule effect="deny">
+                <condition combine="and">
+                    <resource-match attr="dev-cap">camera</resource-match>
+                    <resource-match attr="param:quality">low</resource-match>
+                </condition>
+            </rule>
+        </policy>
+
+</policy-set>
+
+
+</policy-set>

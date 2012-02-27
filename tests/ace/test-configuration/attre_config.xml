@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<!DOCTYPE manager-settings SYSTEM "config.dtd">
+<manager-settings>
+  <editable-by-user>false</editable-by-user>
+  <storage-path>/usr/etc/ace/</storage-path>
+  <policy-files>
+    <file active="true">attr_policy-example.xml</file>
+  </policy-files>
+  <trusted-providers>
+    <provider>samsung</provider>
+  </trusted-providers>
+  <untrusted-providers>
+    <provider>nokia</provider>
+  </untrusted-providers>
+</manager-settings>
+
+

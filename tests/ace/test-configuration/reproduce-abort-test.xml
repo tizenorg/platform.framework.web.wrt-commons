@@ -1,0 +1,26 @@
+<policy-set id="Policy-1">      
+
+<policy>                                                            
+     <target>
+<!--                                                     
+         <subject>                                                 
+             <subject-match attr="id" match="analogclock"/>      
+         </subject>
+-->                                                
+     </target>                                                
+     <rule effect="permit">                                  
+         <condition>                                          
+	<!--
+             <resource-match attr="resource-id">              
+                  api.appconfig                               
+             </resource-match>                               
+             <resource-match attr="device-cap">              
+                  api.appconfig                               
+             </resource-match>                               
+	-->
+         </condition>                                        
+     </rule>                                                 
+</policy>   
+
+
+</policy-set>

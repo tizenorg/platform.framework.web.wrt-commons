@@ -1,0 +1,495 @@
+ <policy-set id="Policy-1" combine="first-matching-target">
+
+        <policy-set combine="deny-overrides" >
+            <target>
+                <subject>
+                    <subject-match attr="JilSecurityDomain">
+                        Unidentified
+                    </subject-match>
+                </subject>
+            </target>
+            <policy combine="deny-overrides">
+                <rule effect="deny">
+                    <condition combine="and" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device
+                        </resource-match>
+                        <resource-match attr="param:function">
+                            getAvailableApplications
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="prompt-oneshot">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.update
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.captureImage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device.Device.launchApplication
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.requestPositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.sendMessage
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="prompt-session">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.findAddressBookItems
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItemsCount
+                        </resource-match>
+                    </condition>
+                </rule>
+                <!-- If the resource was not specified above then the access is unrestricted -->
+                <rule effect="permit">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            Device.PositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAvailableAttributes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.setAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.open
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.play
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.pause
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.resume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.stop
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            AudioPlayer.onStateChange
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.onCameraCaptured
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.setWindow
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.PositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.DeviceStateInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.onPositionRetrieved
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.createMessage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Messaging.onMessageSendingFailure
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.getVolume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.stopAll
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.isAudioPlaying
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.createAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            PIM.onAddressBookItemFound
+                        </resource-match>
+
+                        <!-- This part contains api-features defined in WAC1.0 -->
+
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/accelerometerinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/applicationtypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.2/camera
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/devicestateinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exception
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exceptiontypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/message
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messagetypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/positioninfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/widget
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="permit" />
+            </policy>
+        </policy-set>
+
+        <policy-set combine="deny-overrides" >
+            <target>
+                <subject>
+                    <subject-match attr="JilSecurityDomain">
+                        Identified
+                    </subject-match>
+                </subject>
+            </target>
+            <policy combine="deny-overrides">
+                <rule effect="prompt-session">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.update
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.requestPositionInfo
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="prompt-blanket">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device.Device.launchApplication
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.captureImage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.sendMessage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.findAddressBookItems
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItemsCount
+                        </resource-match>
+                    </condition>
+                </rule>
+                <!-- If the resource was not specified above then the access is unrestricted -->
+                <rule effect="permit">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device.Device.getAvailableApplications
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAvailableAttributes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.setAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.open
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.play
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.pause
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.resume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.stop
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            AudioPlayer.onStateChange
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.onCameraCaptured
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.setWindow
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.PositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.DeviceStateInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.onPositionRetrieved
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.createMessage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Messaging.onMessageSendingFailure
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.getVolume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.stopAll
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.isAudioPlaying
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.createAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            PIM.onAddressBookItemFound
+                        </resource-match>
+
+                        <!-- This part contains api-features defined in WAC1.0 -->
+
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/accelerometerinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/applicationtypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.2/camera
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/devicestateinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exception
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exceptiontypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/message
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messagetypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/positioninfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/widget
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="permit" />
+            </policy>
+        </policy-set>
+
+        <policy-set combine="deny-overrides" >
+            <target>
+                <subject>
+                    <subject-match attr="JilSecurityDomain">
+                        Operator
+                    </subject-match>
+                </subject>
+            </target>
+            <policy combine="deny-overrides">
+                <rule effect="permit">
+                    <condition combine="or" >
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device.Device.launchApplication
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.requestPositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.update
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device.Device.getAvailableApplications
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.getAvailableAttributes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem.AddressBookItem.setAttributeValue
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.open
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.play
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.pause
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.resume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.AudioPlayer.stop
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            AudioPlayer.onStateChange
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.onCameraCaptured
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.setWindow
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia.Camera.captureImage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.PositionInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Device.DeviceStateInfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            DeviceStateInfo.onPositionRetrieved
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.createMessage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging.Messaging.sendMessage
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Messaging.onMessageSendingFailure
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.getVolume
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.stopAll
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            Multimedia.isAudioPlaying
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.createAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            PIM.onAddressBookItemFound
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.findAddressBookItems
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim.PIM.getAddressBookItemsCount
+                        </resource-match>
+
+                        <!-- This part contains api-features defined in WAC1.0 -->
+
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/accelerometerinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/addressbookitem
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/applicationtypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.2/camera
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/device
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/devicestateinfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exception
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.5/exceptiontypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/message
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messagetypes
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/messaging
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/multimedia
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1.1/pim
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/positioninfo
+                        </resource-match>
+                        <resource-match attr="resource-id">
+                            http://jil.org/jil/api/1.1/widget
+                        </resource-match>
+                    </condition>
+                </rule>
+                <rule effect="permit" />
+            </policy>
+        </policy-set>
+ </policy-set>

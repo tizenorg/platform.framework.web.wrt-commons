@@ -1,0 +1,41 @@
+<policy-set id="Policy-3" combine="deny-overrides">
+
+<policy>
+    <target>
+        <subject>
+            <subject-match attr="s-name" match="analogclock"/>
+            <subject-match attr="s-uri.host" match="freebeer.evil.com" />
+            <subject-match attr="s-key-root-trust" match="manufacturer" />
+            <subject-match attr="s-id" match="urn:megacorp:widget:anapp" />
+            <subject-match attr="s-signer-id" match="7zha89%49xL$" />
+            <subject-match attr="s-version" match="5"/>
+        </subject>
+    </target>
+    <rule effect="permit">
+        <condition>
+            <resource-match attr="r-resource-id">device.simcard</resource-match>
+            <resource-match attr="r-r8v2" match="2" />
+            <resource-match attr="r-author" match="author3" />
+            <resource-match attr="r-r9a.scheme" match="http://onet.pl:80/test.html" />
+            <resource-match attr="r-r9b.authority" match="http://onet.pl:80/test.html" />
+            <resource-match attr="r-r9c.scheme-authority" match="http://onet.pl" />
+
+            <environment-match attr="e-resource-id">device.simcard</environment-match>
+            <environment-match attr="e-r8v2" match="2" />
+            <environment-match attr="e-author" match="author3" />
+            <environment-match attr="e-r9a.scheme" match="http://onet.pl:80/test.html" />
+            <environment-match attr="e-r9b.authority" match="http://onet.pl:80/test.html" />
+            <environment-match attr="e-r9c.scheme-authority" match="http://onet.pl" />
+
+            <subject-match attr="s-resource-id">device.simcard</subject-match>
+            <subject-match attr="s-r8v2" match="2" />
+            <subject-match attr="s-author" match="author3" />
+            <subject-match attr="s-r9a.scheme" match="http://onet.pl:80/test.html" />
+            <subject-match attr="s-r9b.authority" match="http://onet.pl:80/test.html" />
+            <subject-match attr="s-r9c.scheme-authority" match="http://onet.pl" />
+        </condition>
+    </rule>
+</policy>
+
+
+</policy-set>
