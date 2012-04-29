@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-db-efl
+Description: DPL DB - EFL based
+Version: @VERSION@
+Requires: dpl-efl sqlite3 db-util
+Libs: -L${libdir} -ldpl-db-efl
+Cflags: -I${includedir}/dpl-efl

@@ -19,46 +19,31 @@
 # @brief
 #
 
-#
 # Check minimum CMake version
-#
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-#
 # Project name
-#
 PROJECT(dpl)
 
-#
-# Logs
-#
-
-
+# Options
 OPTION(DPL_LOG "DPL logs status" OFF)
-
 IF(DPL_LOG)
     MESSAGE(STATUS "Logging enabled for DPL")
     ADD_DEFINITIONS("-DDPL_LOGS_ENABLED")
 ELSE(DPL_LOG)
     MESSAGE(STATUS "Logging disabled for DPL")
 ENDIF(DPL_LOG)
+
 ADD_DEFINITIONS("-DSEPARATED_SINGLETON_IMPLEMENTATION")
+STRING(REGEX MATCH "([^.]*)" API_VERSION "${VERSION}")
+ADD_DEFINITIONS("-DAPI_VERSION=\"$(API_VERSION)\"")
 
-# Gtk
-OPTION(DISABLE_GTK "Disable GTK stuff" ON)
-
-#
 # Build type
-#
-
 SET(CMAKE_BUILD_TYPE "Release")
-
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 SET(CMAKE_CXX_FLAGS "-O2 -g -fPIC -D_FORTIFY_SOURCE=0")
 
-#
 # CMake settings
-#
 MESSAGE(STATUS "========================================")
 MESSAGE(STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR})
 MESSAGE(STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR})
@@ -109,15 +94,10 @@ MESSAGE(STATUS "CMAKE_AR: " ${CMAKE_AR})
 MESSAGE(STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB})
 MESSAGE(STATUS "========================================")
 
-#
 # Build 3rd party libraries first
-#
 ADD_SUBDIRECTORY(3rdparty)
 
-#
 # Compiler flags
-#
-
 ADD_DEFINITIONS("-fvisibility=default")         # mark all exported symbols as visible
 
 # Warnings mode
@@ -189,15 +169,18 @@ SET(TARGET_DPL_LOG_EFL "lib${PROJECT_NAME}-log-efl")
 SET(TARGET_DPL_POPUP "lib${PROJECT_NAME}-popup-efl")
 SET(TARGET_WRT_DAO_RW_LIB "dpl-wrt-dao-rw")
 SET(TARGET_WRT_DAO_RO_LIB "dpl-wrt-dao-ro")
+SET(TARGET_AUTO_SAVE_DAO_LIB "wrt-commons-auto-save-dao")
+SET(TARGET_AUTO_SAVE_DAO_RW_LIB "wrt-commons-auto-save-dao-rw")
+SET(TARGET_AUTO_SAVE_DAO_RO_LIB "wrt-commons-auto-save-dao-ro")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
-SET(TARGET_ACE_DAO_RO_LIB "dpl-ace-dao-ro")
-SET(TARGET_ACE_DAO_RW_LIB "dpl-ace-dao-rw")
-SET(TARGET_ACE_LIB "dpl-ace")
-SET(TARGET_VCORE_LIB "dpl-vcore")
+
+macro(configure_and_install_pkg PKG_FILE)
+    CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_FILE} DESTINATION lib/pkgconfig)
+endmacro(configure_and_install_pkg)
 
 ADD_SUBDIRECTORY(modules)
 
 ADD_SUBDIRECTORY(build)
-ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(etc)
 

@@ -590,10 +590,11 @@ Optional<String> SqlConnection::DataCommand::GetColumnOptionalString(
     return Optional<String>(s);
 }
 
-void SqlConnection::Connect(const std::string &address, Flag::Type flag)
+void SqlConnection::Connect(const std::string &address,
+    Flag::Type type,
+    Flag::Option flag)
 {
-    if (m_connection != NULL)
-    {
+    if (m_connection != NULL) {
         LogPedantic("Already connected.");
         return;
     }
@@ -603,35 +604,29 @@ void SqlConnection::Connect(const std::string &address, Flag::Type flag)
     // Connect to database
     int result;
 
-    if (flag & Flag::UseLucene)
-    {
+    if (type & Flag::UseLucene) {
         result = db_util_open_with_options(
             address.c_str(),
             &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            flag,
             NULL);
 
         m_usingLucene = true;
         LogPedantic("Lucene index enabled");
-    }
-    else
-    {
+    } else {
         result = sqlite3_open_v2(
             address.c_str(),
             &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            flag,
             NULL);
 
         m_usingLucene = false;
         LogPedantic("Lucene index disabled");
     }
 
-    if (result == SQLITE_OK)
-    {
+    if (result == SQLITE_OK) {
         LogPedantic("Connected to DB");
-    }
-    else
-    {
+    } else {
         LogPedantic("Failed to connect to DB!");
         ThrowMsg(Exception::ConnectionBroken, address);
     }
@@ -703,6 +698,7 @@ bool SqlConnection::CheckTableExist(const char *tableName)
 
 SqlConnection::SqlConnection(const std::string &address,
                              Flag::Type flag,
+                             Flag::Option option,
                              SynchronizationObject *synchronizationObject)
     : m_connection(NULL),
       m_usingLucene(false),
@@ -712,7 +708,7 @@ SqlConnection::SqlConnection(const std::string &address,
     LogPedantic("Opening database connection to: " << address);
 
     // Connect to DB
-    SqlConnection::Connect(address, flag);
+    SqlConnection::Connect(address, flag, option);
 
     if (!m_synchronizationObject)
     {

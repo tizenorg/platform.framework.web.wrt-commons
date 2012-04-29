@@ -1,0 +1,13 @@
+SQL(
+    BEGIN TRANSACTION;
+)
+
+CREATE_TABLE(AutoSaveIdPasswd)
+    COLUMN_NOT_NULL(address,    VARCHAR(256), unique)
+    COLUMN_NOT_NULL(userId,     VARCHAR(128),)
+    COLUMN_NOT_NULL(passwd,     VARCHAR(128),)
+CREATE_TABLE_END()
+
+SQL(
+    COMMIT;
+)

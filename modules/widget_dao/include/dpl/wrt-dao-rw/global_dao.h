@@ -31,35 +31,6 @@ class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
     /**
-     * Set new Parental mode status
-     */
-    static void SetParentalMode(bool parental_status);
-
-    /**
-     * Retrieve Parental mode maximal allowed age
-     *
-     * @return NULL if allowed age not set, else pointer value is allowed age
-     */
-    static void SetParentalAllowedAge(const DPL::OptionalInt& age);
-
-    static void AddCategoryRule(
-            const ChildProtection::PowderRules::CategoryRule& powder);
-
-    static void RemoveCategoryRule(
-            const ChildProtection::PowderRules::CategoryRule& powder);
-
-    static void UpdateCategoryRule(
-            const ChildProtection::PowderRules::CategoryRule& oldRule,
-            const ChildProtection::PowderRules::CategoryRule& newRule);
-
-    static void AddAdultBlackListElement(const DPL::String &url);
-
-    static void RemoveAdultBlackListElement(const DPL::String &url);
-
-    static void UpdateAdultBlackList(const DPL::String &oldUrl,
-                                     const DPL::String &newUrl);
-
-    /**
      * Add deffered widget packages to be installed
      */
     static void AddDefferedWidgetPackageInstallation(const DPL::String &path);
@@ -94,13 +65,6 @@ class GlobalDAO : public GlobalDAOReadOnly
      *
      */
     static void SetRoamingDataUsage(NetworkAccessMode newMode);
-
-    /**
-     * This method sets Autofill for Webkit
-     */
-    static void SetAutoSaveIdPasswd(
-            const DPL::String &url, const AutoSaveData &saveData);
-
 
   private:
     GlobalDAO()

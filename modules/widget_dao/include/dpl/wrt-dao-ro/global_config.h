@@ -243,6 +243,11 @@ inline const char* GetTmpDirPath()
 {
     return "/tmp";
 }
+
+inline const char* GetWACVersion()
+{
+    return "2.0";
+}
 } // namespace GlobalConfig
 } // namespace WrtDB
 

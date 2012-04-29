@@ -63,14 +63,6 @@ SET_TARGET_PROPERTIES(${TARGET_LOC} PROPERTIES
 )
 
 INSTALL(TARGETS ${TARGET_LOC}
-    DESTINATION bin
-    PERMISSIONS OWNER_READ
-                OWNER_WRITE
-                OWNER_EXECUTE
-                GROUP_READ
-                GROUP_EXECUTE
-                WORLD_READ
-                WORLD_EXECUTE
-    )
+    DESTINATION bin)
 
 ADD_SUBDIRECTORY(files)

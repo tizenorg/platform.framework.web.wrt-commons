@@ -82,15 +82,7 @@ SET_TARGET_PROPERTIES(${TARGET_DBUS_TEST_SERVICE} PROPERTIES
 )
 
 INSTALL(TARGETS ${TARGET_DBUS_TESTS} ${TARGET_DBUS_TEST_SERVICE}
-        DESTINATION bin
-        PERMISSIONS OWNER_READ
-                    OWNER_WRITE
-                    OWNER_EXECUTE
-                    GROUP_READ
-                    GROUP_EXECUTE
-                    WORLD_READ
-                    WORLD_EXECUTE
-)
+        DESTINATION bin)
 
 INSTALL(FILES
         ${PROJECT_SOURCE_DIR}/tests/dbus/data/org.tizen.DBusTestService.service

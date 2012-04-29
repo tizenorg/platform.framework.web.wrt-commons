@@ -39,9 +39,14 @@ DPL::DB::ThreadDatabaseSupport WrtDatabase::m_interface(
         WrtDatabase::Address(),
         WrtDatabase::Flags());
 
-void WrtDatabase::attachToThread()
+void WrtDatabase::attachToThreadRO()
 {
-    m_interface.AttachToThread();
+    m_interface.AttachToThread(DPL::DB::SqlConnection::Flag::RO);
+}
+
+void WrtDatabase::attachToThreadRW()
+{
+    m_interface.AttachToThread(DPL::DB::SqlConnection::Flag::RW);
 }
 
 void WrtDatabase::detachFromThread()

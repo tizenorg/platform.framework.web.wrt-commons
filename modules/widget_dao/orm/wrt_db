@@ -5,8 +5,6 @@ SQL(
 /*TODO: secure_by_default should be 0 by default*/
 CREATE_TABLE(GlobalProperties)
     COLUMN_NOT_NULL(developer_mode,          INT,          DEFAULT 0)
-    COLUMN_NOT_NULL(parental_mode,           INT,          DEFAULT 0)
-    COLUMN(parental_allowed_age,             INT,          DEFAULT NULL)
     COLUMN_NOT_NULL(secure_by_default,       INT,          DEFAULT 1)
     COLUMN_NOT_NULL(home_network_data_usage, TINYINT,      DEFAULT 1)
     COLUMN_NOT_NULL(roaming_data_usage,      TINYINT,      DEFAULT 1)
@@ -32,7 +30,6 @@ CREATE_TABLE(WidgetInfo)
     COLUMN(base_folder,             VARCHAR(256),  DEFAULT '')
     COLUMN(webkit_plugins_required, TINYINT,       DEFAULT 0)
     COLUMN(security_domain,         INT,           DEFAULT 0)
-    COLUMN_NOT_NULL(child_protection,INT,          DEFAULT 0)
     COLUMN(recognized,              INT,           DEFAULT 0)
     COLUMN(wac_signed,              INT,           DEFAULT 0)
     COLUMN(distributor_signed,      INT,           DEFAULT 0)
@@ -117,6 +114,7 @@ CREATE_TABLE(WidgetFeature)
     COLUMN_NOT_NULL(app_id,             INT,)
     COLUMN_NOT_NULL(name,               VARCHAR(256),)
     COLUMN_NOT_NULL(required,           INT,)
+    COLUMN_NOT_NULL(rejected,           INT,)
     TABLE_CONSTRAINTS(
         FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
@@ -254,37 +252,6 @@ CREATE_TABLE(FeatureDeviceCapProxy)
     TABLE_CONSTRAINTS(PRIMARY KEY(FeatureUUID,DeviceCapID))
 CREATE_TABLE_END()
 
-CREATE_TABLE(PowderLevels)
-    COLUMN_NOT_NULL(app_id,       INT,       )
-    COLUMN_NOT_NULL(id,           INTEGER,   primary key autoincrement)
-    COLUMN_NOT_NULL(category,     TEXT,      )
-    COLUMN_NOT_NULL(level,        INTEGER,   )
-    TABLE_CONSTRAINTS(
-        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
-    )
-CREATE_TABLE_END()
-
-CREATE_TABLE(PowderLevelContexts)
-    COLUMN_NOT_NULL(levelId,      INTEGER,   )
-    COLUMN_NOT_NULL(context,      TEXT,      )
-
-    TABLE_CONSTRAINTS(
-        FOREIGN KEY (levelId) REFERENCES PowderLevels (id) ON DELETE CASCADE
-    )
-CREATE_TABLE_END()
-
-CREATE_TABLE(ChildProtectionBlacklist)
-    COLUMN_NOT_NULL(url,        TEXT,       unique)
-CREATE_TABLE_END()
-
-CREATE_TABLE(PowderRules)
-    COLUMN_NOT_NULL(id,           INTEGER,   primary key autoincrement)
-    COLUMN_NOT_NULL(category,     TEXT,      )
-    COLUMN_NOT_NULL(level,        INTEGER,   )
-    COLUMN(context,               TEXT,      )
-    TABLE_CONSTRAINTS(unique(category,context))
-CREATE_TABLE_END()
-
 CREATE_TABLE(DefferedWidgetPackageInstallation)
     COLUMN_NOT_NULL(path,        TEXT,       unique)
 CREATE_TABLE_END()
@@ -300,12 +267,6 @@ CREATE_TABLE(CRLResponseStorage)
     COLUMN_NOT_NULL(distribution_point,TEXT,       primary key)
     COLUMN_NOT_NULL(crl_body,          TEXT,)
     COLUMN(next_update_time,           BIGINT,)
-CREATE_TABLE_END()
-
-CREATE_TABLE(AutoSaveIdPasswd)
-    COLUMN_NOT_NULL(address,    VARCHAR(256), unique)
-    COLUMN_NOT_NULL(userId,     VARCHAR(128),)
-    COLUMN_NOT_NULL(passwd,     VARCHAR(128),)
 CREATE_TABLE_END()
 
 CREATE_TABLE(SettginsList)
@@ -351,7 +312,6 @@ CREATE_TABLE_END()
 
 SQL(
     INSERT INTO UserAgents VALUES("Tizen", "Mozilla/5.0 (Linux; U; Tizen 1.0; en-us) AppleWebKit/534.46 (KHTML, like Gecko) Mobile Tizen Browser/1.0");
-    INSERT INTO UserAgents VALUES("Chrome 16", "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20110706 Firefox/5.0");
 )
 
 SQL(

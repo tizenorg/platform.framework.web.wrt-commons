@@ -54,19 +54,18 @@ TARGET_LINK_LIBRARIES(${TARGET_DPL_SOCKET_EFL}
 
 # Target library properties
 SET_TARGET_PROPERTIES(${TARGET_DPL_SOCKET_EFL} PROPERTIES
-    SOVERSION ${VERSION}
+    SOVERSION ${API_VERSION} 
+ VERSION ${VERSION}
     CLEAN_DIRECT_OUTPUT 1
     OUTPUT_NAME ${DPL_EFL_SOCKET_LIBRARY})
 
 # Install libraries
 INSTALL(TARGETS ${TARGET_DPL_SOCKET_EFL}
-        DESTINATION lib
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+        DESTINATION lib)
 
 # Install detail headers
 INSTALL(FILES ${DPL_SOCKET_HEADERS}
         DESTINATION include/dpl-efl/dpl/socket)
 
 # Install pkgconfig script
-INSTALL(FILES dpl-socket-efl.pc
-        DESTINATION lib/pkgconfig)
+configure_and_install_pkg(dpl-socket-efl.pc)

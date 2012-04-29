@@ -19,13 +19,17 @@
  * so if you want to use this file, refer to the README file in root directory
  */
 
+#include <list>
+#include <set>
+#include <string>
 #include <warp_iri.h>
 #include <dpl/string.h>
+#include <dpl/auto_ptr.h>
 #include <dpl/foreach.h>
 #include <idna.h>
 #include <istream>
 #include <iri.h>
-#include <ValidatorCommon.h>
+//#include <ValidatorCommon.h>
 
 namespace {
 // All schemes which are supported by external application should be ignored
@@ -46,9 +50,10 @@ const DPL::String SCHEMA_FTP = DPL::FromUTF8String("ftp");
 
 // This will create AutoPtr deleter for iri_struct.
 // Deleter must be in the same namespace as definition of AutoPtr.
-namespace ValidationCore {
-VC_DECLARE_DELETER(iri_struct, iri_destroy)
-}
+
+namespace DPL{
+DECLARE_DELETER(iri_struct, iri_destroy)
+} // namespace DPL
 
 WarpIRI::WarpIRI() :
     m_domain(false),
@@ -75,7 +80,7 @@ void WarpIRI::set(const char *p_iri,
         return;
     }
 
-    ValidationCore::AutoPtr<iri_struct> iri(iri_parse(p_iri));
+    DPL::AutoPtr<iri_struct> iri(iri_parse(p_iri));
 
     if (!iri.get()) {
         LogError("Error in iri_parse!");

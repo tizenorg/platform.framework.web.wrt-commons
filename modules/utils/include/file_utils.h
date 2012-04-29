@@ -30,6 +30,7 @@
 #include <dpl/exception.h>
 
 namespace FileUtils {
+DECLARE_EXCEPTION_TYPE(DPL::Exception, CreateDirectoryException)
 DECLARE_EXCEPTION_TYPE(DPL::Exception, RemoveDirectoryException)
 
 bool FileExists(const DPL::String& absolutePath);

@@ -40,7 +40,11 @@ using namespace Popup;
 const char* EDJ_NAME = "/usr/share/edje/ace/generic_popup.edj";
 const char* POPUP_LAYOUT1 = "popup_layout1";
 const char* POPUP_LAYOUT2 = "popup_layout2";
-const char* BUTTON_RESPONSE_CALLBACK_NAME = "response";
+const char* POPUP_PART_TITLE = "title,text";
+const char* POPUP_PART_BUTTON1 = "button1";
+const char* POPUP_PART_BUTTON2 = "button2";
+const char* POPUP_PART_BUTTON3 = "button3";
+const char* BUTTON_CLICKED_CALLBACK_NAME = "clicked";
 const char* CHANGED_CALLBACK_NAME = "changed";
 const unsigned int MAX_NUMBER_OF_VERTICAL = 2;
 
@@ -95,14 +99,14 @@ class PopupRenderer::Impl
     }
 
     void ButtonCallback(EvasObject::IConnection* /*connection*/,
-            void* event_info,
-            void* /*unused*/)
+            void* /*event_info*/,
+            void* data)
     {
         LogInfo("ButtonCallback");
         Assert(m_initialized);
         AnswerCallbackData answerData;
 
-        answerData.buttonAnswer = int(event_info);
+        answerData.buttonAnswer = reinterpret_cast<int>(data);
         answerData.chackState = m_checkState;
         answerData.password = m_password;
         m_current->ForwardAnswer(answerData);
@@ -148,7 +152,7 @@ class PopupRenderer::Impl
         evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_show(label);
 
-        elm_layout_content_set(
+        elm_object_part_content_set(
             layout,
             DPL::lexical_cast<std::string>(themeIndex).c_str(),
             label);
@@ -166,7 +170,7 @@ class PopupRenderer::Impl
         evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, 0.0);
         elm_object_text_set(check,
                             object.getCheckLabel().c_str());
-        elm_layout_content_set(
+        elm_object_part_content_set(
             layout,
             DPL::lexical_cast<std::string>(themeIndex).c_str(),
             check);
@@ -182,34 +186,39 @@ class PopupRenderer::Impl
     void DoRender(const PopupObject::Button& object,
             EvasObject &parent)
     {
-        elm_popup_buttons_add(parent,
-                              1,
-                              object.getLabel().c_str(),
-                              object.getLabelId(),
-                              NULL);
-        parent.ConnectMemberSmartCallback(
-                                          BUTTON_RESPONSE_CALLBACK_NAME,
-                                          &Impl::ButtonCallback,
-                                          this,
-                                          static_cast<void*>(NULL));
+        EvasObject btn(elm_button_add(parent));
+
+        elm_object_text_set(btn, object.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn);
+	btn.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                       &Impl::ButtonCallback,
+                                       this,
+                                       reinterpret_cast<void*>(object.getLabelId()));
+	m_createdObjects.push_back(btn);
     }
 
     void DoRender(const PopupObject::Button& object1,
             const PopupObject::Button& object2,
             EvasObject &parent)
     {
-        elm_popup_buttons_add(parent,
-                              2,
-                              object1.getLabel().c_str(),
-                              object1.getLabelId(),
-                              object2.getLabel().c_str(),
-                              object2.getLabelId(),
-                              NULL);
-        parent.ConnectMemberSmartCallback(
-                                          BUTTON_RESPONSE_CALLBACK_NAME,
-                                          &Impl::ButtonCallback,
-                                          this,
-                                          static_cast<void*>(NULL));
+        EvasObject btn1(elm_button_add(parent));
+        EvasObject btn2(elm_button_add(parent));
+
+        elm_object_text_set(btn1, object1.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn1);
+	btn1.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                        &Impl::ButtonCallback,
+                                        this,
+                                        reinterpret_cast<void*>(object1.getLabelId()));
+
+        elm_object_text_set(btn2, object2.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON2, btn2);
+	btn2.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                        &Impl::ButtonCallback,
+                                        this,
+                                        reinterpret_cast<void*>(object2.getLabelId()));
+	m_createdObjects.push_back(btn1);
+	m_createdObjects.push_back(btn2);
     }
 
     void DoRender(const PopupObject::Button& object1,
@@ -217,20 +226,33 @@ class PopupRenderer::Impl
             const PopupObject::Button& object3,
             EvasObject &parent)
     {
-        elm_popup_buttons_add(parent,
-                              3,
-                              object1.getLabel().c_str(),
-                              object1.getLabelId(),
-                              object2.getLabel().c_str(),
-                              object2.getLabelId(),
-                              object3.getLabel().c_str(),
-                              object3.getLabelId(),
-                              NULL);
-        parent.ConnectMemberSmartCallback(
-                                          BUTTON_RESPONSE_CALLBACK_NAME,
-                                          &Impl::ButtonCallback,
-                                          this,
-                                          static_cast<void*>(NULL));
+        EvasObject btn1(elm_button_add(parent));
+        EvasObject btn2(elm_button_add(parent));
+        EvasObject btn3(elm_button_add(parent));
+
+        elm_object_text_set(btn1, object1.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn1);
+	btn1.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                        &Impl::ButtonCallback,
+                                        this,
+                                        reinterpret_cast<void*>(object1.getLabelId()));
+
+        elm_object_text_set(btn2, object2.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON2, btn2);
+	btn2.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                        &Impl::ButtonCallback,
+                                        this,
+                                        reinterpret_cast<void*>(object2.getLabelId()));
+
+        elm_object_text_set(btn3, object3.getLabel().c_str());
+        elm_object_part_content_set(parent, POPUP_PART_BUTTON3, btn3);
+	btn3.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+                                        &Impl::ButtonCallback,
+                                        this,
+                                        reinterpret_cast<void*>(object3.getLabelId()));
+	m_createdObjects.push_back(btn1);
+	m_createdObjects.push_back(btn2);
+	m_createdObjects.push_back(btn3);
     }
 
     EvasObject getBaseObject()
@@ -288,8 +310,9 @@ class PopupRenderer::Impl
             evas_object_size_hint_weight_set(main,
                                              EVAS_HINT_EXPAND,
                                              EVAS_HINT_EXPAND);
-            elm_popup_title_label_set(main,
-                                      m_current->GetTitle().c_str());
+            elm_object_part_text_set(main,
+                                     POPUP_PART_TITLE,
+                                     m_current->GetTitle().c_str());
 
             m_createdObjects.push_back(main);
             std::vector<PopupObject::Button> buttonObjectList;
@@ -318,8 +341,8 @@ class PopupRenderer::Impl
                 }
                 Assert(m_themeIndexV <= MAX_NUMBER_OF_VERTICAL);
             }
-            elm_popup_content_set(main,
-                                  layout);
+            elm_object_content_set(main,
+                                   layout);
 
             // show buution
             switch(buttonObjectList.size()) {

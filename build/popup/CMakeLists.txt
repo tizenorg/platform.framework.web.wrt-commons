@@ -50,19 +50,18 @@ TARGET_LINK_LIBRARIES(${TARGET_DPL_POPUP}
 
 # Target library properties
 SET_TARGET_PROPERTIES(${TARGET_DPL_POPUP} PROPERTIES
-    SOVERSION ${VERSION}
+    SOVERSION ${API_VERSION} 
+ VERSION ${VERSION}
     CLEAN_DIRECT_OUTPUT 1
     OUTPUT_NAME ${DPL_POPUP_LIBRARY})
 
 # Install libraries
 INSTALL(TARGETS ${TARGET_DPL_POPUP}
-        DESTINATION lib
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+        DESTINATION lib)
 
 # Install detail headers
 INSTALL(FILES ${DPL_POPUP_HEADERS}
         DESTINATION include/dpl-efl/dpl/popup)
 
 # Install pkgconfig script
-INSTALL(FILES dpl-popup-efl.pc
-        DESTINATION lib/pkgconfig)
+configure_and_install_pkg(dpl-popup-efl.pc)

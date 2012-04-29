@@ -377,6 +377,13 @@ public:
             None      = 1<<0,
             UseLucene = 1<<1
         };
+
+        enum Option
+        {
+            RO = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READONLY,
+            RW =
+            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE
+        };
     };
 
     // RowID
@@ -414,7 +421,8 @@ protected:
     // Synchronization object
     ScopedPtr<SynchronizationObject> m_synchronizationObject;
 
-    virtual void Connect(const std::string &address, Flag::Type = Flag::None);
+    virtual void Connect(const std::string &address,
+                         Flag::Type = Flag::None, Flag::Option = Flag::RO);
     virtual void Disconnect();
 
     void TurnOnForeignKeys();
@@ -436,6 +444,7 @@ public:
      */
     explicit SqlConnection(const std::string &address = std::string(),
                            Flag::Type flags = Flag::None,
+                           Flag::Option options = Flag::RO,
                            SynchronizationObject *synchronizationObject =
                                AllocDefaultSynchronizationObject());
 

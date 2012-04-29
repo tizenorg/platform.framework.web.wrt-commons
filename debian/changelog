@@ -1,26 +1,1167 @@
+wrt-commons (0.2.25-1) unstable; urgency=low
+
+  * Apply changed EFL APIs 
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.25-1
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 14 Mar 2012 10:04:41 +0900
+
+wrt-commons (0.2.25) unstable; urgency=low
+
+  * Support OBS, SMACK
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.25
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Tue, 13 Mar 2012 19:51:25 +0900
+
+wrt-commons (0.2.24) unstable; urgency=low
+
+  * Clean-up heynoti depedency
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.24
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 06 Mar 2012 21:12:40 +0900
+
+wrt-commons (0.2.23) unstable; urgency=low
+
+  * Move certificates and finterprint settings from wrt-commons repository into wrt-security
+  * Add exception for "create directory"
+  * Clean-up unused event source
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.23
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 06 Mar 2012 20:29:32 +0900
+
+wrt-commons (0.2.22) unstable; urgency=low
+
+  * Modified libraries' names
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.22
+
+ -- Grzegorz Krawczyk <g.krawczyk@samsung.com>  Tue, 28 Feb 2012 17:01:07 +0100
+
+wrt-commons (0.2.21) unstable; urgency=low
+
+  * Vcore and ACE removed
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.21
+
+ -- Grzegorz Krawczyk <g.krawczyk@samsung.com>  Fri, 24 Feb 2012 16:51:27 +0100
+
+wrt-commons (0.2.20) unstable; urgency=low
+
+  * User Agent lists update
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.20
+
+ -- Hoseon LEE <hoseon46.lee@samsung.com>  Fri, 24 Feb 2012 09:28:47 +0100
+
+wrt-commons (0.2.19) unstable; urgency=low
+
+  * WAC Compliance test WL-3240 fix. 
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.19
+
+ -- Zbigniew Kostrzewa <z.kostrzewa@samsung.com>  Wed, 22 Feb 2012 09:28:47 +0100
+
 wrt-commons (0.2.18) unstable; urgency=low
 
-  * Boilerplate update
+  * Fixed static dev cap setting.
 
-  * Git : tizen2/pkgs/w/wrt-commons
+  * Git : slp/pkgs/w/wrt-commons
   * Tag : wrt-commons_0.2.18
 
- -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Thu, 23 Feb 2012 16:12:49 +0900
+ -- Zbigniew Kostrzewa <z.kostrzewa@samsung.com>  Wed, 22 Feb 2012 07:59:18 +0100
 
 wrt-commons (0.2.17) unstable; urgency=low
 
-  * debianize
-
-  * Git : tizen2/pkgs/w/wrt-commons
+  * WAC policy test suite bugfix.
+  
+  * Git : slp/pkgs/w/wrt-commons
   * Tag : wrt-commons_0.2.17
-
- -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 22 Feb 2012 16:57:31 +0900
+ 
+ -- Zbigniew Kostrzewa <z.kostrzewa@samsung.com>  Mon, 20 Feb 2012 14:05:41 +0100
 
 wrt-commons (0.2.16) unstable; urgency=low
 
-  * Init changelog
+  * Localization API minor change
+  * test package reenabled
 
-  * Git : tizen2/pkgs/w/wrt-commons
+  * Git : slp/pkgs/w/wrt-commons
   * Tag : wrt-commons_0.2.16
 
  -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 13 Feb 2012 16:04:58 +0100
+
+wrt-commons (0.2.15) unstable; urgency=low
+
+  * Tapi dependency added
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.15
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 13 Feb 2012 12:53:12 +0100
+
+wrt-commons (0.2.14) unstable; urgency=low
+
+  * MEID check added
+  * Added safe singleton implementation, that prevents dubletons.
+ 
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.14
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 13 Feb 2012 12:29:16 +0100
+
+wrt-commons (0.2.13) unstable; urgency=low
+
+  * Removing SLP, Bada ... strings for Source Open
+  * Update User-agent
+  * Popup manage initialization flag fixed
+  * Add weather widget is installed by package name
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.13
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 13 Feb 2012 10:46:30 +0100
+
+wrt-commons (0.2.12) unstable; urgency=low
+
+  * disabling test package to be build 
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.12
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Wed, 08 Feb 2012 17:45:57 +0100
+
+wrt-commons (0.2.11) unstable; urgency=low
+
+  * Ace and Vcore tests moved to wrt-commons
+  * "efl" suffic removed
+  * certificate names changes
+  * bugfix:
+  ** undetermined attributes
+  ** Attributes sorting algorithm
+  ** Vcore init
+  * New tests added (to OCSP)
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.11
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Wed, 08 Feb 2012 17:10:30 +0100
+
+wrt-commons (0.2.10) unstable; urgency=low
+
+  * Files access with FILE API bug fix
+  * Add global dao APIs for operation of white document list
+  * fixed WidgetDAO for ugid
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.10
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 02 Feb 2012 15:43:01 +0900
+
+wrt-commons (0.2.9) unstable; urgency=low
+
+  * Refactoring Phase2
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.9
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 31 Jan 2012 12:56:00 +0900
+
+wrt-commons (0.2.8) unstable; urgency=low
+
+  * documentation included to repository
+  * dbus fix (crash issue with bool type)
+ 
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.8
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Wed, 25 Jan 2012 14:47:21 +0100
+
+wrt-commons (0.2.7) unstable; urgency=low
+
+  * Debianize latest source
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.7
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 25 Jan 2012 10:30:05 +0900
+
+wrt-commons (0.2.6) unstable; urgency=low
+
+  * Wrt-commons split into several libraries
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.6
+
+ -- Grzegorz Krawczyk <g.krawczyk@samsung.com>  Fri, 20 Jan 2012 16:20:27 +0100
+
+wrt-commons (0.2.5) unstable; urgency=low
+
+  * DBUS module moved from wrt
+  * Dir structure has been changed (modules extracted)
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.5
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 17 Jan 2012 18:20:27 +0100
+
+wrt-commons (0.2.4) unstable; urgency=low
+
+  * Webkit2(Refactoring) branch merged
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.4
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 16 Jan 2012 15:57:06 +0900
+
+wrt-commons (0.2.3) unstable; urgency=low
+
+  * Webkit2(Refactoring) branch merged
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.3
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 16 Jan 2012 15:30:07 +0900
+
+wrt-commons (0.2.2) unstable; urgency=low
+
+  * Master and Webkit2 branch merged (ORM change merged)
+  * Mechanisms moved from wrt: NestedLoop, ScopedGPointer
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.2
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 12 Jan 2012 11:19:00 +0100
+
+wrt-commons (0.2.1) unstable; urgency=low
+
+  * ORM interface changed
+ 
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : wrt-commons_0.2.1
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 12 Dec 2011 11:33:07 +0100
+
+wrt-commons (0.2.0) unstable; urgency=low
+
+  * Debianize for changing package name (wrt-commons)
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : wrt-commons_0.2.0
+
+ -- Hoseon LEE <hoseon46.lee@samsung.com>  Thu, 08 Dec 2011 10:51:40 +0900
+
+wrt-commons (0.1.65) unstable; urgency=low
+
+  * Debianize latest source
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.65
+
+ -- Hoseon LEE <hoseon46.lee@samsung.com>  Wed, 07 Dec 2011 12:11:02 +0900
+
+wrt-commons (0.1.64) unstable; urgency=low
+
+  * Fixes, FakeRPC connection added
+ 
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.64
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 29 Nov 2011 12:20:39 +0100
+
+dpl (0.1.63) unstable; urgency=low
+
+  * ThreadDatabase Support moved to dpl
+ 
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.63
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 22 Nov 2011 16:48:43 +0100
+
+dpl (0.1.62) unstable; urgency=low
+
+  * ICDelegate, apply, caller functions extended
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.62
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 17 Nov 2011 17:19:13 +0100
+
+dpl (0.1.61) unstable; urgency=low
+
+  * Adding ORM, Apply, ICD mechanism to DPL
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.61
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Wed, 09 Nov 2011 13:33:16 +0100
+
+dpl (0.1.60) unstable; urgency=low
+
+  * debianization due to icu upversioning
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.60
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 25 Oct 2011 10:40:26 +0200
+
+dpl (0.1.59) unstable; urgency=low
+
+  * modification of build option to build only EFL DPL package 
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.59
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 07 Sep 2011 13:42:54 +0900
+
+dpl (0.1.58) unstable; urgency=low
+
+  * Debianized for open source 
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.58
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Tue, 06 Sep 2011 13:52:05 +0900
+
+dpl (0.1.57) unstable; urgency=low
+
+  * Waitables reloaded after HandleWatcher is called
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.57
+
+ -- Zbigniew Kostrzewa <z.kostrzewa@samsung.com>  Thu, 28 Jul 2011 11:35:42 +0200
+
+dpl (0.1.56) unstable; urgency=low
+
+  * add policyClass as template param, genericsocket fixed
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.56
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 27 Jun 2011 11:55:42 +0200
+
+dpl (0.1.55) unstable; urgency=low
+
+  * once, automatic listeners cleaning, property fix
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.55
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 14 Jun 2011 10:50:56 +0200
+
+dpl (0.1.54) unstable; urgency=low
+
+  * fix build dep
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.54
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 09 Jun 2011 14:12:31 +0200
+
+dpl (0.1.53) unstable; urgency=low
+
+  * scoped patterns extended, StringCompare with ICU
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.53
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 09 Jun 2011 12:50:44 +0200
+
+dpl (0.1.52) unstable; urgency=low
+
+  * scoped patterns extanded
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.52
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 06 Jun 2011 15:59:44 +0200
+
+dpl (0.1.51) unstable; urgency=low
+
+  * string errno, get/set virtual for property
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.51
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 06 Jun 2011 14:43:48 +0200
+
+dpl (0.1.50) unstable; urgency=low
+
+  * fix namespace, fix network change message publishing, 
+  * size functionality added int TypeLists
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.50
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 19 May 2011 15:06:39 +0200
+
+dpl (0.1.49) unstable; urgency=low
+
+  * license cleanup, small bug fixes
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.49
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 12 May 2011 12:57:54 +0200
+
+dpl (0.1.48) unstable; urgency=low
+
+  * MessageQueue, static remove for semaphores
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.48
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 22 Apr 2011 11:32:15 +0200
+
+dpl (0.1.47) unstable; urgency=low
+
+  * model/property system, TLS fixed
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.47
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 14 Apr 2011 14:35:38 +0200
+
+dpl (0.1.46) unstable; urgency=low
+
+  * delegate mechanism, sql connection, test runner fix
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.46
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 31 Mar 2011 10:18:22 +0200
+
+dpl (0.1.45) unstable; urgency=low
+
+  * ThreadLocal variables, named semaphore, Waitable fix,
+  * symbols visibility fix
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.45
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 21 Mar 2011 16:57:31 +0100
+
+dpl (0.1.44) unstable; urgency=low
+
+  * Disable Werror flag, bb fixed 
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.44
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 10 Mar 2011 21:06:51 +0900
+
+dpl (0.1.43) unstable; urgency=low
+
+  * ecore_main_loop_select_func_get return type changed
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.43
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 08 Mar 2011 11:05:54 +0900
+
+dpl (0.1.42) unstable; urgency=low
+
+  * MultiTask added. union_cast, lexical_cast
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.42
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 04 Mar 2011 14:05:23 +0100
+
+dpl (0.1.41) unstable; urgency=low
+
+  * klocwork fixes, release method added to scoped array
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.41
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 01 Mar 2011 09:38:53 +0100
+
+dpl (0.1.40) unstable; urgency=low
+
+  * Zip-input fixed.
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.40
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 28 Feb 2011 10:42:44 +0100
+
+dpl (0.1.39-1) unstable; urgency=low
+
+  * redebianized
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.39-1
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 25 Feb 2011 09:33:12 +0100
+
+dpl (0.1.39) unstable; urgency=low
+
+  * Semaphore added, Mutex fixed, Zip enhanced
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.39
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 22 Feb 2011 09:54:11 +0100
+
+dpl (0.1.38) unstable; urgency=low
+
+  * GetCurrentTask, EventDispatcher fix, Append for DPL::String
+  * Zip file support
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.38
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 15 Feb 2011 17:52:24 +0100
+
+dpl (0.1.37-1) unstable; urgency=low
+
+  * redebianize
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.37-1
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 04 Feb 2011 11:11:13 +0100
+
+dpl (0.1.37) unstable; urgency=low
+
+  * EventSupport fixes.
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.37
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 03 Feb 2011 17:44:49 +0100
+
+dpl (0.1.36) unstable; urgency=low
+
+  * header fix.
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.36
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 01 Feb 2011 12:19:53 +0100
+
+dpl (0.1.35-1) unstable; urgency=low
+
+  * debianization fix.
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.35-1
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 01 Feb 2011 09:58:40 +0100
+
+dpl (0.1.35) unstable; urgency=low
+
+  * DPL::CharTraits fixed
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.35
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 01 Feb 2011 09:46:04 +0100
+
+dpl (0.1.34) unstable; urgency=low
+
+  * bundled value usage added.
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.34
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 28 Jan 2011 14:13:03 +0100
+
+dpl (0.1.33) unstable; urgency=low
+
+  * Synchronized events support.
+  * FOREACH macro.
+  * BinaryQueue reimplementation
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.33
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 21 Jan 2011 10:43:38 +0100
+
+dpl (0.1.32-3) unstable; urgency=low
+
+  * dpl path fix
+
+  * Git : 165.213.180.234:slp/pkgs/d/dpl
+  * Tag : dpl_0.1.32-3
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 11 Jan 2011 18:19:25 +0100
+
+dpl (0.1.32-2) unstable; urgency=low
+
+  * build break fixed
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.32-2
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 11 Jan 2011 17:29:55 +0100
+
+dpl (0.1.32-1) unstable; urgency=low
+
+  * redebianizing
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.32-1
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 11 Jan 2011 12:46:19 +0100
+
+dpl (0.1.32) unstable; urgency=low
+
+  * moving vconf header to dirty headers
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.32
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 10 Jan 2011 10:13:07 +0100
+
+dpl (0.1.31) unstable; urgency=low
+
+  * debianized - 0.1.31
+  
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.31
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Wed, 08 Dec 2010 20:22:25 +0900
+
+dpl (0.1.30-2) unstable; urgency=low
+
+  * debianized - 0.1.30-2
+  * Ignored category for test runner
+  * TypeListGenerator to TypeListDecl
+  
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.30-2
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Mon, 15 Nov 2010 16:00:52 +0900
+
+dpl (0.1.30) unstable; urgency=low
+
+  * Ignored category for test runner
+
+ -- Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>  Fri, 12 Nov 2010 14:55:15 +0100
+
+dpl (0.1.29) unstable; urgency=low
+
+  * Renamed TypeListGenerator to TypeListDecl
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.29
+
+ -- Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>  Fri, 12 Nov 2010 14:14:54 +0100
+
+dpl (0.1.28) unstable; urgency=low
+
+  * New controller mechanism 
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.28
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Fri, 12 Nov 2010 12:22:01 +0100
+
+dpl (0.1.27) unstable; urgency=low
+
+  * Added threads' guarded singletons
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.27
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 09 Nov 2010 10:13:16 +0100
+
+dpl (0.1.26) unstable; urgency=low
+
+  * Bug fixes
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.26
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Mon, 08 Nov 2010 14:43:15 +0100
+
+ dpl (0.1.25-1) unstable; urgency=low
+
+  * Redebianized.
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.25-1
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 28 Oct 2010 12:12:45 +0900
+
+dpl (0.1.25) unstable; urgency=low
+
+  * Fixed exception handing while parsing RPC protocol
+  * commit : a19efed5a210fb1f8f91de18009b0d86e03326db
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.25
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Mon, 25 Oct 2010 15:21:48 +0900
+
+
+dpl (0.1.24) unstable; urgency=low
+
+  * Added 21 Controler support
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.24
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Wed, 20 Oct 2010 16:15:42 +0200
+
+dpl (0.1.23) unstable; urgency=low
+
+  * Reverted: main event dispatcher fix
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.23
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Wed, 13 Oct 2010 11:09:48 +0200
+
+dpl (0.1.22-1) unstable; urgency=low
+
+  * Main event dispatcher fix
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.22-1
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Fri, 08 Oct 2010 16:17:51 +0200
+
+dpl (0.1.22) unstable; urgency=low
+
+  * Main event dispatcher fix
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.22 
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Fri, 08 Oct 2010 14:45:45 +0200
+
+dpl (0.1.21) unstable; urgency=low
+
+  * Fixed RPC bug which caused white screen
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.21
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Thu, 07 Oct 2010 12:17:18 +0200
+
+dpl (0.1.20-1) unstable; urgency=low
+
+  * Reupload to fix debianization error (again)
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.20-1
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Wed, 06 Oct 2010 15:07:32 +0200
+
+dpl (0.1.19) unstable; urgency=low
+
+  * Fixed bug in generic RPC protocol parser & package name is changed(svn is removed)
+  
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.19
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 30 Sep 2010 19:17:20 +0900
+
+dpl (0.1.18) unstable; urgency=low
+
+  * support string conversion (i18n) and char traits
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.18
+
+ -- Ming Jin <ming79.jin@samsung.com>  Fri, 17 Sep 2010 14:32:23 +0900
+
+dpl (0.1.17) unstable; urgency=low
+
+  * Upgrade to EFL1.0 alpha 
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.17
+
+ -- Piotr Fatyga <p.fatyga@samsung.com>  Fri, 10 Sep 2010 17:41:55 +0200
+
+dpl (0.1.16) unstable; urgency=low
+
+  * changed assert routine. Building changed to Release. 
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.16
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Wed, 01 Sep 2010 11:39:41 +0200
+
+dpl (0.1.15) unstable; urgency=low
+
+  * Hibernation fixed 
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.15
+  
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 31 Aug 2010 19:00:52 +0200
+
+dpl (0.1.14) unstable; urgency=low
+
+  * Improvements in shared ptr, logging mechanism and unit testing
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.14
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Tue, 24 Aug 2010 09:59:48 +0200
+
+dpl (0.1.12) unstable; urgency=low
+
+  * Fixed problem with bool operator in smart pointers
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.12
+
+ -- Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>  Wed, 18 Aug 2010 11:01:52 +0200
+
+dpl (0.1.11) unstable; urgency=low
+
+  * appcore updated 
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.11
+  
+ -- Koeun Choi <koeun.choi@samsung.com>  Fri, 06 Aug 2010 10:28:44 +0900
+
+dpl (0.1.10) unstable; urgency=low
+
+  * Added support for handling late EFL events
+
+  * Git : 165.213.180.234:/git/slp/pkgs/dpl
+  * Tag : dpl_0.1.10
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 03 Aug 2010 19:34:53 +0900
+
+dpl (0.1.9) unstable; urgency=low
+
+  * Fixed bug in shared pointer copy operator
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.9
+
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Mon, 12 Jul 2010 13:54:01 +0900
+
+dpl (0.1.8) unstable; urgency=low
+
+  * Fixed prevent defects
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.8
+
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Tue, 22 Jun 2010 12:14:32 +0900
+
+dpl (0.1.7) unstable; urgency=low
+
+  * DLOG API change update 
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.7
+
+ -- Ming Jin <ming79.jin@samsung.com>  Wed, 16 Jun 2010 17:00:00 +0900
+
+dpl (0.1.6-1) unstable; urgency=low
+
+  * Strange tag verification error.
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.6-1
+
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Fri, 11 Jun 2010 11:37:41 +0900
+
+dpl (0.1.6) unstable; urgency=low
+
+  * Repackaging due to efl update.
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.6
+
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Fri, 11 Jun 2010 09:38:01 +0900
+
+dpl (0.1.5) unstable; urgency=low
+
+  * Changed usage of deprecated appfwk to appcore-efl
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.5
+ 
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Tue, 08 Jun 2010 19:11:38 +0900
+
+dpl (0.1.4) unstable; urgency=low
+
+  * appfwk api removed
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.4
+
+ -- Andrew Lee <hyunchul2.lee@samsung.com>  Fri, 04 Jun 2010 11:22:28 +0900
+
+dpl (0.1.3) unstable; urgency=low
+
+  * single instance locking mechanism supported 
+  
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.3
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Wed, 19 May 2010 20:19:00 +0900
+
+dpl (0.1.2) unstable; urgency=low
+
+  * HIBERNATION_LEAVE_BEFORE_WS added 
+  
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.2
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 18 May 2010 08:27:14 +0900
+
+dpl (0.1.1) unstable; urgency=low
+
+  * permission changed by new SLP security guideline  
+  
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.1
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Fri, 14 May 2010 14:07:16 +0900
+
+dpl (0.1.0) unstable; urgency=medium
+
+  * below details are written by Przemek. :)
+
+  * Added main window visibility optional flag to application class.
+
+  * Removed debug logs from application (switched to pedantic ones)
+    Fixed close sequence in RPC example
+
+  * Fixed critical leak in rpc connection related to acquisition of abstract waitable input/output.
+
+  * Added RPC Client/Server example
+
+  * Removed useParam from ConnectionEstablished event in RPC Server/Client
+    Added ConnectionID to ConnectionEstablishedEvent in RPC Server/Client
+    Added convience Open methods to (Tcp/Unix)SocketRPC(Server/Client)
+
+  * Removed purpose-specific static call code.
+
+  * Added implementation of GenericSocketRPCServer, TcpSocketRPCServer, UnixSocketRPCServer.
+
+  * Implementation in progress: Client/Server architecture for RPC - client and connection part.
+
+  * Temporary fix to build break caused by problems with in DLOG include files
+
+  * Fixed unregister global noti signal routine
+
+  * Added dedicated RPCFunction include file
+    All current RPC mechanisms marked as deprecated
+    Added RPC Client/Server/Connection stub files
+ 
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.1.0
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Fri, 07 May 2010 11:10:09 +0200
+
+dpl (0.0.9) unstable; urgency=low
+
+  * HibernationEnter and HibernationLeave system events added to EventDeliverySystem
+
+  * Added support for old style pedantic logs
+
+  * Added initial support (i386,gcc) for dynamically created static methods (static interception)
+
+  * Added protocol argument size checks in RPC
+
+  * Fixed non-reentrant version of serialized string parser in EventDeliverySystem
+
+  * Fixed multiple event handling routines to return all signaled handles list (starvation related fix)
+
+  * Workaround definition file added. Moved GLIB-loop-intergration workaround to workaround definition file.
+
+  * Fixed typo in exception messages
+
+  * Workaround for SLP select
+
+  * Added postinstallation scripts for EFL and GTL version of DPL
+
+  * Fixed bug related to improper reinitialization of socket descriptor after Close/Open sequence
+
+  * Added GenericSocketRPC
+    Added TcpSocketRPC
+    Implementation of UnixSocketRPC rebased to GenericSocketRPC
+    Fixed template-based problems with declaring nested generic exceptions
+
+  * Added support for old style plain logs (export DPL_USE_OLD_STYLE_LOGS=1)
+
+  * Fixed bug in WaitableInputOutputExecutionContextSupport related to continous event insisting
+    Fixed bug in WaitableHandle related to improper handling of Read/Write events
+    Added support for retrieving other errors in WatableHandle
+    Added runtime-check for invalid WaitableHandles
+
+  * Fixed DPL debug package name
+
+  * More DPL doxygen documentation added.
+
+  * Added more tests for BinaryQueue (21)
+    Added doxygen documentation for BinaryQueue
+
+  * BinaryQueue basic unit tests added (13)
+
+  * Added generic framework for unit-testing for DPL
+
+  * Added support for handling manipulations with waitable handle watcher/listeners lists during event handling
+    Added TcpSocket
+    Added tcpsock example
+    Added support for defining maximum number of bytes to read in AbstractInput
+    Added support for DNS resolve for tcp Address
+
+  * Added support for retrieving doubles from database in SqlConnection.
+    Added exceptions on retrieving column out of bounds.
+
+  * Added support for retrieveing last insert row ID in SqlConnnection (reported by b.grzelewski)
+
+  * Fixed bug in GenericRPC related to inproper interpretation of incoming data stream (reported by p.sikorski)
+
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.0.8
+
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 29 Apr 2010 17:41:02 +0200
+
+dpl (0.0.8) unstable; urgency=medium
+
+  * debianized : commit 210d5f7ecd396ff9aeeafcb0d34272a4c4e6c77d 
+  
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.0.8
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Fri, 23 Apr 2010 00:51:27 +0900
+
+dpl (0.0.7) unstable; urgency=low
+
+  * debianized  
+  * Git : 165.213.180.234:/git/slp2.0/slp2.0-pkgs/dpl-0
+  * Tag : dpl_0.0.7
+  
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 20 Apr 2010 14:16:18 +0900
+
+dpl (0.0.6) unstable; urgency=medium
+
+  * LogSystem switched to DLOG
+
+  * Initial support for Application in gtk version added
+
+  * Fixed link problems in example projects build scripts
+
+  * Added missing sender in events from GenericSocket
+
+  * Added missing dependencies to db-util in pkgconfig files
+
+  * Fixed memory leak in MainEventDispatcher for EFL, related to timed events (reported by valgrind)
+
+  * Fixed memory leak in Thread event list (reported by valgrind)
+
+  * Minimum version of libslp-setting-0 defined (reported by p.misiak)
+
+  * Fixed bug in UnixSocketRPC in scenario when cannot connect (reported by p.sikorski)
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Fri, 16 Apr 2010 11:08:46 +0200
+
+dpl (0.0.5) unstable; urgency=high
+
+  * Minimum required version od db-util changed to 0.1.0-23 due to link problems
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 15 Apr 2010 08:28:08 +0200
+
+dpl (0.0.4) unstable; urgency=medium
+
+  * SQLConnection: Added support for Lucene indexer
+
+  * Replaced deprecated API from vconf and util in EventDeliveryDetail for EFL
+
+  * Added doxygen configuration file
+    Added deprecated DPL declarator file
+    Added support for handling broken connections in GenericSocket and RPC
+
+  * DLOG: dlog_init/dlog_deinit is not needed and deprecated. Removed.
+
+  * Fixed bug related to multiple close/connect on socket (reported by p.sikorski)
+
+  * Reference manual stub added
+
+  * Added WaitableInputOutputExecutionContextSupport
+    Various bugfixes related to WaitableHandleSupport
+    Added RPC ClosedEvent support
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Wed, 14 Apr 2010 14:27:54 +0200
+
+dpl (0.0.3) unstable; urgency=low
+
+  * Experimental RPC over unix-sockets added.
+
+  * Fixed bug in Main. Various bugfixes in UnixSocket and GenericSocket. GenericRPC implementation in progress
+
+  * Removed NamedPipeRPCCall
+    Added UnixSocketRPC
+    Renaming RPCCall -> RPC
+
+  * GenericSocket implementation finished
+
+  * Generic socket implementation in progress.
+    Added DPL debug package
+
+  * Added Main
+
+  * Fixed DPL-GTK library dependency problem
+
+  * Added WaitableHandleWatchSupport
+
+  * Fixed BUG in EFL-MainEventDispatcher, regarding too late deinitialization
+
+  * Fixed bug in controller touch check assertions.
+    Generic socket implementation in progress.
+
+  * Added support for mode in waitable handle wait procedures.
+    Added support for multi-mode watchers in thread.
+    Added UnixSocket implementation.
+    Added GenericSocket implementation.
+    Added AbstractSocket.
+    Added Address concept.
+    Added example socket test program.
+
+  * Controller extended to handle maximum of 20 events
+
+  * Added WaitableHandle
+
+  * Added AbstractWaitableInput, AbstractWaitableOutput, AbstractWaitableInputOutput,
+    NamedBasePipe, NamedInputPipe, NamedOutputPipe, partial implementation of GenericRPCCall,
+    full implementation of NamedPipeRPCCall
+
+  * Added NamedPipe (blocking mode)
+
+  * Added AbstractInput, AbstractOutput, AbstractInputOutput, NamedPipe stub, GenericRPCCall stub
+
+  * Added RecursiveMutex.
+    Added support for waitable event watchers in Thread.
+
+  * Added BinaryQueue
+
+  * Debian/changelog updated
+
+  * Fixed build-depends
+
+  * Package build dependencies defined properly
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Thu, 08 Apr 2010 15:54:02 +0200
+
+dpl (0.0.2) unstable; urgency=low
+
+  * Toolchain upgrades and fixes
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 23 Mar 2010 11:40:32 +0100
+
+dpl (0.0.1) unstable; urgency=low
+
+  * Initial release
+
+ -- Koeun Choi <koeun.choi@samsung.com>  Tue, 23 Mar 2010 11:40:32 +0100
+

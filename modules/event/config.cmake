@@ -23,8 +23,6 @@ SET(DPL_EVENT_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/event/src/abstract_event_call.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/abstract_event_dispatcher.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/controller.cpp
-    ${PROJECT_SOURCE_DIR}/modules/event/src/event_delivery.cpp
-    ${PROJECT_SOURCE_DIR}/modules/event/src/event_delivery_detail.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/event_listener.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/event_support.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/generic_event_call.cpp
@@ -40,10 +38,6 @@ SET(DPL_EVENT_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/abstract_event_call.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/abstract_event_dispatcher.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/controller.h
-    ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_delivery_detail.h
-    ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_delivery.h
-    ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_delivery_injector.h
-    ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_delivery_messages.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_listener.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/event_support.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/generic_event_call.h

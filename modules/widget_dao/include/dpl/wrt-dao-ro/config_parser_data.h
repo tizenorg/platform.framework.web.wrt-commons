@@ -217,8 +217,7 @@ class ConfigParserData
 
     bool flashNeeded;
 
-    DPL::OptionalFloat minVersionRequired;
-    DPL::OptionalInt minVersionRequiredFound;
+    DPL::OptionalString minVersionRequired;
     StringsList powderDescriptionLinks;
 
     bool backSupported;
@@ -238,8 +237,7 @@ class ConfigParserData
 
     ConfigParserData() :
         flashNeeded(false),
-        minVersionRequired(1.0),
-        minVersionRequiredFound(),
+        minVersionRequired(),
         backSupported(false),
         accessNetwork(false),
         startFileEncountered(false)

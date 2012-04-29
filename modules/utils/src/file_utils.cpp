@@ -145,7 +145,7 @@ void MakePath(const std::string& path,
         mode_t mode)
 {
     if (mkpath(path.c_str(), mode) == -1) {
-        ThrowMsg(DPL::CommonException::InternalError, "Cannot make path");
+        ThrowMsg(CreateDirectoryException, "Cannot make path");
     }
 }
 

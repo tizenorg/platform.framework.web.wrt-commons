@@ -163,8 +163,6 @@ DbWidgetHandle WidgetDAO::registerWidget(const WidgetRegisterInfo &widgetRegInfo
         wacSecurity.getCertificateChainList(list);
         registerLaunchCertificates(widgetHandle,list);
 
-        registerWidgetPowderData(widgetHandle, widgetRegInfo);
-
         registerWidgetSettings(widgetHandle, widgetRegInfo);
 
         registerAppService(widgetHandle, widgetRegInfo);
@@ -224,7 +222,6 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(const WidgetRegisterInfo &regInfo,
     row.Set_author_href(widgetConfigurationInfo.authorHref);
     row.Set_base_folder(DPL::FromUTF8String(regInfo.baseFolder));
     row.Set_webkit_plugins_required(widgetConfigurationInfo.flashNeeded);
-    row.Set_child_protection(1);
     row.Set_recognized(wacSecurity.isRecognized());
     row.Set_wac_signed(wacSecurity.isWacSigned());
     row.Set_distributor_signed(wacSecurity.isDistributorSigned());
@@ -390,6 +387,7 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
         widgetFeature.Set_app_id(widgetHandle);
         widgetFeature.Set_name(pWidgetFeature->name);
         widgetFeature.Set_required(pWidgetFeature->required);
+        widgetFeature.Set_rejected(false);
 
         wrt::WidgetFeature::widget_feature_id::ColumnType widgetFeatureID;
         {
@@ -412,6 +410,29 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
             DO_INSERT(featureParam, wrt::FeatureParam)
         }
     }
+}
+
+void WidgetDAO::updateFeatureRejectStatus(const DbWidgetFeature &widgetFeature){
+    // This function could be merged with registerWidgetFeature but it requires desing change:
+    // 1. Check "ace step" in installer must be done before "update database step"
+    // And:
+    // ConfigurationParserData shouldn't be called "ParserData" any more.
+    using namespace DPL::DB::ORM;
+
+    wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+    WRT_DB_SELECT(select, wrt::WidgetFeature, &WrtDatabase::interface())
+    select->Where(And(Equals<wrt::WidgetFeature::app_id>(m_widgetHandle),
+                      Equals<wrt::WidgetFeature::name>(widgetFeature.name)));
+
+    auto row = select->GetSingleRow();
+    row.Set_rejected(widgetFeature.rejected);
+
+    WRT_DB_UPDATE(update, wrt::WidgetFeature, &WrtDatabase::interface())
+    update->Where(And(Equals<wrt::WidgetFeature::app_id>(m_widgetHandle),
+                      Equals<wrt::WidgetFeature::name>(widgetFeature.name)));
+    update->Values(row);
+    update->Execute();
+    transaction.Commit();
 }
 
 void WidgetDAO::registerWidgetWindowModes(DbWidgetHandle widgetHandle,
@@ -471,44 +492,6 @@ void WidgetDAO::registerWidgetCertificates(DbWidgetHandle widgetHandle,
         row.Set_common_name(it->strCommonName);
 
         DO_INSERT(row, WidgetCertificateFingerprint)
-    }
-}
-
-void WidgetDAO::registerWidgetPowderData(DbWidgetHandle widgetHandle,
-        const WidgetRegisterInfo &regInfo)
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-
-    using namespace Powder;
-
-    FOREACH(i, regInfo.powderDescription.categories)
-    {
-        const DPL::String& categoryName(i->first);
-        const Description::CategoryEntry& categoryEntry(i->second);
-        FOREACH(l, categoryEntry.levels)
-        {
-            PowderLevels::id::ColumnType powderID;
-            {
-                PowderLevels::Row row;
-                row.Set_app_id(widgetHandle);
-                row.Set_category(categoryName);
-                row.Set_level(l->level);
-
-                WRT_DB_INSERT(insert, PowderLevels, &WrtDatabase::interface())
-                insert->Values(row);
-                powderID = insert->Execute();
-            }
-
-            FOREACH(c, l->context)
-            {
-                PowderLevelContexts::Row row;
-                row.Set_levelId(powderID);
-                row.Set_context(*c);
-
-                DO_INSERT(row, PowderLevelContexts)
-            }
-        }
     }
 }
 

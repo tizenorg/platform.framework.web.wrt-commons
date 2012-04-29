@@ -264,6 +264,7 @@ DbWidgetFeatureSet WidgetDAOReadOnly::getFeaturesList() const
             DbWidgetFeature feature;
             feature.name = i->Get_name();
             feature.required = i->Get_required();
+            feature.rejected = i->Get_rejected();
             feature.params = getFeatureParams(i->Get_widget_feature_id());
             FeatureDAOReadOnly featureDao(DPL::ToUTF8String(i->Get_name()));
             feature.pluginId = featureDao.GetPluginHandle();
@@ -981,50 +982,6 @@ std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
     }
 
     return path.str();
-}
-
-ChildProtection::Record WidgetDAOReadOnly::getChildProtection() const
-{
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    return ChildProtection::Record(row.Get_child_protection());
-}
-
-Powder::Description WidgetDAOReadOnly::getPowderDescription() const
-{
-    //TODO check widget existance
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace Powder;
-        Description description;
-
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, PowderLevels, &WrtDatabase::interface())
-        select->Where(Equals<PowderLevels::app_id>(m_widgetHandle));
-        typedef std::list<PowderLevels::Row> RowList;
-        RowList list = select->GetRowList();
-
-        FOREACH(it, list)
-        {
-            Description::CategoryEntry& categoryEntry =
-                description.categories[it->Get_category()];
-            Description::LevelEntry levelEntry(
-                (Description::LevelEnum)it->Get_level());
-
-            WRT_DB_SELECT(selectContexts, PowderLevelContexts, &WrtDatabase::interface())
-            selectContexts->Where(Equals<PowderLevelContexts::levelId>(
-                                      it->Get_id()));
-            typedef std::list<PowderLevelContexts::Row> ContextsRowList;
-            ContextsRowList contextsList = selectContexts->GetRowList();
-
-            FOREACH(c, contextsList)
-            levelEntry.context.insert(c->Get_context());
-
-            categoryEntry.levels.push_back(levelEntry);
-        }
-        return description;
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get powder description")
 }
 
 void WidgetDAOReadOnly::getWidgetSettings(

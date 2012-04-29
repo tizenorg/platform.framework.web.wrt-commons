@@ -55,35 +55,8 @@ class GlobalDAOReadOnly
     };
 
   public:
-    /**
-     * Retrieve Parental mode status
-     *
-     * @return true for Parental Mode on, false for Parental Mode off
-     */
-    static bool GetParentalMode();
-
-    /**
-     * Retrieve Parental mode maximal allowed age
-     *
-     * @return NULL if allowed age not set, else pointer value is allowed age
-     */
-    static DPL::OptionalInt GetParentalAllowedAge();
-    /**
-     * Retrieve Parental mode maximal allowed age
-     *
-     * @return NULL if allowed age not set, else pointer value is allowed age
-     */
 
     static bool IsValidSubTag(const DPL::String& tag, int type);
-
-    static bool IsPowderRulePresent(
-            const ChildProtection::PowderRules::CategoryRule& rule);
-
-    static ChildProtection::PowderRules GetPowderRules();
-
-    static ChildProtection::BlackList GetAdultBlackList();
-
-    static bool IsElementOnAdultBlackList(const DPL::String &url);
 
     /**
      * Retrieve list of deffered widget packages to be installed
@@ -132,19 +105,6 @@ class GlobalDAOReadOnly
      */
     static DeviceCapabilitySet GetDeviceCapability(
             const DPL::String &apifeature);
-
-
-    /**
-     * This method gets Autofill for Webkit
-     */
-    struct AutoSaveData
-    {
-        DPL::String userId;
-        DPL::String passwd;
-    };
-
-    static DPL::Optional<AutoSaveData> GetAutoSaveIdPasswd(
-            const DPL::String &url);
 
   protected:
     GlobalDAOReadOnly()

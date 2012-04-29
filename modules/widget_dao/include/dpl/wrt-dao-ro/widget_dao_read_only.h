@@ -161,13 +161,13 @@ struct WidgetRegisterInfo
     WidgetType type;
     DPL::OptionalString guid;
     DPL::OptionalString version;
+    DPL::OptionalString minVersion;
     std::string shareHref;
     std::string baseFolder;
     WidgetSignatureType signatureType;
     int isFactoryWidget;
     int isTestWidget;
     ConfigParserData configInfo;
-    Powder::Description powderDescription;
     LocalizationData localizationData;
     DPL::OptionalString pkgname;
     time_t installedTime;
@@ -679,10 +679,6 @@ class WidgetDAOReadOnly
     std::string getCookieDatabasePath() const;
     // Local storage
     std::string getPrivateLocalStoragePath() const;
-
-    ChildProtection::Record getChildProtection() const;
-
-    Powder::Description getPowderDescription() const;
 
     bool getBackSupported() const;
 

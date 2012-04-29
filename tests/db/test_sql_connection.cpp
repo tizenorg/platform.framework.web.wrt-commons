@@ -65,6 +65,7 @@ protected:
         DPL::DB::SqlConnection connection(
             m_dbFileName,
             DPL::DB::SqlConnection::Flag::None,
+            DPL::DB::SqlConnection::Flag::RW,
             m_generator->Create());
 
         DPL::DB::SqlConnection::DataCommandAutoPtr countCommand =

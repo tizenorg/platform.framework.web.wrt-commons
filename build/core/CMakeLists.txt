@@ -58,14 +58,14 @@ TARGET_LINK_LIBRARIES(${TARGET_DPL_EFL} lib3rdparty)
 
 # Target library properties
 SET_TARGET_PROPERTIES(${TARGET_DPL_EFL} PROPERTIES
-    SOVERSION ${VERSION}
+    SOVERSION ${API_VERSION} 
+ VERSION ${VERSION}
     CLEAN_DIRECT_OUTPUT 1
     OUTPUT_NAME ${DPL_EFL_LIBRARY})
 
 # Install libraries
 INSTALL(TARGETS ${TARGET_DPL_EFL}
-        DESTINATION lib
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+        DESTINATION lib)
 
 # Install detail headers
 INSTALL(FILES ${DPL_CORE_EFL_DETAIL_HEADERS}
@@ -84,5 +84,4 @@ INSTALL(FILES ${DPL_3RDPARTY_HEADERS}
         DESTINATION include/dpl-efl/dpl/3rdparty/fastdelegate)
 
 # Install pkgconfig script
-INSTALL(FILES dpl-efl.pc
-        DESTINATION lib/pkgconfig)
+configure_and_install_pkg(dpl-efl.pc)

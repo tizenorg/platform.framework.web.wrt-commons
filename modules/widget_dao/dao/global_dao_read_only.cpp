@@ -33,39 +33,6 @@
 
 namespace WrtDB {
 
-ChildProtection::BlackList GlobalDAOReadOnly::GetAdultBlackList()
-{
-    LogDebug("Getting AdultBlackList");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, ChildProtectionBlacklist, &WrtDatabase::interface())
-        std::list<DPL::String> list =
-            select->GetValueList<ChildProtectionBlacklist::url>();
-        ChildProtection::BlackList blacklist(list.begin(), list.end());
-        return blacklist;
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get AdultBalckList");
-    }
-}
-
-bool GlobalDAOReadOnly::IsElementOnAdultBlackList(const DPL::String &url)
-{
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, ChildProtectionBlacklist, &WrtDatabase::interface())
-        select->Where(Equals<ChildProtectionBlacklist::url>(url));
-
-        return !select->GetRowList().empty();
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failure during checking if url is on pwoder black list");
-    }
-}
-
 bool GlobalDAOReadOnly::GetDeveloperMode()
 {
     LogDebug("Getting Developer mode");
@@ -94,22 +61,6 @@ WidgetPackageList GlobalDAOReadOnly::GetDefferedWidgetPackageInstallationList()
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get defered widget packages list");
     }
-}
-
-bool GlobalDAOReadOnly::GetParentalMode()
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-    return select->GetSingleValue<GlobalProperties::parental_mode>();
-}
-
-DPL::OptionalInt GlobalDAOReadOnly::GetParentalAllowedAge()
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-    return select->GetSingleValue<GlobalProperties::parental_allowed_age>();
 }
 
 bool GlobalDAOReadOnly::GetSecureByDefault()
@@ -183,64 +134,6 @@ bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
         return false;
     } else {
         return true;
-    }
-}
-
-
-bool GlobalDAOReadOnly::IsPowderRulePresent(
-        const ChildProtection::PowderRules::CategoryRule& powder)
-{
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        if (!powder.context.IsNull()) {
-            WRT_DB_SELECT(selWithContext, PowderRules, &WrtDatabase::interface())
-
-            selWithContext->Where(
-                And(Equals<PowderRules::category>(powder.category),
-                    And(Equals<PowderRules::level>(powder.level),
-                        Equals<PowderRules::context>(powder.context))));
-            return !selWithContext->GetRowList().empty();
-        } else {
-            WRT_DB_SELECT(selWithoutContext, PowderRules, &WrtDatabase::interface())
-            selWithoutContext->Where(
-                And(Equals<PowderRules::category>(powder.category),
-                    And(Equals<PowderRules::level>(powder.level),
-                        Is<PowderRules::context>(powder.context))));
-            return !selWithoutContext->GetRowList().empty();
-        }
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failure during checking if rule is present");
-    }
-}
-
-ChildProtection::PowderRules GlobalDAOReadOnly::GetPowderRules()
-{
-    ChildProtection::PowderRules powder;
-    powder.ageLimit = GetParentalAllowedAge();
-
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        typedef std::list<PowderRules::Row> PowderRulesList;
-        WRT_DB_SELECT(select, PowderRules, &WrtDatabase::interface())
-
-        PowderRulesList list = select->GetRowList();
-        FOREACH(it, list) {
-            using namespace Powder;
-            powder.rules.push_back(
-                ChildProtection::PowderRules::CategoryRule(
-                    it->Get_category(),
-                    static_cast<Description::LevelEnum>(it->Get_level()),
-                    it->Get_context()));
-        }
-        return powder;
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get POWDER rules");
     }
 }
 
@@ -339,30 +232,6 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     }Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to update roaming network data usage");
-    }
-}
-
-DPL::Optional<GlobalDAOReadOnly::AutoSaveData>
-        GlobalDAOReadOnly::GetAutoSaveIdPasswd(const DPL::String &url)
-{
-    Try{
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, AutoSaveIdPasswd, &WrtDatabase::interface());
-        select->Where(Equals<AutoSaveIdPasswd::address>(url));
-        AutoSaveIdPasswd::Select::RowList rows = select->GetRowList();
-
-        if (rows.empty()) {
-            return DPL::Optional<GlobalDAOReadOnly::AutoSaveData>::Null;
-        }
-
-        GlobalDAOReadOnly::AutoSaveData saveData;
-        saveData.userId = rows.front().Get_userId();
-        saveData.passwd = rows.front().Get_passwd();
-        return saveData;
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get autosave data string");
     }
 }
 
