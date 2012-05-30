@@ -7,6 +7,7 @@ Group:      Development/Libraries
 License:    Apache License, Version 2.0
 URL:        N/A
 Source0:    %{name}-%{version}.tar.gz
+Source1001: packaging/wrt-commons.manifest 
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(ecore)
 BuildRequires:  pkgconfig(appcore-efl)
@@ -39,6 +40,7 @@ Wrt common library development headers
 %setup -q
 
 %build
+cp %{SOURCE1001} .
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
@@ -103,6 +105,7 @@ fi
 echo "[WRT] wrt-commons postinst done ..."
 
 %files
+%manifest wrt-commons.manifest
 %{_libdir}/*.so
 %{_libdir}/*.so.*
 /usr/share/wrt-engine/*
@@ -110,5 +113,6 @@ echo "[WRT] wrt-commons postinst done ..."
 %attr(775,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
 
 %files devel
+%manifest wrt-commons.manifest
 %{_includedir}/dpl-efl/*
 %{_libdir}/pkgconfig/*.pc
