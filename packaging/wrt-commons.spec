@@ -54,9 +54,10 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 
 %post
-if [ -z ${2} ]; then
+if [ $1 == 1 ]; then
     echo "This is new install of wrt-commons"
     echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+    mkdir -p /opt/apps/widget/
     /usr/bin/wrt_commons_reset_db.sh
 else
     # Find out old and new version of databases
