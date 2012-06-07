@@ -284,6 +284,7 @@ class WidgetDAOReadOnly
      * @param[in] widgetHandle application id of widget.
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
+    WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
 
     /**
      * Destructor

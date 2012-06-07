@@ -27,7 +27,6 @@
 
 #include <dpl/foreach.h>
 #include <dpl/mutex.h>
-#include <dpl/wrt-dao-rw/widget_dao.h>
 
 namespace {
 

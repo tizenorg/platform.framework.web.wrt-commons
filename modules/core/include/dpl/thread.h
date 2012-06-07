@@ -172,6 +172,12 @@ public:
     void Quit();
 
     /**
+     * Checks if current thread is main one
+     * Returns true if it is main program thread, false otherwise
+     */
+    static bool IsMainThread();
+
+    /**
      * Current thread retrieval
      * Returns DPL thread handle or NULL if it is main program thread
      */
@@ -281,7 +287,7 @@ private:
             // If yes, pthread_exit(NULL) is required
             if (!g_TLSforMainCreated)
             {
-                if (Thread::GetCurrentThread() == NULL)
+                if (Thread::IsMainThread())
                 {
                     g_TLSforMainCreated = true;
                     atexit(&MainThreadExitClean);

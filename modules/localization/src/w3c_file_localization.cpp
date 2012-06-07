@@ -25,7 +25,7 @@
 
 #include <dpl/localization/w3c_file_localization.h>
 
-#include <dpl/wrt-dao-rw/widget_dao.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/localization/localization_utils.h>
 
 #include <dpl/log/log.h>
@@ -107,7 +107,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         const DPL::String &url)
 {
     DPL::String req = url;
-    WidgetDAO dao(widgetHandle);
+    WidgetDAOReadOnly dao(widgetHandle);
 
     if (req.find(WIDGET_URI_BEGIN) == 0) {
         req.erase(0, WIDGET_URI_BEGIN.length());
@@ -141,7 +141,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         const LanguageTagsList &languageTags,
         const DPL::String& file)
 {
-    WidgetDAO dao(widgetHandle);
+    WidgetDAOReadOnly dao(widgetHandle);
     return GetFilePathInWidgetPackageInternal(languageTags, dao.getPath(), file);
 }
 
@@ -149,10 +149,10 @@ DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle widgetHandle)
 {
     using namespace LocalizationUtils;
 
-    WidgetDAO dao(widgetHandle);
+    WidgetDAOReadOnly dao(widgetHandle);
 
-    WidgetDAO::LocalizedStartFileList locList = dao.getLocalizedStartFileList();
-    WidgetDAO::WidgetStartFileList list = dao.getStartFileList();
+    WidgetDAOReadOnly::LocalizedStartFileList locList = dao.getLocalizedStartFileList();
+    WidgetDAOReadOnly::WidgetStartFileList list = dao.getStartFileList();
     LanguageTagsList tagsList = LocalizationUtils::GetUserAgentLanguageTags();
 
     DPL::OptionalString defaultLoc = dao.getDefaultlocale();
@@ -181,10 +181,10 @@ DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle widgetHandle)
 OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
 {
     using namespace LocalizationUtils;
-    WidgetDAO dao(widgetHandle);
+    WidgetDAOReadOnly dao(widgetHandle);
 
-    WidgetDAO::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
-    WidgetDAO::WidgetIconList list = dao.getIconList();
+    WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
+    WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
     LanguageTagsList tagsList = LocalizationUtils::GetUserAgentLanguageTags();
 
     DPL::OptionalString defaultLoc = dao.getDefaultlocale();
@@ -219,8 +219,8 @@ WidgetIconList getValidIconsList(
         const LanguageTagsList &languageTags)
 {
     using namespace LocalizationUtils;
-    WidgetDAO dao(widgetHandle);
-    WidgetDAO::WidgetIconList list = dao.getIconList();
+    WidgetDAOReadOnly dao(widgetHandle);
+    WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
 
     WidgetIconList outlist;
 
@@ -249,10 +249,10 @@ OptionalWidgetStartFileInfo getStartFileInfo(
 
     WidgetStartFileInfo info;
 
-    WidgetDAO dao(widgetHandle);
-    WidgetDAO::LocalizedStartFileList locList =
+    WidgetDAOReadOnly dao(widgetHandle);
+    WidgetDAOReadOnly::LocalizedStartFileList locList =
         dao.getLocalizedStartFileList();
-    WidgetDAO::WidgetStartFileList list = dao.getStartFileList();
+    WidgetDAOReadOnly::WidgetStartFileList list = dao.getStartFileList();
 
     FOREACH(tag, tagsList)
     {
@@ -286,7 +286,7 @@ WidgetLocalizedInfo getLocalizedInfo(const WrtDB::DbWidgetHandle handle)
 {
     LanguageTagList languages =
         LocalizationUtils::GetUserAgentLanguageTags();
-    WidgetDAO dao(handle);
+    WidgetDAOReadOnly dao(handle);
     DPL::OptionalString dl = dao.getDefaultlocale();
     if (!!dl) {
         languages.push_back(*dl);

@@ -99,6 +99,11 @@ WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
 {
 }
 
+WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
+    m_widgetHandle(WidgetDAOReadOnly::getHandle(widgetGUID))
+{
+}
+
 WidgetDAOReadOnly::~WidgetDAOReadOnly()
 {
 }

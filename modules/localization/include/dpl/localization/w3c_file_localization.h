@@ -22,7 +22,7 @@
 #ifndef W3C_FILE_LOCALIZATION_H
 #define W3C_FILE_LOCALIZATION_H
 
-#include <dpl/wrt-dao-rw/widget_dao.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/optional.h>
 #include <dpl/string.h>
 #include <list>
