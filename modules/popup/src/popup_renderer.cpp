@@ -79,7 +79,9 @@ class PopupRenderer::Impl
 
     ~Impl()
     {
-        Assert(!m_initialized);
+        if (m_initialized) {
+            LogError("Destroyed without Deinitialize");
+        }
     }
 
     void Initialize()

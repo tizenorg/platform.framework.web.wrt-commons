@@ -32,8 +32,6 @@
 namespace WrtDB {
 namespace FeatureDAO {
 
-const int STRANGE_FEATURE_PROPERTIES_ID = 0;
-
 FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
                               const DbPluginHandle pluginHandle)
 {
@@ -104,50 +102,6 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
             insert->Values(row);
             insert->Execute();
         }
-
-        transaction.Commit();
-
-        return featureHandle;
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
-                   "Failure during Registering Feature");
-    }
-}
-
-FeatureHandle RegisterStrangeFeature(const std::string& featureName)
-{
-    Try
-    {
-        LogDebug("Registering Feature " << featureName);
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-
-        if (FeatureDAOReadOnly::isFeatureInstalled(featureName)) {
-            LogError(" >> Feature " << featureName <<
-                     " is already registered.");
-            transaction.Commit();
-            return -1;
-        }
-
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        //register feature
-        LogInfo("    |-- Registering feature " << featureName);
-
-        FeaturesList::Row row;
-        row.Set_FeatureName(DPL::FromUTF8String(featureName));
-
-        // PluginPropertiesId '0' is not used as PluginPropertiesId for normal features(calendar, contact....).
-        // PluginPropertiesId for normal features start from '1'
-        row.Set_PluginPropertiesId(STRANGE_FEATURE_PROPERTIES_ID);
-
-        WRT_DB_INSERT(insert, FeaturesList, &WrtDatabase::interface())
-        insert->Values(row);
-        insert->Execute();
-
-        FeatureHandle featureHandle =
-            FeatureDAOReadOnly(featureName).GetFeatureHandle();
 
         transaction.Commit();
 

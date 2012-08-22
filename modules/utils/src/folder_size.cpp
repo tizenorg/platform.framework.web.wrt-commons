@@ -31,7 +31,7 @@
 
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
-#include <folder_size.h>
+#include <dpl/utils/folder_size.h>
 
 namespace Utils {
 namespace {

@@ -35,7 +35,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dpl/log/log.h>
-#include <wrt_utility.h>
+#include <dpl/utils/wrt_utility.h>
 
 using namespace std;
 

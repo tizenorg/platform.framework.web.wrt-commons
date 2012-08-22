@@ -23,6 +23,7 @@
 #include <wrt-commons/auto-save-dao-rw/auto_save_dao.h>
 #include <wrt-commons/auto-save-dao/AutoSaveDatabase.h>
 #include <orm_generator_autosave.h>
+#include <dpl/foreach.h>
 
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::autosave;
@@ -59,30 +60,30 @@ void AutoSaveDAO::detachDatabase(void)
     m_autoSavedbInterface.DetachFromThread();
 }
 
-void AutoSaveDAO::setAutoSaveIdPasswd(const DPL::String &url,
-                                      const AutoSaveData &saveData)
+void AutoSaveDAO::setAutoSaveSubmitFormData(const DPL::String &url,
+                                      const SubmitFormData &submitFormData)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         ScopedTransaction transaction(&m_autoSavedbInterface);
-        AutoSaveIdPasswd::Row row;
 
-        row.Set_address(url);
-        row.Set_userId(saveData.userId);
-        row.Set_passwd(saveData.passwd);
+        SubmitFormData submitData = getAutoSaveSubmitFormData(url);
+        if (!submitData.empty()) {
+            AUTOSAVE_DB_DELETE(del,
+                               AutoSaveSubmitFormElement,
+                               &m_autoSavedbInterface)
+            del->Where(Equals<AutoSaveSubmitFormElement::address>(url));
+            del->Execute();
+        }
 
-        DPL::Optional<AutoSaveData> savedData =
-        getAutoSaveIdPasswd(url);
+        FOREACH(pSubmitFormData, submitFormData) {
+            AutoSaveSubmitFormElement::Row row;
+            row.Set_address(url);
+            row.Set_key(pSubmitFormData->key);
+            row.Set_value(pSubmitFormData->value);
 
-        if (!savedData.IsNull()) {
-            AUTOSAVE_DB_UPDATE(update, AutoSaveIdPasswd, &m_autoSavedbInterface)
-
-            update->Where(Equals<AutoSaveIdPasswd::address>(url));
-            update->Values(row);
-            update->Execute();
-        } else {
             AUTOSAVE_DB_INSERT(
-                insert, AutoSaveIdPasswd, &m_autoSavedbInterface);
+                insert, AutoSaveSubmitFormElement, &m_autoSavedbInterface);
             insert->Values(row);
             insert->Execute();
         }
@@ -92,7 +93,6 @@ void AutoSaveDAO::setAutoSaveIdPasswd(const DPL::String &url,
     SQL_CONNECTION_EXCEPTION_HANDLER_END(
         "Fail to register id, passwd for autosave")
 }
-
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 

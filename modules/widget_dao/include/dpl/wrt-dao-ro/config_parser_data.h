@@ -189,6 +189,7 @@ class ConfigParserData
         bool operator!=(const ServiceInfo&) const;
     };
     typedef std::list<ServiceInfo> ServiceInfoList;
+    typedef std::list<DPL::OptionalString> DependsPkgList;
 
     StringsList nameSpaces;
 
@@ -230,10 +231,16 @@ class ConfigParserData
     DPL::OptionalString startFileContentType;
     IconsList iconsList;
 
-    // pakcage name determined by operator for TIZEN webapp
-    DPL::OptionalString pkgname;
+    // tizen id / required platform min version for TIZEN webapp
+    DPL::OptionalString tizenId;
+    DPL::OptionalString tizenMinVersionRequired;
+
     //Application service model list
     ServiceInfoList appServiceList;
+    // For link shared directory
+    DependsPkgList dependsPkgList;
+    // Splash image path
+    DPL::OptionalString splashImgSrc;
 
     ConfigParserData() :
         flashNeeded(false),

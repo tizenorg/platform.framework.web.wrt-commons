@@ -12,25 +12,15 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-# @file        CMakeLists.txt
+#
+# @file        config.cmake
 # @author      Lukasz Marek (l.marek@samsung.com)
 # @version     1.0
 # @brief
 #
 
-SET(DPL_TEST_INCLUDE_DIR
-    ${DPL_CORE_INCLUDE_DIR}
-    ${DPL_EVENT_INCLUDE_DIR}
-    ${DPL_DBUS_INCLUDE_DIR}
-    ${DPL_DB_INCLUDE_DIR}
-    ${DPL_RPC_INCLUDE_DIR}
-    ${DPL_SOCKET_INCLUDE_DIR}
-    ${DPL_TEST_ENGINE_INCLUDE_DIR}
-    ${DPL_LOG_INCLUDE_DIR}
-)
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(event)
-ADD_SUBDIRECTORY(localization)
+SET(DPL_WRT_ENGINE_HEADERS
+    ${PROJECT_SOURCE_DIR}/modules/support/wrt_plugin_export.h
+    PARENT_SCOPE
+)

@@ -13,30 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-/*
- * @file        loop_control.cpp
- * @author      Jaroslaw Osmanski (j.osmanski@samsung.com)
- * @version     1.0
- * @brief       This file is the definitions of loop controlling utilities
+/**
+ * @file    wrt_global_settings.h
+ * @version    0.6
+ * @author    Pawel Sikorski(p.sikorski@samsung.com)
+ * @brief     Header file for global predefined wrt setting
  */
 
+#ifndef WRT_COMMON_GLOBAL_SETTINGS_H_
+#define WRT_COMMON_GLOBAL_SETTINGS_H_
 
-#ifndef LOOP_CONTROL_H_
-#define LOOP_CONTROL_H_
+namespace GlobalSettings {
 
-namespace LoopControl
-{
-
-void init_loop(int argc, char *argv[]);
-void wait_for_wrt_init();
-void finish_wait_for_wrt_init();
-void quit_loop();
-
-void wrt_start_loop();
-void wrt_end_loop();
-
-void *abstract_window();
+// Methods for getting/setting test mode environment flag
+bool TestModeEnabled();
+bool IsEmulator();
 
 }
 
-#endif /* LOOP_CONTROL_H_ */
+#endif /* WRT_COMMON_GLOBAL_SETTINGS_H_ */

@@ -30,16 +30,6 @@ namespace WrtDB {
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
-    /**
-     * Add deffered widget packages to be installed
-     */
-    static void AddDefferedWidgetPackageInstallation(const DPL::String &path);
-
-    /**
-     * Remove deffered widget packages to be installed
-     */
-    static void RemoveDefferedWidgetPackageInstallation(const DPL::String &arg);
-
     static void SetDeveloperMode(bool mode);
 
     static void SetSecureByDefault(bool secureByDefault);
@@ -65,6 +55,8 @@ class GlobalDAO : public GlobalDAOReadOnly
      *
      */
     static void SetRoamingDataUsage(NetworkAccessMode newMode);
+
+    static void SetCookieSharingMode(bool mode);
 
   private:
     GlobalDAO()

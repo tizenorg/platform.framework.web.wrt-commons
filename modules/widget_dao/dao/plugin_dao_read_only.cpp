@@ -185,34 +185,6 @@ std::string PluginDAOReadOnly::getLibraryName() const
     return ret;
 }
 
-std::string PluginDAOReadOnly::getInstallURI() const
-{
-    LogDebug("Getting plugin install URI. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_InstallURI(), "install URI")
-}
-
-std::string PluginDAOReadOnly::getKeyCn() const
-{
-    LogDebug("Getting plugin KeyCn. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_KeyCN(), "keyCN")
-}
-
-std::string PluginDAOReadOnly::getRootKey() const
-{
-    LogDebug("Getting plugin rootKey. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyCN(), "rootKey")
-}
-
-std::string PluginDAOReadOnly::getRootKeyFingerprint() const
-{
-    LogDebug("Getting plugin rootKeyFingerprint. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyFingerprint(), "rootKeyFingerprint")
-}
-
 #undef RETURN_STD_STRING
 
 PluginHandleSetPtr PluginDAOReadOnly::getLibraryDependencies() const

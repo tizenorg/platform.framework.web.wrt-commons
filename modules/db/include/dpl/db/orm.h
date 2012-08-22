@@ -25,6 +25,7 @@
 #include <string>
 #include <typeinfo>
 #include <utility>
+#include <set>
 
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/orm_interface.h>
@@ -33,6 +34,7 @@
 #include <dpl/shared_ptr.h>
 #include <dpl/type_list.h>
 #include <dpl/assert.h>
+#include <dpl/foreach.h>
 
 #ifndef DPL_ORM_H
 #define DPL_ORM_H
@@ -48,6 +50,10 @@ namespace ORM {
         (void)_ignored_; \
     }
 
+#define DECLARE_COLUMN_TYPE_LIST() typedef DPL::TypeListDecl<
+#define SELECTED_COLUMN(table_name, column_name) table_name::column_name,
+#define DECLARE_COLUMN_TYPE_LIST_END(name) DPL::TypeListGuard>::Type name;
+
 typedef size_t ColumnIndex;
 typedef size_t ArgumentIndex;
 typedef DPL::Optional<DPL::String> OptionalString;
@@ -60,6 +66,7 @@ namespace RelationTypes {
     extern const char And[];
     extern const char Or[];
     extern const char Is[];
+    extern const char In[];
     //TODO define more relation types
 }
 
@@ -147,6 +154,8 @@ public:
     virtual std::string GetString() const
     {
         std::string statement;
+        statement += ColumnData::GetTableName();
+        statement += ".";
         statement += ColumnData::GetColumnName();
         statement += " ";
         statement += Relation;
@@ -171,12 +180,279 @@ public:
 ORM_DEFINE_COMPARE_EXPRESSION(Equals, Equal)
 ORM_DEFINE_COMPARE_EXPRESSION(Is, Is)
 
+template<typename ColumnData1, typename ColumnData2>
+class CompareBinaryColumn {
+private:
+    std::string m_relation;
+public:
+    CompareBinaryColumn(const char* Relation) :
+      m_relation(Relation)
+    {}
+
+    virtual std::string GetString() const
+    {
+        std::string statement;
+        statement += ColumnData1::GetTableName();
+        statement += ".";
+        statement += ColumnData1::GetColumnName();
+        statement += " ";
+        statement += m_relation;
+        statement += " ";
+        statement += ColumnData2::GetTableName();
+        statement += ".";
+        statement += ColumnData2::GetColumnName();
+
+        return statement;
+    }
+};
+
+template<typename ColumnData1, typename ColumnData2>
+CompareBinaryColumn<ColumnData1, ColumnData2>
+    Equal()
+{
+    return CompareBinaryColumn<ColumnData1, ColumnData2>(RelationTypes::Equal);
+}
+
+template<typename ColumnData, const char* Relation>
+class NumerousArguments : public Expression {
+protected:
+    std::set<typename ColumnData::ColumnType> m_argumentList;
+public:
+    NumerousArguments(const std::set<typename ColumnData::ColumnType>& argumentList) : m_argumentList(argumentList) {}
+
+    virtual std::string GetString() const
+    {
+        std::string statement;
+        statement += ColumnData::GetColumnName();
+        statement += " ";
+        statement += Relation;
+        statement += " ( ";
+
+        int argumentCount = m_argumentList.size();
+        while(argumentCount)
+        {
+            statement += "?";
+            argumentCount--;
+            if (argumentCount)
+            {
+                statement += ", ";
+            }
+        }
+
+        statement += " )";
+
+        return statement;
+    }
+
+    virtual ArgumentIndex BindTo(DataCommand *command, ArgumentIndex index)
+    {
+        ArgumentIndex argumentIndex = index;
+        FOREACH(argumentIt, m_argumentList)
+        {
+            DataCommandUtils::BindArgument(command, argumentIndex, *argumentIt);
+            argumentIndex++;
+        }
+        return  argumentIndex + 1;
+    }
+
+    template<typename TableDefinition>
+    struct ValidForTable {
+        typedef typename TableDefinition::ColumnList::template Contains<ColumnData> Yes;
+    };
+};
+
+#define ORM_DEFINE_COMPARE_EXPRESSION_NUMEROUS_ARGUMENTS(name, relationType)                      \
+    template<typename ColumnData>                                              \
+    class name : public NumerousArguments<ColumnData, RelationTypes::relationType> {     \
+    public:                                                                    \
+        name(std::set<typename ColumnData::ColumnType> column) :                         \
+            NumerousArguments<ColumnData, RelationTypes::relationType>(column)           \
+        {}                                                                     \
+    };
+
+ORM_DEFINE_COMPARE_EXPRESSION_NUMEROUS_ARGUMENTS(In, In)
+
 template<typename ColumnType>
 ColumnType GetColumnFromCommand(ColumnIndex columnIndex, DataCommand *command);
+
+class CustomColumnBase {
+public:
+    CustomColumnBase() {}
+    virtual ~CustomColumnBase() {}
+};
+
+template<typename ColumnType>
+class CustomColumn : public CustomColumnBase {
+private:
+    ColumnType m_columnData;
+
+public:
+    CustomColumn() {}
+    CustomColumn(ColumnType data)
+    {
+        m_columnData = data;
+    }
+
+    void SetColumnData(ColumnType data)
+    {
+        m_columnData = data;
+    }
+
+    ColumnType GetColumnData() const
+    {
+        return m_columnData;
+    }
+};
+
+template<typename ColumnList>
+class CustomRowUtil {
+public:
+    static void MakeColumnList(std::vector<CustomColumnBase*>& columnList)
+    {
+        typedef CustomColumn<typename ColumnList::Head::ColumnType> Type;
+        Type* pColumn = new Type();
+        columnList.push_back(pColumn);
+        CustomRowUtil<typename ColumnList::Tail>::MakeColumnList(columnList);
+    }
+
+    static void CopyColumnList(const std::vector<CustomColumnBase*>& srcList, std::vector<CustomColumnBase*>& dstList)
+    {
+        CopyColumnList(srcList, dstList, 0);
+    }
+
+    static ColumnIndex GetColumnIndex(const std::string& columnName)
+    {
+        return GetColumnIndex(columnName, 0);
+    }
+
+private:
+    static void CopyColumnList(const std::vector<CustomColumnBase*>& srcList, std::vector<CustomColumnBase*>& dstList, ColumnIndex index)
+    {
+        typedef CustomColumn<typename ColumnList::Head::ColumnType> Type;
+        Type* pColumn = new Type(((Type*)(srcList.at(index)))->GetColumnData());
+        dstList.push_back(pColumn);
+        CustomRowUtil<typename ColumnList::Tail>::CopyColumnList(srcList, dstList, index + 1);
+    }
+
+    static ColumnIndex GetColumnIndex(const std::string& columnName, ColumnIndex index)
+    {
+        if (ColumnList::Head::GetColumnName() == columnName)
+            return index;
+
+        return CustomRowUtil<typename ColumnList::Tail>::GetColumnIndex(columnName, index + 1);
+    }
+
+template<typename Other>
+friend class CustomRowUtil;
+};
+
+template<>
+class CustomRowUtil<DPL::TypeListGuard> {
+public:
+    static void MakeColumnList(std::vector<CustomColumnBase*>&) {}
+private:
+    static void CopyColumnList(const std::vector<CustomColumnBase*>&, std::vector<CustomColumnBase*>&, ColumnIndex) {}
+    static ColumnIndex GetColumnIndex(const std::string&, ColumnIndex) { return -1; }
+
+template<typename Other>
+friend class CustomRowUtil;
+};
+
+template<typename ColumnList>
+class CustomRow {
+private:
+    std::vector<CustomColumnBase*> m_columns;
+
+public:
+    CustomRow()
+    {
+        CustomRowUtil<ColumnList>::MakeColumnList(m_columns);
+    }
+
+    CustomRow(const CustomRow& r)
+    {
+        CustomRowUtil<ColumnList>::CopyColumnList(r.m_columns, m_columns);
+    }
+
+    virtual ~CustomRow()
+    {
+        while (!m_columns.empty())
+        {
+            CustomColumnBase* pCustomColumn = m_columns.back();
+            m_columns.pop_back();
+            if (pCustomColumn)
+                delete pCustomColumn;
+        }
+    }
+
+    template<typename ColumnType>
+    void SetColumnData(ColumnIndex columnIndex, ColumnType data)
+    {
+        typedef CustomColumn<ColumnType> Type;
+        Assert(columnIndex >= 0 && columnIndex < m_columns.size());
+        Type* pColumn = dynamic_cast<Type*>(m_columns.at(columnIndex));
+        Assert(pColumn);
+        pColumn->SetColumnData(data);
+    }
+
+    template<typename ColumnData>
+    typename ColumnData::ColumnType GetColumnData()
+    {
+        typedef CustomColumn<typename ColumnData::ColumnType> Type;
+        ColumnIndex index = CustomRowUtil<ColumnList>::GetColumnIndex(ColumnData::GetColumnName());
+        Assert(index >= 0 && index < m_columns.size());
+        Type* pColumn = dynamic_cast<Type*>(m_columns.at(index));
+        Assert(pColumn);
+        return pColumn->GetColumnData();
+    }
+};
+
+template<typename CustomRow, typename ColumnType>
+void SetColumnData(CustomRow& row, ColumnType columnData, ColumnIndex columnIndex)
+{
+    row.SetColumnData<ColumnType>(columnIndex, columnData);
+}
+
+template<typename ColumnList, typename CustomRow>
+class FillCustomRowUtil {
+public:
+    static void FillCustomRow(CustomRow& row, DataCommand* command)
+    {
+        FillCustomRow(row, 0, command);
+    }
+
+private:
+    static void FillCustomRow(CustomRow& row, ColumnIndex columnIndex, DataCommand* command)
+    {
+        typename ColumnList::Head::ColumnType columnData;
+        columnData = GetColumnFromCommand<typename ColumnList::Head::ColumnType>(columnIndex, command);
+        SetColumnData<CustomRow, typename ColumnList::Head::ColumnType>(row, columnData, columnIndex);
+        FillCustomRowUtil<typename ColumnList::Tail, CustomRow>::FillCustomRow(row, columnIndex + 1, command);
+    }
+
+template<typename Other, typename OtherRow>
+friend class FillCustomRowUtil;
+};
+
+template<typename CustomRow>
+class FillCustomRowUtil<DPL::TypeListGuard, CustomRow> {
+private:
+    static void FillCustomRow(CustomRow&, ColumnIndex, DataCommand *)
+    { /* do nothing, we're past the last element of column list */ }
+
+template<typename Other, typename OtherRow>
+friend class FillCustomRowUtil;
+};
 
 template<typename ColumnList, typename Row>
 class FillRowUtil {
 public:
+    static void FillRow(Row& row, DataCommand *command)
+    {
+        FillRow(row, 0, command);
+    }
+
+private:
     static void FillRow(Row& row, ColumnIndex columnIndex, DataCommand *command)
     {
         typename ColumnList::Head::ColumnType rowField;
@@ -184,13 +460,51 @@ public:
         ColumnList::Head::SetRowField(row, rowField);
         FillRowUtil<typename ColumnList::Tail, Row>::FillRow(row, columnIndex + 1, command);
     }
+
+template<typename Other, typename OtherRow>
+friend class FillRowUtil;
 };
 
 template<typename Row>
 class FillRowUtil<DPL::TypeListGuard, Row> {
-public:
+private:
     static void FillRow(Row&, ColumnIndex, DataCommand *)
     { /* do nothing, we're past the last element of column list */ }
+
+template<typename Other, typename OtherRow>
+friend class FillRowUtil;
+};
+
+template<typename ColumnList>
+class JoinUtil {
+public:
+    static std::string GetColumnNames()
+    {
+        std::string result;
+        result = ColumnList::Head::GetTableName();
+        result += ".";
+        result += ColumnList::Head::GetColumnName();
+        if (ColumnList::Tail::Size > 0)
+            result += ", ";
+
+        return result += JoinUtil<typename ColumnList::Tail>::GetColumnNames();
+    }
+
+    static std::string GetJoinTableName(const std::string& tableName)
+    {
+        std::string joinTableName = ColumnList::Head::GetTableName();
+        if (tableName.find(joinTableName) == std::string::npos)
+            return joinTableName;
+
+        return JoinUtil<typename ColumnList::Tail>::GetJoinTableName(tableName);
+    }
+};
+
+template<>
+class JoinUtil<DPL::TypeListGuard> {
+public:
+    static std::string GetColumnNames() { return ""; }
+    static std::string GetJoinTableName(std::string) { return ""; }
 };
 
 class Exception {
@@ -448,6 +762,7 @@ public:
     typedef std::list<Row>                             RowList;
 protected:
     DPL::Optional<std::string> m_orderBy;
+    std::string m_JoinClause;
     bool                       m_distinctResults;
 
     void Prepare(const char* selectColumnName)
@@ -460,6 +775,8 @@ protected:
             this->m_commandString += selectColumnName;
             this->m_commandString += " FROM ";
             this->m_commandString += TableDefinition::GetName();
+
+            this->m_commandString += m_JoinClause;
 
             QueryWithWhereClause<TableDefinition>::Prepare();
 
@@ -491,7 +808,15 @@ protected:
     Row GetRow()
     {
         Row row;
-        FillRowUtil<ColumnList, Row>::FillRow(row, 0, this->m_command);
+        FillRowUtil<ColumnList, Row>::FillRow(row, this->m_command);
+        return row;
+    }
+
+    template<typename ColumnList, typename CustomRow>
+    CustomRow GetCustomRow()
+    {
+        CustomRow row;
+        FillCustomRowUtil<ColumnList, CustomRow>::FillCustomRow(row, this->m_command);
         return row;
     }
 
@@ -511,6 +836,18 @@ public:
     void OrderBy(const std::string& orderBy)
     {
         m_orderBy = orderBy;
+    }
+
+    template<typename ColumnList, typename Expression>
+    void Join(const Expression& expression) {
+        std::string usedTableNames = TableDefinition::GetName();
+        if (!m_JoinClause.empty())
+            usedTableNames += m_JoinClause;
+
+        this->m_JoinClause += " JOIN ";
+        this->m_JoinClause += JoinUtil<ColumnList>::GetJoinTableName(usedTableNames);
+        this->m_JoinClause += " ON ";
+        this->m_JoinClause += expression.GetString();
     }
 
     template<typename ColumnData>
@@ -565,6 +902,34 @@ public:
 
         while (this->m_command->Step())
             resultList.push_back(GetRow());
+
+        this->m_command->Reset();
+        return resultList;
+    }
+
+    template<typename ColumnList, typename CustomRow>
+    CustomRow GetCustomSingleRow()
+    {
+        Prepare(JoinUtil<ColumnList>::GetColumnNames().c_str());
+        Bind();
+        this->m_command->Step();
+
+        CustomRow result = GetCustomRow<ColumnList, CustomRow>();
+
+        this->m_command->Reset();
+        return result;
+    }
+
+    template<typename ColumnList, typename CustomRow>
+    std::list<CustomRow> GetCustomRowList()
+    {
+        Prepare(JoinUtil<ColumnList>::GetColumnNames().c_str());
+        Bind();
+
+        std::list<CustomRow> resultList;
+
+        while (this->m_command->Step())
+            resultList.push_back(GetCustomRow<ColumnList, CustomRow>());
 
         this->m_command->Reset();
         return resultList;

@@ -20,35 +20,85 @@
  * @author      Lukasz Wrzosek (l.wrzosek@samsung.com)
  * @brief       runtime
  */
-#include <dpl/assert.h>
-#include <dpl/log/log.h>
-#include <string.h>
-#include <stdlib.h>
-#include <wrt_global_settings_internal.h>
+#include <cstdlib>
+#include <cstring>
+#include <string>
+#include <sys/utsname.h>
+#include <dpl/utils/wrt_global_settings.h>
+
+namespace GlobalSettings {
 
 namespace {
-bool GetPopupsEnabledFlag()
+const char* MACHINE_NAME_EMUL = "emulated"; // "arch_emulated"
+enum MachineType
 {
-    //TODO : env var. will be removed after UX guide for POWDER is enabled.
-    const char *env = getenv("WRT_POPUP_ENABLE");
-    if (env && 0 == strcmp(env, "1")) {
-        return true;
-    } else {
-        return false;
+    MACHINE_TYPE_TARGET,
+    MACHINE_TYPE_EMULATOR,
+    MACHINE_TYPE_UNKNOWN
+};
+
+struct Settings {
+    bool testMode;
+    bool isEmulator;
+
+    Settings()
+    : testMode(false),
+    isEmulator(false)
+    {}
+};
+
+Settings gSettings;
+
+bool initializeGlobalSettings();
+bool initHelper = initializeGlobalSettings();
+
+MachineType getMachineType()
+{
+    // get current machine name
+    struct utsname u;
+    if (0 == uname(&u)) {
+        if ((!u.machine) || (0 == strlen(u.machine))) {
+            return MACHINE_TYPE_UNKNOWN;
+        } else {
+            // If current machine is emul,
+            // machine name include "<arch>_emulated"
+            std::string machine = u.machine;
+            // find "emulated" string in the u.machine
+            if (std::string::npos != machine.find(MACHINE_NAME_EMUL)) {
+                return MACHINE_TYPE_EMULATOR;
+            } else {
+                return MACHINE_TYPE_TARGET;
+            }
+        }
     }
+
+    return MACHINE_TYPE_UNKNOWN;
 }
-
-static bool initializeGlobalSettings();
-
-static bool initHelper = initializeGlobalSettings();
 
 bool initializeGlobalSettings()
 {
     (void)initHelper;
-    LogDebug("Initializing globall settings");
-    GlobalSettings::IGlobalSettingsFunctions functions;
-    functions.getPopupsEnabledFlag = &GetPopupsEnabledFlag;
-    GlobalSettings::SetPredefinedGlobalSettings(functions);
+
+    // ignore environment variables if this flag is not set
+#ifdef GLOBAL_SETTINGS_CONTROL
+    const char *env = getenv("WRT_TEST_MODE");
+    gSettings.testMode = (env != NULL && 0 == strncmp(env, "1", 1));
+    // TODO other settings initialization
+
+#endif
+    gSettings.isEmulator = (MACHINE_TYPE_EMULATOR == getMachineType());
     return false;
 }
+} // namespace
+
+bool TestModeEnabled()
+{
+    return gSettings.testMode;
 }
+
+bool IsEmulator()
+{
+    return gSettings.isEmulator;
+}
+
+} // GlobalSettings

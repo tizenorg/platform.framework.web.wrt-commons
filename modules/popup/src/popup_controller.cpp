@@ -56,7 +56,6 @@ CtrlPopup::~CtrlPopup()
 void CtrlPopup::EmitAnswer(const AnswerCallbackData & answer)
 {
     AnswerCallbackData l_answer = answer;
-    l_answer.loopHandle = m_loopHandle;
     PopupAnswerEvent event(SharedFromThis(), m_callback, l_answer);
     DPL::Event::EventSupport<PopupAnswerEvent>::EmitEvent(event);
 }
@@ -71,11 +70,10 @@ CtrlPopupPtr PopupController::CreatePopup() const
                new CtrlPopup(PopupManagerSingleton::Instance().CreatePopup()));
 }
 
-void PopupController::OnEventReceived(const ShowPopupEvent& event)
+void PopupController::OnEventReceived(const ShowPopupEventShort& event)
 {
     CtrlPopupPtr popup = event.GetArg0();
     popup->m_callback = event.GetArg1();
-    popup->m_loopHandle = event.GetArg2();
 
     //pass canvas from controller to manager
     //canvas is not passed earlier because value wasn't set properly

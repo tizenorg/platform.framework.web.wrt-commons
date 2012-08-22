@@ -75,7 +75,6 @@
 #include <dpl/enable_shared_from_this.h>
 #include <dpl/noncopyable.h>
 #include <dpl/log/log.h>
-#include <dpl/event/nested_loop.h>
 #include <dpl/popup/popup_manager.h>
 
 namespace DPL {
@@ -106,10 +105,10 @@ DECLARE_GENERIC_EVENT_3(PopupAnswerEvent,
                         CtrlPopupPtr,
                         PopupAnswerCallback,
                         AnswerCallbackData)
-DECLARE_GENERIC_EVENT_3(ShowPopupEvent,
+
+DECLARE_GENERIC_EVENT_2(ShowPopupEventShort,
                         CtrlPopupPtr,
-                        PopupAnswerCallback,
-                        DPL::Event::LoopHandle)
+                        PopupAnswerCallback)
 
 class CtrlPopup : public DPL::Event::EventSupport<PopupAnswerEvent>,
     protected DPL::EnableSharedFromThis<CtrlPopup>
@@ -128,11 +127,10 @@ class CtrlPopup : public DPL::Event::EventSupport<PopupAnswerEvent>,
 
     IPopupPtr m_popup;
     PopupAnswerCallback m_callback;
-    DPL::Event::LoopHandle m_loopHandle;
 };
 
 class PopupController :
-    public DPL::Event::Controller<DPL::TypeListDecl<ShowPopupEvent>::Type>
+    public DPL::Event::Controller<DPL::TypeListDecl<ShowPopupEventShort>::Type>
 {
   public:
     CtrlPopupPtr CreatePopup() const;
@@ -148,7 +146,7 @@ class PopupController :
     void* m_canvas;
 
   protected:
-    virtual void OnEventReceived(const ShowPopupEvent& event);
+    virtual void OnEventReceived(const ShowPopupEventShort& event);
     PopupController();
 
   private:

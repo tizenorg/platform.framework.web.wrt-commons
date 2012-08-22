@@ -24,15 +24,40 @@
 #ifndef SHARE_COMMON_DAO_TYPES_H_
 #define SHARE_COMMON_DAO_TYPES_H_
 
-#include <dpl/optional_typedefs.h>
+#include <list>
+#include <dpl/string.h>
 
 namespace AutoSaveDB {
 
-struct AutoSaveData
+struct SubmitFormElement
 {
-    DPL::String userId;
-    DPL::String passwd;
+    DPL::String key;
+    DPL::String value;
+
+    SubmitFormElement()
+    {
+    }
+
+    SubmitFormElement(
+        const DPL::String& keyData,
+        const DPL::String& valueData) :
+        key(keyData),
+        value(valueData)
+    {
+    }
+
+    bool operator== (const SubmitFormElement& other) const
+    {
+        return (!DPL::StringCompare(key, other.key) &&
+               !DPL::StringCompare(value, other.value));
+    }
+
+    bool operator!= (const SubmitFormElement& other) const
+    {
+        return !(*this == other);
+    }
 };
+typedef std::list<SubmitFormElement> SubmitFormData;
 
 } // namespace AutoSaveDB
 

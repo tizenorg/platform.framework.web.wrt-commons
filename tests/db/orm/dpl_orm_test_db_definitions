@@ -1,5 +1,0 @@
-DATABASE_START(dpl_orm_test)
-
-#include "dpl_orm_test_db"
-
-DATABASE_END()

@@ -28,6 +28,8 @@
 
 #include <string>
 #include <cstdio>
+#include <fstream>
+#include <sstream>
 
 namespace DPL
 {
@@ -37,6 +39,7 @@ namespace Test
 namespace
 {
 const char *DEFAULT_HTML_FILE_NAME = "index.html";
+const char *DEFAULT_TAP_FILE_NAME = "results.tap";
 
 class Statistic
 {
@@ -472,6 +475,127 @@ TestResultsCollectorBase* CSVCollector::Constructor()
 
 }
 
+class TAPCollector
+    : public TestResultsCollectorBase
+{
+  public:
+    static TestResultsCollectorBase* Constructor();
+
+  private:
+    TAPCollector() : m_filename(DEFAULT_TAP_FILE_NAME)  {}
+
+    virtual bool Configure()
+    {
+        m_output.open(m_filename.c_str(), std::ios_base::trunc);
+        if (m_output.fail()) {
+            LogError("Can't open output file: " << m_filename);
+            return false;
+        }
+        return true;
+    }
+    virtual std::string CollectorSpecificHelp() const
+    {
+        std::string retVal = "--file=<filename> - name of file for output\n"
+                             "                    default - ";
+        retVal += DEFAULT_TAP_FILE_NAME;
+        retVal += "\n";
+        return retVal;
+    }
+
+    virtual void Start()
+    {
+        Assert(m_output.good() && "Output file must be opened.");
+        m_output << "TAP version 13" << std::endl;
+        m_testIndex = 0;
+    }
+
+    virtual void Finish()
+    {
+        m_output << "1.." << m_testIndex << std::endl;
+        m_output << m_collectedData.rdbuf();
+        m_output.close();
+    }
+
+    virtual bool ParseCollectorSpecificArg(const std::string& arg)
+    {
+        const std::string argname = "--file=";
+        if (0 == arg.find(argname)) {
+            m_filename = arg.substr(argname.size());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    virtual void CollectResult(const std::string& id,
+                               const std::string& description,
+                               const FailStatus::Type status = FailStatus::NONE,
+                               const std::string& reason = "")
+    {
+        m_testIndex++;
+        switch(status) {
+            case TestResultsCollectorBase::FailStatus::NONE:
+                LogBasicTAP(true, id, description);
+                endTAPLine();
+                break;
+            case TestResultsCollectorBase::FailStatus::FAILED:
+                LogBasicTAP(false, id, description);
+                endTAPLine();
+                break;
+            case TestResultsCollectorBase::FailStatus::IGNORED:
+                LogBasicTAP(true, id, description);
+                m_collectedData << " # skip " << reason;
+                endTAPLine();
+                break;
+            case TestResultsCollectorBase::FailStatus::TODO:
+                LogBasicTAP(false, id, description);
+                m_collectedData << " # TODO " << reason;
+                endTAPLine();
+                break;
+            case TestResultsCollectorBase::FailStatus::INTERNAL:
+                LogBasicTAP(true, id, description);
+                endTAPLine();
+                m_collectedData << "    ---" << std::endl;
+                m_collectedData << "    message: " << reason << std::endl;
+                m_collectedData << "    severity: Internal" << std::endl;
+                m_collectedData << "    ..." << std::endl;
+                break;
+            default:
+                Assert(false && "Bad status");
+        }
+    }
+
+    void LogBasicTAP(bool isOK, const std::string& id,
+            const std::string& description)
+    {
+        if (!isOK) {
+            m_collectedData << "not ";
+        }
+        m_collectedData << "ok " << m_testIndex << " [" <<
+                            id << "] " << description;
+    }
+
+    void endTAPLine()
+    {
+        m_collectedData << std::endl;
+    }
+
+
+    std::string m_filename;
+    std::stringstream m_collectedData;
+    std::ofstream m_output;
+    int m_testIndex;
+};
+
+
+TestResultsCollectorBase* TAPCollector::Constructor()
+{
+    return new TAPCollector();
+}
+
+
 void TestResultsCollectorBase::RegisterCollectorConstructor(
     const std::string& name,
     TestResultsCollectorBase::CollectorConstructorFunc func)
@@ -519,6 +643,9 @@ int RegisterCollectorConstructors()
     TestResultsCollectorBase::RegisterCollectorConstructor(
         "csv",
         &CSVCollector::Constructor);
+    TestResultsCollectorBase::RegisterCollectorConstructor(
+        "tap",
+        &TAPCollector::Constructor);
 
     return 0;
 }

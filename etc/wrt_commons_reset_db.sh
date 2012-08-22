@@ -14,36 +14,32 @@
 #    limitations under the License.
 #
 
-wrt_commons_create_clean_db.sh
-
 rm -rf /opt/apps/widget/system/*
 
-# This directories contains test widgets and test keys. It shouldn't be removed.
-#rm -rf /opt/apps/widget/user/*
-#rm -rf /opt/apps/widget/data/*
-
 #Removing of widget desktop icons
-WIDGET_EXEC_PATH=/opt/apps/widget/exec
-WIDGET_DESKTOP_PATH=/opt/share/install-info/application
-WIDGET_ICON_PATH=/opt/share/icons/default/small
-WIDGET_EXECS="${WIDGET_EXEC_PATH}/*";
+WIDGET_EXEC_PATH=/opt/apps/
+WIDGET_DESKTOP_PATH=/opt/share/applications/
+WRT_DB=/opt/dbspace/.wrt.db
+PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/apps/widget/
+PLUGINS_INSTALLATION_REQUIRED=plugin-installation-required
 
-for file in $WIDGET_EXECS; do
-    widget_id=${file#${WIDGET_EXEC_PATH}/};
+if [ -f ${WRT_DB} ]
+then
+    PKG_NAME_SET=$(sqlite3 $WRT_DB 'select pkgname from WidgetInfo;')
+    for pkgname in $PKG_NAME_SET
+    do
+        rm -rf ${WIDGET_EXEC_PATH}${pkgname}
+        widget_desktop_file="${WIDGET_DESKTOP_PATH}${pkgname}.desktop";
+        if [ -f ${widget_desktop_file} ]; then
+            rm -f $widget_desktop_file;
+        fi
+    done
+else
+    echo "${WRT_DB} doesn't exist"
+fi
 
-    widget_desktop_file="${WIDGET_DESKTOP_PATH}/org.tizen.${widget_id}.desktop";
-    if [ -f ${widget_desktop_file} ]; then
-        echo "rm -f $widget_desktop_file";
-        rm -f $widget_desktop_file;
-    fi
-
-    widget_icon_file="${WIDGET_ICON_PATH}/${widget_id}.*"
-    if [ -f ${widget_icon_file} ]; then
-        echo "rm -f $widget_icon_file";
-        rm -f $widget_icon_file;
-    fi
-done
-
-rm -rf /opt/apps/widget/exec/*
-touch /opt/apps/widget/plugin-installation-required
-
+wrt_commons_create_clean_db.sh
+if [ -e ${PLUGINS_INSTALLATION_REQUIRED_PATH} ] && [ -d ${PLUGINS_INSTALLATION_REQUIRED_PATH} ]
+then
+    touch ${PLUGINS_INSTALLATION_REQUIRED_PATH}${PLUGINS_INSTALLATION_REQUIRED}
+fi

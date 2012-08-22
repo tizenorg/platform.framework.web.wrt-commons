@@ -29,41 +29,6 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-void GlobalDAO::AddDefferedWidgetPackageInstallation(const DPL::String &path)
-{
-    LogDebug("Adding widget package as defered. Path: " << path);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        DefferedWidgetPackageInstallation::Row row;
-        row.Set_path(path);
-
-        WRT_DB_INSERT(insert, DefferedWidgetPackageInstallation, &WrtDatabase::interface())
-        insert->Values(row);
-        insert->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to add defered widget package");
-    }
-}
-
-void GlobalDAO::RemoveDefferedWidgetPackageInstallation(const DPL::String &path)
-{
-    LogDebug("Remove widget package from differed list. Path: " << path);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_DELETE(del, DefferedWidgetPackageInstallation, &WrtDatabase::interface())
-        del->Where(Equals<DefferedWidgetPackageInstallation::path>(path));
-        del->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to remove defered widget package");
-    }
-}
-
 void GlobalDAO::SetDeveloperMode(bool mode)
 {
     LogDebug("updating Developer mode to:" << mode);
@@ -229,6 +194,25 @@ void GlobalDAO::RemoveWhiteURI(const std::string &uri)
     } Catch(DPL::DB::SqlConnection::Exception::Base) {
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
                    "Failed to removed white URI from AdultBlackList");
+    }
+}
+
+void GlobalDAO::SetCookieSharingMode(bool mode)
+{
+    LogDebug("updating Cookie Sharing mode to:" << mode);
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        GlobalProperties::Row row;
+        row.Set_cookie_sharing_mode(mode);
+
+        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
+        update->Values(row);
+        update->Execute();
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
+                   "Failed to update Cookie Sharing Mode");
     }
 }
 

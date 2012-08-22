@@ -89,6 +89,11 @@ Thread::~Thread()
     m_eventList.clear();
 }
 
+bool Thread::IsMainThread()
+{
+    return (pthread_equal(pthread_self(), g_mainThread));
+}
+
 Thread *Thread::GetCurrentThread()
 {
     if (pthread_equal(pthread_self(), g_mainThread))

@@ -381,8 +381,12 @@ public:
         enum Option
         {
             RO = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READONLY,
-            RW =
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE
+            /**
+             *TODO: please remove CREATE option from RW flag when all places
+             *      that need that switched do CRW
+             */
+            RW = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            CRW = RW | SQLITE_OPEN_CREATE,
         };
     };
 

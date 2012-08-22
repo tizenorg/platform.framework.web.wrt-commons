@@ -19,8 +19,13 @@
  * @version     1.0
  * @brief       This file is the implementation file of zip input
  */
+#include <iomanip>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <dpl/zip_input.h>
-#include <dpl/file_input_mapping.h>
+#include <dpl/scoped_close.h>
 #include <dpl/binary_queue.h>
 #include <dpl/scoped_free.h>
 #include <dpl/scoped_ptr.h>
@@ -87,7 +92,9 @@ public:
 class Device
 {
 private:
-    DPL::ScopedPtr<FileInputMapping> m_fileMapping;
+    int m_handle;
+    off64_t m_size; // file mapping size
+    unsigned char *m_address; // mapping base address
 
     struct File
     {
@@ -104,30 +111,75 @@ private:
 public:
     Device(const std::string &fileName)
     {
-        Try
-        {
-            LogPedantic("Creating file mapping");
-            m_fileMapping.Reset(new FileInputMapping(fileName));
-        }
-        Catch (FileInputMapping::Exception::Base)
-        {
-            LogPedantic("Failed to create file mapping");
+        LogPedantic("Creating file mapping");
+        // Open device and map it to user space
+        int file = TEMP_FAILURE_RETRY(open(fileName.c_str(), O_RDONLY));
 
-            ReThrowMsg(ZipInput::Exception::OpenFailed,
-                       "Failed to open zip file mapping");
+        if (file == -1)
+        {
+            int error = errno;
+            ThrowMsg(ZipInput::Exception::OpenFailed,
+                     "Failed to open file. errno = " << error);
         }
 
-        LogPedantic("File mapping created");
+        // Scoped close on file
+        ScopedClose scopedClose(file);
+
+        // Calculate file size
+        off64_t size = lseek64(file, 0, SEEK_END);
+
+        if (size == static_cast<off64_t>(-1))
+        {
+            int error = errno;
+            ThrowMsg(ZipInput::Exception::OpenFailed,
+                     "Failed to seek file. errno = " << error);
+        }
+
+        // Map file to usespace
+        void *address = mmap(0, static_cast<size_t>(size),
+                             PROT_READ, MAP_SHARED, file, 0);
+
+        if (address == MAP_FAILED)
+        {
+            int error = errno;
+            ThrowMsg(ZipInput::Exception::OpenFailed,
+                     "Failed to map file. errno = " << error);
+        }
+
+        // Release scoped close
+        m_handle = scopedClose.Release();
+
+        // Save mapped up address
+        m_size = size;
+        m_address = static_cast<unsigned char *>(address);
+
+        LogPedantic("Created file mapping: " << fileName <<
+                    " of size: " << m_size <<
+                    " at address: " << std::hex << static_cast<void *>(m_address));
+    }
+
+    ~Device()
+    {
+        // Close mapping
+        if (munmap(m_address, static_cast<size_t>(m_size)) == -1)
+        {
+            int error = errno;
+            LogPedantic("Failed to munmap file. errno = " << error);
+        }
+
+        // Close file descriptor
+        if (close(m_handle) == -1)
+        {
+            int error = errno;
+            LogPedantic("Failed to close file. errno = " << error);
+        }
     }
 
     // zlib_filefunc64_def interface: files
     static voidpf ZCALLBACK open64_file(voidpf opaque,
-                                        const void* filename,
-                                        int mode)
+                                        const void* /*filename*/,
+                                        int /*mode*/)
     {
-        (void)filename;
-        (void)mode;
-
         Device *device = static_cast<Device *>(opaque);
 
         // Open file for master device
@@ -143,13 +195,13 @@ public:
         File *deviceFile = static_cast<File *>(pstream);
 
         // Check if offset is out of bounds
-        if (deviceFile->offset >= device->m_fileMapping->GetSize())
+        if (deviceFile->offset >= device->m_size)
         {
             LogPedantic("Device: read offset out of bounds");
             return -1;
         }
 
-        off64_t bytesLeft = device->m_fileMapping->GetSize() -
+        off64_t bytesLeft = device->m_size -
                             deviceFile->offset;
 
         off64_t bytesToRead;
@@ -162,7 +214,7 @@ public:
 
         // Do copy
         memcpy(buf,
-               device->m_fileMapping->GetAddress() + deviceFile->offset,
+               device->m_address + deviceFile->offset,
                static_cast<size_t>(bytesToRead));
 
         // Increment file offset
@@ -172,25 +224,18 @@ public:
         return static_cast<uLong>(bytesToRead);
     }
 
-    static uLong ZCALLBACK write_file(voidpf opaque,
-                                      voidpf stream,
-                                      const void* buf,
-                                      uLong size)
+    static uLong ZCALLBACK write_file(voidpf /*opaque*/,
+                                      voidpf /*stream*/,
+                                      const void* /*buf*/,
+                                      uLong /*size*/)
     {
-        (void)opaque;
-        (void)stream;
-        (void)buf;
-        (void)size;
-
         // Not supported by device
         LogPedantic("Unsupported function called!");
         return -1;
     }
 
-    static int ZCALLBACK close_file(voidpf opaque,
-                                    voidpf stream)
+    static int ZCALLBACK close_file(voidpf /*opaque*/, voidpf stream)
     {
-        (void)opaque;
         File *deviceFile = static_cast<File *>(stream);
 
         // Delete file
@@ -200,20 +245,14 @@ public:
         return 0;
     }
 
-    static int ZCALLBACK testerror_file(voidpf opaque,
-                                        voidpf stream)
+    static int ZCALLBACK testerror_file(voidpf /*opaque*/, voidpf /*stream*/)
     {
-        (void)opaque;
-        (void)stream;
-
         // No errors
         return 0;
     }
 
-    static ZPOS64_T ZCALLBACK tell64_file(voidpf opaque,
-                                          voidpf stream)
+    static ZPOS64_T ZCALLBACK tell64_file(voidpf /*opaque*/, voidpf stream)
     {
-        (void)opaque;
         File *deviceFile = static_cast<File *>(stream);
 
         return static_cast<ZPOS64_T>(deviceFile->offset);
@@ -241,7 +280,7 @@ public:
 
             case ZLIB_FILEFUNC_SEEK_END:
                 deviceFile->offset =
-                    device->m_fileMapping->GetSize() -
+                    device->m_size -
                     static_cast<off64_t>(offset);
 
                 break;
@@ -414,25 +453,8 @@ void ZipInput::ReadInfos(void *masterFile)
                 ),
                 std::string(fileName.Get()),
                 std::string(fileComment.Get()),
-                static_cast<unsigned long>(fileInfo.version),
-                static_cast<unsigned long>(fileInfo.version_needed),
-                static_cast<unsigned long>(fileInfo.flag),
-                static_cast<unsigned long>(fileInfo.compression_method),
-                static_cast<unsigned long>(fileInfo.dosDate),
-                static_cast<unsigned long>(fileInfo.crc),
                 static_cast<off64_t>(fileInfo.compressed_size),
-                static_cast<off64_t>(fileInfo.uncompressed_size),
-                static_cast<unsigned long>(fileInfo.disk_num_start),
-                static_cast<unsigned long>(fileInfo.internal_fa),
-                static_cast<unsigned long>(fileInfo.external_fa),
-                FileDateTime(
-                    fileInfo.tmu_date.tm_sec,
-                    fileInfo.tmu_date.tm_min,
-                    fileInfo.tmu_date.tm_hour,
-                    fileInfo.tmu_date.tm_mday,
-                    fileInfo.tmu_date.tm_mon,
-                    fileInfo.tmu_date.tm_year
-                )
+                static_cast<off64_t>(fileInfo.uncompressed_size)
             )
         );
 
@@ -474,11 +496,6 @@ ZipInput::const_reverse_iterator ZipInput::rend() const
 ZipInput::size_type ZipInput::size() const
 {
     return m_fileInfos.size();
-}
-
-ZipInput::File *ZipInput::OpenFile(FileHandle handle)
-{
-    return new File(m_device, handle);
 }
 
 ZipInput::File *ZipInput::OpenFile(const std::string &fileName)

@@ -29,6 +29,9 @@
 #include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <list>
 #include <string>
+#include <sys/time.h>
+#include <ctime>
+#include <cstdlib>
 #include <dpl/exception.h>
 #include <dpl/db/orm.h>
 #include <dpl/wrt-dao-ro/config_parser_data.h>
@@ -60,13 +63,31 @@ class WidgetDAO : public WidgetDAOReadOnly
      *
      * @see WidgetRegisterInfo
      * @see UnRegisterWidget()
+     * @param[in] widgetHandle  Widget ID that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information needed to be registered.
-     * @return widget's app id issued by app manager; 0 represents a failure during register.
+     * @param[in] wacSecurity   Widget's security certificates.
      */
+    static void registerWidget(
+            const DbWidgetHandle& widgetHandle,
+            const WidgetRegisterInfo &pWidgetRegisterInfo,
+            const IWacSecurity &wacSecurity);
+
     static DbWidgetHandle registerWidget(
             const WidgetRegisterInfo &pWidgetRegisterInfo,
-            const IWacSecurity &wacSecurity,
-            const LanguageTagsList& languageTags);
+            const IWacSecurity &wacSecurity) __attribute__((deprecated))
+    {
+        //make it more precise due to very fast tests
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        srand(time(NULL) + tv.tv_usec);
+        DbWidgetHandle widgetHandle;
+        do {
+            widgetHandle = rand();
+        } while (isWidgetInstalled(widgetHandle));
+
+        registerWidget(widgetHandle, pWidgetRegisterInfo, wacSecurity);
+        return widgetHandle;
+    }
 
     /**
      * This method removes a widget's information from EmDB.
@@ -99,7 +120,8 @@ class WidgetDAO : public WidgetDAOReadOnly
 
   private:
     //Methods used during widget registering
-    static DbWidgetHandle registerWidgetInfo(
+    static void registerWidgetInfo(
+            const DbWidgetHandle& widgetHandle,
             const WidgetRegisterInfo &regInfo,
             const IWacSecurity &wacSecurity);
     static void registerWidgetExtendedInfo(
@@ -108,10 +130,6 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetLocalizedInfo(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
-    static void registerWidgetUserAgentLocales(
-            DbWidgetHandle widgetHandle,
-            const WidgetRegisterInfo &rInf,
-            const LanguageTagsList& languageTags);
     static void registerWidgetIcons(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);

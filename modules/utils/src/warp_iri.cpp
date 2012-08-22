@@ -22,7 +22,7 @@
 #include <list>
 #include <set>
 #include <string>
-#include <warp_iri.h>
+#include <dpl/utils/warp_iri.h>
 #include <dpl/string.h>
 #include <dpl/auto_ptr.h>
 #include <dpl/foreach.h>

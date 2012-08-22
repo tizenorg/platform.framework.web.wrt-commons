@@ -55,11 +55,6 @@ class PluginMetafileData
     }
 
     std::string m_libraryName;
-    std::string m_featuresInstallURI;
-    std::string m_featuresKeyCN;
-    std::string m_featuresRootCN;
-    std::string m_featuresRootFingerprint;
-
     FeatureContainer m_featureContainer;
 };
 
@@ -85,6 +80,13 @@ class PluginObjectsDAO
  * FindWidgetModel routine.
  */
 typedef int DbWidgetHandle;
+
+/**
+ * Value of invalid widget handle
+ */
+enum {
+    INVALID_WIDGET_HANDLE = -1
+};
 
 /**
  * @brief Structure to hold the information of widget's size
@@ -217,7 +219,6 @@ typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 enum AppType
 {
     APP_TYPE_UNKNOWN = 0, // unknown
-    APP_TYPE_WAC10, // WAC 1.0
     APP_TYPE_WAC20, // WAC 2.0
     APP_TYPE_TIZENWEBAPP, // Tizen webapp
 };
@@ -242,7 +243,6 @@ class WidgetType
         switch (appType) {
 #define X(x) case x: return #x;
         X(APP_TYPE_UNKNOWN)
-        X(APP_TYPE_WAC10)
         X(APP_TYPE_WAC20)
         X(APP_TYPE_TIZENWEBAPP)
 #undef X
@@ -252,6 +252,49 @@ class WidgetType
     }
 
     AppType appType;
+};
+
+/**
+ * @brief Package specific type
+ *
+ * Package type describes belowed in Tizen webapp, C++ service App
+ */
+enum PackagingType
+{
+    PKG_TYPE_UNKNOWN = 0, // unknown
+    PKG_TYPE_TIZEN_WEBAPP, // Tizen webapp
+    PKG_TYPE_TIZEN_WITHSVCAPP, // Tizen webapp with C++ service app
+};
+
+class PkgType
+{
+  public:
+    PkgType()
+    :pkgType(PKG_TYPE_UNKNOWN)
+    {
+    }
+    PkgType(const PackagingType type)
+    :pkgType(type)
+    {
+    }
+    bool operator== (const PackagingType& other) const
+    {
+        return pkgType == other;
+    }
+    std::string getPkgtypeToString()
+    {
+        switch (pkgType) {
+#define X(x) case x: return #x;
+        X(PKG_TYPE_UNKNOWN)
+        X(PKG_TYPE_TIZEN_WEBAPP)
+        X(PKG_TYPE_TIZEN_WITHSVCAPP)
+#undef X
+        default:
+            return "UNKNOWN";
+        }
+    }
+
+    PackagingType pkgType;
 };
 
 } // namespace WrtDB

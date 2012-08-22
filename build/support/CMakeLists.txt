@@ -12,24 +12,15 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-#
 # @file        CMakeLists.txt
 # @author      Lukasz Marek (l.marek@samsung.com)
 # @version     1.0
 # @brief
 #
 
-include(core/config.cmake)
-include(dbus/config.cmake)
-include(db/config.cmake)
-include(event/config.cmake)
-include(socket/config.cmake)
-include(rpc/config.cmake)
-include(test/config.cmake)
-include(log/config.cmake)
-ADD_SUBDIRECTORY(widget_dao)
-ADD_SUBDIRECTORY(auto_save_dao)
-include(popup/config.cmake)
-include(utils/config.cmake)
-include(localization/config.cmake)
-include(support/config.cmake)
+# Install headers
+INSTALL(FILES ${DPL_WRT_ENGINE_HEADERS}
+        DESTINATION include/dpl-efl/wrt-commons)
+
+# Install pkgconfig script
+configure_and_install_pkg(wrt-plugins-types.pc)

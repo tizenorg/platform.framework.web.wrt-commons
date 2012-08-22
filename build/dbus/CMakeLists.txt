@@ -22,6 +22,7 @@
 INCLUDE(FindPkgConfig)
 PKG_CHECK_MODULES(SYS_EFL_DBUS
     dbus-1
+    gio-2.0
     REQUIRED)
 
 # Add core include directories

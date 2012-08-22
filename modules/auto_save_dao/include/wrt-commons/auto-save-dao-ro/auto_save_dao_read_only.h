@@ -27,6 +27,7 @@
 
 #include <dpl/string.h>
 #include <dpl/exception.h>
+#include <dpl/optional.h>
 #include <wrt-commons/auto-save-dao/common_dao_types.h>
 
 namespace AutoSaveDB {
@@ -55,7 +56,7 @@ class AutoSaveDAOReadOnly
     /**
      * This method gets Autofill for Webkit
      */
-    static DPL::Optional<AutoSaveData> getAutoSaveIdPasswd(
+    static SubmitFormData getAutoSaveSubmitFormData(
             const DPL::String &url);
 
 };

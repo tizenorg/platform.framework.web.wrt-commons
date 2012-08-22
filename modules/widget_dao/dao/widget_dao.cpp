@@ -124,9 +124,10 @@ void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
 }
 
-DbWidgetHandle WidgetDAO::registerWidget(const WidgetRegisterInfo &widgetRegInfo,
-                                       const IWacSecurity &wacSecurity,
-                                       const LanguageTagsList& languageTags)
+void WidgetDAO::registerWidget(
+        const DbWidgetHandle& widgetHandle,
+        const WidgetRegisterInfo &widgetRegInfo,
+        const IWacSecurity &wacSecurity)
 {
     LogDebug("Registering widget");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -135,15 +136,11 @@ DbWidgetHandle WidgetDAO::registerWidget(const WidgetRegisterInfo &widgetRegInfo
 
         //Register into WidgetInfo has to be first
         //as all other tables depend upon that
-        DbWidgetHandle widgetHandle =
-                registerWidgetInfo(widgetRegInfo, wacSecurity);
+        registerWidgetInfo(widgetHandle, widgetRegInfo, wacSecurity);
 
         registerWidgetExtendedInfo(widgetHandle, widgetRegInfo);
 
         registerWidgetLocalizedInfo(widgetHandle, widgetRegInfo);
-
-        registerWidgetUserAgentLocales(
-                widgetHandle, widgetRegInfo, languageTags);
 
         registerWidgetIcons(widgetHandle, widgetRegInfo);
 
@@ -168,8 +165,6 @@ DbWidgetHandle WidgetDAO::registerWidget(const WidgetRegisterInfo &widgetRegInfo
         registerAppService(widgetHandle, widgetRegInfo);
 
         transaction.Commit();
-
-        return widgetHandle;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
 }
@@ -196,12 +191,16 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_factory_widget(regInfo.isFactoryWidget);
     row.Set_test_widget(regInfo.isTestWidget);
     row.Set_install_time(regInfo.installedTime);
+    row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
+
 
     DO_INSERT(row, WidgetExtendedInfo)
 }
 
-DbWidgetHandle WidgetDAO::registerWidgetInfo(const WidgetRegisterInfo &regInfo,
-                                   const IWacSecurity &wacSecurity)
+void WidgetDAO::registerWidgetInfo(
+        const DbWidgetHandle& widgetHandle,
+        const WidgetRegisterInfo &regInfo,
+        const IWacSecurity &wacSecurity)
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
@@ -211,6 +210,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(const WidgetRegisterInfo &regInfo,
     // Because of that, "Optional" is not used there
 
     WidgetInfo::Row row;
+    row.Set_app_id(widgetHandle);
     row.Set_widget_type(regInfo.type.appType);
     row.Set_widget_id(widgetConfigurationInfo.widget_id);
     row.Set_defaultlocale(widgetConfigurationInfo.defaultlocale);
@@ -227,20 +227,23 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(const WidgetRegisterInfo &regInfo,
     row.Set_distributor_signed(wacSecurity.isDistributorSigned());
     {
         std::stringstream tmp;
-        tmp << widgetConfigurationInfo.minVersionRequired;
+        tmp << regInfo.minVersion;
         row.Set_min_version(DPL::FromUTF8String(tmp.str()));
     }
     row.Set_back_supported(widgetConfigurationInfo.backSupported);
     row.Set_access_network(widgetConfigurationInfo.accessNetwork);
     row.Set_pkgname(regInfo.pkgname);
+    row.Set_pkg_type(regInfo.pType.pkgType);
 
-    wrt::WidgetInfo::app_id::ColumnType appID;
+    Try
     {
-        WRT_DB_INSERT(insert, WidgetInfo, &WrtDatabase::interface())
-        insert->Values(row);
-        appID = insert->Execute();
+        DO_INSERT(row, WidgetInfo);
     }
-    return appID;
+    Catch(DPL::DB::SqlConnection::Exception::Base)
+    {
+        ReThrowMsg(WidgetDAO::Exception::DatabaseError,
+                   "Failed to register widget info.");
+    }
 }
 
 void WidgetDAO::registerWidgetLocalizedInfo(DbWidgetHandle widgetHandle,
@@ -267,25 +270,6 @@ void WidgetDAO::registerWidgetLocalizedInfo(DbWidgetHandle widgetHandle,
         row.Set_widget_license_href(data.licenseHref);
 
         DO_INSERT(row, LocalizedWidgetInfo)
-    }
-}
-
-void WidgetDAO::registerWidgetUserAgentLocales(
-        DbWidgetHandle widgetHandle,
-        const WidgetRegisterInfo &/*regInfo*/,
-        const LanguageTagsList& languageTags)
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-
-
-    FOREACH(i, languageTags)
-    {
-        wrt::WidgetUserAgentLocales::Row row;
-        row.Set_app_id(widgetHandle);
-        row.Set_language_tag(*i);
-
-        DO_INSERT(row, wrt::WidgetUserAgentLocales)
     }
 }
 

@@ -29,7 +29,7 @@
 
 #include <dpl/exception.h>
 #include <dpl/errno_string.h>
-#include <file_utils.h>
+#include <dpl/utils/file_utils.h>
 
 #include <dpl/wrt-dao-ro/path_builder.h>
 

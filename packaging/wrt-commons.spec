@@ -1,7 +1,7 @@
-#sbs-git:public/pkgs/w/wrt-commons wrt-commons 0.2.25
+#sbs-git:slp/pkgs/w/wrt-commons wrt-commons 0.2.53
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.25
+Version:    0.2.53
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -14,13 +14,13 @@ BuildRequires:  pkgconfig(libssl)
 BuildRequires:  pkgconfig(sqlite3)
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(gio-2.0)
 BuildRequires:  pkgconfig(db-util)
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(libpcrecpp)
 BuildRequires:  pkgconfig(icu-i18n)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
-BuildRequires:  pkgconfig(cert-svc)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
 
@@ -40,9 +40,11 @@ Wrt common library development headers
 
 %build
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
+
 cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
-        -DCMAKE_INSTALL_PREFIX=%{_prefix}
+        -DCMAKE_INSTALL_PREFIX=%{_prefix} \
+        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}
 make %{?jobs:-j%jobs}
 
 %install
@@ -52,6 +54,12 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 
 %post
+mkdir -p /opt/apps/widget/system
+mkdir -p /opt/apps/widget/user
+mkdir -p /opt/apps/widget/exec
+mkdir -p /opt/apps/widget/data/Public
+mkdir -p /usr/lib/wrt-plugins
+
 if [ -z ${2} ]; then
     echo "This is new install of wrt-commons"
     echo "Calling /usr/bin/wrt_commons_reset_db.sh"

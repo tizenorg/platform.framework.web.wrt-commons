@@ -41,9 +41,8 @@ class AutoSaveDAO : public AutoSaveDAOReadOnly
     /**
      * This method sets Autofill for Webkit
      */
-    static void setAutoSaveIdPasswd(
-            const DPL::String &url, const AutoSaveData &saveData);
-
+    static void setAutoSaveSubmitFormData(
+            const DPL::String& url, const SubmitFormData &submitFormData);
 };
 
 } // namespace AutoSaveDB

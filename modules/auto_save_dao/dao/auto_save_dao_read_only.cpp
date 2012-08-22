@@ -25,6 +25,7 @@
 #include <wrt-commons/auto-save-dao-ro/auto_save_dao_read_only.h>
 #include <wrt-commons/auto-save-dao/AutoSaveDatabase.h>
 #include <orm_generator_autosave.h>
+#include <dpl/foreach.h>
 
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::autosave;
@@ -61,23 +62,23 @@ void AutoSaveDAOReadOnly::detachDatabase(void)
     m_autoSavedbInterface.DetachFromThread();
 }
 
-DPL::Optional<AutoSaveData>
-        AutoSaveDAOReadOnly::getAutoSaveIdPasswd(const DPL::String &url)
+SubmitFormData AutoSaveDAOReadOnly::getAutoSaveSubmitFormData(
+    const DPL::String &url)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        AUTOSAVE_DB_SELECT(select, AutoSaveIdPasswd, &m_autoSavedbInterface);
-        select->Where(Equals<AutoSaveIdPasswd::address>(url));
-        AutoSaveIdPasswd::Select::RowList rows = select->GetRowList();
+        AUTOSAVE_DB_SELECT(select, AutoSaveSubmitFormElement, &m_autoSavedbInterface);
+        select->Where(Equals<AutoSaveSubmitFormElement::address>(url));
+        AutoSaveSubmitFormElement::Select::RowList rows = select->GetRowList();
 
-        if (rows.empty()) {
-            return DPL::Optional<AutoSaveData>::Null;
+        SubmitFormData submitFormData;
+        FOREACH(it, rows) {
+            SubmitFormElement element;
+            element.key = it->Get_key();
+            element.value = it->Get_value();
+            submitFormData.push_back(element);
         }
-
-        AutoSaveData saveData;
-        saveData.userId = rows.front().Get_userId();
-        saveData.passwd = rows.front().Get_passwd();
-        return saveData;
+        return submitFormData;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get autosave data string")
 }

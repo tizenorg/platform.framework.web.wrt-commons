@@ -73,7 +73,7 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetWidgetSrcPath()
 {
-    return "res/src";
+    return "res/wgt";
 }
 
 /**
@@ -138,7 +138,7 @@ inline const char* GetWrtClientExec()
  */
 inline const char* GetUserWidgetDesktopIconPath()
 {
-    return "res/icons/default/small";
+    return "/opt/share/icons/default/small";
 }
 
 /**
@@ -193,6 +193,22 @@ inline const char* GetPluginMetafileName()
 }
 
 /**
+ * Plugin .so prefix
+ */
+inline const char* GetPluginPrefix()
+{
+    return "libwrt-plugins-";
+}
+
+/**
+ * Plugin .so suffix
+ */
+inline const char* GetPluginSuffix()
+{
+    return ".so";
+}
+
+/**
  * WRT device plugins installation required
  * File which indicate that new plugins
  * are available and should be installed
@@ -220,8 +236,6 @@ inline const char* GetVCoreDatabaseFilePath()
 {
     return "/opt/dbspace/.vcore.db";
 }
-bool IsOCSPEnabled();
-bool IsCRLEnabled();
 
 /**
  * widgets cookie database file name
@@ -247,6 +261,21 @@ inline const char* GetTmpDirPath()
 inline const char* GetWACVersion()
 {
     return "2.0";
+}
+
+inline const char* GetTizenVersion()
+{
+    return "1.0";
+}
+
+inline const char* GetShareDirectoryPath()
+{
+    return "/opt/share";
+}
+
+inline const char* GetTempInstallInfoPath()
+{
+    return "/opt/apps/widget/temp_info";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB

@@ -30,7 +30,6 @@
 #include <string>
 #include <dpl/optional.h>
 #include <dpl/popup/popup_object.h>
-#include <dpl/event/nested_loop.h>
 
 namespace DPL {
 namespace Popup {
@@ -40,7 +39,6 @@ struct AnswerCallbackData
     int buttonAnswer;
     DPL::Optional<std::string> password;
     bool chackState;
-    DPL::Event::LoopHandle loopHandle;
 };
 
 class PopupManager;

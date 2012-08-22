@@ -58,13 +58,6 @@ class GlobalDAOReadOnly
 
     static bool IsValidSubTag(const DPL::String& tag, int type);
 
-    /**
-     * Retrieve list of deffered widget packages to be installed
-     *
-     * @return Widget package list
-     */
-    static WidgetPackageList GetDefferedWidgetPackageInstallationList();
-
     static bool GetDeveloperMode();
 
     static bool GetSecureByDefault();
@@ -76,6 +69,8 @@ class GlobalDAOReadOnly
     static std::string getComplianceFakeMeid();
 
     static WidgetAccessInfoList GetWhiteURIList();
+
+    static bool GetCookieSharingMode();
 
     enum NetworkAccessMode
     {

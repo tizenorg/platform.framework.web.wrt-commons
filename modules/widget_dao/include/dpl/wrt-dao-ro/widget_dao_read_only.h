@@ -154,7 +154,8 @@ struct WidgetRegisterInfo
         signatureType(SIGNATURE_TYPE_UNIDENTIFIED),
         isFactoryWidget(0),
         isTestWidget(0),
-        configInfo()
+        configInfo(),
+        pType(PKG_TYPE_UNKNOWN)
     {
     }
 
@@ -171,6 +172,7 @@ struct WidgetRegisterInfo
     LocalizationData localizationData;
     DPL::OptionalString pkgname;
     time_t installedTime;
+    PkgType pType;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -284,6 +286,7 @@ class WidgetDAOReadOnly
      * @param[in] widgetHandle application id of widget.
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
+    WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
 
     /**
      * Destructor
@@ -685,6 +688,12 @@ class WidgetDAOReadOnly
     static bool isWidgetInstalled(DbWidgetHandle handle);
     static bool isWidgetInstalled(DPL::String pkgName);
 
+    /* This method get path of the splash image.
+     *
+     * @return path of the widget's splash image
+     */
+    DPL::OptionalString getSplashImgSrc() const;
+
     CertificateChainList getWidgetCertificate() const;
 
     void getWidgetSettings(WidgetSettings& outWidgetSettings) const;
@@ -697,6 +706,16 @@ class WidgetDAOReadOnly
      */
     void getAppServiceList(
             WidgetApplicationServiceList& outAppServiceList) const;
+
+    /**
+     * This method returns the type of the package.
+     *
+     * @return PkgType
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching
+                                                records in DB table.
+     */
+    PkgType getPkgType() const;
 };
 
 } // namespace WrtDB

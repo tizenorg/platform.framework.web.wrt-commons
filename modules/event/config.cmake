@@ -29,7 +29,6 @@ SET(DPL_EVENT_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/event/src/main_event_dispatcher.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/thread_event_dispatcher.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/inter_context_delegate.cpp
-    ${PROJECT_SOURCE_DIR}/modules/event/src/nested_loop.cpp
     ${PROJECT_SOURCE_DIR}/modules/event/src/model.cpp
     PARENT_SCOPE
 )
@@ -43,7 +42,6 @@ SET(DPL_EVENT_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/generic_event_call.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/main_event_dispatcher.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/thread_event_dispatcher.h
-    ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/nested_loop.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/inter_context_delegate.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/model.h
     ${PROJECT_SOURCE_DIR}/modules/event/include/dpl/event/property.h

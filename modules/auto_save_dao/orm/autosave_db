@@ -2,10 +2,10 @@ SQL(
     BEGIN TRANSACTION;
 )
 
-CREATE_TABLE(AutoSaveIdPasswd)
-    COLUMN_NOT_NULL(address,    VARCHAR(256), unique)
-    COLUMN_NOT_NULL(userId,     VARCHAR(128),)
-    COLUMN_NOT_NULL(passwd,     VARCHAR(128),)
+CREATE_TABLE(AutoSaveSubmitFormElement)
+    COLUMN_NOT_NULL(address,    VARCHAR(256))
+    COLUMN_NOT_NULL(key,        TEXT,)
+    COLUMN_NOT_NULL(value,      TEXT,)
 CREATE_TABLE_END()
 
 SQL(

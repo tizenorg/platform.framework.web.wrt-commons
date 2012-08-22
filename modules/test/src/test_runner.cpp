@@ -33,6 +33,8 @@
 #include <memory.h>
 #include <libgen.h>
 #include <cstring>
+#include <cstdlib>
+#include <dpl/utils/wrt_global_settings.h>
 
 #include <dpl/singleton_impl.h>
 IMPLEMENT_SINGLETON(DPL::Test::TestRunner)

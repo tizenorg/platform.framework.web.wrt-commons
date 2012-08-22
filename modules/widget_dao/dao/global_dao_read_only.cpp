@@ -48,21 +48,6 @@ bool GlobalDAOReadOnly::GetDeveloperMode()
     }
 }
 
-WidgetPackageList GlobalDAOReadOnly::GetDefferedWidgetPackageInstallationList()
-{
-    LogDebug("Getting widget packages list defered for installation");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, DefferedWidgetPackageInstallation, &WrtDatabase::interface())
-        return select->GetValueList<DefferedWidgetPackageInstallation::path>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get defered widget packages list");
-    }
-}
-
 bool GlobalDAOReadOnly::GetSecureByDefault()
 {
     using namespace DPL::DB::ORM;
@@ -259,6 +244,21 @@ WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
     } Catch(DPL::DB::SqlConnection::Exception::Base) {
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get whiteURI list");
+    }
+}
+
+bool GlobalDAOReadOnly::GetCookieSharingMode()
+{
+    LogDebug("Getting Cookie Sharing mode");
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
+        return select->GetSingleValue<GlobalProperties::cookie_sharing_mode>();
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get Cookie Sharing mode");
     }
 }
 

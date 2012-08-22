@@ -598,12 +598,10 @@ void SqlConnection::Connect(const std::string &address,
         LogPedantic("Already connected.");
         return;
     }
-
     LogPedantic("Connecting to DB: " << address << "...");
 
     // Connect to database
     int result;
-
     if (type & Flag::UseLucene) {
         result = db_util_open_with_options(
             address.c_str(),
@@ -737,6 +735,12 @@ void SqlConnection::ExecCommand(const char *format, ...)
     {
         LogPedantic("Cannot execute command. Not connected to DB!");
         return;
+    }
+
+    if (format == NULL)
+    {
+        LogPedantic("Null query!");
+        ThrowMsg(Exception::SyntaxError, "Null statement");
     }
 
     char *rawBuffer;

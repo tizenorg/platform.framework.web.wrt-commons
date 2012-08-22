@@ -33,7 +33,6 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/wrt_db.sql
 INCLUDE(FindPkgConfig)
 
 PKG_CHECK_MODULES(WRT_DAO_DEPS
-    cert-svc
     ecore
     appcore-efl
     libxml-2.0
@@ -45,7 +44,6 @@ set(WRT_DAO_RO_SOURCES
     dao/common_dao_types.cpp
     dao/feature_dao_read_only.cpp
     dao/global_dao_read_only.cpp
-    dao/global_config.cpp
     dao/path_builder.cpp
     dao/plugin_dao_read_only.cpp
     dao/property_dao_read_only.cpp
@@ -61,8 +59,6 @@ set(WRT_DAO_RW_SOURCES
     dao/property_dao.cpp
     dao/widget_dao.cpp
 )
-
-ADD_DEFINITIONS("-DSEPARATED_SINGLETON_IMPLEMENTATION")
 
 SET(WRT_DAO_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/modules/widget_dao/include

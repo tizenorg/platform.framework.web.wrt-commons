@@ -67,14 +67,6 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
             row.Set_InstallationState(INSTALLATION_IN_PROGRESS);
             row.Set_PluginLibraryPath(
                 DPL::FromUTF8String(pluginPath));
-            row.Set_InstallURI(
-                DPL::FromUTF8String(metafile.m_featuresInstallURI));
-            row.Set_KeyCN(
-                DPL::FromUTF8String(metafile.m_featuresKeyCN));
-            row.Set_RootKeyCN(
-                DPL::FromUTF8String(metafile.m_featuresRootCN));
-            row.Set_RootKeyFingerprint(
-                DPL::FromUTF8String(metafile.m_featuresRootFingerprint));
 
             WRT_DB_INSERT(insert, PluginProperties, &WrtDatabase::interface())
             insert->Values(row);

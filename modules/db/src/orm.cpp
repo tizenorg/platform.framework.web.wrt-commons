@@ -32,6 +32,7 @@ const char LessThan[] = "<";
 const char And[] = "AND";
 const char Or[] = "OR";
 const char Is[] = "IS";
+const char In[] = "IN";
 }
 
 template<>

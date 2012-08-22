@@ -48,6 +48,8 @@ class FeatureDAOReadOnly
     };
 
     typedef std::set<std::string> DeviceCapabilitiesList;
+    typedef std::multimap<FeatureHandle, std::string> DeviceCapabilitiesMap;
+    typedef std::map<FeatureHandle, std::string> NameMap;
 
     static bool isDeviceCapabilityInstalled(const std::string &deviceCapName);
 
@@ -62,15 +64,14 @@ class FeatureDAOReadOnly
     static FeatureHandleList GetHandleList();
 
     std::string             GetName() const;
-    std::string             GetInstallURI() const;
-    std::string             GetKeyCn() const;
-    std::string             GetRootKey() const;
-    std::string             GetRootKeyFingerprint() const;
     FeatureHandle           GetFeatureHandle() const;
     std::string             GetLibraryPath() const;
     std::string             GetLibraryName() const;
     DeviceCapabilitiesList  GetDeviceCapabilities() const;
     DbPluginHandle          GetPluginHandle() const;
+
+    static NameMap                 GetNames();
+    static DeviceCapabilitiesMap   GetDevCapWithFeatureHandle();
 
   protected:
     FeatureHandle m_featureHandle;

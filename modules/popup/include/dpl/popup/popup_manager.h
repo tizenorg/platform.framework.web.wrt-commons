@@ -30,6 +30,7 @@
 #include <dpl/optional.h>
 #include <dpl/popup/popup.h>
 #include <dpl/popup/popup_renderer.h>
+#include <dpl/log/log.h>
 
 namespace DPL {
 namespace Popup {
@@ -46,7 +47,9 @@ class PopupManager : DPL::Noncopyable
     PopupManager() : m_initialized(false) {}
     ~PopupManager()
     {
-        Assert(!m_initialized);
+        if (m_initialized) {
+            LogError("Destroyed without Deinitialize");
+        }
     }
     void Initialize (PopupRendererPtr creator);
     void Deinitialize();

@@ -1,5 +1,0 @@
-/usr/bin/dpl-test*
-/usr/bin/dpl-dbus-test-service
-/opt/apps/wrt/wrt-commons/tests/*
-/usr/share/dbus-1/services/org.tizen.DBusTestService.service
-/opt/apps/widget/tests/localization/*

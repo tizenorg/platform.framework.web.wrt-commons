@@ -104,10 +104,6 @@ class PluginDAOReadOnly
     PluginInstallationState getInstallationStatus() const;
     std::string  getLibraryPath() const;
     std::string  getLibraryName() const;
-    std::string  getInstallURI() const;
-    std::string  getKeyCn() const;
-    std::string  getRootKey() const;
-    std::string  getRootKeyFingerprint() const;
     PluginHandleSetPtr getLibraryDependencies() const;
 
   private:

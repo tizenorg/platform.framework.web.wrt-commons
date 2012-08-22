@@ -55,6 +55,13 @@ class FeatureModel : public DPL::Event::Model
         PHandle(this, -1)
     {
     }
+
+    void SetData(const std::string& name, const std::set<std::string>& deviceCapabilities, const DbPluginHandle& pluginHandle)
+    {
+        Name.SetWithoutLock(name);
+        DeviceCapabilities.SetWithoutLock(deviceCapabilities);
+        PHandle.SetWithoutLock(pluginHandle);
+    }
 };
 
 typedef DPL::SharedPtr<FeatureModel> FeatureModelPtr;

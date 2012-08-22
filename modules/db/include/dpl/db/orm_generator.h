@@ -70,6 +70,7 @@ namespace ORM {
 #define DECLARE_COLUMN(FIELD, TYPE) \
     struct FIELD { \
         typedef TYPE ColumnType; \
+        static const char* GetTableName() { return GetName(); } \
         static const char* GetColumnName() { return STRINGIFY(FIELD); } \
         static void SetRowField(Row& row, const TYPE& value) { row.Set_##FIELD(value);} \
     };
@@ -269,7 +270,8 @@ namespace ORM {
 
 // Field structure declarations
 
-#define CREATE_TABLE(name) namespace name {
+#define CREATE_TABLE(name) namespace name { \
+    static const char* GetName() { return STRINGIFY(name); }
 #define COLUMN_NOT_NULL(name, type, args...) DECLARE_COLUMN(name, type)
 #define COLUMN(name, type, args...) DECLARE_COLUMN(name, OPTIONAL(type))
 #define CREATE_TABLE_END() }

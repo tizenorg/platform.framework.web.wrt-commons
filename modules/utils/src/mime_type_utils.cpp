@@ -19,7 +19,7 @@
 
 #include <map>
 
-#include <mime_type_utils.h>
+#include <dpl/utils/mime_type_utils.h>
 
 const std::set<DPL::String>& MimeTypeUtils::getMimeTypesSupportedForIcon()
 {

@@ -99,6 +99,11 @@ WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
 {
 }
 
+WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
+    m_widgetHandle(WidgetDAOReadOnly::getHandle(widgetGUID))
+{
+}
+
 WidgetDAOReadOnly::~WidgetDAOReadOnly()
 {
 }
@@ -630,6 +635,31 @@ time_t WidgetDAOReadOnly::getInstallTime() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get widdget install time")
 }
 
+DPL::OptionalString WidgetDAOReadOnly::getSplashImgSrc() const
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
+
+        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
+        if (rows.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. Handle: " << m_widgetHandle);
+        }
+
+        DPL::OptionalString value = rows.front().Get_splash_img_src();
+        if (value.IsNull()) {
+            return DPL::OptionalString::Null;
+        }
+
+        return DPL::OptionalString(getPath() + *value);
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get splash image path")
+}
+
 WidgetDAOReadOnly::WidgetLocalizedIconList WidgetDAOReadOnly::getLocalizedIconList() const
 {
     //TODO check widget existance??
@@ -835,10 +865,14 @@ FingerPrintList WidgetDAOReadOnly::getKeyFingerprints(
         FingerPrintList keys;
         FOREACH(it, rows)
         {
-            DPL::Optional<DPL::String> md5 = it->Get_md5_fingerprint();
-            keys.push_back(md5.IsNull() ? "" : DPL::ToUTF8String(*md5));
             DPL::Optional<DPL::String> sha1 = it->Get_sha1_fingerprint();
-            keys.push_back(sha1.IsNull() ? "" : DPL::ToUTF8String(*sha1));
+            if (!sha1.IsNull()) {
+                keys.push_back(DPL::ToUTF8String(*sha1));
+            }
+            DPL::Optional<DPL::String> md5 = it->Get_md5_fingerprint();
+            if (!md5.IsNull()) {
+                keys.push_back(DPL::ToUTF8String(*md5));
+            }
         }
         return keys;
     }
@@ -1042,6 +1076,13 @@ void WidgetDAOReadOnly::getAppServiceList(
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get access host list")
+}
+
+PkgType WidgetDAOReadOnly::getPkgType() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_pkg_type();
+    return PkgType(static_cast<PackagingType>(*result));
 }
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN

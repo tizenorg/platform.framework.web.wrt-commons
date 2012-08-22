@@ -50,41 +50,6 @@ public:
 
     typedef std::pair<size_t, size_t> FileHandle;
 
-    struct FileDateTime
-    {
-        unsigned int second; //< seconds after the minute - [0,59]
-        unsigned int minute; //< minutes after the hour - [0,59]
-        unsigned int hour;   //< hours since midnight - [0,23]
-        unsigned int day;    //< day of the month - [1,31]
-        unsigned int month;  //< months since January - [0,11]
-        unsigned int year;   //< years - [1980..2044]
-
-        FileDateTime()
-            :   second(0),
-                minute(0),
-                hour(0),
-                day(0),
-                month(0),
-                year(0)
-        {
-        }
-
-        FileDateTime(unsigned int secondArg,
-                     unsigned int minuteArg,
-                     unsigned int hourArg,
-                     unsigned int dayArg,
-                     unsigned int monthArg,
-                     unsigned int yearArg)
-            :   second(secondArg),
-                minute(minuteArg),
-                hour(hourArg),
-                day(dayArg),
-                month(monthArg),
-                year(yearArg)
-        {
-        }
-    };
-
     struct FileInfo
     {
         // File handle
@@ -95,69 +60,28 @@ public:
         std::string comment;
 
         // File information
-        unsigned long version;                //< version made by
-        unsigned long versionNeeded;          //< version needed to extract
-        unsigned long flag;                   //< general purpose bit flag
-        unsigned long compressionMethod;      //< compression method
-        unsigned long dosDate;                //< last mod file date in Dos fmt
-        unsigned long crc;                    //< crc-32
         off64_t       compressedSize;         //< compressed size
         off64_t       uncompressedSize;       //< uncompressed size
-        unsigned long diskNumberStart;        //< disk number start
-        unsigned long internalFileAttributes; //< internal file attributes
-        unsigned long externalFileAttributes; //< external file attributes
-
-        FileDateTime dateTime;
 
         FileInfo()
             : handle(),
               name(),
               comment(),
-              version(0),
-              versionNeeded(0),
-              flag(0),
-              compressionMethod(0),
-              dosDate(0),
-              crc(0),
               compressedSize(0),
-              uncompressedSize(0),
-              diskNumberStart(0),
-              internalFileAttributes(0),
-              externalFileAttributes(0),
-              dateTime()
+              uncompressedSize(0)
         {
         }
 
         FileInfo(const FileHandle &handleArg,
                  const std::string &nameArg,
                  const std::string &commentArg,
-                 unsigned long versionArg,
-                 unsigned long versionNeededArg,
-                 unsigned long flagArg,
-                 unsigned long compressionMethodArg,
-                 unsigned long dosDateArg,
-                 unsigned long crcArg,
                  const off64_t &compressedSizeArg,
-                 const off64_t &uncompressedSizeArg,
-                 unsigned long diskNumberStartArg,
-                 unsigned long internalFileAttributesArg,
-                 unsigned long externalFileAttributesArg,
-                 const FileDateTime &dateTimeArg)
+                 const off64_t &uncompressedSizeArg)
             : handle(handleArg),
               name(nameArg),
               comment(commentArg),
-              version(versionArg),
-              versionNeeded(versionNeededArg),
-              flag(flagArg),
-              compressionMethod(compressionMethodArg),
-              dosDate(dosDateArg),
-              crc(crcArg),
               compressedSize(compressedSizeArg),
-              uncompressedSize(uncompressedSizeArg),
-              diskNumberStart(diskNumberStartArg),
-              internalFileAttributes(internalFileAttributesArg),
-              externalFileAttributes(externalFileAttributesArg),
-              dateTime(dateTimeArg)
+              uncompressedSize(uncompressedSizeArg)
         {
         }
     };
@@ -219,17 +143,6 @@ public:
     // Size, empty
     size_type size() const;
     bool empty() const;
-
-    /**
-     * Open a binary file for given file handle
-     *
-     * @return file object
-     * @param[in] handle Zip file handle to open
-     * @exception std::bad_alloc Cannot allocate memory to hold additional data
-     * @exception SteamOpenFailed Cannot find file with given handle
-     * @see BinaryQueue::BufferDeleterFree
-     */
-    File *OpenFile(FileHandle handle);
 
     /**
      * Open a binary file for given file name

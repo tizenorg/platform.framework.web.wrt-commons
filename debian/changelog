@@ -1,3 +1,297 @@
+wrt-commons (0.2.53) unstable; urgency=low
+
+  * Added new build type for code coverage
+  * User Agent Database update
+  * Added new SQLConnection flag - CRW and null query check
+  * Remove "auto" for fixed build break
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.53
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 09 Aug 2012 15:16:30 +0900
+
+wrt-commons (0.2.52) unstable; urgency=low
+
+  * Re-upload package
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.52
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 31 Jul 2012 11:15:58 +0900
+
+wrt-commons (0.2.51) unstable; urgency=low
+
+  * Re-upload package
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.51
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 30 Jul 2012 10:06:49 +0900
+
+wrt-commons (0.2.50) unstable; urgency=low
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.50
+
+ -- Leerang Song <leerang.song@samsung.com>  Fri, 27 Jul 2012 12:02:06 +0900
+
+wrt-commons (0.2.49) unstable; urgency=low
+
+  * Add splash screen
+  * Fix circular dependency to cert-svc
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.49 
+
+ -- Zbigniew Kostrzewa <z.kostrzewa@samsung.com>  Wed, 25 Jul 2012 14:36:40 +0200
+
+wrt-commons (0.2.48) unstable; urgency=low
+
+  * Fixed CCR(#N_SE-3620)
+  * FeatureDAOReadOnly - performance improvement
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.48
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 25 Jul 2012 09:58:22 +0900
+
+wrt-commons (0.2.47) unstable; urgency=low
+
+  * Change installed resource path & Add PackageType
+  * support tizen extension requirement regarding application id / required version
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.47
+
+ -- Leerang Song <leerang.song@samsung.com>  Thu, 19 Jul 2012 19:19:39 +0900
+
+wrt-commons (0.2.46-1) unstable; urgency=low
+
+  * Add tag for auto SR
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.46-1
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 12 Jul 2012 15:25:36 +0900
+
+wrt-commons (0.2.46) unstable; urgency=low
+
+  * Remove auto save for WK1
+  * Support auto save id/password for WK2
+  * Multiple INVALID_WIDGET_HANDLE definition
+  * Wrt DB DefferedWidgetPackageInstallation clean up
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.46
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 12 Jul 2012 10:56:48 +0900
+
+wrt-commons (0.2.45) unstable; urgency=low
+
+  * Fingerprint list should not contain empty strings
+  * Add frame load and unload callback
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.45
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 28 Jun 2012 16:30:53 +0900
+
+wrt-commons (0.2.44) unstable; urgency=low
+
+  * Move create directory("/opt/apps/widget/")
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.44
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 21 Jun 2012 11:13:38 +0900
+
+wrt-commons (0.2.43) unstable; urgency=low
+
+  * Remove WK1
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.43
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 19 Jun 2012 09:46:13 +0900
+
+wrt-commons (0.2.42) unstable; urgency=low
+
+  * Fix build break in wrt-security
+  * Remove warning when reset .wrt.db
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.42
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 15 Jun 2012 10:31:34 +0900
+
+wrt-commons (0.2.41) unstable; urgency=low
+
+  * Clean up unused api in FeatureDAO
+  * Nested loop removal
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.41
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 31 May 2012 11:40:41 +0900
+
+wrt-commons (0.2.40) unstable; urgency=low
+
+  * Unused code removal
+  * wrt_reset_all.sh changed to remove all widgets files
+  * Modify desktop default icon path for installer
+  * Add wrt-client prefix for wk2
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.40
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 24 May 2012 18:04:34 +0900
+
+wrt-commons (0.2.39) unstable; urgency=low
+
+  * Separated singleton implementation removal
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.39
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Mon, 21 May 2012 15:26:54 +0200
+
+wrt-commons (0.2.38) unstable; urgency=low
+
+  * Refactoring common_dao for auto_save
+  * ZipInput simplified
+  * Nested loop removall
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.38
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 21 May 2012 17:13:15 +0900
+
+wrt-commons (0.2.37) unstable; urgency=low
+
+  * Tests leftovers removal
+  * Remove unused DPL::MultiTaskDecl
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.37
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 17 May 2012 19:49:51 +0900
+
+wrt-commons (0.2.36) unstable; urgency=low
+
+  * Script to reset wrt (wrt_reset_all.sh)
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.36
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 14 May 2012 18:28:43 +0900
+
+wrt-commons (0.2.35) unstable; urgency=low
+
+  * Prepare widgetDAO to get different widget IDs
+  * depends on "add recovery mechanism.." commit
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.35
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 07 May 2012 17:35:10 +0900
+
+wrt-commons (0.2.34) unstable; urgency=low
+
+  * Patch for compliance test widget-api/NoInterfaceObject
+  * TLV pthread reference issue
+  * Changing WidgetDAO rw to ro permissions where appropriate
+  * JIL and WAC1.0 leftovers removal
+  * Widget StartFile localizedPath fix
+  * Switching to the TestModeFlag - final step
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.34
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 03 May 2012 10:11:41 +0900
+
+wrt-commons (0.2.33) unstable; urgency=low
+
+  * UserAgent locales removed
+  * Deprecated api removed
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.33
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 23 Apr 2012 14:10:21 +0900
+
+wrt-commons (0.2.32) unstable; urgency=low
+
+  * Language changed callback move to WRT engine
+  * Modify the access rights for Semaphore method
+  * Ultimate solution to test mode flag
+  * Web App data sharing From orange requirement
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.32
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 16 Apr 2012 09:48:09 +0900
+
+wrt-commons (0.2.31) unstable; urgency=low
+
+  * Mapping from features to device caps is obtained from .so
+  * Exposed pc file for wrt-plugin-export header
+  * Common environment test flag
+  * getUserAgentLocales added to WidgetDAOReadOnly
+  * TAP tests results collector
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.31
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 09 Apr 2012 10:25:57 +0900
+
+wrt-commons (0.2.30) unstable; urgency=low
+
+  * clean-up powder, parental mode
+  * Revert "[wrt-commons] Added global config API and desktop_file_name_field in wrt_db"
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.30
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 28 Mar 2012 18:25:06 +0900
+
+wrt-commons (0.2.29) unstable; urgency=low
+
+  * Change user name to user id
+  * Adding cookie sharing mode field
+  * Added global config API and desktop_file_name_field in wrt_db
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.29
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 27 Mar 2012 17:05:15 +0900
+
+wrt-commons (0.2.28) unstable; urgency=low
+
+  * Optimize OBS
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.28
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 23 Mar 2012 10:10:42 +0900
+
+wrt-commons (0.2.27) unstable; urgency=low
+
+  * add libxml2-dev to 'Depends' of wrt-commons-dev package 
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.27
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Mon, 19 Mar 2012 19:01:09 +0900
+
+wrt-commons (0.2.26) unstable; urgency=low
+
+  * Create ".wrt_autosave.db"
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.26
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 19 Mar 2012 13:31:14 +0900
+
 wrt-commons (0.2.25-1) unstable; urgency=low
 
   * Apply changed EFL APIs 
