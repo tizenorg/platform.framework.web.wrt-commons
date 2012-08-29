@@ -12,23 +12,27 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-# @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
+#
+# @file        config.cmake
+# @author      Soyoung Kim(sy037.kim@samsung.com)
 # @version     1.0
 # @brief
 #
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(event)
-ADD_SUBDIRECTORY(socket)
-ADD_SUBDIRECTORY(rpc)
-ADD_SUBDIRECTORY(test)
-#ADD_SUBDIRECTORY(log)
-ADD_SUBDIRECTORY(widget_dao)
-ADD_SUBDIRECTORY(auto_save_dao)
-ADD_SUBDIRECTORY(popup)
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(support)
-ADD_SUBDIRECTORY(encryption)
+SET(DPL_ENCRYPTION_SOURCES
+    ${PROJECT_SOURCE_DIR}/modules/encryption/src/resource_encryption.cpp
+    ${PROJECT_SOURCE_DIR}/modules/encryption/src/resource_decryption.cpp
+    PARENT_SCOPE
+)
+
+
+SET(DPL_ENCRYPTION_HEADERS
+    ${PROJECT_SOURCE_DIR}/modules/encryption/include/dpl/encryption/resource_encryption.h
+    ${PROJECT_SOURCE_DIR}/modules/encryption/include/dpl/encryption/resource_decryption.h
+    PARENT_SCOPE
+)
+
+SET(DPL_ENCRYPTION_INCLUDE_DIR
+    ${PROJECT_SOURCE_DIR}/modules/encryption/include
+    PARENT_SCOPE
+)

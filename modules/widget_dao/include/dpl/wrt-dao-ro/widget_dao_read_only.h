@@ -173,6 +173,7 @@ struct WidgetRegisterInfo
     DPL::OptionalString pkgname;
     time_t installedTime;
     PkgType pType;
+    EncryptedFileList encryptedFiles;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -716,6 +717,8 @@ class WidgetDAOReadOnly
                                                 records in DB table.
      */
     PkgType getPkgType() const;
+
+    void getEncryptedFileList(EncryptedFileList& filesList) const;
 };
 
 } // namespace WrtDB

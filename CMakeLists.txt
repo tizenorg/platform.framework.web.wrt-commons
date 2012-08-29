@@ -178,6 +178,7 @@ SET(TARGET_AUTO_SAVE_DAO_LIB "wrt-commons-auto-save-dao")
 SET(TARGET_AUTO_SAVE_DAO_RW_LIB "wrt-commons-auto-save-dao-rw")
 SET(TARGET_AUTO_SAVE_DAO_RO_LIB "wrt-commons-auto-save-dao-ro")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
+SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
 
 macro(configure_and_install_pkg PKG_FILE)
     CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)

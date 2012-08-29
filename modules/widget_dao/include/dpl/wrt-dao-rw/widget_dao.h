@@ -160,6 +160,9 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerAppService(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
+    static void registerEncryptedResouceInfo(
+            DbWidgetHandle widgetHandle,
+            const WidgetRegisterInfo &regInfo);
 };
 
 } // namespace WrtDB

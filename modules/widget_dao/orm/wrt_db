@@ -282,6 +282,16 @@ CREATE_TABLE(WidgetWhiteURIList)
     COLUMN_NOT_NULL(subdomain_access,    INT,        CHECK(subdomain_access between 0 and 1))
 CREATE_TABLE_END()
 
+CREATE_TABLE(EncryptedResourceList)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(resource,       TEXT,)
+    COLUMN_NOT_NULL(size,           INT,)
+
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
 SQL(
     INSERT INTO WidgetWhiteURIList VALUES("http://samsung.com", 1);
     INSERT INTO WidgetWhiteURIList VALUES("http://orange.fr", 1);

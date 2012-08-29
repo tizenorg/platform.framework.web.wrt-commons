@@ -1,3 +1,14 @@
+wrt-commons (0.2.54) unstable; urgency=low
+
+  * [common] Add XML test collector
+  * [common] Add encryption api
+  * [Engine] Fix for wrt-popup
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.54
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 29 Aug 2012 13:37:28 +0900
+
 wrt-commons (0.2.53) unstable; urgency=low
 
   * Added new build type for code coverage

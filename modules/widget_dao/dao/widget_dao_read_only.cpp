@@ -1085,6 +1085,25 @@ PkgType WidgetDAOReadOnly::getPkgType() const
     return PkgType(static_cast<PackagingType>(*result));
 }
 
+void WidgetDAOReadOnly::getEncryptedFileList(EncryptedFileList& filesList) const
+{
+    //TODO check widget existance
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+    WRT_DB_SELECT(select, EncryptedResourceList, &WrtDatabase::interface())
+    select->Where(Equals<EncryptedResourceList::app_id>(m_widgetHandle));
+
+    typedef std::list<DPL::DB::ORM::wrt::EncryptedResourceList::Row> RowList;
+    RowList list = select->GetRowList();
+
+    FOREACH(it, list) {
+        EncryptedFileInfo info;
+        info.fileName = it->Get_resource();
+        info.fileSize = it->Get_size();
+        filesList.insert(info);
+    }
+}
+
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE

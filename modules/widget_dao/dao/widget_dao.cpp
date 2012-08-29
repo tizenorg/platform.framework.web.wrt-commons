@@ -164,6 +164,8 @@ void WidgetDAO::registerWidget(
 
         registerAppService(widgetHandle, widgetRegInfo);
 
+        registerEncryptedResouceInfo(widgetHandle, widgetRegInfo);
+
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
@@ -530,6 +532,23 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
         row.Set_mime(ASIt->m_mime);
 
         DO_INSERT(row, ApplicationServiceInfo)
+    }
+}
+
+void WidgetDAO::registerEncryptedResouceInfo(DbWidgetHandle widgetHandle,
+        const WidgetRegisterInfo &regInfo)
+{
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+
+    FOREACH(it, regInfo.encryptedFiles)
+    {
+        EncryptedResourceList::Row row;
+        row.Set_app_id(widgetHandle);
+        row.Set_resource(it->fileName);
+        row.Set_size(it->fileSize);
+
+        DO_INSERT(row, EncryptedResourceList)
     }
 }
 

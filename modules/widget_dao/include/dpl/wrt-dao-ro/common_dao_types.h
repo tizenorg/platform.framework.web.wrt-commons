@@ -131,9 +131,32 @@ struct WidgetAccessInfo
     }
 };
 
+struct EncryptedFileInfo
+{
+    DPL::String fileName;
+    int fileSize;
+
+    bool operator==(const EncryptedFileInfo& info) const
+    {
+        return fileName == info.fileName;
+    }
+
+    bool operator==(const DPL::String& file) const
+    {
+        return fileName == file;
+    }
+
+    bool operator< (const EncryptedFileInfo& info) const
+    {
+        return fileName < info.fileName;
+    }
+};
+
 typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
 
 typedef std::list<DPL::String> WindowModeList;
+
+typedef std::set<EncryptedFileInfo> EncryptedFileList;
 
 /**
  * @brief Widget configuration parameter key

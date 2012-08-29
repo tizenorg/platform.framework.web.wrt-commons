@@ -96,6 +96,9 @@ Main::~Main()
     ecore_main_fd_handler_del(m_invokerHandler);
     m_invokerHandler = NULL;
 
+    //set old ecore select function, because after ecore_shutdown() call,
+    //it is being called once again and it may crash.
+    ecore_main_loop_select_func_set(m_oldEcoreSelect);
     // Decrement ECORE init count
     // We do not need ecore routines any more
     ecore_shutdown();
