@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: wrt-commons-security-origin-dao
+Description: wrt-commons-security-origin-dao
+
+Version: @VERSION@
+Requires: dpl-efl
+Libs: -lwrt-commons-security-origin-dao -L${libdir}
+Cflags: -I${includedir}/dpl-efl

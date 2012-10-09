@@ -1,0 +1,5 @@
+DATABASE_START(security_origin)
+
+#include "security_origin_db"
+
+DATABASE_END()

@@ -13,23 +13,9 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
-# @version     1.0
+# @author      Jihoon Chung (jihoon.chung@samsung.com)
 # @brief
 #
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(event)
-ADD_SUBDIRECTORY(socket)
-ADD_SUBDIRECTORY(rpc)
-ADD_SUBDIRECTORY(test)
-#ADD_SUBDIRECTORY(log)
-ADD_SUBDIRECTORY(widget_dao)
-ADD_SUBDIRECTORY(auto_save_dao)
-ADD_SUBDIRECTORY(security_origin_dao)
-ADD_SUBDIRECTORY(popup)
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(support)
-ADD_SUBDIRECTORY(encryption)
+configure_and_install_pkg(wrt-commons-security-origin-dao.pc)
+
