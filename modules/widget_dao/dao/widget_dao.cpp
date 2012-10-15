@@ -280,7 +280,15 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     {
         row.Set_app_id(*handle);
     }
-    row.Set_widget_type(regInfo.type.appType);
+
+    if (regInfo.webAppType == APP_TYPE_UNKNOWN && regInfo.type !=
+            APP_TYPE_UNKNOWN) {
+        // TODO : regInfo.type is temporary code for security.
+        //        This code will be removed.
+        row.Set_widget_type(regInfo.type.appType);
+    } else {
+        row.Set_widget_type(regInfo.webAppType.appType);
+    }
     row.Set_widget_id(widgetConfigurationInfo.widget_id);
     row.Set_defaultlocale(widgetConfigurationInfo.defaultlocale);
     row.Set_widget_version(widgetConfigurationInfo.version);
@@ -303,7 +311,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_back_supported(widgetConfigurationInfo.backSupported);
     row.Set_access_network(widgetConfigurationInfo.accessNetwork);
     row.Set_pkgname(regInfo.pkgname);
-    row.Set_pkg_type(regInfo.pType.pkgType);
+    row.Set_pkg_type(regInfo.packagingType.pkgType);
 
     Try
     {

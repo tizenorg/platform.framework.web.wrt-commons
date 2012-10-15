@@ -272,6 +272,10 @@ class WidgetType
     {
         return appType == other;
     }
+    bool operator!= (const AppType& other) const
+    {
+        return appType != other;
+    }
     std::string getApptypeToString()
     {
         switch (appType) {
@@ -293,42 +297,48 @@ class WidgetType
  *
  * Package type describes belowed in Tizen webapp, C++ service App
  */
-enum PackagingType
+enum PkgType
 {
     PKG_TYPE_UNKNOWN = 0, // unknown
-    PKG_TYPE_TIZEN_WEBAPP, // Tizen webapp
-    PKG_TYPE_TIZEN_WITHSVCAPP // Tizen webapp with C++ service app
+    PKG_TYPE_NOMAL_WEB_APP,
+    PKG_TYPE_HOSTED_WEB_APP,    // request from browser
+    PKG_TYPE_HYBRID_WEB_APP, // Tizen webapp with C++ service app
 };
 
-class PkgType
+class PackagingType
 {
   public:
-    PkgType()
+    PackagingType()
     :pkgType(PKG_TYPE_UNKNOWN)
     {
     }
-    PkgType(const PackagingType type)
+    PackagingType(const PkgType type)
     :pkgType(type)
     {
     }
-    bool operator== (const PackagingType& other) const
+    bool operator== (const PkgType& other) const
     {
         return pkgType == other;
+    }
+    bool operator!= (const PkgType& other) const
+    {
+        return pkgType != other;
     }
     std::string getPkgtypeToString()
     {
         switch (pkgType) {
 #define X(x) case x: return #x;
         X(PKG_TYPE_UNKNOWN)
-        X(PKG_TYPE_TIZEN_WEBAPP)
-        X(PKG_TYPE_TIZEN_WITHSVCAPP)
+        X(PKG_TYPE_NOMAL_WEB_APP)
+        X(PKG_TYPE_HOSTED_WEB_APP)
+        X(PKG_TYPE_HYBRID_WEB_APP)
 #undef X
         default:
             return "UNKNOWN";
         }
     }
 
-    PackagingType pkgType;
+    PkgType pkgType;
 };
 
 } // namespace WrtDB

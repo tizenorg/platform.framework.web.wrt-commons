@@ -1083,11 +1083,11 @@ void WidgetDAOReadOnly::getAppServiceList(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get access host list")
 }
 
-PkgType WidgetDAOReadOnly::getPkgType() const
+PackagingType WidgetDAOReadOnly::getPackagingType() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
     DPL::OptionalInt result = row.Get_pkg_type();
-    return PkgType(static_cast<PackagingType>(*result));
+    return PackagingType(static_cast<PkgType>(*result));
 }
 
 void WidgetDAOReadOnly::getEncryptedFileList(EncryptedFileList& filesList) const

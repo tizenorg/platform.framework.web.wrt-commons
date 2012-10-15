@@ -156,15 +156,16 @@ struct WidgetRegisterInfo
 
     //Constructor
     WidgetRegisterInfo() :
-        type(APP_TYPE_UNKNOWN),
+        webAppType(APP_TYPE_UNKNOWN),
         signatureType(SIGNATURE_TYPE_UNIDENTIFIED),
         isTestWidget(0),
         configInfo(),
-        pType(PKG_TYPE_UNKNOWN)
+        packagingType(PKG_TYPE_UNKNOWN)
     {
     }
 
-    WidgetType type;
+    WidgetType webAppType;
+    WidgetType type; // TODO : This type will be removed.
     DPL::OptionalString guid;
     DPL::OptionalString version;
     DPL::OptionalString minVersion;
@@ -176,7 +177,7 @@ struct WidgetRegisterInfo
     LocalizationData localizationData;
     DPL::OptionalString pkgname;
     time_t installedTime;
-    PkgType pType;
+    PackagingType packagingType;
     EncryptedFileList encryptedFiles;
     ExternalLocationList externalLocations;
 };
@@ -724,12 +725,12 @@ class WidgetDAOReadOnly
     /**
      * This method returns the type of the package.
      *
-     * @return PkgType
+     * @return PackagingType
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching
                                                 records in DB table.
      */
-    PkgType getPkgType() const;
+    PackagingType getPackagingType() const;
 
     void getEncryptedFileList(EncryptedFileList& filesList) const;
 
