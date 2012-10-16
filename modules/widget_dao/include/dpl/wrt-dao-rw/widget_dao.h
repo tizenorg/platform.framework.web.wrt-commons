@@ -44,13 +44,7 @@ class WidgetDAO : public WidgetDAOReadOnly
   public:
     typedef std::list<DPL::String> LanguageTagsList;
 
-    /**
-     * This is a constructor.
-     *
-     * @param[in] widgetHandle application id of widget.
-     * @param[in] widgetGUID application guid of widget.
-     */
-    WidgetDAO(DbWidgetHandle widgetHandle);
+    WidgetDAO(DbWidgetHandle handle);
     WidgetDAO(DPL::OptionalString widgetGUID);
     WidgetDAO(DPL::String pkgName);
 
@@ -60,54 +54,56 @@ class WidgetDAO : public WidgetDAOReadOnly
     virtual ~WidgetDAO();
 
     /**
-     * This method registers the widget information to the DB when it is installed.
+     * This method registers the widget information in the DB when it is installed.
      *
      * @see WidgetRegisterInfo
      * @see UnRegisterWidget()
-     * @param[in] widgetHandle  Widget ID that will be registered.
+     * @param[in] widgetPkgname Widget Pkgname that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information needed to be registered.
      * @param[in] wacSecurity   Widget's security certificates.
      */
     static void registerWidget(
-            const DbWidgetHandle& widgetHandle,
-            const WidgetRegisterInfo &pWidgetRegisterInfo,
+            const WidgetPkgName & widgetPkgname,
+            const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
 
-    static DbWidgetHandle registerWidget(
-            const WidgetRegisterInfo &pWidgetRegisterInfo,
-            const IWacSecurity &wacSecurity) __attribute__((deprecated))
-    {
-        //make it more precise due to very fast tests
-        struct timeval tv;
-        gettimeofday(&tv, NULL);
-        srand(time(NULL) + tv.tv_usec);
-        DbWidgetHandle widgetHandle;
-        do {
-            widgetHandle = rand();
-        } while (isWidgetInstalled(widgetHandle));
+    static void registerWidget(
+            WrtDB::DbWidgetHandle handle,
+            const WidgetRegisterInfo &widgetRegInfo,
+            const IWacSecurity &wacSecurity) __attribute__((deprecated));
 
-        registerWidget(widgetHandle, pWidgetRegisterInfo, wacSecurity);
-        return widgetHandle;
-    }
+    static DbWidgetHandle registerWidget(
+                const WidgetRegisterInfo &pWidgetRegisterInfo,
+                const IWacSecurity &wacSecurity) __attribute__((deprecated));
+
+    /**
+     * This method re-registers the widget information to the DB when it is installed.
+     *
+     * It performs unregistration and new registration of widget in db in one transaction.
+     *
+     * @see WidgetRegisterInfo
+     * @param[in] widgetName  Widget pkgname that will be registered.
+     * @param[in] pWidgetRegisterInfo    Specified the widget's information needed to be registered.
+     * @param[in] wacSecurity   Widget's security certificates.
+     */
+    static void registerOrUpdateWidget(
+            const WidgetPkgName & widgetName,
+            const WidgetRegisterInfo &widgetRegInfo,
+            const IWacSecurity &wacSecurity);
 
     /**
      * This method removes a widget's information from EmDB.
      *
      * @see RegisterWidget()
-     * @param[in] widgetHandle    widget's app id
-     * @return true if succeed, false if fail.
+     * @param[in] pkgName widgets name to be unregistered
      */
-    static void unregisterWidget(DbWidgetHandle widgetHandle);
+    static void unregisterWidget(const WidgetPkgName & pkgName);
+
+    static void unregisterWidget(WrtDB::DbWidgetHandle handle) __attribute__((deprecated));
 
     /* This method removes widget property
      */
     void removeProperty(const PropertyDAOReadOnly::WidgetPropertyKey &key);
-
-    /**
-     * @brief registerExternalLocations Inserts new rows to WidgetExternalLocations
-     * @param externals list of files
-     */
-    void registerExternalLocations(const ExternalLocationList & externals);
 
     /**
      * @brief registerExternalLocations Removes rows from WidgetExternalLocations
@@ -130,12 +126,15 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     void updateFeatureRejectStatus(const DbWidgetFeature &widgetFeature);
 
+    void registerExternalLocations(const ExternalLocationList & externals) __attribute__((deprecated));
+
   private:
     //Methods used during widget registering
-    static void registerWidgetInfo(
-            const DbWidgetHandle& widgetHandle,
+    static DbWidgetHandle registerWidgetInfo(
+            const WidgetPkgName & widgetName,
             const WidgetRegisterInfo &regInfo,
-            const IWacSecurity &wacSecurity);
+            const IWacSecurity &wacSecurity,
+            const DPL::Optional<DbWidgetHandle> handle = DPL::Optional<DbWidgetHandle>());
     static void registerWidgetExtendedInfo(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
@@ -176,6 +175,20 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerEncryptedResouceInfo(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
+    /**
+     * @brief registerExternalLocations Inserts new rows to WidgetExternalLocations
+     * @param externals list of files
+     */
+    static void registerExternalLocations(DbWidgetHandle widgetHandle,
+                                const ExternalLocationList & externals);
+
+    static DbWidgetHandle registerWidgetInternal(
+            const WidgetPkgName & widgetName,
+            const WidgetRegisterInfo &widgetRegInfo,
+            const IWacSecurity &wacSecurity,
+            const DPL::Optional<DbWidgetHandle> handle = DPL::Optional<DbWidgetHandle>());
+    static void unregisterWidgetInternal(
+            const WidgetPkgName & pkgName);
 };
 
 } // namespace WrtDB

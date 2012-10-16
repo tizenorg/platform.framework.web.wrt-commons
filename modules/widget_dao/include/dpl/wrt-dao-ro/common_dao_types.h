@@ -81,6 +81,7 @@ class PluginObjectsDAO
  * FindWidgetModel routine.
  */
 typedef int DbWidgetHandle;
+typedef DPL::String WidgetPkgName;
 
 /**
  * Value of invalid widget handle

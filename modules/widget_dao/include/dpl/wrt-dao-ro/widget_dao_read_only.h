@@ -103,6 +103,7 @@ typedef std::list<WidgetCertificateData> WidgetCertificateDataList;
 
 typedef DPL::String Locale;
 typedef std::set<Locale> LocaleSet;
+typedef std::list<std::string> ExternalLocationList;
 
 /**
  * WidgetRegisterInfo
@@ -177,6 +178,7 @@ struct WidgetRegisterInfo
     time_t installedTime;
     PkgType pType;
     EncryptedFileList encryptedFiles;
+    ExternalLocationList externalLocations;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -225,7 +227,6 @@ typedef std::list<DPL::String> LanguageTagList;
 typedef std::list<std::string> HostList;
 typedef std::list<std::string> FingerPrintList;
 typedef std::list<std::string> ResourceAttributeList;
-typedef std::list<std::string> ExternalLocationList; //TODO: if there will be many files registered std::set is better
 
 class WidgetDAOReadOnly
 {

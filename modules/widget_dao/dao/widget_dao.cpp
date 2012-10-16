@@ -51,21 +51,6 @@ namespace WrtDB {
                    message);                            \
     }
 
-#define CHECK_WIDGET_EXISTENCE(macro_transaction, macro_handle)          \
-    if (!WidgetDAO::isWidgetInstalled(macro_handle))                      \
-    {                                                                    \
-        macro_transaction.Commit();                                      \
-        LogWarning("Cannot find widget. Handle: " << macro_handle);      \
-        ThrowMsg(WidgetDAO::Exception::WidgetNotExist,                   \
-                 "Cannot find widget. Handle: " << macro_handle);        \
-    }
-
-
-WidgetDAO::WidgetDAO(DbWidgetHandle widgetHandle) :
-    WidgetDAOReadOnly(widgetHandle)
-{
-}
-
 WidgetDAO::WidgetDAO(DPL::OptionalString widgetGUID) :
     WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(widgetGUID))
 {
@@ -73,6 +58,11 @@ WidgetDAO::WidgetDAO(DPL::OptionalString widgetGUID) :
 
 WidgetDAO::WidgetDAO(DPL::String pkgName) :
     WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(pkgName))
+{
+}
+
+WidgetDAO::WidgetDAO(DbWidgetHandle handle) :
+    WidgetDAOReadOnly(handle)
 {
 }
 
@@ -130,7 +120,7 @@ void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
 }
 
 void WidgetDAO::registerWidget(
-        const DbWidgetHandle& widgetHandle,
+        const WidgetPkgName & widgetPkgname,
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity)
 {
@@ -138,46 +128,110 @@ void WidgetDAO::registerWidget(
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-
-        //Register into WidgetInfo has to be first
-        //as all other tables depend upon that
-        registerWidgetInfo(widgetHandle, widgetRegInfo, wacSecurity);
-
-        registerWidgetExtendedInfo(widgetHandle, widgetRegInfo);
-
-        registerWidgetLocalizedInfo(widgetHandle, widgetRegInfo);
-
-        registerWidgetIcons(widgetHandle, widgetRegInfo);
-
-        registerWidgetStartFile(widgetHandle, widgetRegInfo);
-
-        PropertyDAO::RegisterProperties(widgetHandle, widgetRegInfo);
-
-        registerWidgetFeatures(widgetHandle, widgetRegInfo);
-
-        registerWidgetWindowModes(widgetHandle, widgetRegInfo);
-
-        registerWidgetWarpInfo(widgetHandle, widgetRegInfo);
-
-        registerWidgetCertificates(widgetHandle, wacSecurity);
-
-        CertificateChainList list;
-        wacSecurity.getCertificateChainList(list, SIGNATURE_DISTRIBUTOR);
-        registerCertificatesChains(widgetHandle, SIGNATURE_DISTRIBUTOR, list);
-
-        list.clear();
-        wacSecurity.getCertificateChainList(list, SIGNATURE_AUTHOR);
-        registerCertificatesChains(widgetHandle, SIGNATURE_AUTHOR, list);
-
-        registerWidgetSettings(widgetHandle, widgetRegInfo);
-
-        registerAppService(widgetHandle, widgetRegInfo);
-
-        registerEncryptedResouceInfo(widgetHandle, widgetRegInfo);
-
+        DbWidgetHandle widgetHandle = registerWidgetInternal(widgetPkgname, widgetRegInfo, wacSecurity);
+        registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
+        //TODO: remove construction from handle and move that call to registerWidgetInternal
+        // in new version external fiels should be register together with other informations
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
+}
+
+void WidgetDAO::registerWidget(
+            WrtDB::DbWidgetHandle handle,
+            const WidgetRegisterInfo & widgetRegInfo,
+            const IWacSecurity &wacSecurity)
+{
+    LogDebug("Registering widget");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        registerWidgetInternal(L"", widgetRegInfo, wacSecurity, handle);
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
+}
+
+DbWidgetHandle WidgetDAO::registerWidget(
+            const WidgetRegisterInfo &pWidgetRegisterInfo,
+            const IWacSecurity &wacSecurity)
+{
+    //make it more precise due to very fast tests
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    srand(time(NULL) + tv.tv_usec);
+    DbWidgetHandle widgetHandle;
+    do {
+        widgetHandle = rand();
+    } while (isWidgetInstalled(widgetHandle));
+
+    registerWidget(widgetHandle, pWidgetRegisterInfo, wacSecurity);
+    return widgetHandle;
+}
+
+DbWidgetHandle WidgetDAO::registerWidgetInternal(
+        const WidgetPkgName & widgetName,
+        const WidgetRegisterInfo &widgetRegInfo,
+        const IWacSecurity &wacSecurity,
+        const DPL::Optional<DbWidgetHandle> handle)
+{
+    //Register into WidgetInfo has to be first
+    //as all other tables depend upon that
+    DbWidgetHandle widgetHandle = registerWidgetInfo(widgetName, widgetRegInfo, wacSecurity, handle);
+
+    registerWidgetExtendedInfo(widgetHandle, widgetRegInfo);
+
+    registerWidgetLocalizedInfo(widgetHandle, widgetRegInfo);
+
+    registerWidgetIcons(widgetHandle, widgetRegInfo);
+
+    registerWidgetStartFile(widgetHandle, widgetRegInfo);
+
+    PropertyDAO::RegisterProperties(widgetHandle, widgetRegInfo);
+
+    registerWidgetFeatures(widgetHandle, widgetRegInfo);
+
+    registerWidgetWindowModes(widgetHandle, widgetRegInfo);
+
+    registerWidgetWarpInfo(widgetHandle, widgetRegInfo);
+
+    registerWidgetCertificates(widgetHandle, wacSecurity);
+
+    CertificateChainList list;
+    wacSecurity.getCertificateChainList(list, SIGNATURE_DISTRIBUTOR);
+    registerCertificatesChains(widgetHandle, SIGNATURE_DISTRIBUTOR, list);
+
+    list.clear();
+    wacSecurity.getCertificateChainList(list, SIGNATURE_AUTHOR);
+    registerCertificatesChains(widgetHandle, SIGNATURE_AUTHOR, list);
+
+    registerWidgetSettings(widgetHandle, widgetRegInfo);
+
+    registerAppService(widgetHandle, widgetRegInfo);
+
+    registerEncryptedResouceInfo(widgetHandle, widgetRegInfo);
+
+    return widgetHandle;
+}
+
+void WidgetDAO::registerOrUpdateWidget(
+        const WidgetPkgName & widgetName,
+        const WidgetRegisterInfo &widgetRegInfo,
+        const IWacSecurity &wacSecurity)
+{
+    LogDebug("Reregistering widget");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+
+        unregisterWidgetInternal(widgetName);
+        DbWidgetHandle widgetHandle = registerWidgetInternal(widgetName, widgetRegInfo, wacSecurity);
+        registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
+        //TODO: remove construction from handle and move that call to registerWidgetInternal
+        // in new version external fiels should be register together with other informations
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
 }
 
 #define DO_INSERT(row, table)                              \
@@ -208,10 +262,11 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     DO_INSERT(row, WidgetExtendedInfo)
 }
 
-void WidgetDAO::registerWidgetInfo(
-        const DbWidgetHandle& widgetHandle,
+DbWidgetHandle WidgetDAO::registerWidgetInfo(
+        const WidgetPkgName & widgetName,
         const WidgetRegisterInfo &regInfo,
-        const IWacSecurity &wacSecurity)
+        const IWacSecurity &wacSecurity,
+        const DPL::Optional<DbWidgetHandle> handle)
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
@@ -221,7 +276,10 @@ void WidgetDAO::registerWidgetInfo(
     // Because of that, "Optional" is not used there
 
     WidgetInfo::Row row;
-    row.Set_app_id(widgetHandle);
+    if(!!handle)
+    {
+        row.Set_app_id(*handle);
+    }
     row.Set_widget_type(regInfo.type.appType);
     row.Set_widget_id(widgetConfigurationInfo.widget_id);
     row.Set_defaultlocale(widgetConfigurationInfo.defaultlocale);
@@ -236,6 +294,7 @@ void WidgetDAO::registerWidgetInfo(
     row.Set_recognized(wacSecurity.isRecognized());
     row.Set_wac_signed(wacSecurity.isWacSigned());
     row.Set_distributor_signed(wacSecurity.isDistributorSigned());
+    row.Set_pkgname(widgetName);
     {
         std::stringstream tmp;
         tmp << regInfo.minVersion;
@@ -254,6 +313,18 @@ void WidgetDAO::registerWidgetInfo(
     {
         ReThrowMsg(WidgetDAO::Exception::DatabaseError,
                    "Failed to register widget info.");
+    }
+
+    if(!handle)
+    {
+        //get autoincremented value of widgetHandle
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::pkgname>(widgetName));
+        return select->GetSingleValue<WidgetInfo::app_id>();
+    }
+    else
+    {
+        return *handle;
     }
 }
 
@@ -565,16 +636,22 @@ void WidgetDAO::registerEncryptedResouceInfo(DbWidgetHandle widgetHandle,
 
 void WidgetDAO::registerExternalLocations(const ExternalLocationList & externals)
 {
+    registerExternalLocations(m_widgetHandle, externals);
+}
+
+void WidgetDAO::registerExternalLocations(DbWidgetHandle widgetHandle,
+                                          const ExternalLocationList & externals)
+{
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        LogDebug("Inserting external files for widgetHandle: " << m_widgetHandle);
+        LogDebug("Inserting external files for widgetHandle: " << widgetHandle);
         FOREACH(it, externals)
         {
             WidgetExternalLocations::Row row;
-            row.Set_app_id(m_widgetHandle);
+            row.Set_app_id(widgetHandle);
             row.Set_path(DPL::FromUTF8String(*it));
 
             DO_INSERT(row, WidgetExternalLocations)
@@ -594,35 +671,56 @@ void WidgetDAO::unregisterAllExternalLocations()
     del->Execute();
 }
 
-#undef DO_INSERT
-
-void WidgetDAO::unregisterWidget(DbWidgetHandle widgetHandle)
+void WidgetDAO::unregisterWidget(const WidgetPkgName & pkgName)
 {
-    LogDebug("Unregistering widget from DB. Handle: " << widgetHandle);
+    LogDebug("Unregistering widget from DB. PkgName: " << pkgName);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        unregisterWidgetInternal(pkgName);
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to unregister widget")
+}
+
+void WidgetDAO::unregisterWidget(WrtDB::DbWidgetHandle handle)
+{
+    LogDebug("Unregistering widget from DB. Handle: " << handle);
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
-
-        CHECK_WIDGET_EXISTENCE(transaction, widgetHandle)
+        ScopedTransaction transaction(&WrtDatabase::interface());
 
         // Delete from table Widget Info
-        {
-            WRT_DB_DELETE(del, WidgetInfo, &WrtDatabase::interface())
-            del->Where(Equals<WidgetInfo::app_id>(widgetHandle));
-            del->Execute();
-        }
-
-        // Deleting in other tables is done via "delete cascade" in SQL
+        WRT_DB_DELETE(del, WidgetInfo, &WrtDatabase::interface())
+        del->Where(Equals<WidgetInfo::app_id>(handle));
+        del->Execute();
 
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to unregister widget")
 }
 
+void WidgetDAO::unregisterWidgetInternal(
+        const WidgetPkgName & pkgName)
+{
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+
+    DbWidgetHandle handle = getHandle(pkgName);
+
+    // Delete from table Widget Info
+    WRT_DB_DELETE(del, WidgetInfo, &WrtDatabase::interface())
+    del->Where(Equals<WidgetInfo::app_id>(handle));
+    del->Execute();
+
+    // Deleting in other tables is done via "delete cascade" in SQL
+}
+
+#undef DO_INSERT
+
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
-#undef CHECK_WIDGET_EXISTENCE
 
 } // namespace WrtDB

@@ -19,7 +19,7 @@ SQL(
 )
 
 CREATE_TABLE(WidgetInfo)
-    COLUMN_NOT_NULL(app_id,         INTEGER,         PRIMARY KEY)
+    COLUMN_NOT_NULL(app_id,         INTEGER,         PRIMARY KEY AUTOINCREMENT)
     COLUMN(widget_type,               INT,  DEFAULT 1)
     COLUMN(widget_id,               VARCHAR(256),  DEFAULT '')
     COLUMN(widget_version,          VARCHAR(256),  DEFAULT '')
@@ -38,7 +38,7 @@ CREATE_TABLE(WidgetInfo)
     COLUMN_NOT_NULL(back_supported, TINYINT,       DEFAULT 0)
     COLUMN(access_network,          TINYINT,       DEFAULT 0)
     COLUMN(defaultlocale,           VARCHAR(256),  DEFAULT 0)
-    COLUMN(pkgname,             VARCHAR(256),  DEFAULT 0)
+    COLUMN(pkgname,                 VARCHAR(256),  DEFAULT 0 UNIQUE)
     COLUMN(pkg_type,                INT,  DEFAULT 0)
 CREATE_TABLE_END()
 
