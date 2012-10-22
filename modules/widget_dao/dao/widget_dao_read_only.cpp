@@ -198,23 +198,11 @@ DPL::String WidgetDAOReadOnly::getPath() const
             GlobalConfig::GetUserInstalledWidgetPath());
     DPL::String srcPath = DPL::FromUTF8String(GlobalConfig::GetWidgetSrcPath());
 
-    bool isFactoryWidget = isFactory();
-
-    if (isFactoryWidget) {
-        WidgetGUID widgetGUID = getGUID();
-        if (!widgetGUID) {
-            Throw(WidgetDAOReadOnly::Exception::GUIDisNull);
-        }
-        path += L"/" + *widgetGUID + L"/";
-    } else {
-        // if the widget is a "downloaded widget",
-        // use unique package name.
-        DPL::OStringStream strAppId;
-        strAppId << m_widgetHandle;
-        DPL::OptionalString pkgname = getPkgname();
-        path += L"/" + *pkgname;
-        path += srcPath + L"/";
-    }
+    DPL::OStringStream strAppId;
+    strAppId << m_widgetHandle;
+    DPL::OptionalString pkgname = getPkgname();
+    path += L"/" + *pkgname;
+    path += srcPath + L"/";
 
     return path;
 }
@@ -632,30 +620,6 @@ bool WidgetDAOReadOnly::getWebkitPluginsRequired() const
     if (ret.IsNull() || *ret == 0) { return false; } else { return true; }
 }
 
-bool WidgetDAOReadOnly::isFactory() const
-{
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
-
-        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
-        if (rows.empty()) {
-            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Cannot find widget. Handle: " << m_widgetHandle);
-        }
-
-        DPL::OptionalInt ret = rows.front().Get_factory_widget();
-        if (ret.IsNull()) {
-            return false;
-        }
-        return static_cast<bool>(*ret);
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get isFactory")
-}
-
 time_t WidgetDAOReadOnly::getInstallTime() const
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -837,11 +801,6 @@ std::string WidgetDAOReadOnly::getBaseFolder() const
     }
 
     return baseFolder;
-}
-
-bool WidgetDAOReadOnly::isDeletable() const
-{
-    return !WidgetDAOReadOnly::isFactory();
 }
 
 WidgetCertificateDataList WidgetDAOReadOnly::getCertificateDataList() const
@@ -1048,14 +1007,6 @@ std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
     path << WidgetConfig::GetWidgetWebLocalStoragePath(*pkgname);
     path << "/";
 
-    if (isFactory()) {
-        WidgetGUID widgetGUID = getGUID();
-        if (!widgetGUID) {
-            Throw(WidgetDAOReadOnly::Exception::GUIDisNull);
-        }
-        path << DPL::ToUTF8String(*widgetGUID);
-    }
-
     return path.str();
 }
 
@@ -1067,10 +1018,10 @@ void WidgetDAOReadOnly::getWidgetSettings(
     {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, SettginsList, &WrtDatabase::interface())
-        select->Where(Equals<SettginsList::appId>(m_widgetHandle));
+        WRT_DB_SELECT(select, SettingsList, &WrtDatabase::interface())
+        select->Where(Equals<SettingsList::appId>(m_widgetHandle));
 
-        SettginsList::Select::RowList rows = select->GetRowList();
+        SettingsList::Select::RowList rows = select->GetRowList();
 
         FOREACH(it, rows)
         {

@@ -35,15 +35,7 @@ class WarpIRI
     /* It also checks port and schema */
     bool isSubDomain(const WarpIRI &second) const;
     bool isAccessDefinition() const;
-    // KW    bool isIRIValid() const;
     bool getSubDomain() const;
-
-    /* This is debug function */
-    // KW     void print() const {
-    // KW         LogInfo("P:" << m_port << " S:" << m_schema);
-    // KW         for (size_t i = 0; i < m_host.size(); ++i)
-    // KW             LogInfo("      " << m_host[i]);
-    // KW     }
 
     static bool isIRISchemaIgnored(const char *iri);
 

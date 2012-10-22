@@ -157,7 +157,6 @@ struct WidgetRegisterInfo
     WidgetRegisterInfo() :
         type(APP_TYPE_UNKNOWN),
         signatureType(SIGNATURE_TYPE_UNIDENTIFIED),
-        isFactoryWidget(0),
         isTestWidget(0),
         configInfo(),
         pType(PKG_TYPE_UNKNOWN)
@@ -171,7 +170,6 @@ struct WidgetRegisterInfo
     std::string shareHref;
     std::string baseFolder;
     WidgetSignatureType signatureType;
-    int isFactoryWidget;
     int isTestWidget;
     ConfigParserData configInfo;
     LocalizationData localizationData;
@@ -636,14 +634,6 @@ class WidgetDAOReadOnly
     std::string getShareHref() const;
 
     /**
-     * This method checks whether specified widget is a factory widget.
-     *
-     * @param[in] widgetHandle    widget's app id
-     * @return true if yes, false if no.
-     */
-    bool isFactory() const;
-
-    /**
      * This method get widget installed time
      *
      * @return time_t : return widget's install time
@@ -659,16 +649,6 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     std::string getBaseFolder() const;
-
-    /**
-     * This method gets deletable property of widget.
-     *
-     * @return true: can be deleted; false: can not be deleted
-     * @exception WRT_CONF_ERR_GCONF_FAILURE
-     * @exception WRT_CONF_ERR_EMDB_FAILURE
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD
-     */
-    bool isDeletable() const;
 
     /* This method gets the parameter list for resource.
      */

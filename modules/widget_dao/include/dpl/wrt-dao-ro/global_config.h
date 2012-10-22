@@ -149,14 +149,6 @@ inline const char* GetUserWidgetDefaultIconFile()
     return "/usr/share/wrt-engine/wrt_widget_default_icon.png";
 }
 
-/**
- * WRT downloaded widgets
- */
-// KW inline const char* GetDownloadedWidgetPath()
-// KW {
-// KW     return "/opt/share/widget/test-widgets";
-// KW }
-
 inline const char* GetSignatureXmlSchema()
 {
     //TODO please rename, this filename is not descriptive enough

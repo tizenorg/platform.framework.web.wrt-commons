@@ -195,10 +195,6 @@ bool WarpIRI::isAccessDefinition() const
     return m_isAccessDefinition;
 }
 
-// KW bool WarpIRI::isIRIValid() const {
-// KW     return m_isIRIValid;
-// KW }
-
 bool WarpIRI::getSubDomain() const
 {
     return m_domain;

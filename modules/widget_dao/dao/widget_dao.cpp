@@ -199,7 +199,6 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_app_id(widgetHandle);
     //    row.Set_share_href    (DPL::FromUTF8String(regInfo.shareHref));
     row.Set_signature_type(regInfo.signatureType);
-    row.Set_factory_widget(regInfo.isFactoryWidget);
     row.Set_test_widget(regInfo.isTestWidget);
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
@@ -518,12 +517,12 @@ void WidgetDAO::registerWidgetSettings(DbWidgetHandle widgetHandle,
 
     FOREACH(pWidgetSetting, widgetConfigurationInfo.settingsList)
     {
-        SettginsList::Row row;
+        SettingsList::Row row;
         row.Set_appId(widgetHandle);
         row.Set_settingName(pWidgetSetting->m_name);
         row.Set_settingValue(pWidgetSetting->m_value);
 
-        DO_INSERT(row, SettginsList)
+        DO_INSERT(row, SettingsList)
     }
 }
 
