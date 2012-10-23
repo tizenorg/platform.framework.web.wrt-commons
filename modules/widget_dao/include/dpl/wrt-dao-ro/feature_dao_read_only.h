@@ -50,6 +50,7 @@ class FeatureDAOReadOnly
     typedef std::set<std::string> DeviceCapabilitiesList;
     typedef std::multimap<FeatureHandle, std::string> DeviceCapabilitiesMap;
     typedef std::map<FeatureHandle, std::string> NameMap;
+    typedef std::map<FeatureHandle, FeatureData> FeatureMap;
 
     static bool isDeviceCapabilityInstalled(const std::string &deviceCapName);
 
@@ -72,6 +73,8 @@ class FeatureDAOReadOnly
 
     static NameMap                 GetNames();
     static DeviceCapabilitiesMap   GetDevCapWithFeatureHandle();
+
+    static FeatureMap GetFeatures(const std::list<std::string>& featureNames);
 
   protected:
     FeatureHandle m_featureHandle;

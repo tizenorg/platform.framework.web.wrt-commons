@@ -54,6 +54,8 @@ class PluginDAO : public PluginDAOReadOnly
     static void setPluginInstallationStatus(
             DbPluginHandle,
             PluginInstallationState);
+
+    static void unregisterPlugin(DbPluginHandle pluginHandle);
 };
 
 } // namespace WrtDB

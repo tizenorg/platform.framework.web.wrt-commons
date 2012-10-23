@@ -113,5 +113,48 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
     }
 }
 
+void UnregisterFeature(FeatureHandle featureHandle)
+{
+    Try
+    {
+        LogDebug("Unregistering Feature " << featureHandle);
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+                &WrtDatabase::interface());
+
+        if (FeatureDAOReadOnly::isFeatureInstalled(featureHandle)) {
+            LogError("Feature handle is invalid");
+            return;
+        }
+
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        // Unregister DeviceCapabilities
+        FeatureDAOReadOnly::DeviceCapabilitiesList capabilitiesList =
+            FeatureDAOReadOnly(featureHandle).GetDeviceCapabilities();
+
+        FOREACH(it, capabilitiesList) {
+            WRT_DB_DELETE(del, DeviceCapabilities, &WrtDatabase::interface())
+            del->Where(
+                Equals<DeviceCapabilities::DeviceCapName>(
+                    DPL::FromUTF8String(*it)));
+            del->Execute();
+        }
+
+        // Unregister Feature
+        WRT_DB_DELETE(del, FeaturesList, &WrtDatabase::interface())
+        del->Where(Equals<FeaturesList::FeatureUUID>(featureHandle));
+        del->Execute();
+        transaction.Commit();
+
+        return;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Fail to unregister Feature");
+    }
+}
+
+
 } // namespace FeatureDAO
 } // namespace WrtDB

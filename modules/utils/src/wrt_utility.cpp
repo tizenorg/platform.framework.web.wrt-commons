@@ -21,24 +21,21 @@
  * @brief  This file implemented some common functions for widget manager
  */
 
-#include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include <dirent.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdarg.h>
 #include <errno.h>
 #include <libgen.h>
+#include <fts.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dpl/log/log.h>
 #include <dpl/utils/wrt_utility.h>
 
-using namespace std;
+#ifndef MAX_WIDGET_PATH_LENGTH
+#define MAX_WIDGET_PATH_LENGTH    1024
+#endif
 
+//will be replaced by WrtUtilJoinPaths
 bool _WrtUtilSetAbsolutePath(char* absolutePath,
         const char* parentPath,
         const char* fileName)
@@ -78,124 +75,21 @@ bool _WrtUtilSetAbsolutePath(char* absolutePath,
     return true;
 }
 
-// KW bool _WrtUtilConvertStrToBool(char* value, bool *result)
-// KW {
-// KW     bool ret = false;
-// KW     if (NULL == value || NULL == result)
-// KW     {
-// KW         return ret;
-// KW     }
-// KW
-// KW     char* source = value;
-// KW     char* changed = (char*)malloc(strlen(value) + 1);
-// KW     if (NULL == changed)
-// KW     {
-// KW         return ret;
-// KW     }
-// KW     memset(changed, 0, strlen(value) + 1);
-// KW
-// KW     char* cur = changed;
-// KW     while(*source)
-// KW     {
-// KW         *cur++ = tolower(*source++);
-// KW     }
-// KW     if (!strcmp(changed,"false") || !strcmp(changed,"0"))
-// KW     {
-// KW         *result = false;
-// KW         ret = true;
-// KW     }
-// KW     else if(!strcmp(changed,"true") || !strcmp(changed,"1"))
-// KW     {
-// KW         *result = true;
-// KW         ret = true;
-// KW     }
-// KW     free(changed);
-// KW
-// KW     return ret;
-// KW }
-
-void _WrtUtilGetDirAndFileName(const char* fullPath,
-        char** dirName,
-        char** fileName)
+void WrtUtilJoinPaths(std::string &joined, const std::string &parent, const std::string &child)
 {
-    int length = 0;
-    int index = 0;
-    if (NULL == fullPath || (NULL == dirName && NULL == fileName)) {
-        return;
-    }
+    size_t parent_len = parent.length();;
+    joined=parent;
+    joined+=child;
+    //In case someone used windows-style paths
+    std::replace(joined.begin(), joined.end(), '\\', '/');
 
-    length = strlen(fullPath);
-    for (index = length - 1; index >= 0; index--) {
-        if ('/' == fullPath[index]) {
-            if (index == length - 1) {
-                LogDebug(" Warning: The end of directroy is '/'! ");
-                if (dirName) {
-                    *dirName = (char*)malloc(sizeof(char) * (length + 1));
-                    if (*dirName != NULL) {
-                        memset(*dirName, 0, sizeof(char) * (length + 1));
-                        strncpy(*dirName, fullPath, length);
-                    }
-                }
-                return;
-            }
-            break;
-        }
-    }
-    if (index >= 0) {
-        if (dirName) {
-            int dirName_len = index + 2;
-
-            *dirName = (char*)malloc(sizeof(char) * dirName_len);
-            if (*dirName != NULL) {
-                memset(*dirName, 0, sizeof(char) * dirName_len);
-                strncpy(*dirName, fullPath, dirName_len - 1);
-            }
-        }
-
-        if (fileName) {
-            int fileName_len = length - index;
-
-            *fileName = (char*)malloc(sizeof(char) * fileName_len);
-            if (*fileName != NULL) {
-                memset(*fileName, 0, sizeof(char) * fileName_len);
-                strncpy(*fileName, &fullPath[index + 1], fileName_len - 1);
-            }
-        }
-    } else {
-        if (fileName) {
-            *fileName = (char*)malloc(sizeof(char) * (length + 1));
-            if (*fileName != NULL) {
-                memset(*fileName, 0, sizeof(char) * (length + 1));
-                strncpy(*fileName, fullPath, length);
-            }
-        }
+    if (parent_len != 0 && child.length() != 0) {
+        if (joined[parent_len-1] != '/' && joined[parent_len] != '/')
+            joined.insert(parent_len, "/");
+        else if (joined[parent_len-1] == '/' && joined[parent_len] == '/')
+            joined.erase(parent_len, 1);
     }
 }
-
-// KW bool _WrtUtilStringCmp(const char* srcStr, const char* destStr)
-// KW {
-// KW     bool ret = false;
-// KW     char* strString = NULL;
-// KW     char* destString = NULL;
-// KW
-// KW     if (NULL == srcStr || NULL == destStr )
-// KW     {
-// KW         return ret;
-// KW     }
-// KW
-// KW     _WrtUtilStringToLower(srcStr, &strString);
-// KW     _WrtUtilStringToLower(destStr,&destString);
-// KW
-// KW     if(!strcmp(strString, destString))
-// KW     {
-// KW         ret = true;
-// KW     }
-// KW
-// KW     free(strString);
-// KW     free(destString);
-// KW
-// KW     return ret;
-// KW }
 
 // check it deeply later.
 bool _WrtMakeDir (const char *path,
@@ -244,28 +138,32 @@ bool _WrtMakeDir (const char *path,
     return true;
 }
 
-bool _WrtUtilChangeDir(const char* path)
+bool WrtUtilMakeDir(const std::string &newpath, mode_t mode)
 {
-    if (NULL == path) {
-        return false;
-    }
-    if (-1 == chdir(path)) {
-        if (ENOENT == errno) {
-            if (!_WrtMakeDir(path, 0664, WRT_FILEUTILS_RECUR)) {
-                return false;
-            }
-            if (-1 == chdir(path)) {
-                remove(path);
-                return false;
-            }
-        } else {
+    size_t pos = 0;
+    int error;
+
+    if (newpath.length() == 0) return false;
+
+    std::string path=newpath;
+
+    if (*(path.rbegin()) != '/') path += '/';
+
+    while ((pos = path.find('/', pos+1)) != std::string::npos) {
+        if (mkdir(path.substr(0, pos).c_str(), mode) != 0) {
+            error=errno;
+            if (error == EEXIST) continue;
+            LogWarning(__PRETTY_FUNCTION__ << ": failed to create directory "
+                        << path.substr(0,pos)
+                        << ". Error: "
+                        << strerror(error));
             return false;
         }
     }
-
     return true;
 }
 
+// will be replaced with the latter function
 bool _WrtUtilRemoveDir(const char* path)
 {
     DIR* dir = NULL;
@@ -330,9 +228,83 @@ bool _WrtUtilRemoveDir(const char* path)
     return true;
 }
 
-bool
-_WrtUtilStringToLower(const char* str,
-        char** lowerStr)
+bool WrtUtilRemove(const std::string &path)
+{
+    FTS *fts;
+    FTSENT *ftsent;
+    bool rv = true;
+    int error = 0;
+    char * const paths[] = {const_cast<char * const>(path.c_str()), NULL};
+
+    if ((fts = fts_open(paths, FTS_PHYSICAL|FTS_NOCHDIR, NULL)) == NULL) {
+        //ERROR
+        error = errno;
+        LogWarning(__PRETTY_FUNCTION__ << ": fts_open failed with error: "
+                    << strerror(error));
+        return false;
+    }
+
+    while ((ftsent = fts_read(fts)) != NULL) {
+        switch (ftsent->fts_info) {
+            case FTS_D:
+                //directory in preorder - do nothing
+                break;
+            case FTS_DP:
+                //directory in postorder - remove
+                if (rmdir(ftsent->fts_accpath) != 0) {
+                    error = errno;
+                    LogWarning(__PRETTY_FUNCTION__
+                                << ": rmdir failed with error: "
+                                << strerror(error));
+                    rv = false;
+                }
+                break;
+            case FTS_DC:
+            case FTS_F:
+            case FTS_NSOK:
+            case FTS_SL:
+            case FTS_SLNONE:
+            case FTS_DEFAULT:
+                //regular files and other objects that can safely be removed
+                if (unlink(ftsent->fts_accpath) != 0) {
+                    error = errno;
+                    LogWarning(__PRETTY_FUNCTION__
+                                << ": unlink failed with error: "
+                                << strerror(error));
+                    rv = false;
+                }
+                break;
+            case FTS_NS:
+                LogWarning(__PRETTY_FUNCTION__
+                            << ": couldn't get stat info for file: "
+                            << ftsent->fts_path
+                            << ". The error was: "
+                            << strerror(ftsent->fts_errno));
+                rv = false;
+                break;
+            case FTS_DOT:
+            case FTS_DNR:
+            case FTS_ERR:
+            default:
+                LogWarning(__PRETTY_FUNCTION__
+                            << ": traversal failed with error: "
+                            << strerror(ftsent->fts_errno));
+                rv = false;
+                break;
+        }
+    }
+
+    if (fts_close(fts) == -1) {
+        error = errno;
+        LogWarning(__PRETTY_FUNCTION__ << ": fts_close failed with error: "
+                    << strerror(error));
+        rv = false;
+    }
+    return rv;
+}
+
+// shall be replaced with the latter function
+bool _WrtUtilStringToLower(const char* str, char** lowerStr)
 {
     if (!str || !lowerStr) {
         return true;
@@ -358,5 +330,33 @@ _WrtUtilStringToLower(const char* str,
     }
 
     return true;
+}
+
+void WrtUtilStringToLower(std::string &out, const std::string &in)
+{
+    out.clear();
+    for (std::string::const_iterator it=in.begin(); it<in.end(); ++it) {
+        out += static_cast<char>(tolower(*it));
+    }
+}
+
+bool WrtUtilFileExists(const std::string &path)
+{
+    struct stat tmp;
+    if (stat(path.c_str(),&tmp) == 0) {
+        return S_ISREG(tmp.st_mode);
+    } else {
+        return false;
+    }
+}
+
+bool WrtUtilDirExists(const std::string &path)
+{
+    struct stat tmp;
+    if (stat(path.c_str(),&tmp) == 0) {
+        return S_ISDIR(tmp.st_mode);
+    } else {
+        return false;
+    }
 }
 

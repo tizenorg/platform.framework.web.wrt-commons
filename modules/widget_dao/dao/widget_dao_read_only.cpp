@@ -35,6 +35,7 @@
 #include <dpl/wrt-dao-ro/widget_config.h>
 #include <dpl/wrt-dao-ro/feature_dao_read_only.h>
 #include <orm_generator_wrt.h>
+#include <LanguageTagsProvider.h>
 
 namespace WrtDB {
 
@@ -102,6 +103,12 @@ WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
 WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
     m_widgetHandle(WidgetDAOReadOnly::getHandle(widgetGUID))
 {
+}
+
+WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::String pkgName) :
+    m_widgetHandle(WidgetDAOReadOnly::getHandle(pkgName))
+{
+
 }
 
 WidgetDAOReadOnly::~WidgetDAOReadOnly()
@@ -205,7 +212,7 @@ DPL::String WidgetDAOReadOnly::getPath() const
         DPL::OStringStream strAppId;
         strAppId << m_widgetHandle;
         DPL::OptionalString pkgname = getPkgname();
-        path += L"/" + *pkgname + L"/";
+        path += L"/" + *pkgname;
         path += srcPath + L"/";
     }
 
@@ -373,6 +380,16 @@ DbWidgetHandleList WidgetDAOReadOnly::getHandleList()
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get handle list")
 }
 
+DbWidgetDAOReadOnlyList WidgetDAOReadOnly::getWidgetList()
+{
+    LogDebug("Getting DbWidget List");
+    DbWidgetDAOReadOnlyList list;
+    FOREACH(iterator, getHandleList()) {
+        list.push_back(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(*iterator)));
+    }
+    return list;
+}
+
 bool WidgetDAOReadOnly::isWidgetInstalled(DbWidgetHandle handle)
 {
     LogDebug("Checking if widget exist. Handle: " << handle);
@@ -407,12 +424,36 @@ bool WidgetDAOReadOnly::isWidgetInstalled(DPL::String pkgName)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to check if widget exist")
 }
 
-CertificateChainList WidgetDAOReadOnly::getWidgetCertificate() const
+ExternalLocationList WidgetDAOReadOnly::getWidgetExternalLocations() const
+{
+    LogDebug("Getting WidgetExtranalFiles List");
+    ExternalLocationList result;
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetExternalLocations, &WrtDatabase::interface());
+        select->Where(Equals<WidgetExternalLocations::app_id>(m_widgetHandle));
+        WidgetExternalLocations::Select::RowList rows = select->GetRowList();
+        FOREACH(it, rows)
+        {
+            result.push_back(DPL::ToUTF8String(it->Get_path()));
+        }
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get handle list")
+    return result;
+}
+
+CertificateChainList WidgetDAOReadOnly::getWidgetCertificate(
+        CertificateSource source) const
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
     WRT_DB_SELECT(select, WidgetCertificate, &WrtDatabase::interface())
-    select->Where(Equals<WidgetCertificate::app_id>(m_widgetHandle));
+    select->Where(
+        And(
+            Equals<WidgetCertificate::app_id>(m_widgetHandle),
+            Equals<WidgetCertificate::cert_source>(source)));
 
     std::list<DPL::DB::ORM::wrt::WidgetCertificate::Row> chainList = select->GetRowList();
 
@@ -961,7 +1002,7 @@ void WidgetDAOReadOnly::getWidgetAccessInfo(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get accessinfo list")
 }
 
-LanguageTagList WidgetDAOReadOnly::getLanguageTags() const
+LanguageTags WidgetDAOReadOnly::getLanguageTags() const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -975,7 +1016,7 @@ LanguageTagList WidgetDAOReadOnly::getLanguageTags() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get language tags")
 }
 
-LanguageTagList WidgetDAOReadOnly::getIconLanguageTags() const
+LanguageTags WidgetDAOReadOnly::getIconLanguageTags() const
 {
     //TODO check widget existance
     using namespace DPL::DB::ORM;
@@ -1102,6 +1143,26 @@ void WidgetDAOReadOnly::getEncryptedFileList(EncryptedFileList& filesList) const
         info.fileSize = it->Get_size();
         filesList.insert(info);
     }
+}
+
+DPL::OptionalString WidgetDAOReadOnly::getBackgroundPage() const
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
+
+        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
+        if (rows.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. Handle: " << m_widgetHandle);
+        }
+
+        return rows.front().Get_background_page();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get background page")
 }
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN

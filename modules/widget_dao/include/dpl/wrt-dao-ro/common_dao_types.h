@@ -31,6 +31,7 @@
 #include <list>
 #include <dpl/optional_typedefs.h>
 #include <dpl/shared_ptr.h>
+#include <memory>
 
 namespace WrtDB {
 class PluginMetafileData
@@ -233,6 +234,13 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  * @brief Default container with DbWidgetHandle's
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
+
+class WidgetDAOReadOnly; //forward declaration
+typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
+/**
+ * @brief Default container with WidgetDAOReadOnly
+ */
+typedef std::list<WidgetDAOReadOnlyPtr> DbWidgetDAOReadOnlyList;
 
 /**
  * @brief Widget specific type

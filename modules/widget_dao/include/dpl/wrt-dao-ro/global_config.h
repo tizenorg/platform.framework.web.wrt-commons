@@ -57,7 +57,7 @@ inline const char* GetDevicePluginPath()
  */
 inline const char* GetFactoryInstalledWidgetPath()
 {
-    return "/opt/apps/widget/system";
+    return "/opt/share/widget/system";
 }
 
 /**
@@ -73,7 +73,7 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetWidgetSrcPath()
 {
-    return "res/wgt";
+    return "/res/wgt";
 }
 
 /**
@@ -81,7 +81,7 @@ inline const char* GetWidgetSrcPath()
  */
 inline const char* GetPublicVirtualRootPath()
 {
-    return "/opt/apps/widget/data/Public";
+    return "/opt/share/widget/data/Public";
 }
 
 /**
@@ -97,7 +97,7 @@ inline const char* GetWidgetLocalStoragePath()
  */
 inline const char* GetTestsDataPath()
 {
-    return "/opt/apps/widget/tests";
+    return "/opt/share/widget/tests";
 }
 
 /**
@@ -105,7 +105,7 @@ inline const char* GetTestsDataPath()
  */
 inline const char* GetUserWidgetExecPath()
 {
-    return "bin";
+    return "/bin";
 }
 
 /**
@@ -154,7 +154,7 @@ inline const char* GetUserWidgetDefaultIconFile()
  */
 // KW inline const char* GetDownloadedWidgetPath()
 // KW {
-// KW     return "/opt/apps/widget/test-widgets";
+// KW     return "/opt/share/widget/test-widgets";
 // KW }
 
 inline const char* GetSignatureXmlSchema()
@@ -215,7 +215,7 @@ inline const char* GetPluginSuffix()
  */
 inline const char* GetPluginInstallInitializerName()
 {
-    return "/opt/apps/widget/plugin-installation-required";
+    return "/opt/share/widget/plugin-installation-required";
 }
 
 /**
@@ -275,7 +275,7 @@ inline const char* GetShareDirectoryPath()
 
 inline const char* GetTempInstallInfoPath()
 {
-    return "/opt/apps/widget/temp_info";
+    return "/opt/share/widget/temp_info";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB

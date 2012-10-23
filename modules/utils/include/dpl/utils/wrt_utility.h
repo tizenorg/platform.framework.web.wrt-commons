@@ -25,14 +25,11 @@
 #define _WRT_UTILITY_H_
 
 #include <stdbool.h>
+#include <sys/stat.h>
 
 #ifdef __cplusplus
 extern "C"
 {
-#endif
-
-#ifndef MAX_WIDGET_PATH_LENGTH
-#define MAX_WIDGET_PATH_LENGTH    1024
 #endif
 
 /**
@@ -40,11 +37,7 @@ extern "C"
  */
 enum
 {
-    WRT_FILEUTILS_PRESERVE_STATUS = 1,
-    WRT_FILEUTILS_PRESERVE_SYMLINKS = 2,
-    WRT_FILEUTILS_RECUR = 4,
-    WRT_FILEUTILS_FORCE = 8,
-    WRT_FILEUTILS_INTERACTIVE = 16
+    WRT_FILEUTILS_RECUR = 4 //this is the default for almost all WrtMakeDir calls (once called with 0)
 };
 
 /**
@@ -61,51 +54,16 @@ bool _WrtUtilSetAbsolutePath(char* absolutePath,
         const char* fileName);
 
 /**
- * Change the string to bool value,no case sensitive, e.x., "true" or "1" to ture; "False" or "0" to false.
+ * Joins two paths into one
  *
- * @param[in]    value
- * @param[out]    result
+ * @param[out] joined  String for storing joined paths
+ * @param[in] parent   String containing the first part of path
+ * @param[in] child    String containing the second part of the path
  *
- * @return    if success, return true; or return false.
+ * Data stored in joined before the function call will be replaced with joined
+ * paths.
  */
-// KW bool _WrtUtilConvertStrToBool(char* value, bool *result);
-
-/**
- * Get the dir path and file name from the full path. e.x., "/opt/lib/filename" as fullPath, "/opt/lib/" as dirName, "filename" as fileName.
- * it's necessary to free *dirName or *fileName if either of them is not NULL.
- *
- * @param[in]    fullPath
- * @param[out]    dirName
- * @param[out]    fileName
- *
- * @return
- */
-void _WrtUtilGetDirAndFileName(const char* fullPath,
-        char** dirName,
-        char** fileName);
-
-#if 0
-/**
- * Change the provided string into lower case, caller should allocate the memory of source and dest.
- *
- * @param[in] source    the source string to be changed
- * @param[out] dest    the dest string with lower case
- *
- * return        if success, return true, or return false.
- */
-bool _WrtUtilStringToLower(const char* source,
-        char* dest);
-#endif
-
-/**
- * Compare two string, no case sensitive.
- *
- * @param[in] srcStr
- * @param[in] destStr
- *
- * return        return true if the two strings are identical, or return false.
- */
-// KW bool _WrtUtilStringCmp(const char* srcStr, const char* destStr);
+void WrtUtilJoinPaths(std::string &joined, const std::string &parent, const std::string &child);
 
 /**
  * This function is used to make a directory.
@@ -123,14 +81,18 @@ bool _WrtMakeDir (const char *path,
         int flags);
 
 /**
- * This function is used to change to specified directory.
- * If the directory does not exist, it will create it directly.
+ * Creates directories specified by path
  *
- * @param[in]  path    Specified the directory path
+ * @param[in]  path    Path to create
+ * @param[in]  mode    access flags, default to 0755
+ * @return    true on success, false on failure
  *
- * @return    TRUE on success or FALSE on failure.
+ * Function creates directory specified by path argument and all directories
+ * leading up to it, if they don't exist. Note that if yout wish to create
+ * several nested directories, you must make sure that the mode flag allows you
+ * to write and search the direcotries you create.
  */
-bool _WrtUtilChangeDir(const char* path);
+bool WrtUtilMakeDir(const std::string &newpath, mode_t mode=0755);
 
 /**
  * This function is used to remove a directory from the file system.
@@ -141,15 +103,14 @@ bool _WrtUtilChangeDir(const char* path);
  */
 bool _WrtUtilRemoveDir(const char* path);
 
-// KW /**
-// KW  * This function is used to make a temp directory in root directory.
-// KW  *
-// KW  * @param[in]  root    Specified the root directory
-// KW  *
-// KW  * @return    if fails, return NULL, else return the temp path.
-// KW  * it's necessary to free the returned memory space.
-// KW  */
-// KW char* _WrtUtilMakeTempDir(const char* root);
+/**
+ * This function removes the directory or file pointed to by path
+ *
+ * @param[in] path  Path to the file/directory to be deleted
+ *
+ * @return true on success, false otherwise
+ */
+bool WrtUtilRemove(const std::string &path);
 
 /**
  * This function is used to convert a string to lowercase.
@@ -161,6 +122,35 @@ bool _WrtUtilRemoveDir(const char* path);
  */
 bool _WrtUtilStringToLower(const char* str,
         char** lowerStr);
+
+/**
+ * This function converts a string to lowercase
+ *
+ * @param[in]    in   the string to be converted
+ * @param[out] out  the string for placing converted values in
+ *
+ * The previous data stored in string out will be replaced with converted
+ * string from string in
+ */
+void WrtUtilStringToLower(std::string &out, const std::string &in);
+
+/**
+ * Checks if path exists and is a regular file
+ *
+ * @param[in] path   the string representing path to check
+ *
+ * @return true if regular file is accessible under path, false otherwise
+ */
+bool WrtUtilFileExists(const std::string &path);
+
+/**
+ * Checks if path exists and is a directory
+ *
+ * @param[in] path   the string representing path to check
+ *
+ * @return true if directory is accessible under path, false otherwise
+ */
+bool WrtUtilDirExists(const std::string &path);
 
 #ifdef __cplusplus
 }

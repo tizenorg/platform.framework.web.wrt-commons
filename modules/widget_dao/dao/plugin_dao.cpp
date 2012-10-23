@@ -209,4 +209,37 @@ void PluginDAO::setPluginInstallationStatus(DbPluginHandle pluginHandle,
     }
 }
 
+void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
+{
+    LogDebug("unregisterPlugin plugin. Handle: " << pluginHandle);
+
+    Try {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+                &WrtDatabase::interface());
+        DbPluginHandle handle;
+
+        if (!isPluginInstalled(pluginHandle)) {
+            LogInfo("PluginHandle is invalid. Handle: " << handle);
+            return;
+
+        } else {
+            using namespace DPL::DB::ORM;
+            using namespace DPL::DB::ORM::wrt;
+
+            WRT_DB_DELETE(del, PluginProperties, &WrtDatabase::interface())
+            del->Where(
+                Equals<PluginProperties::PluginPropertiesId>(pluginHandle));
+            del->Execute();
+
+            transaction.Commit();
+            LogDebug(" >> Plugin Unregistered. Handle: " << handle);
+        }
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base)
+    {
+        ReThrowMsg(PluginDAO::Exception::DatabaseError,
+                   "Failed in UnregisterPlugin");
+    }
+}
+
 } // namespace WrtDB

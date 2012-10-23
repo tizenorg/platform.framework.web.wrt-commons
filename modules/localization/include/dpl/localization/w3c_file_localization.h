@@ -37,24 +37,23 @@ typedef std::list<WidgetIcon> WidgetIconList;
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
         const DPL::String &url);
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
         const DPL::String& file);
 
-DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle widgetHandle);
+DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle handle);
+DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao);
 OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle);
 WidgetIconList getValidIconsList(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags);
+        WrtDB::DbWidgetHandle widgetHandle);
 
 OptionalWidgetStartFileInfo getStartFileInfo(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &tagsList);
+        WrtDB::DbWidgetHandle widgetHandle);
+
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::DbWidgetHandle widgetHandle);
+WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::WidgetDAOReadOnlyPtr dao);
 }
 
 #endif //W3C_FILE_LOCALIZATION_H

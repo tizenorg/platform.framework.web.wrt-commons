@@ -39,6 +39,11 @@ typedef DPL::SharedPtr<FeatureHandleList> FeatureHandleListPtr;
 typedef int FeatureSetHandle;
 typedef std::list<FeatureSetHandle> FeatureSetHandleList;
 
+typedef struct {
+    std::string     featureName;
+    DbPluginHandle  pluginHandle;
+} FeatureData;
+
 class FeatureModel : public DPL::Event::Model
 {
   public:

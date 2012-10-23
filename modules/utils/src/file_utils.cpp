@@ -141,6 +141,16 @@ bool FileExists(const DPL::String& absolutePath)
     }
 }
 
+bool DirectoryExists(const DPL::String& absolutePath)
+{
+    struct stat statStruct;
+    if (stat(DPL::ToUTF8String(absolutePath).c_str(), &statStruct) == 0) {
+        return S_ISDIR(statStruct.st_mode);
+    } else {
+        return false;
+    }
+}
+
 void MakePath(const std::string& path,
         mode_t mode)
 {

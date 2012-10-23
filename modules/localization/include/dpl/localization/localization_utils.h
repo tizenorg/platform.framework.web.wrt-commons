@@ -73,14 +73,12 @@ struct WidgetStartFileInfo
 };
 
 typedef DPL::Optional<WidgetIcon> OptionalWidgetIcon;
-typedef std::list<DPL::String> LanguageTagsList;
 typedef DPL::Optional<WidgetStartFileInfo> OptionalWidgetStartFileInfo;
 
 namespace LocalizationUtils {
-DPL::String BCP47LanguageTagToLocale(const DPL::String&);
-DPL::String LocaleToBCP47LanguageTag(const DPL::String&);
+/* Function below is deprecated - please use static functions of LanguageTagsProvider:
+ * BCP47LanguageTagToLocale() and LocaleToBCP47LanguageTag() */
+DPL::String BCP47LanguageTagToLocale(const DPL::String&) __attribute__((deprecated));
 
-void SetSystemLanguageTags(const LanguageTagsList& tags);
-LanguageTagsList GetUserAgentLanguageTags();
 }
 #endif //LOCALIZATION_UTILS_H

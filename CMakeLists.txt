@@ -44,9 +44,17 @@ ADD_DEFINITIONS("-DGLOBAL_SETTINGS_CONTROL")
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE "Release")
 ENDIF(NOT CMAKE_BUILD_TYPE)
-SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} -fPIC")
-SET(CMAKE_CXX_FLAGS         "-O2 -g -fPIC -D_FORTIFY_SOURCE=0")
-SET(CMAKE_CXX_FLAGS_CCOV    "-O0 -g -fPIC -D_FORTIFY_SOURCE=0 --coverage")
+
+# Compiler flags
+SET(CMAKE_C_FLAGS_PROFILING    "-O0 -g -pg")
+SET(CMAKE_CXX_FLAGS_PROFILING  "-O0 -std=c++0x -g -pg")
+SET(CMAKE_C_FLAGS_DEBUG        "-O0 -g")
+SET(CMAKE_CXX_FLAGS_DEBUG      "-O0 -std=c++0x -g")
+SET(CMAKE_C_FLAGS_RELEASE      "-O2 -g")
+SET(CMAKE_CXX_FLAGS_RELEASE    "-O2 -std=c++0x -g")
+SET(CMAKE_CXX_FLAGS_CCOV       "-O0 -std=c++0x -g --coverage")
+
+ADD_DEFINITIONS("-fPIC")                        # If supported for the target machine, emit position-independent code, suitable for dynamic linking and avoiding any limit on the size of the global offset table. This option makes a difference on the m68k, PowerPC and SPARC. (BJ: our ARM too?)
 
 # CMake settings
 MESSAGE(STATUS "========================================")

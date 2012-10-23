@@ -71,6 +71,11 @@ WidgetDAO::WidgetDAO(DPL::OptionalString widgetGUID) :
 {
 }
 
+WidgetDAO::WidgetDAO(DPL::String pkgName) :
+    WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(pkgName))
+{
+}
+
 WidgetDAO::~WidgetDAO()
 {
 }
@@ -157,8 +162,12 @@ void WidgetDAO::registerWidget(
         registerWidgetCertificates(widgetHandle, wacSecurity);
 
         CertificateChainList list;
-        wacSecurity.getCertificateChainList(list);
-        registerLaunchCertificates(widgetHandle,list);
+        wacSecurity.getCertificateChainList(list, SIGNATURE_DISTRIBUTOR);
+        registerCertificatesChains(widgetHandle, SIGNATURE_DISTRIBUTOR, list);
+
+        list.clear();
+        wacSecurity.getCertificateChainList(list, SIGNATURE_AUTHOR);
+        registerCertificatesChains(widgetHandle, SIGNATURE_AUTHOR, list);
 
         registerWidgetSettings(widgetHandle, widgetRegInfo);
 
@@ -194,6 +203,7 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_test_widget(regInfo.isTestWidget);
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
+    row.Set_background_page(regInfo.configInfo.backgroundPage);
 
 
     DO_INSERT(row, WidgetExtendedInfo)
@@ -481,7 +491,8 @@ void WidgetDAO::registerWidgetCertificates(DbWidgetHandle widgetHandle,
     }
 }
 
-void WidgetDAO::registerLaunchCertificates(DbWidgetHandle widgetHandle,
+void WidgetDAO::registerCertificatesChains(DbWidgetHandle widgetHandle,
+        CertificateSource certificateSource,
         const CertificateChainList &certificateChainList)
 {
     using namespace DPL::DB::ORM;
@@ -490,6 +501,7 @@ void WidgetDAO::registerLaunchCertificates(DbWidgetHandle widgetHandle,
     {
         WidgetCertificate::Row row;
         row.Set_app_id(widgetHandle);
+        row.Set_cert_source(certificateSource);
         row.Set_encoded_chain(DPL::FromASCIIString(*certChain));
 
         DO_INSERT(row, WidgetCertificate);
@@ -550,6 +562,37 @@ void WidgetDAO::registerEncryptedResouceInfo(DbWidgetHandle widgetHandle,
 
         DO_INSERT(row, EncryptedResourceList)
     }
+}
+
+void WidgetDAO::registerExternalLocations(const ExternalLocationList & externals)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        LogDebug("Inserting external files for widgetHandle: " << m_widgetHandle);
+        FOREACH(it, externals)
+        {
+            WidgetExternalLocations::Row row;
+            row.Set_app_id(m_widgetHandle);
+            row.Set_path(DPL::FromUTF8String(*it));
+
+            DO_INSERT(row, WidgetExternalLocations)
+        }
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register external files");
+}
+
+void WidgetDAO::unregisterAllExternalLocations()
+{
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+    LogDebug("Deleting external files for widgetHandle: " << m_widgetHandle);
+    WRT_DB_DELETE(del, WidgetExternalLocations, &WrtDatabase::interface());
+    del->Where(Equals<WidgetExternalLocations::app_id>(m_widgetHandle));
+    del->Execute();
 }
 
 #undef DO_INSERT

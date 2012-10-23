@@ -67,6 +67,7 @@ SET(WRT_DAO_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/modules/core/include
     ${PROJECT_SOURCE_DIR}/modules/db/include
     ${PROJECT_SOURCE_DIR}/modules/log/include
+    ${PROJECT_SOURCE_DIR}/modules/localization/include
     ${WRT_DAO_DEPS_INCLUDE_DIRS}
     )
 

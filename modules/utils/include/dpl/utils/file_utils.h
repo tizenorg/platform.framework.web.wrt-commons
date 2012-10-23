@@ -34,6 +34,7 @@ DECLARE_EXCEPTION_TYPE(DPL::Exception, CreateDirectoryException)
 DECLARE_EXCEPTION_TYPE(DPL::Exception, RemoveDirectoryException)
 
 bool FileExists(const DPL::String& absolutePath);
+bool DirectoryExists(const DPL::String& absolutePath);
 
 /**
  * Creates specified path recursively.

@@ -52,7 +52,6 @@ class TestResultsCollectorBase
             NONE,
             FAILED,
             IGNORED,
-            TODO,
             INTERNAL
         };
     };

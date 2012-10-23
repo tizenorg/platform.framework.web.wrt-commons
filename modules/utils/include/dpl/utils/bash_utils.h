@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2012 Samsung Electronics Co., Ltd All Rights Reserved
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,21 +14,25 @@
  *    limitations under the License.
  */
 /**
- * @file    localization_utils.cpp
- * @author  Bartosz Janiak (b.janiak@samsung.com)
+ * @file    bash_utils.h
+ * @author  Iwanek Tomasz
  * @version 1.0
  */
 
-#include <dpl/localization/localization_utils.h>
-#include <algorithm>
+#ifndef BASH_UTILS_H
+#define BASH_UTILS_H
 
-namespace LocalizationUtils {
+#include<string>
 
-DPL::String BCP47LanguageTagToLocale(const DPL::String& inLanguageTag)
-{
-    DPL::String languageTag(inLanguageTag);
-    std::replace(languageTag.begin(), languageTag.end(), '-', '_');
-    return languageTag;
+namespace BashUtils {
+
+/**
+ * Escapes bash special characters in string and return string in double quotes
+ * @param source string to be escaped
+ * @return escaped string
+ */
+std::string escape_arg(const std::string & source);
+
 }
 
-}
+#endif // BASH_UTILS_H
