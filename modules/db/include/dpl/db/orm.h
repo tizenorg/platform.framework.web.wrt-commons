@@ -77,7 +77,7 @@ namespace DataCommandUtils {
     void BindArgument(DataCommand *command, ArgumentIndex index, const DPL::String& argument);
     void BindArgument(DataCommand *command, ArgumentIndex index, const OptionalString& argument);
 }
-class Expression {
+class __attribute__ ((visibility("hidden"))) Expression {
 public:
     virtual ~Expression() {}
     virtual std::string GetString() const = 0;
@@ -87,7 +87,7 @@ public:
 typedef DPL::SharedPtr<Expression> ExpressionPtr;
 
 template<const char* Operator, typename LeftExpression, typename RightExpression>
-class BinaryExpression : public Expression {
+class __attribute__ ((visibility("hidden"))) BinaryExpression : public Expression {
 protected:
     LeftExpression  m_leftExpression;
     RightExpression m_rightExpression;
@@ -129,7 +129,7 @@ BinaryExpression<RelationTypes::And, LeftExpression, RightExpression>
 }
 
 template<typename ArgumentType>
-class ExpressionWithArgument : public Expression {
+class __attribute__ ((visibility("hidden"))) ExpressionWithArgument : public Expression {
 protected:
     ArgumentType argument;
 
@@ -143,9 +143,8 @@ public:
     }
 };
 
-
 template<typename ColumnData, const char* Relation>
-class Compare : public ExpressionWithArgument<typename ColumnData::ColumnType> {
+class __attribute__ ((visibility("hidden"))) Compare : public ExpressionWithArgument<typename ColumnData::ColumnType> {
 public:
     explicit Compare(typename ColumnData::ColumnType column) :
         ExpressionWithArgument<typename ColumnData::ColumnType>(column)
@@ -170,7 +169,7 @@ public:
 };
 #define ORM_DEFINE_COMPARE_EXPRESSION(name, relationType)                      \
     template<typename ColumnData>                                              \
-    class name : public Compare<ColumnData, RelationTypes::relationType> {     \
+    class __attribute__ ((visibility("hidden"))) name : public Compare<ColumnData, RelationTypes::relationType> {     \
     public:                                                                    \
         name(typename ColumnData::ColumnType column) :                         \
             Compare<ColumnData, RelationTypes::relationType>(column)           \
@@ -181,7 +180,7 @@ ORM_DEFINE_COMPARE_EXPRESSION(Equals, Equal)
 ORM_DEFINE_COMPARE_EXPRESSION(Is, Is)
 
 template<typename ColumnData1, typename ColumnData2>
-class CompareBinaryColumn {
+class __attribute__ ((visibility("hidden"))) CompareBinaryColumn {
 private:
     std::string m_relation;
 public:
@@ -216,7 +215,7 @@ CompareBinaryColumn<ColumnData1, ColumnData2>
 }
 
 template<typename ColumnData, const char* Relation>
-class NumerousArguments : public Expression {
+class __attribute__ ((visibility("hidden"))) NumerousArguments : public Expression {
 protected:
     std::set<typename ColumnData::ColumnType> m_argumentList;
 public:
@@ -265,7 +264,7 @@ public:
 
 #define ORM_DEFINE_COMPARE_EXPRESSION_NUMEROUS_ARGUMENTS(name, relationType)                      \
     template<typename ColumnData>                                              \
-    class name : public NumerousArguments<ColumnData, RelationTypes::relationType> {     \
+    class __attribute__ ((visibility("hidden"))) name : public NumerousArguments<ColumnData, RelationTypes::relationType> {     \
     public:                                                                    \
         name(std::set<typename ColumnData::ColumnType> column) :                         \
             NumerousArguments<ColumnData, RelationTypes::relationType>(column)           \
@@ -277,14 +276,14 @@ ORM_DEFINE_COMPARE_EXPRESSION_NUMEROUS_ARGUMENTS(In, In)
 template<typename ColumnType>
 ColumnType GetColumnFromCommand(ColumnIndex columnIndex, DataCommand *command);
 
-class CustomColumnBase {
+class __attribute__ ((visibility("hidden"))) CustomColumnBase {
 public:
     CustomColumnBase() {}
     virtual ~CustomColumnBase() {}
 };
 
 template<typename ColumnType>
-class CustomColumn : public CustomColumnBase {
+class __attribute__ ((visibility("hidden"))) CustomColumn : public CustomColumnBase {
 private:
     ColumnType m_columnData;
 
@@ -307,7 +306,7 @@ public:
 };
 
 template<typename ColumnList>
-class CustomRowUtil {
+class __attribute__ ((visibility("hidden"))) CustomRowUtil {
 public:
     static void MakeColumnList(std::vector<CustomColumnBase*>& columnList)
     {
@@ -349,7 +348,7 @@ friend class CustomRowUtil;
 };
 
 template<>
-class CustomRowUtil<DPL::TypeListGuard> {
+class __attribute__ ((visibility("hidden"))) CustomRowUtil<DPL::TypeListGuard> {
 public:
     static void MakeColumnList(std::vector<CustomColumnBase*>&) {}
 private:
@@ -361,7 +360,7 @@ friend class CustomRowUtil;
 };
 
 template<typename ColumnList>
-class CustomRow {
+class __attribute__ ((visibility("hidden"))) CustomRow {
 private:
     std::vector<CustomColumnBase*> m_columns;
 
@@ -416,7 +415,7 @@ void SetColumnData(CustomRow& row, ColumnType columnData, ColumnIndex columnInde
 }
 
 template<typename ColumnList, typename CustomRow>
-class FillCustomRowUtil {
+class  __attribute__ ((visibility("hidden"))) FillCustomRowUtil {
 public:
     static void FillCustomRow(CustomRow& row, DataCommand* command)
     {
@@ -437,7 +436,7 @@ friend class FillCustomRowUtil;
 };
 
 template<typename CustomRow>
-class FillCustomRowUtil<DPL::TypeListGuard, CustomRow> {
+class  __attribute__ ((visibility("hidden"))) FillCustomRowUtil<DPL::TypeListGuard, CustomRow> {
 private:
     static void FillCustomRow(CustomRow&, ColumnIndex, DataCommand *)
     { /* do nothing, we're past the last element of column list */ }
@@ -447,7 +446,7 @@ friend class FillCustomRowUtil;
 };
 
 template<typename ColumnList, typename Row>
-class FillRowUtil {
+class  __attribute__ ((visibility("hidden"))) FillRowUtil {
 public:
     static void FillRow(Row& row, DataCommand *command)
     {
@@ -468,7 +467,7 @@ friend class FillRowUtil;
 };
 
 template<typename Row>
-class FillRowUtil<DPL::TypeListGuard, Row> {
+class  __attribute__ ((visibility("hidden"))) FillRowUtil<DPL::TypeListGuard, Row> {
 private:
     static void FillRow(Row&, ColumnIndex, DataCommand *)
     { /* do nothing, we're past the last element of column list */ }
@@ -478,7 +477,7 @@ friend class FillRowUtil;
 };
 
 template<typename ColumnList>
-class JoinUtil {
+class  __attribute__ ((visibility("hidden"))) JoinUtil {
 public:
     static std::string GetColumnNames()
     {
@@ -503,7 +502,7 @@ public:
 };
 
 template<>
-class JoinUtil<DPL::TypeListGuard> {
+class  __attribute__ ((visibility("hidden"))) JoinUtil<DPL::TypeListGuard> {
 public:
     static std::string GetColumnNames() { return ""; }
     static std::string GetJoinTableName(std::string) { return ""; }
@@ -518,7 +517,7 @@ public:
 };
 
 template<typename TableDefinition>
-class Query
+class  __attribute__ ((visibility("hidden"))) Query
 {
 protected:
     explicit Query(IOrmInterface* interface) :
@@ -542,7 +541,7 @@ protected:
 };
 
 template<typename TableDefinition>
-class QueryWithWhereClause : public Query<TableDefinition>
+class  __attribute__ ((visibility("hidden"))) QueryWithWhereClause : public Query<TableDefinition>
 {
 protected:
     ExpressionPtr m_whereExpression;
@@ -593,7 +592,7 @@ public:
 };
 
 template<typename TableDefinition>
-class Delete : public QueryWithWhereClause<TableDefinition>
+class  __attribute__ ((visibility("hidden"))) Delete : public QueryWithWhereClause<TableDefinition>
 {
 protected:
     void Prepare()
@@ -634,7 +633,7 @@ public:
 };
 
 template<typename TableDefinition>
-class Insert : public Query<TableDefinition>
+class __attribute__ ((visibility("hidden"))) Insert : public Query<TableDefinition>
 {
 public:
     typedef typename TableDefinition::Row Row;
@@ -755,7 +754,7 @@ public:
 };
 
 template<typename TableDefinition>
-class Select : public QueryWithWhereClause<TableDefinition>
+class __attribute__ ((visibility("hidden"))) Select : public QueryWithWhereClause<TableDefinition>
 {
 public:
     typedef typename TableDefinition::ColumnList       ColumnList;
@@ -939,7 +938,7 @@ public:
 };
 
 template<typename TableDefinition>
-class Update : public QueryWithWhereClause<TableDefinition> {
+class __attribute__ ((visibility("hidden"))) Update : public QueryWithWhereClause<TableDefinition> {
 public:
     typedef typename TableDefinition::Row Row;
 
