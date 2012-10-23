@@ -553,6 +553,12 @@ class WidgetDAOReadOnly
     static DbWidgetHandleList getHandleList();
 
     /**
+     * This method returns list of pkgname of installed packages
+     * @return list of pkgname of installed packages
+     */
+    static WidgetPkgNameList getPkgnameList();
+
+    /**
      * This method returns a list of all the installed widgets.
      *
      * @return list of installed widgets.

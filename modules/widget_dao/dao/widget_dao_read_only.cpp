@@ -368,6 +368,19 @@ DbWidgetHandleList WidgetDAOReadOnly::getHandleList()
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get handle list")
 }
 
+WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
+{
+    LogDebug("Getting Pkgname List");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        return select->GetValueList<WidgetInfo::pkgname>();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
+}
+
 DbWidgetDAOReadOnlyList WidgetDAOReadOnly::getWidgetList()
 {
     LogDebug("Getting DbWidget List");

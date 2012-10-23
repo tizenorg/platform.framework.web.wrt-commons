@@ -236,6 +236,8 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 
+typedef std::list<DPL::Optional<WidgetPkgName> > WidgetPkgNameList; //TODO: this cannot be null -> appropriate changes in db schema needed
+
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
 /**
