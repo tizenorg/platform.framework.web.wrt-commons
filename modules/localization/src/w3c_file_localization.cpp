@@ -156,6 +156,11 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
     return GetFilePathInWidgetPackageInternal(dao.getPath(), file);
 }
 
+DPL::OptionalString getStartFile(const WrtDB::WidgetPkgName & pkgname)
+{
+    return getStartFile(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+}
+
 DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle handle)
 {
     return getStartFile(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(handle)));
@@ -190,15 +195,23 @@ DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
     return DPL::OptionalString::Null;
 }
 
-OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
+OptionalWidgetIcon getIcon(const WrtDB::WidgetPkgName & pkgname)
 {
-    WidgetDAOReadOnly dao(widgetHandle);
+    return getIcon(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+}
 
-    WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
-    WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
+OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle)
+{
+    return getIcon(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
+}
+
+OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao)
+{
+    WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao->getLocalizedIconList();
+    WidgetDAOReadOnly::WidgetIconList list = dao->getIconList();
     LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
-    DPL::OptionalString defaultLoc = dao.getDefaultlocale();
+    DPL::OptionalString defaultLoc = dao->getDefaultlocale();
     if (!!defaultLoc) {
         tagsList.push_back(*defaultLoc);
     }
@@ -291,6 +304,11 @@ OptionalWidgetStartFileInfo getStartFileInfo(
 WidgetLocalizedInfo getLocalizedInfo(const WrtDB::DbWidgetHandle handle)
 {
     return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(handle)));
+}
+
+WidgetLocalizedInfo getLocalizedInfo(const WrtDB::WidgetPkgName & pkgname)
+{
+    return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
 }
 
 WidgetLocalizedInfo getLocalizedInfo(WidgetDAOReadOnlyPtr dao)
