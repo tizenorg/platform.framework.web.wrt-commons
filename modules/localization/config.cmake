@@ -20,7 +20,6 @@
 #
 
 SET(DPL_LOCALIZATION_SOURCES
-    ${PROJECT_SOURCE_DIR}/modules/localization/src/localization_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/localization/src/w3c_file_localization.cpp
     ${PROJECT_SOURCE_DIR}/modules/localization/src/LanguageTagsProvider.cpp
     PARENT_SCOPE

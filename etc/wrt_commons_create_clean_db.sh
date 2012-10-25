@@ -27,6 +27,7 @@ do
     chown 0:6026 /opt/dbspace/.$name.db-journal
     chmod 660 /opt/dbspace/.$name.db
     chmod 660 /opt/dbspace/.$name.db-journal
+    pkill -9 security-serv
 done
 
 

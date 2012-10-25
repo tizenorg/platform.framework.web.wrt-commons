@@ -21,7 +21,6 @@
 
 SET(DPL_UTILS_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/utils/src/bash_utils.cpp
-    ${PROJECT_SOURCE_DIR}/modules/utils/src/file_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/folder_size.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/mime_type_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/warp_iri.cpp
@@ -34,7 +33,6 @@ SET(DPL_UTILS_SOURCES
 
 SET(DPL_UTILS_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/bash_utils.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/file_utils.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/folder_size.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/mime_type_utils.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/warp_iri.h

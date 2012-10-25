@@ -75,10 +75,4 @@ struct WidgetStartFileInfo
 typedef DPL::Optional<WidgetIcon> OptionalWidgetIcon;
 typedef DPL::Optional<WidgetStartFileInfo> OptionalWidgetStartFileInfo;
 
-namespace LocalizationUtils {
-/* Function below is deprecated - please use static functions of LanguageTagsProvider:
- * BCP47LanguageTagToLocale() and LocaleToBCP47LanguageTag() */
-DPL::String BCP47LanguageTagToLocale(const DPL::String&) __attribute__((deprecated));
-
-}
 #endif //LOCALIZATION_UTILS_H

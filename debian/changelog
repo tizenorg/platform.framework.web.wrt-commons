@@ -1,3 +1,18 @@
+wrt-commons (0.2.67) unstable; urgency=low
+
+  * Localization cleaning from unused API (restore)
+  * Removing old, unused _WrtUtil* functions
+  * Database reset affects security-server
+  * Removing FileUtils
+  * Replacing recursive opendir with fts
+
+  * Release wrt-commons_0.2.67
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.67
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Wed, 24 Oct 2012 17:02:50 +0900
+
 wrt-commons (0.2.66) unstable; urgency=low
 
   * Release wrt-commons_0.2.66

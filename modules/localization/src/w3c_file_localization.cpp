@@ -48,7 +48,6 @@ DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
         std::string filePath)
 {
     LogDebug("Looking for file: " << filePath << "  in: " << basePath);
-    using namespace LocalizationUtils;
 
     const LanguageTags& ltags = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
@@ -162,8 +161,6 @@ DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle handle)
 
 DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
 {
-    using namespace LocalizationUtils;
-
     WidgetDAOReadOnly::LocalizedStartFileList locList = dao->getLocalizedStartFileList();
     WidgetDAOReadOnly::WidgetStartFileList list = dao->getStartFileList();
     LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
@@ -193,7 +190,6 @@ DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
 
 OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
     WidgetDAOReadOnly dao(widgetHandle);
 
     WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
@@ -230,7 +226,6 @@ OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
 WidgetIconList getValidIconsList(
         WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
     WidgetDAOReadOnly dao(widgetHandle);
     WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
 
@@ -255,8 +250,6 @@ WidgetIconList getValidIconsList(
 OptionalWidgetStartFileInfo getStartFileInfo(
         WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
-
     WidgetStartFileInfo info;
 
     WidgetDAOReadOnly dao(widgetHandle);

@@ -14,44 +14,16 @@
  *    limitations under the License.
  */
 /**
- * @file    wrt_utility.h
- * @version    0.6
- * @author    Wei Dong(d.wei@samsung.com)
- * @author    Ma Quan(jason.ma@samsung.com)
- * @brief     Header file of widget manager common functions
+ * @file        wrt_utility.h
+ * @version     0.8
+ * @author      Janusz Majnert <j.majnert@samsung.com>
+ * @brief       Common utility functions
  */
 
 #ifndef _WRT_UTILITY_H_
 #define _WRT_UTILITY_H_
 
-#include <stdbool.h>
 #include <sys/stat.h>
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-/**
- * File options
- */
-enum
-{
-    WRT_FILEUTILS_RECUR = 4 //this is the default for almost all WrtMakeDir calls (once called with 0)
-};
-
-/**
- * Combine the parentPath and fileName into a new absolute file name.
- *
- * @param[out]    absolutePath
- * @param[in]    parentPath
- * @param[in]    fileName
- *
- * @return    if success, return true; or return false.
- */
-bool _WrtUtilSetAbsolutePath(char* absolutePath,
-        const char* parentPath,
-        const char* fileName);
 
 /**
  * Joins two paths into one
@@ -64,21 +36,6 @@ bool _WrtUtilSetAbsolutePath(char* absolutePath,
  * paths.
  */
 void WrtUtilJoinPaths(std::string &joined, const std::string &parent, const std::string &child);
-
-/**
- * This function is used to make a directory.
- * it's neccessary to free the returned dir path.
- *
- * @param[in] path    Specified the directory path
- * @param[in] mode    Operation mode the you want to set
- * @param[in] flags   WRT_FILEUTILS_RECUR if you want to make parent's directory recusively,
- *                    WRT_FILEUTILS_NONE if not.
- *
- * @return    TRUE on success or FALSE on failure.
- */
-bool _WrtMakeDir (const char *path,
-        long mode,
-        int flags);
 
 /**
  * Creates directories specified by path
@@ -95,15 +52,6 @@ bool _WrtMakeDir (const char *path,
 bool WrtUtilMakeDir(const std::string &newpath, mode_t mode=0755);
 
 /**
- * This function is used to remove a directory from the file system.
- *
- * @param[in]  path    Specified the directory path
- *
- * @return    TRUE on success or FALSE on failure.
- */
-bool _WrtUtilRemoveDir(const char* path);
-
-/**
  * This function removes the directory or file pointed to by path
  *
  * @param[in] path  Path to the file/directory to be deleted
@@ -111,17 +59,6 @@ bool _WrtUtilRemoveDir(const char* path);
  * @return true on success, false otherwise
  */
 bool WrtUtilRemove(const std::string &path);
-
-/**
- * This function is used to convert a string to lowercase.
- *
- * @param[in]  str            the string need to be converted.
- * @param[in]  lowerStr    the converted string.
- *
- * @return    TRUE on success or FALSE on failure.
- */
-bool _WrtUtilStringToLower(const char* str,
-        char** lowerStr);
 
 /**
  * This function converts a string to lowercase
@@ -151,10 +88,6 @@ bool WrtUtilFileExists(const std::string &path);
  * @return true if directory is accessible under path, false otherwise
  */
 bool WrtUtilDirExists(const std::string &path);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //_WRT_UTILITY_H_
 

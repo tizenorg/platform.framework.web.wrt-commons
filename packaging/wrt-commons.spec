@@ -1,7 +1,7 @@
-#sbs-git:slp/pkgs/w/wrt-commons wrt-commons 0.2.66
+#sbs-git:slp/pkgs/w/wrt-commons wrt-commons 0.2.67
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.66
+Version:    0.2.67
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
