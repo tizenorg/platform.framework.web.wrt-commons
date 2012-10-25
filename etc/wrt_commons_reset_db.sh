@@ -14,13 +14,13 @@
 #    limitations under the License.
 #
 
-rm -rf /opt/apps/widget/system/*
+rm -rf /opt/share/widget/system/*
 
 #Removing of widget desktop icons
 WIDGET_EXEC_PATH=/opt/apps/
 WIDGET_DESKTOP_PATH=/opt/share/applications/
 WRT_DB=/opt/dbspace/.wrt.db
-PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/apps/widget/
+PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/share/widget/
 PLUGINS_INSTALLATION_REQUIRED=plugin-installation-required
 
 if [ -f ${WRT_DB} ]

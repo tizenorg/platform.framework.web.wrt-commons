@@ -356,4 +356,38 @@ FeatureDAOReadOnly::GetDevCapWithFeatureHandle()
     }
 }
 
+FeatureDAOReadOnly::FeatureMap
+FeatureDAOReadOnly::GetFeatures(const std::list<std::string>& featureNames)
+{
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        std::set<typename FeaturesList::FeatureName::ColumnType> nameList;
+        FOREACH(nm, featureNames) {
+            nameList.insert(DPL::FromUTF8String(*nm));
+        }
+
+        WRT_DB_SELECT(select, FeaturesList, &WrtDatabase::interface())
+        select->Where(In<FeaturesList::FeatureName>(nameList));
+
+        FeatureMap featureMap;
+        FeatureData featureData;
+        FeaturesList::Select::RowList rows = select->GetRowList();
+        FOREACH(rowIt, rows) {
+            featureData.featureName = DPL::ToUTF8String(
+                    rowIt->Get_FeatureName());
+            featureData.pluginHandle = rowIt->Get_PluginPropertiesId();
+            featureMap.insert(std::pair<FeatureHandle, FeatureData>(
+                    rowIt->Get_FeatureUUID(), featureData));
+        }
+
+        return featureMap;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Failure during getting GetFeatures");
+    }
+}
+
 } // namespace WrtDB

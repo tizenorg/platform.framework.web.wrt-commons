@@ -51,6 +51,11 @@ enum WidgetSignatureType
     SIGNATURE_TYPE_UNIDENTIFIED
 };
 
+enum CertificateSource {
+    SIGNATURE_DISTRIBUTOR = 0,
+    SIGNATURE_AUTHOR = 1
+};
+
 typedef std::list<DPL::String> StringList;
 
 struct WidgetLocalizedInfo
@@ -190,7 +195,8 @@ class IWacSecurity
 
     virtual bool isWacSigned() const = 0;
 
-    virtual void getCertificateChainList(CertificateChainList& list) const = 0;
+    virtual void getCertificateChainList(CertificateChainList& list,
+            CertificateSource source) const = 0;
 };
 
 /**
@@ -221,6 +227,7 @@ typedef std::list<DPL::String> LanguageTagList;
 typedef std::list<std::string> HostList;
 typedef std::list<std::string> FingerPrintList;
 typedef std::list<std::string> ResourceAttributeList;
+typedef std::list<std::string> ExternalLocationList; //TODO: if there will be many files registered std::set is better
 
 class WidgetDAOReadOnly
 {
@@ -280,7 +287,6 @@ class WidgetDAOReadOnly
     };
     typedef std::list<WidgetLocalizedStartFileRow> LocalizedStartFileList;
 
-
     /**
      * This is a constructor.
      *
@@ -288,6 +294,7 @@ class WidgetDAOReadOnly
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
     WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
+    WidgetDAOReadOnly(DPL::String pkgName);
 
     /**
      * Destructor
@@ -537,7 +544,7 @@ class WidgetDAOReadOnly
     bool getWebkitPluginsRequired() const;
 
     /**
-     * This method returns a list of all the installed widgets.
+     * This method returns a list of all the installed widgets' app id.
      *
      * @return list of installed widgets' app id.
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
@@ -545,6 +552,16 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     static DbWidgetHandleList getHandleList();
+
+    /**
+     * This method returns a list of all the installed widgets.
+     *
+     * @return list of installed widgets.
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
+     *  DB table.
+     */
+    static DbWidgetDAOReadOnlyList getWidgetList();
 
    /**
      * This method removes a widget's information from EmDB.
@@ -679,6 +696,8 @@ class WidgetDAOReadOnly
     LanguageTagList getLanguageTags() const;
     LanguageTagList getIconLanguageTags() const;
 
+
+
     WidgetLocalizedInfo getLocalizedInfo(const DPL::String& languageTag) const;
     std::string getCookieDatabasePath() const;
     // Local storage
@@ -695,7 +714,14 @@ class WidgetDAOReadOnly
      */
     DPL::OptionalString getSplashImgSrc() const;
 
-    CertificateChainList getWidgetCertificate() const;
+    ExternalLocationList getWidgetExternalLocations() const;
+
+    /*
+     * Default value is required to keep compatibility with
+     * wrt-installer and wrt.
+     */
+    CertificateChainList getWidgetCertificate(
+            CertificateSource source = SIGNATURE_DISTRIBUTOR) const;
 
     void getWidgetSettings(WidgetSettings& outWidgetSettings) const;
 
@@ -719,6 +745,13 @@ class WidgetDAOReadOnly
     PkgType getPkgType() const;
 
     void getEncryptedFileList(EncryptedFileList& filesList) const;
+
+    /**
+     * This method returns widget's background page filename.
+     *
+     * @return Name of file containing background page
+     */
+    DPL::OptionalString getBackgroundPage() const;
 };
 
 } // namespace WrtDB

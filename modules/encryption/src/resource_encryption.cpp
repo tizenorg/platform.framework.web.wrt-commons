@@ -30,7 +30,7 @@ const char* ENCRYPTION_FILE = "_enc";
 const char* DECRYPTION_FILE = "_dec";
 
 inline std::string GetDefaultEncryptKeyPath() {
-    return "/opt/apps/widget/data";
+    return "/opt/share/widget/data";
 }
 }
 namespace WRTEncryptor{

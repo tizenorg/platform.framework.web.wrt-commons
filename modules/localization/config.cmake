@@ -20,8 +20,8 @@
 #
 
 SET(DPL_LOCALIZATION_SOURCES
-    ${PROJECT_SOURCE_DIR}/modules/localization/src/localization_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/localization/src/w3c_file_localization.cpp
+    ${PROJECT_SOURCE_DIR}/modules/localization/src/LanguageTagsProvider.cpp
     PARENT_SCOPE
 )
 
@@ -29,6 +29,7 @@ SET(DPL_LOCALIZATION_SOURCES
 SET(DPL_LOCALIZATION_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/localization/include/dpl/localization/localization_utils.h
     ${PROJECT_SOURCE_DIR}/modules/localization/include/dpl/localization/w3c_file_localization.h
+    ${PROJECT_SOURCE_DIR}/modules/localization/include/LanguageTagsProvider.h
     PARENT_SCOPE
 )
 

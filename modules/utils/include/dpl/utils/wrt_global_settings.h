@@ -25,8 +25,14 @@
 
 namespace GlobalSettings {
 
-// Methods for getting/setting test mode environment flag
+// Methods for getting test mode environment flag
 bool TestModeEnabled();
+bool PopupsTestModeEnabled();
+bool WarpTestModeEnabled();
+bool RoamingTestModeEnabled();
+bool OCSPTestModeEnabled();
+bool CrlTestModeEnabled();
+bool MakeScreenTestModeEnabled();
 bool IsEmulator();
 
 }

@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include <dpl/localization/w3c_file_localization.h>
 
@@ -33,19 +34,22 @@
 #include <dpl/optional.h>
 #include <dpl/foreach.h>
 
+#include <LanguageTagsProvider.h>
+
 using namespace WrtDB;
 
 namespace {
 const DPL::String FILE_URI_BEGIN = L"file://";
 const DPL::String WIDGET_URI_BEGIN = L"widget://";
+const DPL::String LOCALE_PREFIX = L"locales/";
 
 DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
-        const LanguageTagsList &tags,
         const std::string& basePath,
         std::string filePath)
 {
     LogDebug("Looking for file: " << filePath << "  in: " << basePath);
-    using namespace LocalizationUtils;
+
+    const LanguageTags& ltags = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     //Check if string isn't empty
     if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
@@ -54,10 +58,10 @@ DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
     //Check if string isn't empty
     if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
 
-    LogDebug("locales size = " << tags.size());
-    for (LanguageTagsList::const_iterator it = tags.begin();
-         it != tags.end();
-         ++it) {
+    LogDebug("locales size = " << ltags.size());
+    for (LanguageTags::const_iterator it = ltags.begin();
+            it != ltags.end();
+            ++it) {
         LogDebug("Trying locale: " << *it);
         std::string path = basePath;
         if (path[path.size() - 1] == '/') {
@@ -84,13 +88,11 @@ DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
 }
 
 DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
-        const LanguageTagsList &languageTags,
         const DPL::String& basePath,
         const DPL::String& filePath)
 {
     DPL::Optional<std::string> path =
-        GetFilePathInWidgetPackageInternal(languageTags,
-                                           DPL::ToUTF8String(basePath),
+        GetFilePathInWidgetPackageInternal(DPL::ToUTF8String(basePath),
                                            DPL::ToUTF8String(filePath));
     DPL::Optional<DPL::String> dplPath;
     if (!!path) {
@@ -103,7 +105,6 @@ DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
 namespace W3CFileLocalization {
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
         const DPL::String &url)
 {
     DPL::String req = url;
@@ -116,6 +117,15 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         if (req.find(dao.getPath()) == 0) {
             req.erase(0, dao.getPath().length());
         }
+        if (req.find(LOCALE_PREFIX) == 0) {
+            req.erase(0, LOCALE_PREFIX.length());
+            int position = req.find('/');
+            // should always be >0 as correct locales path is
+            // always locales/xx/ or locales/xx-XX/
+            if (position != std::string::npos && position > 0) {
+                req.erase(0, position+1);
+            }
+        }
     } else {
         LogDebug("Unknown path format, ignoring");
         return DPL::Optional<DPL::String>::Null;
@@ -124,7 +134,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
     auto widgetPath = dao.getPath();
 
     DPL::Optional<DPL::String> found =
-        GetFilePathInWidgetPackageInternal(languageTags, widgetPath, req);
+        GetFilePathInWidgetPackageInternal(widgetPath, req);
 
     if (!found) {
         LogError("Path not found within current locale in current widget");
@@ -138,24 +148,24 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
         const DPL::String& file)
 {
     WidgetDAOReadOnly dao(widgetHandle);
-    return GetFilePathInWidgetPackageInternal(languageTags, dao.getPath(), file);
+    return GetFilePathInWidgetPackageInternal(dao.getPath(), file);
 }
 
-DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle widgetHandle)
+DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle handle)
 {
-    using namespace LocalizationUtils;
+    return getStartFile(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(handle)));
+}
 
-    WidgetDAOReadOnly dao(widgetHandle);
+DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
+{
+    WidgetDAOReadOnly::LocalizedStartFileList locList = dao->getLocalizedStartFileList();
+    WidgetDAOReadOnly::WidgetStartFileList list = dao->getStartFileList();
+    LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
-    WidgetDAOReadOnly::LocalizedStartFileList locList = dao.getLocalizedStartFileList();
-    WidgetDAOReadOnly::WidgetStartFileList list = dao.getStartFileList();
-    LanguageTagsList tagsList = LocalizationUtils::GetUserAgentLanguageTags();
-
-    DPL::OptionalString defaultLoc = dao.getDefaultlocale();
+    DPL::OptionalString defaultLoc = dao->getDefaultlocale();
     if (!!defaultLoc) {
         tagsList.push_back(*defaultLoc);
     }
@@ -180,12 +190,11 @@ DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle widgetHandle)
 
 OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
     WidgetDAOReadOnly dao(widgetHandle);
 
     WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
     WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
-    LanguageTagsList tagsList = LocalizationUtils::GetUserAgentLanguageTags();
+    LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     DPL::OptionalString defaultLoc = dao.getDefaultlocale();
     if (!!defaultLoc) {
@@ -215,10 +224,8 @@ OptionalWidgetIcon getIcon(const WrtDB::DbWidgetHandle widgetHandle)
 }
 
 WidgetIconList getValidIconsList(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags)
+        WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
     WidgetDAOReadOnly dao(widgetHandle);
     WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
 
@@ -228,7 +235,6 @@ WidgetIconList getValidIconsList(
     {
         LogDebug(":" << it->iconSrc);
         if (!!getFilePathInWidgetPackage(widgetHandle,
-                                         languageTags,
                                          it->iconSrc))
         {
             WidgetIcon ret;
@@ -242,17 +248,15 @@ WidgetIconList getValidIconsList(
 }
 
 OptionalWidgetStartFileInfo getStartFileInfo(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagList &tagsList)
+        WrtDB::DbWidgetHandle widgetHandle)
 {
-    using namespace LocalizationUtils;
-
     WidgetStartFileInfo info;
 
     WidgetDAOReadOnly dao(widgetHandle);
     WidgetDAOReadOnly::LocalizedStartFileList locList =
         dao.getLocalizedStartFileList();
     WidgetDAOReadOnly::WidgetStartFileList list = dao.getStartFileList();
+    const LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     FOREACH(tag, tagsList)
     {
@@ -284,10 +288,13 @@ OptionalWidgetStartFileInfo getStartFileInfo(
 
 WidgetLocalizedInfo getLocalizedInfo(const WrtDB::DbWidgetHandle handle)
 {
-    LanguageTagList languages =
-        LocalizationUtils::GetUserAgentLanguageTags();
-    WidgetDAOReadOnly dao(handle);
-    DPL::OptionalString dl = dao.getDefaultlocale();
+    return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(handle)));
+}
+
+WidgetLocalizedInfo getLocalizedInfo(WidgetDAOReadOnlyPtr dao)
+{
+    LanguageTags languages = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    DPL::OptionalString dl = dao->getDefaultlocale();
     if (!!dl) {
         languages.push_back(*dl);
     }
@@ -295,7 +302,7 @@ WidgetLocalizedInfo getLocalizedInfo(const WrtDB::DbWidgetHandle handle)
     WidgetLocalizedInfo result;
     FOREACH(i, languages)
     {
-        WidgetLocalizedInfo languageResult = dao.getLocalizedInfo(*i);
+        WidgetLocalizedInfo languageResult = dao->getLocalizedInfo(*i);
 
 #define OVERWRITE_IF_NULL(FIELD) if (!result.FIELD) { \
         result.FIELD = languageResult.FIELD; \

@@ -1,3 +1,147 @@
+wrt-commons (0.2.67) unstable; urgency=low
+
+  * Localization cleaning from unused API (restore)
+  * Removing old, unused _WrtUtil* functions
+  * Database reset affects security-server
+  * Removing FileUtils
+  * Replacing recursive opendir with fts
+
+  * Release wrt-commons_0.2.67
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.67
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Wed, 24 Oct 2012 17:02:50 +0900
+
+wrt-commons (0.2.66) unstable; urgency=low
+
+  * Release wrt-commons_0.2.66
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.66
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Thu, 18 Oct 2012 11:33:54 +0900
+
+wrt-commons (0.2.65) unstable; urgency=low
+
+  * [Engine] Add method to get widget list
+  * [Commons] New utility functions in wrt_utility
+  * [Commons] Escaping bash sequences in argument programs
+  * [Engine] Allow to call methods using dao pointer
+  * [Engine] Remove mutex from log system.
+  * [Engine] Support for authors certificates (part 4).
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.65
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Wed, 17 Oct 2012 22:08:33 +0900
+
+wrt-commons (0.2.64) unstable; urgency=low
+
+  * Revert "Localization cleaning from unused API"
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.64
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 12 Oct 2012 14:21:43 +0900
+
+wrt-commons (0.2.63) unstable; urgency=low
+
+  * Support for authors certificate
+  * WidgetDAO new CTOR (based on TizenID)
+  * Localization related cleanup
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.63
+
+ -- Pawel Sikorski <p.sikorski@samsung.com>  Thu, 11 Oct 2012 12:53:19 +0200
+
+wrt-commons (0.2.62) unstable; urgency=low
+
+  * [Engine] Add license installing
+  * [Engine] clean up .gitignore
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.62
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 11 Oct 2012 08:02:04 +0900
+
+wrt-commons (0.2.61) unstable; urgency=low
+
+  * [Commons] Support for Debug and Release build configuration
+  * Deprecated localization API removal
+  * Localization refactoring and cleaning
+  * [Commons] Refactoring featureDAO, pluginDAO table
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.61
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 05 Oct 2012 07:29:49 +0900
+
+wrt-commons (0.2.60) unstable; urgency=low
+
+  * for SEL verification
+  * [Commons] POWDER remains removed
+  * [Commons] Fixed PLM P120926-3287
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.60
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Sep 2012 15:27:25 +0900
+
+wrt-commons (0.2.59) unstalbe; urgency=low
+
+  * Add smack manifest
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.59
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Thu, 20 Sep 2012 20:08:44 +0900
+
+wrt-commons (0.2.58) unstalbe; urgency=low
+
+  * for SEL verification
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.58
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Thu, 20 Sep 2012 12:02:41 +0900
+
+wrt-commons (0.2.57) unstalbe; urgency=low
+
+  * Proper list support in LanguageTagsProvider
+  * User Agent Database update
+  * Language tags providing class added
+  * Add a feature dao function giving requested features' data
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.57
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Wed, 19 Sep 2012 12:03:09 +0900
+
+wrt-commons (0.2.56) unstalbe; urgency=low
+
+  * [Commons] Test mode environment variable changed
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.56
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 12 Sep 2012 15:46:28 +0900
+
+wrt-commons (0.2.55) unstable; urgency=low
+
+  * [Commons] Table ExternalFiles renamed to ExternalLocations
+  * [Commons] Fix in base path removal in localization module.
+  * [Commons] Add multiple output types in test framework
+  * [Commons] Slash added to global config paths
+  * [Commons] Background page support in WidgetModel
+  * [Commons] New table - WidgetExternalFiles
+
+  * Git : slp/pkgs/w/wrt-commons
+  * Tag : wrt-commons_0.2.55
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Thu, 06 Sep 2012 00:34:12 +0900
+
 wrt-commons (0.2.54) unstable; urgency=low
 
   * [common] Add XML test collector

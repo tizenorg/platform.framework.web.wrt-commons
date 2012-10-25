@@ -1,7 +1,7 @@
-#sbs-git:slp/pkgs/w/wrt-commons wrt-commons 0.2.54
+#sbs-git:slp/pkgs/w/wrt-commons wrt-commons 0.2.67
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.54
+Version:    0.2.67
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -48,16 +48,18 @@ cmake . -DVERSION=%{version} \
 make %{?jobs:-j%jobs}
 
 %install
+mkdir -p %{buildroot}/usr/share/license
+cp %{name} %{buildroot}/usr/share/license/
 %make_install
 
 %clean
 rm -rf %{buildroot}
 
 %post
-mkdir -p /opt/apps/widget/system
-mkdir -p /opt/apps/widget/user
-mkdir -p /opt/apps/widget/exec
-mkdir -p /opt/apps/widget/data/Public
+mkdir -p /opt/share/widget/system
+mkdir -p /opt/share/widget/user
+mkdir -p /opt/share/widget/exec
+mkdir -p /opt/share/widget/data/Public
 mkdir -p /usr/lib/wrt-plugins
 
 if [ -z ${2} ]; then
@@ -108,14 +110,22 @@ else
     cp /usr/var/lib/dbus/machine-id /var/lib/dbus/
 fi
 
+# Set Smack label for db files
+chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
+chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
+chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db
+chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db-journal
+
 echo "[WRT] wrt-commons postinst done ..."
 
 %files
+%manifest wrt-commons.manifest
 %{_libdir}/*.so
 %{_libdir}/*.so.*
 /usr/share/wrt-engine/*
 %attr(775,root,root) %{_bindir}/wrt_commons_reset_db.sh
 %attr(775,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
+%{_datadir}/license/%{name}
 
 %files devel
 %{_includedir}/dpl-efl/*

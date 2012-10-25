@@ -52,6 +52,7 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     WidgetDAO(DbWidgetHandle widgetHandle);
     WidgetDAO(DPL::OptionalString widgetGUID);
+    WidgetDAO(DPL::String pkgName);
 
     /**
      * Destructor
@@ -102,6 +103,17 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     void removeProperty(const PropertyDAOReadOnly::WidgetPropertyKey &key);
 
+    /**
+     * @brief registerExternalLocations Inserts new rows to WidgetExternalLocations
+     * @param externals list of files
+     */
+    void registerExternalLocations(const ExternalLocationList & externals);
+
+    /**
+     * @brief registerExternalLocations Removes rows from WidgetExternalLocations
+     */
+    void unregisterAllExternalLocations();
+
     /* This method sets widget property
      */
     void setProperty(const PropertyDAOReadOnly::WidgetPropertyKey &key,
@@ -151,8 +163,9 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetCertificates(
             DbWidgetHandle widgetHandle,
             const IWacSecurity &wacSecurity);
-    static void registerLaunchCertificates(
+    static void registerCertificatesChains(
             DbWidgetHandle widgetHandle,
+            CertificateSource certificateSource,
             const CertificateChainList &list);
     static void registerWidgetSettings(
             DbWidgetHandle widgetHandle,

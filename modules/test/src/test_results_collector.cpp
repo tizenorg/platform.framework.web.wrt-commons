@@ -427,11 +427,12 @@ class XmlCollector
         // Show result
         FOREACH(group, m_groupsStats) {
             PrintStats(group->first, group->second);
+            size_t posBegin = m_outputBuffer.find("<testcase name=\"unknown\"");
+            size_t posEnd = m_outputBuffer.find("</testcase>", posBegin);
+            m_outputBuffer.erase(posBegin - 3, posEnd - posBegin + sizeof("</testcase>") + 2);
         }
 
-        size_t posBegin = m_outputBuffer.find("<testcase name=\"unknown\"");
-        size_t posEnd = m_outputBuffer.find("</testcase>", posBegin);
-        m_outputBuffer.erase(posBegin - 3, posEnd - posBegin + sizeof("</testcase>") + 2);
+
         remove(m_filename.c_str());
         m_fp.Reset(fopen (m_filename.c_str(), "w"));
         Assert(!!m_fp && "File handle must not be null");
@@ -482,8 +483,9 @@ class XmlCollector
             default:
                 Assert(false && "Bad status");
         }
-        size_t pos = m_outputBuffer.find("<testcase name=\"unknown\"");
-        m_outputBuffer.insert(pos - 2, m_resultBuffer);
+        size_t group_pos = m_outputBuffer.find(m_currentGroup);
+        size_t last_case_pos = m_outputBuffer.find("<testcase name=\"unknown\"", group_pos);
+        m_outputBuffer.insert(last_case_pos - 2, m_resultBuffer);
         fseek(m_fp.Get(), 0L, SEEK_SET);
         fprintf(m_fp.Get(), "%s", m_outputBuffer.c_str());
         fflush(m_fp.Get());

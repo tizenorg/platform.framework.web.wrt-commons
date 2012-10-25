@@ -27,6 +27,7 @@
 
 typedef WrtDB::DbWidgetHandle WidgetHandle;
 typedef WrtDB::DbWidgetHandleList WidgetHandleList;
+typedef WrtDB::DbWidgetDAOReadOnlyList WidgetDAOReadOnlyList;
 
 typedef WrtDB::DbWidgetFeature WidgetFeature;
 typedef WrtDB::DbWidgetFeatureSet WidgetFeatureSet;

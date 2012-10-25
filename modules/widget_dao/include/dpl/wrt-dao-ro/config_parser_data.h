@@ -219,7 +219,6 @@ class ConfigParserData
     bool flashNeeded;
 
     DPL::OptionalString minVersionRequired;
-    StringsList powderDescriptionLinks;
 
     bool backSupported;
     bool accessNetwork;
@@ -241,6 +240,8 @@ class ConfigParserData
     DependsPkgList dependsPkgList;
     // Splash image path
     DPL::OptionalString splashImgSrc;
+    // Background page filename
+    DPL::OptionalString backgroundPage;
 
     ConfigParserData() :
         flashNeeded(false),

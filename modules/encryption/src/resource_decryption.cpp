@@ -28,7 +28,7 @@
 
 namespace {
 inline std::string GetDefaultEncryptKeyPath() {
-    return "/opt/apps/widget/data/";
+    return "/opt/share/widget/data/";
 }
 }
 namespace WRTDecryptor{
