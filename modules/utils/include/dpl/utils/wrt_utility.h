@@ -61,17 +61,6 @@ bool WrtUtilMakeDir(const std::string &newpath, mode_t mode=0755);
 bool WrtUtilRemove(const std::string &path);
 
 /**
- * This function converts a string to lowercase
- *
- * @param[in]    in   the string to be converted
- * @param[out] out  the string for placing converted values in
- *
- * The previous data stored in string out will be replaced with converted
- * string from string in
- */
-void WrtUtilStringToLower(std::string &out, const std::string &in);
-
-/**
  * Checks if path exists and is a regular file
  *
  * @param[in] path   the string representing path to check

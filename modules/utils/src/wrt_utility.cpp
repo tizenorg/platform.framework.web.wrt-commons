@@ -145,14 +145,6 @@ bool WrtUtilRemove(const std::string &path)
     return rv;
 }
 
-void WrtUtilStringToLower(std::string &out, const std::string &in)
-{
-    out.clear();
-    for (std::string::const_iterator it=in.begin(); it<in.end(); ++it) {
-        out += static_cast<char>(tolower(*it));
-    }
-}
-
 bool WrtUtilFileExists(const std::string &path)
 {
     struct stat tmp;
