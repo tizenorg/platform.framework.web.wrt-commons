@@ -55,6 +55,8 @@ DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
     if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
     //Removing preceding '/'
     if (filePath[0] == '/') { filePath.erase(0, 1); }
+    // In some cases (start file localization) url has unnecessary "/" at the end
+    if(filePath[filePath.size()-1] == '/') { filePath.erase(filePath.size()-1, 1); }
     //Check if string isn't empty
     if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
 
