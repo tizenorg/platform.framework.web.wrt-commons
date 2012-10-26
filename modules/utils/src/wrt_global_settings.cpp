@@ -48,8 +48,8 @@ enum MachineType
 };
 
 struct Settings {
-    int testModes;
     bool isEmulator;
+    int testModes;
 
     Settings()
     : isEmulator(false), testModes(0)

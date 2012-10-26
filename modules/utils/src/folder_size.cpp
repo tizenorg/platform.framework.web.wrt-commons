@@ -115,10 +115,11 @@ const int stepSize = 1024;
 template<typename... Rest>
 struct Pre;
 
+
 template<typename Postfix, typename... Rest>
 struct Pre<Postfix, Rest...>
 {
-    static const double value = Pre<Rest...>::value * stepSize;
+    static const double value;
     static std::string printSize(double fileSize)
     {
         if(fileSize >= Pre<Rest...>::value) {
@@ -145,9 +146,14 @@ struct Pre<>
         }
 
 };
+
 const double Pre<>::value = 1.0;
+template<typename Postfix, typename... Params> const double Pre<Postfix, Params...>::value(Pre<>::value * stepSize);
+
 
 typedef Pre<PrefixGB, PrefixMB, PrefixKB, PrefixB> FolderSizeToStringType;
+
+
 } //anonymous namespace
 
 

@@ -43,7 +43,7 @@ class ConfigParserData
   public:
     struct Param
     {
-        Param(const DPL::String& name) : name(name)
+        Param(const DPL::String& _name) : name(_name)
         {
         }
         DPL::String name;
@@ -59,9 +59,9 @@ class ConfigParserData
 
     struct Feature
     {
-        Feature(const DPL::String& name,
-                bool required = true) : name(name),
-            required(required)
+        Feature(const DPL::String& _name,
+                bool _required = true) : name(_name),
+            required(_required)
         {
         }
         DPL::String name;
@@ -79,7 +79,7 @@ class ConfigParserData
 
     struct Icon
     {
-        Icon(const DPL::String& src) : src(src)
+        Icon(const DPL::String& _src) : src(_src)
         {
         }
         DPL::String src;
@@ -109,11 +109,11 @@ class ConfigParserData
 
     struct Preference
     {
-        Preference(const DPL::String& name,
-                bool readonly = false) :
-            name(name),
+        Preference(const DPL::String& _name,
+                bool _readonly = false) :
+            name(_name),
             value(),
-            readonly(readonly)
+            readonly(_readonly)
         {
         }
         DPL::String name;

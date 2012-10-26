@@ -34,6 +34,7 @@ DECLARE_EXCEPTION_TYPE(DPL::Exception, CreateDirectoryException)
 DECLARE_EXCEPTION_TYPE(DPL::Exception, RemoveDirectoryException)
 
 bool FileExists(const DPL::String& absolutePath);
+bool DirectoryExists(const DPL::String& absolutePath);
 
 /**
  * Creates specified path recursively.
@@ -41,8 +42,7 @@ bool FileExists(const DPL::String& absolutePath);
  * @param mode Mode for the non-existing parts of the path (e.g. 0755).
  * @throw DPL::CommonException::::InternalError If sth bad happens.
  */
-void MakePath(const std::string& path,
-        mode_t mode);
+void MakePath(const std::string& path, mode_t mode);
 
 /**
  * Removes specified directory recursively.
@@ -50,6 +50,7 @@ void MakePath(const std::string& path,
  * @throw FileUtils::DirectoryRemoveException If an error occured.
  */
 void RemoveDir(const std::string& path);
-};
+
+} // namespace FileUtils
 
 #endif

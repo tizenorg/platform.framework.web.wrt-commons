@@ -466,8 +466,6 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
         wrt::FeatureParam::Row featureParam;
         featureParam.Set_widget_feature_id(widgetFeatureID);
 
-        ConfigParserData::ParamsList::const_iterator iter;
-
         FOREACH(iter, pWidgetFeature->paramsList)
         {
             featureParam.Set_name(iter->name);

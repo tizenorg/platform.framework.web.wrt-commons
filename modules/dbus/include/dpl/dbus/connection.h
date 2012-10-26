@@ -172,9 +172,9 @@ private:
 
     struct ObjectRegistration
     {
-        ObjectRegistration(guint registrationId, const ObjectPtr& object)
-            : registrationId(registrationId),
-              object(object)
+        ObjectRegistration(guint _registrationId, const ObjectPtr& _object)
+            : registrationId(_registrationId),
+              object(_object)
         {
         }
 

@@ -3,7 +3,7 @@ SQL(
 )
 
 CREATE_TABLE(AutoSaveSubmitFormElement)
-    COLUMN_NOT_NULL(address,    VARCHAR(256))
+    COLUMN_NOT_NULL(address,    VARCHAR(256),)
     COLUMN_NOT_NULL(key,        TEXT,)
     COLUMN_NOT_NULL(value,      TEXT,)
 CREATE_TABLE_END()

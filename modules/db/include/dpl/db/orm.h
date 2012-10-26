@@ -189,6 +189,8 @@ public:
       m_relation(Relation)
     {}
 
+    virtual ~CompareBinaryColumn() {}
+
     virtual std::string GetString() const
     {
         std::string statement;
@@ -389,7 +391,7 @@ public:
     void SetColumnData(ColumnIndex columnIndex, ColumnType data)
     {
         typedef CustomColumn<ColumnType> Type;
-        Assert(columnIndex >= 0 && columnIndex < m_columns.size());
+        Assert(columnIndex < m_columns.size());
         Type* pColumn = dynamic_cast<Type*>(m_columns.at(columnIndex));
         Assert(pColumn);
         pColumn->SetColumnData(data);
@@ -400,7 +402,7 @@ public:
     {
         typedef CustomColumn<typename ColumnData::ColumnType> Type;
         ColumnIndex index = CustomRowUtil<ColumnList>::GetColumnIndex(ColumnData::GetColumnName());
-        Assert(index >= 0 && index < m_columns.size());
+        Assert(index < m_columns.size());
         Type* pColumn = dynamic_cast<Type*>(m_columns.at(index));
         Assert(pColumn);
         return pColumn->GetColumnData();

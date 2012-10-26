@@ -72,7 +72,7 @@ namespace ORM {
         typedef TYPE ColumnType; \
         static const char* GetTableName() { return GetName(); } \
         static const char* GetColumnName() { return STRINGIFY(FIELD); } \
-        static void SetRowField(Row& row, const TYPE& value) { row.Set_##FIELD(value);} \
+        static void SetRowField(Row& row, const TYPE& _value) { row.Set_##FIELD(_value);} \
     };
 
 #define INT         int
@@ -82,8 +82,8 @@ namespace ORM {
 #define VARCHAR(x)  DPL::String
 #define TEXT        DPL::String
 
-#define SQL(args...)
-#define TABLE_CONSTRAINTS(args...)
+#define SQL(...)
+#define TABLE_CONSTRAINTS(...)
 #define OPTIONAL(type) DPL::Optional< type >
 #define DATABASE_START(db_name)                                 \
     namespace db_name                                           \
@@ -124,8 +124,8 @@ namespace ORM {
         class RowBase;                                                          \
         inline std::ostream& operator<<(std::ostream& ostr, const RowBase& row); \
     }
-#define COLUMN_NOT_NULL(name, type, args...)
-#define COLUMN(name, type, args...)
+#define COLUMN_NOT_NULL(name, type, ...)
+#define COLUMN(name, type, ...)
 #define CREATE_TABLE_END()
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -142,11 +142,11 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { class RowBase {                 \
    public: friend std::ostream& operator<<(std::ostream&, const RowBase&);
-#define COLUMN_NOT_NULL(name, type, args...)                                \
+#define COLUMN_NOT_NULL(name, type, ...)                                \
         protected: type name; bool m_##name##_set;                          \
-        public:  void Set_##name(const type& value) {                       \
+        public:  void Set_##name(const type& _value) {                       \
                      m_##name##_set = true;                                 \
-                     this->name = value;                                     \
+                     this->name = _value;                                     \
         }                                                                   \
         public:  type Get_##name() const {                                  \
                      if ( !m_##name##_set ) {                               \
@@ -156,11 +156,11 @@ namespace ORM {
                      return name;                                           \
         }
 
-#define COLUMN(name, type, args...)                                         \
+#define COLUMN(name, type, ...)                                         \
         protected: OPTIONAL(type) name; bool m_##name##_set;                \
-        public:  void Set_##name(const OPTIONAL(type)& value) {             \
+        public:  void Set_##name(const OPTIONAL(type)& _value) {             \
                      m_##name##_set = true;                                 \
-                     this->name = value;                                     \
+                     this->name = _value;                                     \
         }                                                                   \
         public:  OPTIONAL(type) Get_##name() const {                        \
                      if ( !m_##name##_set ) {                               \
@@ -181,8 +181,8 @@ namespace ORM {
 // RowBase ostream operator<<
 
 #define CREATE_TABLE(name) std::ostream& name::operator<<(std::ostream& ostr, const RowBase& row) { using ::operator<< ; ostr << STRINGIFY(name) << " (";
-#define COLUMN_NOT_NULL(name, type, args...) ostr << " '" << row.name << "'" ;
-#define COLUMN(name, type, args...)          ostr << " '" << row.name << "'" ;
+#define COLUMN_NOT_NULL(name, type, ...) ostr << " '" << row.name << "'" ;
+#define COLUMN(name, type, ...)          ostr << " '" << row.name << "'" ;
 #define CREATE_TABLE_END() ostr << " )" ; return ostr; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -196,8 +196,8 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { class RowBase2 : public RowBase { \
     public: bool operator==(const RowBase2& row) const { return true
-#define COLUMN_NOT_NULL(name, type, args...) && (this->name == row.name)
-#define COLUMN(name, type, args...)          && (this->name == row.name)
+#define COLUMN_NOT_NULL(name, type, ...) && (this->name == row.name)
+#define COLUMN(name, type, ...)          && (this->name == row.name)
 #define CREATE_TABLE_END() ; } }; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -211,8 +211,8 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { class RowBase3 : public RowBase2 { \
     public: bool operator<(const RowBase3& row) const {
-#define COLUMN_NOT_NULL(name, type, args...) if (this->name < row.name) { return true; } if (this->name > row.name) { return false; }
-#define COLUMN(name, type, args...)          if (this->name < row.name) { return true; } if (this->name > row.name) { return false; }
+#define COLUMN_NOT_NULL(name, type, ...) if (this->name < row.name) { return true; } if (this->name > row.name) { return false; }
+#define COLUMN(name, type, ...)          if (this->name < row.name) { return true; } if (this->name > row.name) { return false; }
 #define CREATE_TABLE_END() return false; } }; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -226,8 +226,8 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { class RowBase4 : public RowBase3 { \
     public: bool IsSignatureMatching(const RowBase4& row) const { return true
-#define COLUMN_NOT_NULL(name, type, args...) && (this->m_##name##_set == row.m_##name##_set)
-#define COLUMN(name, type, args...)          && (this->m_##name##_set == row.m_##name##_set)
+#define COLUMN_NOT_NULL(name, type, ...) && (this->m_##name##_set == row.m_##name##_set)
+#define COLUMN(name, type, ...)          && (this->m_##name##_set == row.m_##name##_set)
 #define CREATE_TABLE_END() ; } }; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -241,8 +241,8 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { class RowBase5 : public RowBase4 { \
     public: RowBase5() {
-#define COLUMN_NOT_NULL(name, type, args...) m_##name##_set = false;
-#define COLUMN(name, type, args...)          m_##name##_set = false;
+#define COLUMN_NOT_NULL(name, type, ...) m_##name##_set = false;
+#define COLUMN(name, type, ...)          m_##name##_set = false;
 #define CREATE_TABLE_END() } }; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -257,8 +257,8 @@ namespace ORM {
 #define CREATE_TABLE(name) namespace name { class Row : public RowBase5 { \
     public: template<typename Visitor>                                    \
     void VisitColumns(Visitor& visitor) const {
-#define COLUMN_NOT_NULL(name, type, args...) visitor.Visit(STRINGIFY(name), this->name, this->m_##name##_set);
-#define COLUMN(name, type, args...)          visitor.Visit(STRINGIFY(name), this->name, this->m_##name##_set);
+#define COLUMN_NOT_NULL(name, type, ...) visitor.Visit(STRINGIFY(name), this->name, this->m_##name##_set);
+#define COLUMN(name, type, ...)          visitor.Visit(STRINGIFY(name), this->name, this->m_##name##_set);
 #define CREATE_TABLE_END() } }; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -272,8 +272,8 @@ namespace ORM {
 
 #define CREATE_TABLE(name) namespace name { \
     static const char* GetName() { return STRINGIFY(name); }
-#define COLUMN_NOT_NULL(name, type, args...) DECLARE_COLUMN(name, type)
-#define COLUMN(name, type, args...) DECLARE_COLUMN(name, OPTIONAL(type))
+#define COLUMN_NOT_NULL(name, type, ...) DECLARE_COLUMN(name, type)
+#define COLUMN(name, type, ...) DECLARE_COLUMN(name, OPTIONAL(type))
 #define CREATE_TABLE_END() }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -286,8 +286,8 @@ namespace ORM {
 // ColumnList typedef
 
 #define CREATE_TABLE(name) namespace name { typedef DPL::TypeListDecl<
-#define COLUMN_NOT_NULL(name, type, args...) name,
-#define COLUMN(name, type, args...) name,
+#define COLUMN_NOT_NULL(name, type, ...) name,
+#define COLUMN(name, type, ...) name,
 #define CREATE_TABLE_END() DPL::TypeListGuard>::Type ColumnList; }
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -328,8 +328,8 @@ namespace ORM {
         };                                                                  \
     }
 
-#define COLUMN_NOT_NULL(name, type, args...)
-#define COLUMN(name, type, args...)
+#define COLUMN_NOT_NULL(name, type, ...)
+#define COLUMN(name, type, ...)
 #define CREATE_TABLE_END()
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL
@@ -348,8 +348,8 @@ namespace ORM {
         typedef Delete<TableDefinition> Delete; \
         typedef Update<TableDefinition> Update; \
     }
-#define COLUMN_NOT_NULL(name, type, args...)
-#define COLUMN(name, type, args...)
+#define COLUMN_NOT_NULL(name, type, ...)
+#define COLUMN(name, type, ...)
 #define CREATE_TABLE_END()
 
 #include ORM_GENERATOR_DATABASE_NAME_LOCAL

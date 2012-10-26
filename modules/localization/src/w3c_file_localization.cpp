@@ -121,7 +121,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         }
         if (req.find(LOCALE_PREFIX) == 0) {
             req.erase(0, LOCALE_PREFIX.length());
-            int position = req.find('/');
+            size_t position = req.find('/');
             // should always be >0 as correct locales path is
             // always locales/xx/ or locales/xx-XX/
             if (position != std::string::npos && position > 0) {

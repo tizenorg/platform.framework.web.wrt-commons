@@ -254,7 +254,7 @@ enum AppType
 {
     APP_TYPE_UNKNOWN = 0, // unknown
     APP_TYPE_WAC20, // WAC 2.0
-    APP_TYPE_TIZENWEBAPP, // Tizen webapp
+    APP_TYPE_TIZENWEBAPP // Tizen webapp
 };
 
 class WidgetType
@@ -297,7 +297,7 @@ enum PackagingType
 {
     PKG_TYPE_UNKNOWN = 0, // unknown
     PKG_TYPE_TIZEN_WEBAPP, // Tizen webapp
-    PKG_TYPE_TIZEN_WITHSVCAPP, // Tizen webapp with C++ service app
+    PKG_TYPE_TIZEN_WITHSVCAPP // Tizen webapp with C++ service app
 };
 
 class PkgType

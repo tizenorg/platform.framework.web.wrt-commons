@@ -25,6 +25,9 @@
 #include <libxml/xmlstring.h>
 
 namespace WrtDB {
+bool IsSpace(const xmlChar* str);
+bool CopyChar(xmlChar* out, xmlChar* in);
+
 
 bool IsSpace(const xmlChar* str)
 {
@@ -87,6 +90,8 @@ bool IsSpace(const xmlChar* str)
                 case 0xa9:
                 case 0xaf:
                     return true;
+                default:
+                    return false;
                 }
             case 0x81:
                 if (*(str + 2) == 0x9f) {

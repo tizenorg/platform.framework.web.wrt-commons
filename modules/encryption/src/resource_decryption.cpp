@@ -61,8 +61,13 @@ void ResourceDecryptor::SetDecryptionKey(std::string userKey)
         ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
                 "Failed to get decryption key");
     }
+
     m_decKey = new AES_KEY;
-    fread(m_decKey, 1, sizeof(AES_KEY),fp);
+    size_t resultSize =fread(m_decKey, 1, sizeof(AES_KEY),fp);
+    if (resultSize!= sizeof(AES_KEY))
+        ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
+                "Failed to get AES key");
+
     fclose(fp);
 }
 
