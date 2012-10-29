@@ -67,14 +67,23 @@ class WidgetDAO : public WidgetDAOReadOnly
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
 
-    static void registerWidget(
-            WrtDB::DbWidgetHandle handle,
-            const WidgetRegisterInfo &widgetRegInfo,
-            const IWacSecurity &wacSecurity) __attribute__((deprecated));
-
     static DbWidgetHandle registerWidget(
                 const WidgetRegisterInfo &pWidgetRegisterInfo,
                 const IWacSecurity &wacSecurity) __attribute__((deprecated));
+
+    /**
+     * @brief registerWidgetGenerateTizenId Registers widget with auto-generated tizen id
+     *
+     * This function is disadviced and should be used only in tests.
+     * Function is not thread-safe.
+     *
+     * @param pWidgetRegisterInfo registeration information
+     * @param wacSecurity Widget's security certificates.
+     * @return pkgname generated
+     */
+    static WidgetPkgName registerWidgetGenerateTizenId(
+                const WidgetRegisterInfo &pWidgetRegisterInfo,
+                const IWacSecurity &wacSecurity);
 
     /**
      * This method re-registers the widget information to the DB when it is installed.
@@ -90,6 +99,11 @@ class WidgetDAO : public WidgetDAOReadOnly
             const WidgetPkgName & widgetName,
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
+
+    static void registerWidget(
+            WrtDB::DbWidgetHandle handle,
+            const WidgetRegisterInfo &widgetRegInfo,
+            const IWacSecurity &wacSecurity) __attribute__((deprecated));
 
     /**
      * This method removes a widget's information from EmDB.
@@ -125,8 +139,6 @@ class WidgetDAO : public WidgetDAOReadOnly
      * api feature mustn't be loaded durign widget launch.
      */
     void updateFeatureRejectStatus(const DbWidgetFeature &widgetFeature);
-
-    void registerExternalLocations(const ExternalLocationList & externals) __attribute__((deprecated));
 
   private:
     //Methods used during widget registering
@@ -182,7 +194,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerExternalLocations(DbWidgetHandle widgetHandle,
                                 const ExternalLocationList & externals);
 
-    static DbWidgetHandle registerWidgetInternal(
+    static void registerWidgetInternal(
             const WidgetPkgName & widgetName,
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity,

@@ -128,25 +128,22 @@ void WidgetDAO::registerWidget(
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        DbWidgetHandle widgetHandle = registerWidgetInternal(widgetPkgname, widgetRegInfo, wacSecurity);
-        registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
-        //TODO: remove construction from handle and move that call to registerWidgetInternal
-        // in new version external fiels should be register together with other informations
+        registerWidgetInternal(widgetPkgname, widgetRegInfo, wacSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
 }
 
 void WidgetDAO::registerWidget(
-            WrtDB::DbWidgetHandle handle,
-            const WidgetRegisterInfo & widgetRegInfo,
-            const IWacSecurity &wacSecurity)
+        WrtDB::DbWidgetHandle handle,
+        const WidgetRegisterInfo &widgetRegInfo,
+        const IWacSecurity &wacSecurity)
 {
     LogDebug("Registering widget");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        registerWidgetInternal(L"", widgetRegInfo, wacSecurity, handle);
+        registerWidgetInternal(generateTizenId(), widgetRegInfo, wacSecurity, handle);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
@@ -169,7 +166,16 @@ DbWidgetHandle WidgetDAO::registerWidget(
     return widgetHandle;
 }
 
-DbWidgetHandle WidgetDAO::registerWidgetInternal(
+WidgetPkgName WidgetDAO::registerWidgetGenerateTizenId(
+            const WidgetRegisterInfo &pWidgetRegisterInfo,
+            const IWacSecurity &wacSecurity)
+{
+    WidgetPkgName widgetPkgName = generateTizenId();
+    registerWidget(widgetPkgName, pWidgetRegisterInfo, wacSecurity);
+    return widgetPkgName;
+}
+
+void WidgetDAO::registerWidgetInternal(
         const WidgetPkgName & widgetName,
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity,
@@ -211,7 +217,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInternal(
 
     registerEncryptedResouceInfo(widgetHandle, widgetRegInfo);
 
-    return widgetHandle;
+    registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
 }
 
 void WidgetDAO::registerOrUpdateWidget(
@@ -225,10 +231,7 @@ void WidgetDAO::registerOrUpdateWidget(
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
 
         unregisterWidgetInternal(widgetName);
-        DbWidgetHandle widgetHandle = registerWidgetInternal(widgetName, widgetRegInfo, wacSecurity);
-        registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
-        //TODO: remove construction from handle and move that call to registerWidgetInternal
-        // in new version external fiels should be register together with other informations
+        registerWidgetInternal(widgetName, widgetRegInfo, wacSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
@@ -310,7 +313,6 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     }
     row.Set_back_supported(widgetConfigurationInfo.backSupported);
     row.Set_access_network(widgetConfigurationInfo.accessNetwork);
-    row.Set_pkgname(regInfo.pkgname);
     row.Set_pkg_type(regInfo.packagingType.pkgType);
 
     Try
@@ -638,11 +640,6 @@ void WidgetDAO::registerEncryptedResouceInfo(DbWidgetHandle widgetHandle,
 
         DO_INSERT(row, EncryptedResourceList)
     }
-}
-
-void WidgetDAO::registerExternalLocations(const ExternalLocationList & externals)
-{
-    registerExternalLocations(m_widgetHandle, externals);
 }
 
 void WidgetDAO::registerExternalLocations(DbWidgetHandle widgetHandle,

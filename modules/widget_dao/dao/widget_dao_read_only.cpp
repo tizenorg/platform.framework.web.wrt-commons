@@ -88,6 +88,8 @@ WidgetInfoRow getWidgetInfoRow(int widgetHandle)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in GetWidgetInfoRow")
 }
 
+const int MAX_TIZENID_LENGTH = 10;
+
 } // namespace
 
 
@@ -408,7 +410,7 @@ bool WidgetDAOReadOnly::isWidgetInstalled(DbWidgetHandle handle)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to check if widget exist")
 }
 
-bool WidgetDAOReadOnly::isWidgetInstalled(DPL::String pkgName)
+bool WidgetDAOReadOnly::isWidgetInstalled(const WidgetPkgName & pkgName)
 {
     LogDebug("Checking if widget exist. package name " << pkgName);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -1127,6 +1129,20 @@ DPL::OptionalString WidgetDAOReadOnly::getBackgroundPage() const
         return rows.front().Get_background_page();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get background page")
+}
+
+WidgetPkgName WidgetDAOReadOnly::generateTizenId() {
+    std::string allowed("0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz");
+    WidgetPkgName tizenId;
+    tizenId.resize(MAX_TIZENID_LENGTH);
+    do {
+    for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
+        tizenId[i] = allowed[rand() % allowed.length()];
+    }
+    } while (isWidgetInstalled(tizenId));
+    return tizenId;
 }
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN

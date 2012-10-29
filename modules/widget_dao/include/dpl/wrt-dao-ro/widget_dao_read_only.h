@@ -694,7 +694,7 @@ class WidgetDAOReadOnly
     bool getBackSupported() const;
 
     static bool isWidgetInstalled(DbWidgetHandle handle);
-    static bool isWidgetInstalled(DPL::String pkgName);
+    static bool isWidgetInstalled(const WidgetPkgName & pkgName);
 
     /* This method get path of the splash image.
      *
@@ -740,6 +740,16 @@ class WidgetDAOReadOnly
      * @return Name of file containing background page
      */
     DPL::OptionalString getBackgroundPage() const;
+
+    /**
+     * @brief generateTizenId generates new tizen id
+     *
+     * If widget do not supplies it's own tizen id, this method can be used,
+     * although it should be removed in future.
+     *
+     * @return new tizen id
+     */
+    static WidgetPkgName generateTizenId();
 };
 
 } // namespace WrtDB
