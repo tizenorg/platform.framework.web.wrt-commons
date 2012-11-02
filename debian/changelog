@@ -1,3 +1,19 @@
+wrt-commons (0.2.68) unstable; urgency=low
+
+  * Change profiling build
+  * Removing unused WtrUtilStringToLower
+  * Fix for localization URI ended with '/'
+  * Code refactoring and removal of factory_widget attribute
+  * WidgetDAO from WidgetHandle construction depracated
+  * WrtDAO - getPkgnameList
+  * Removal of compilation warnings
+  * W3c file localization - from pkgname construction
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.68
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 02 Nov 2012 11:20:52 +0900
+
 wrt-commons (0.2.67) unstable; urgency=low
 
   * Localization cleaning from unused API (restore)
