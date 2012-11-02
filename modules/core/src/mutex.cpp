@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of mutex
  */
+#include <stddef.h>
 #include <dpl/mutex.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>

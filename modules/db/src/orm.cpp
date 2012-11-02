@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       Static definitions and function template specialziations of DPL-ORM.
  */
-
+#include <stddef.h>
 #include <dpl/db/orm.h>
 
 namespace DPL {

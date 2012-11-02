@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 #include <dpl/db/thread_database_support.h>

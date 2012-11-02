@@ -20,6 +20,7 @@
  * @version 1.0
  * @brief   Implementation file for task list
  */
+#include <stddef.h>
 #include <dpl/task_list.h>
 #include <dpl/assert.h>
 

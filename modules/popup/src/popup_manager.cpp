@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       This is popup_manager implementation file
  */
-
+#include <stddef.h>
 #include <dpl/popup/popup_manager.h>
 #include <dpl/popup/popup.h>
 

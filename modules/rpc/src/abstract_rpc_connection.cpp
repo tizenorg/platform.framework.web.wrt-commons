@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of abstract RPC connection
  */
+#include <stddef.h>
 #include <dpl/rpc/abstract_rpc_connection.h>
 
 //

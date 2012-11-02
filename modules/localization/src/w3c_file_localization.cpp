@@ -18,7 +18,7 @@
  * @author  Lukasz Wrzosek (l.wrzosek@samsung.com)
  * @version 1.0
  */
-
+#include <stddef.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>

@@ -20,7 +20,7 @@
  * @version 1.0
  * @brief   This file contains the definition of plugin dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/plugin_dao.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>

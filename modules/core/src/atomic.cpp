@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of atomic
  */
+#include <stddef.h>
 #include <dpl/atomic.h>
 
 namespace DPL

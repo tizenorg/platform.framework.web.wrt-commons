@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of SQL connection
  */
+#include <stddef.h>
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/scoped_free.h>

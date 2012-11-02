@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of metronome client example
  */
+#include <stddef.h>
 #include <dpl/tcp_socket_rpc_client.h>
 #include <dpl/tcp_socket_rpc_connection.h>
 #include <dpl/application.h>

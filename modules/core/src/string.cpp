@@ -19,6 +19,7 @@
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
  */
+#include <stddef.h>
 #include <dpl/string.h>
 #include <dpl/char_traits.h>
 #include <dpl/errno_string.h>

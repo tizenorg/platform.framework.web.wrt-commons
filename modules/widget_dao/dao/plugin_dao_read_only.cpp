@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the implementation of plugin dao read only
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/plugin_dao_read_only.h>
 
 #include <sstream>

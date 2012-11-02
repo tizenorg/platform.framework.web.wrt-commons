@@ -20,6 +20,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of test runner
  */
+#include <stddef.h>
 #include <dpl/test/test_runner.h>
 #include <dpl/test/test_results_collector.h>
 #include <dpl/exception.h>

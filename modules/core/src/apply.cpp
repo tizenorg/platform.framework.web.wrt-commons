@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of apply functionality
  */
+#include <stddef.h>
 #include <dpl/apply.h>
 
 //

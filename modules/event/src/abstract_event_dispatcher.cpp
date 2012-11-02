@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of abstract event dispatcher
  */
+#include <stddef.h>
 #include <dpl/event/abstract_event_dispatcher.h>
 
 namespace DPL

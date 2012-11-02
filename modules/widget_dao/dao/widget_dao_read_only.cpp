@@ -23,7 +23,7 @@
  * @version 1.0
  * @brief   This file contains the declaration of widget dao
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 
 #include <sstream>

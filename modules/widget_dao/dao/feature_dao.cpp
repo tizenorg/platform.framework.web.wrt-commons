@@ -22,7 +22,7 @@
  * @version 1.0
  * @brief   This file contains the definition of feature configuration.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/feature_dao.h>
 #include <dpl/foreach.h>
 #include <dpl/db/orm.h>

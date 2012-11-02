@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/log/log.h>
 #include <dpl/dbus/connection.h>
 #include <dpl/dbus/exception.h>

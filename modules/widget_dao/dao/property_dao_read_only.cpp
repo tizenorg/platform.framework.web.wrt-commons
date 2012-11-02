@@ -19,7 +19,7 @@
  *  Created on: Nov 16, 2011
  *      Author: Krzysztof Jackiewicz(k.jackiewicz@samsung.com)
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/property_dao_read_only.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>

@@ -18,7 +18,7 @@
  * @author  Marcin Kaminski (marcin.ka@samsung.com)
  * @version 1.0
  */
-
+#include <stddef.h>
 #include "LanguageTagsProvider.h"
 
 #include <dpl/log/log.h>

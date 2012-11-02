@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       Implementation file some concrete TestResulstsCollector
  */
-
+#include <stddef.h>
 #include <dpl/test/test_results_collector.h>
 #include <dpl/colors.h>
 #include <dpl/assert.h>

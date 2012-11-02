@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of MVC generic event
  */
+#include <stddef.h>
 #include <dpl/generic_event.h>
 
 //

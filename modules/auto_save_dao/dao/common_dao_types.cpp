@@ -21,7 +21,7 @@
  * @brief   This file contains the implementation of
  *             common data types for autoSavedb
  */
-
+#include <stddef.h>
 #include <wrt-commons/auto-save-dao/common_dao_types.h>
 #include <dpl/log/log.h>
 

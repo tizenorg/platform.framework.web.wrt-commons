@@ -21,7 +21,7 @@
  * @version 1.0
  * @brief   This file contains the declaration of auto save dao
  */
-
+#include <stddef.h>
 #include <wrt-commons/auto-save-dao-ro/auto_save_dao_read_only.h>
 #include <wrt-commons/auto-save-dao/AutoSaveDatabase.h>
 #include <orm_generator_autosave.h>

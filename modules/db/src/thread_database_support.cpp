@@ -19,5 +19,5 @@
  * @version 1.0
  * @brief   This file contains the definition of thread database support
  */
-
+#include <stddef.h>
 #include <dpl/db/thread_database_support.h>

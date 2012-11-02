@@ -19,6 +19,7 @@
  * @version     0.1
  * @brief
  */
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/config_parser_data.h>
 #include <dpl/log/log.h>
 #include <libxml/xmlreader.h>

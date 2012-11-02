@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of main for EFL
  */
+#include <stddef.h>
 #include <dpl/main.h>
 #include <dpl/log/log.h>
 #include <sys/select.h>

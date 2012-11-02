@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of noncopyable
  */
+#include <stddef.h>
 #include <dpl/noncopyable.h>
 
 namespace DPL

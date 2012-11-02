@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of RPC example
  */
+#include <stddef.h>
 #include <dpl/unix_socket_rpc_client.h>
 #include <dpl/unix_socket_rpc_server.h>
 #include <dpl/unix_socket_rpc_connection.h>

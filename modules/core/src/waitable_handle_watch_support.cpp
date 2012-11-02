@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of waitable handle watch support
  */
+#include <stddef.h>
 #include <dpl/waitable_handle_watch_support.h>
 #include <dpl/thread.h>
 #include <dpl/main.h>

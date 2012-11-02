@@ -20,7 +20,7 @@
  * @version     1.0
  * @brief       Implementation for function calculating directory size
  */
-
+#include <stddef.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>

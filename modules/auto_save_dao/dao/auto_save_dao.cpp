@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief    This file contains the definition of auto save dao class.
  */
-
+#include <stddef.h>
 #include <wrt-commons/auto-save-dao-rw/auto_save_dao.h>
 #include <wrt-commons/auto-save-dao/AutoSaveDatabase.h>
 #include <orm_generator_autosave.h>

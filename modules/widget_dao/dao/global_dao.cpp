@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the definition of global dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/global_dao.h>
 #include <dpl/log/log.h>
 #include <dpl/string.h>

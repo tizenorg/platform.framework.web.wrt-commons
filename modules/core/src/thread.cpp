@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of thread
  */
+#include <stddef.h>
 #include <dpl/thread.h>
 #include <dpl/log/log.h>
 #include <sys/time.h>

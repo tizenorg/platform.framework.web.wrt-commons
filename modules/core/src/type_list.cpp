@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       Generic type list template
  */
+#include <stddef.h>
 #include <dpl/type_list.h>
 
 //

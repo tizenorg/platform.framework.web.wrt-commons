@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of zip input
  */
+#include <stddef.h>
 #include <iomanip>
 #include <sys/stat.h>
 #include <sys/mman.h>

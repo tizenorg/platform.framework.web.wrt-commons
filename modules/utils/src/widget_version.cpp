@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for widget version
  */
+#include <stddef.h>
 #include <dpl/utils/widget_version.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>

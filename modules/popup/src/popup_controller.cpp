@@ -19,7 +19,7 @@
  * @version 1.0
  * @bref    Implementation file for popup controller
  */
-
+#include <stddef.h>
 #include <dpl/popup/popup_controller.h>
 
 #include <dpl/assert.h>

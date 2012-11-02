@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for resource decryption
  */
+#include <stddef.h>
 #include <dpl/encryption/resource_decryption.h>
 
 #include <fcntl.h>

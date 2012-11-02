@@ -25,7 +25,7 @@
 #include <dpl/noncopyable.h>
 #include <dpl/atomic.h>
 #include <dpl/bool_operator.h>
-#include <cstddef>
+#include <stddef.h>
 #include <dpl/assert.h>
 
 namespace DPL

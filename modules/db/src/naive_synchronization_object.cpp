@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of SQL naive synchronization object
  */
+#include <stddef.h>
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/thread.h>
 

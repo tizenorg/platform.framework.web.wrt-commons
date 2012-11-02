@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of named base pipe
  */
+#include <stddef.h>
 #include <dpl/named_base_pipe.h>
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -18,7 +18,7 @@
  * but there are some patent issue between  W3C WARP SPEC and APPLE.
  * so if you want to use this file, refer to the README file in root directory
  */
-
+#include <stddef.h>
 #include <list>
 #include <set>
 #include <string>

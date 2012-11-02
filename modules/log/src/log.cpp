@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of log system
  */
+#include <stddef.h>
 #include <dpl/log/log.h>
 #include <dpl/singleton_impl.h>
 

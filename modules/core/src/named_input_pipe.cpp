@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of named input pipe
  */
+#include <stddef.h>
 #include <dpl/named_input_pipe.h>
 #include <dpl/binary_queue.h>
 #include <sys/types.h>

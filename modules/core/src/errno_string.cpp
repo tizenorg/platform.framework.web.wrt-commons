@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of errno string
  */
+#include <stddef.h>
 #include <dpl/errno_string.h>
 #include <dpl/assert.h>
 #include <dpl/exception.h>

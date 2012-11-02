@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of simple example
  */
+#include <stddef.h>
 #include <dpl/log/log.h>
 
 int main(int argc, char *argv[])

@@ -19,7 +19,7 @@
  * @author      Janusz Majnert <j.majnert@samsung.com>
  * @brief       Implementation of some common utility functions
  */
-
+#include <stddef.h>
 #include <fts.h>
 #include <string>
 #include <sys/stat.h>

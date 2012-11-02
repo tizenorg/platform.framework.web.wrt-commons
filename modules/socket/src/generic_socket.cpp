@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of generic socket
  */
+#include <stddef.h>
 #include <dpl/socket/generic_socket.h>
 
 //

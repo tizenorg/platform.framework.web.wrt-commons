@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of unix socket
  */
+#include <stddef.h>
 #include <dpl/socket/unix_socket.h>
 #include <dpl/log/log.h>
 #include <dpl/exception.h>

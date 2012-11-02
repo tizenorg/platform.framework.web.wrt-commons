@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the definition of global dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/global_dao_read_only.h>
 
 #include <dpl/foreach.h>

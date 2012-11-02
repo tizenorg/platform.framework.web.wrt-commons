@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation for Evas_Object wrapper from Efl.
  */
-
+#include <stddef.h>
 #include <dpl/popup/evas_object.h>
 #include <dpl/foreach.h>
 

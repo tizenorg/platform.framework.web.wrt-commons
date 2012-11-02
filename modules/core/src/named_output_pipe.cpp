@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of named output pipe
  */
+#include <stddef.h>
 #include <dpl/named_output_pipe.h>
 #include <dpl/binary_queue.h>
 #include <dpl/scoped_free.h>

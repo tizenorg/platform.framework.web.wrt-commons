@@ -25,7 +25,7 @@
  * @version 1.0
  * @brief   This file contains the definition of Configuration.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/widget_dao.h>
 
 #include <sstream>

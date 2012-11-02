@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the definition of property dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/property_dao.h>
 #include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/log/log.h>

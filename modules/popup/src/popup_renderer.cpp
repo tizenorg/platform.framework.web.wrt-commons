@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       This is efl specific implementation for PopupRenderer
  */
-
+#include <stddef.h>
 #include <dpl/popup/popup_manager.h>
 #include <dpl/popup/popup_renderer.h>
 #include <dpl/popup/popup_manager.h>

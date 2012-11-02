@@ -18,7 +18,7 @@
  * @author  Iwanek Tomasz
  * @version 1.0
  */
-
+#include <stddef.h>
 #include<dpl/utils/bash_utils.h>
 #include<dpl/log/log.h>
 

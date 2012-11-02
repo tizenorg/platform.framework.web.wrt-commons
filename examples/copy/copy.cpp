@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of copy example
  */
+#include <stddef.h>
 #include <dpl/file_input.h>
 #include <dpl/file_output.h>
 #include <dpl/copy.h>
