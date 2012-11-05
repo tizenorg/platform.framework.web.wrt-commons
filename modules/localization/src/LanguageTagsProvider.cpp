@@ -65,6 +65,24 @@ void LanguageTagsProvider::resetLanguageTags()
     this->loadSystemTags();
 }
 
+void LanguageTagsProvider::addWidgetDefaultLocales(const DPL::String& defaultLocale){
+    if (defaultLocale.size() > 0 &&
+        std::find(m_languageTagsList.begin(), m_languageTagsList.end(), defaultLocale) == m_languageTagsList.end())
+    {
+        if (m_languageTagsList.size() < 2) {
+            m_languageTagsList.push_front(defaultLocale);
+        } else {
+            LanguageTags::iterator placeToInsert = m_languageTagsList.end();
+            --placeToInsert;
+            if (*placeToInsert != L"")
+            {
+                ++placeToInsert;
+            }
+            m_languageTagsList.insert(placeToInsert, defaultLocale);
+        }
+    }
+}
+
 DPL::String LanguageTagsProvider::BCP47LanguageTagToLocale(const DPL::String& inLanguageTag)
 {
     DPL::String languageTag(inLanguageTag);

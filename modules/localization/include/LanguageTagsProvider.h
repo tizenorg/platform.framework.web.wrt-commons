@@ -54,6 +54,16 @@ public:
     void resetLanguageTags();
 
     /*
+     * Adds default widget locales to language tags if
+     * it doesn't exist within actual tags.
+     * Default locales i added:
+     * - at the beginning if less then 2 tags exists on list
+     * - just before empty ("") locales - pre-last position
+     * - at the end if last position is not empty locale
+     */
+    void addWidgetDefaultLocales(const DPL::String&);
+
+    /*
      * Function converts language tag string (i.e. en-US)
      * into locales string (en_US).
      */
