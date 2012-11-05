@@ -1,3 +1,12 @@
+wrt-commons (0.2.70) unstable; urgency=low
+
+  * Additional Include: stddef.h
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.70
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 05 Nov 2012 17:43:04 +0900
+
 wrt-commons (0.2.69) unstable; urgency=low
 
   * [Commons] Modify package type
