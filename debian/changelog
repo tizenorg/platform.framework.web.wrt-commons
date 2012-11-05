@@ -1,3 +1,12 @@
+wrt-commons (0.2.69) unstable; urgency=low
+
+  * [Commons] Modify package type
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.69
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Mon, 05 Nov 2012 16:46:34 +0900
+
 wrt-commons (0.2.68) unstable; urgency=low
 
   * Change profiling build
