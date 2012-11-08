@@ -53,14 +53,6 @@ inline const char* GetDevicePluginPath()
 }
 
 /**
- * WRT factory widgets that are loaded by default
- */
-inline const char* GetFactoryInstalledWidgetPath()
-{
-    return "/opt/share/widget/system";
-}
-
-/**
  * WRT widgets that are downloaded and installed by user
  */
 inline const char* GetUserInstalledWidgetPath()
