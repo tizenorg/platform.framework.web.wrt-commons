@@ -1,3 +1,15 @@
+wrt-commons (0.2.71) unstable; urgency=low
+
+  * Implement Security origin database
+  * hidden symbol for enhancement shared library loading time (orm.h)
+  * Default widget locale adding to language tags
+  * WrtDAO clean up - unused function with widget handle usage
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.71
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 12 Nov 2012 16:55:19 +0900
+
 wrt-commons (0.2.70) unstable; urgency=low
 
   * Additional Include: stddef.h
