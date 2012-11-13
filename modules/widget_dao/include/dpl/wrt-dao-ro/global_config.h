@@ -65,7 +65,7 @@ inline const char* GetFactoryInstalledWidgetPath()
  */
 inline const char* GetUserInstalledWidgetPath()
 {
-    return "/opt/apps";
+    return "/opt/usr/apps";
 }
 
 /**
