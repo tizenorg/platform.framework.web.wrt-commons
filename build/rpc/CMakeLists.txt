@@ -1,3 +1,4 @@
+
 # Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +34,9 @@ INCLUDE_DIRECTORIES(
     ${DPL_SOCKET_INCLUDE_DIR}
     ${DPL_EVENT_INCLUDE_DIR}
     ${DPL_RPC_INCLUDE_DIR}
-    ${SYS_EFL_RPC_INCLUDE_DIRS}
 )
+
+INCLUDE_DIRECTORIES(SYSTEM ${SYS_EFL_RPC_INCLUDE_DIRS})
 
 LINK_DIRECTORIES(
     ${SYS_EFL_RPC_LIBRARY_DIRS}

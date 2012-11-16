@@ -170,7 +170,6 @@ ADD_DEFINITIONS("-std=c++0x")
 SET(DPL_3RDPARTY_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/3rdparty)
 
-
 # Set names of binaries being created
 SET(TARGET_DPL_EFL "lib${PROJECT_NAME}-efl")
 SET(TARGET_DPL_DBUS_EFL "lib${PROJECT_NAME}-dbus-efl")
