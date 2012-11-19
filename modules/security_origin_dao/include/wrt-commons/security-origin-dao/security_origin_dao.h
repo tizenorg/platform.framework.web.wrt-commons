@@ -40,14 +40,18 @@ class SecurityOriginDAO
 
     explicit SecurityOriginDAO(int handle);
     virtual ~SecurityOriginDAO();
+    SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
                                const Result result);
+    void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
   private:
     std::string m_securityOriginDBPath;
     DPL::DB::ThreadDatabaseSupport m_securityOriginDBInterface;
     bool hasResult(const SecurityOriginData &securityOriginData);
 };
+
+typedef std::shared_ptr<SecurityOriginDAO> SecurityOriginDAOPtr;
 
 } // namespace SecurityOriginDB
 

@@ -25,24 +25,28 @@
 #define _SECURITY_ORIGIN_DAO_TYPES_H_
 
 #include <list>
+#include <memory>
 #include <dpl/string.h>
 
 namespace SecurityOriginDB {
 
 enum Feature
 {
+    FEATURE_START = 0,
     FEATURE_GEOLOCATION = 0,
-    FEATURE_FILESYSTEM,
-    FEATURE_WEB_NOTIFICATION
+    FEATURE_WEB_NOTIFICATION,
+    FEATURE_WEB_DATABASE,
+    FEATURE_FILE_SYSTEM_ACCESS,
+    FEATURE_END = FEATURE_FILE_SYSTEM_ACCESS
 };
 
 enum Result
 {
     RESULT_UNKNOWN = 0,
-    RESULT_USER_ALLOWED,
-    RESULT_USER_DENIED,
-    RESULT_EXCEPTION_ALLOWED,
-    RESULT_EXCEPTION_DENIED
+    RESULT_ALLOW_ONCE,
+    RESULT_DENY_ONCE,
+    RESULT_ALLOW_ALWAYS,
+    RESULT_DENY_ALWAYS
 };
 
 struct Origin
@@ -95,6 +99,9 @@ struct SecurityOriginData
         return !(*this == other);
     }
 };
+
+typedef std::shared_ptr<SecurityOriginData> SecurityOriginDataPtr;
+typedef std::list<SecurityOriginDataPtr> SecurityOriginDataList;
 
 } // namespace SecurityOriginDB
 
