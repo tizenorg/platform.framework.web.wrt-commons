@@ -39,6 +39,7 @@ CREATE_TABLE(WidgetInfo)
     COLUMN(access_network,          TINYINT,       DEFAULT 0)
     COLUMN(defaultlocale,           VARCHAR(256),  DEFAULT 0)
     COLUMN(pkgname,                 VARCHAR(256),  DEFAULT 0 UNIQUE)
+    COLUMN_NOT_NULL(pkgname_NOTNULL,VARCHAR(256),  DEFAULT 0 UNIQUE)
     COLUMN(pkg_type,                INT,  DEFAULT 0)
 CREATE_TABLE_END()
 
