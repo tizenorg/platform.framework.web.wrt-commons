@@ -91,6 +91,7 @@ CREATE_TABLE(WidgetExtendedInfo)
     COLUMN_NOT_NULL(test_widget, INT, CHECK(test_widget between 0 and 1) DEFAULT 0)
     COLUMN(splash_img_src,      VARCHAR(256),   DEFAULT '')
     COLUMN(background_page,      VARCHAR(256),   DEFAULT '')
+    COLUMN(installed_path,      VARCHAR(512),   DEFAULT '')
     TABLE_CONSTRAINTS(
         FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )

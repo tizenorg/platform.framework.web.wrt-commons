@@ -35,7 +35,7 @@ namespace WidgetConfig {
 inline std::string GetWidgetBasePath(DPL::String pkgName)
 {
     return PathBuilder()
-               .Append(GlobalConfig::GetUserInstalledWidgetPath())
+               .Append(GlobalConfig::GetWidgetUserDataPath())
                .Append(DPL::ToUTF8String(pkgName))
                .GetFullPath();
 }

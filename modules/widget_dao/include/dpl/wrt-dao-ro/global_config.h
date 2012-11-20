@@ -61,6 +61,22 @@ inline const char* GetUserInstalledWidgetPath()
 }
 
 /**
+ * WRT widgets that are preloaded
+ */
+inline const char* GetUserPreloadedWidgetPath()
+{
+    return "/usr/apps";
+}
+
+/**
+ * WRT widgets that are downloaded and installed by user
+ */
+inline const char* GetWidgetUserDataPath()
+{
+    return "/opt/usr/apps";
+}
+
+/**
  * WRT widgets that are downloaded and installed by user
  */
 inline const char* GetWidgetSrcPath()

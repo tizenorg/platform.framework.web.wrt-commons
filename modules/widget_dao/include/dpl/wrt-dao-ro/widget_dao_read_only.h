@@ -180,6 +180,7 @@ struct WidgetRegisterInfo
     PackagingType packagingType;
     EncryptedFileList encryptedFiles;
     ExternalLocationList externalLocations;
+    DPL::OptionalString widgetInstalledPath;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -765,6 +766,13 @@ class WidgetDAOReadOnly
     SettingsType getWebNotificationUsage() const;
     SettingsType getWebDatabaseUsage() const;
     SettingsType getFileSystemUsage() const;
+
+    /**
+     * This method returns widget's installed path
+     *
+     * @return path of widget installed
+     */
+    DPL::OptionalString getWidgetInstalledPath() const;
 };
 
 } // namespace WrtDB

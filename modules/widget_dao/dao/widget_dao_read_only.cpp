@@ -215,14 +215,9 @@ DPL::OptionalInt WidgetDAOReadOnly::checkPropertyReadFlag(
 
 DPL::String WidgetDAOReadOnly::getPath() const
 {
-    DPL::String path = DPL::FromUTF8String(
-            GlobalConfig::GetUserInstalledWidgetPath());
+    DPL::String path = *getWidgetInstalledPath();
     DPL::String srcPath = DPL::FromUTF8String(GlobalConfig::GetWidgetSrcPath());
 
-    DPL::OStringStream strAppId;
-    strAppId << m_widgetHandle;
-    DPL::OptionalString pkgname = getPkgname();
-    path += L"/" + *pkgname;
     path += srcPath + L"/";
 
     return path;
@@ -1142,6 +1137,25 @@ SettingsType WidgetDAOReadOnly::getFileSystemUsage(void) const
     return static_cast<SettingsType>(*result);
 }
 
+DPL::OptionalString WidgetDAOReadOnly::getWidgetInstalledPath() const
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
+
+        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
+        if (rows.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. Handle: " << m_widgetHandle);
+        }
+
+        return rows.front().Get_installed_path();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get widdget installed path")
+}
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE

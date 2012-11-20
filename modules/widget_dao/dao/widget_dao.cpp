@@ -392,7 +392,7 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
     row.Set_background_page(regInfo.configInfo.backgroundPage);
-
+    row.Set_installed_path(regInfo.widgetInstalledPath);
 
     DO_INSERT(row, WidgetExtendedInfo)
 }
