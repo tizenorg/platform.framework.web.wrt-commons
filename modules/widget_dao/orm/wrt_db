@@ -215,6 +215,18 @@ CREATE_TABLE(WidgetWARPInfo)
     )
 CREATE_TABLE_END()
 
+CREATE_TABLE(WidgetSecuritySettings)
+    COLUMN_NOT_NULL(app_id,                 INT,)
+    COLUMN_NOT_NULL(security_popup_usage,   INT, DEFAULT 1)
+    COLUMN_NOT_NULL(geolocation_usage,      INT, DEFAULT 1)
+    COLUMN_NOT_NULL(web_notification_usage, INT, DEFAULT 1)
+    COLUMN_NOT_NULL(web_database_usage,     INT, DEFAULT 1)
+    COLUMN_NOT_NULL(file_system_usage,      INT, DEFAULT 1)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
 CREATE_TABLE(FeaturesList)
     COLUMN_NOT_NULL(FeatureUUID,            INTEGER,    primary key autoincrement)
     COLUMN_NOT_NULL(FeatureName,            TEXT,       unique)

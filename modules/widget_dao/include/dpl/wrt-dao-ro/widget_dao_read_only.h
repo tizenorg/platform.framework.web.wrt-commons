@@ -750,6 +750,21 @@ class WidgetDAOReadOnly
      * @return new tizen id
      */
     static WidgetPkgName generateTizenId();
+
+    /**
+     * @brief This method return each value for security setting
+     *
+     * @return SettingsType
+     *         SETTINGS_TYPE_UNKNOWN     : unknow value
+     *         SETTINGS_TYPE_ON                : enable
+     *         SETTINGS_TYPE_ALWAYS_ASK : ask by popup
+     *         SETTINGS_TYPE_OFF               : disable
+     */
+    SettingsType getSecurityPopupUsage() const;
+    SettingsType getGeolocationUsage() const;
+    SettingsType getWebNotificationUsage() const;
+    SettingsType getWebDatabaseUsage() const;
+    SettingsType getFileSystemUsage() const;
 };
 
 } // namespace WrtDB

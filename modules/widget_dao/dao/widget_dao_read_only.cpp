@@ -64,7 +64,9 @@ namespace WrtDB {
 
 typedef DPL::DB::ORM::wrt::WidgetInfo::Row WidgetInfoRow;
 typedef DPL::DB::ORM::wrt::WidgetFeature::widget_feature_id::ColumnType
-        WidgetFeatureId;
+    WidgetFeatureId;
+typedef DPL::DB::ORM::wrt::WidgetSecuritySettings::Row
+    WidgetSecuritySettingsRow;
 
 namespace {
 
@@ -86,6 +88,26 @@ WidgetInfoRow getWidgetInfoRow(int widgetHandle)
         return rows.front();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in GetWidgetInfoRow")
+}
+
+WidgetSecuritySettingsRow getWidgetSecuritySettingsRow(int widgetHandle)
+{
+    LogDebug("Getting WidgetSecuritySettings row. Handle: " << widgetHandle);
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetSecuritySettings, &WrtDatabase::interface())
+        select->Where(Equals<WidgetSecuritySettings::app_id>(widgetHandle));
+
+        WidgetSecuritySettings::Select::RowList rows = select->GetRowList();
+        if (rows.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. Handle: " << widgetHandle);
+        }
+        return rows.front();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getWidgetSecuritySettingsRow")
 }
 
 const int MAX_TIZENID_LENGTH = 10;
@@ -1143,6 +1165,46 @@ WidgetPkgName WidgetDAOReadOnly::generateTizenId() {
     }
     } while (isWidgetInstalled(tizenId));
     return tizenId;
+}
+
+SettingsType WidgetDAOReadOnly::getSecurityPopupUsage(void) const
+{
+    WidgetSecuritySettingsRow row =
+        getWidgetSecuritySettingsRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_security_popup_usage();
+    return static_cast<SettingsType>(*result);
+}
+
+SettingsType WidgetDAOReadOnly::getGeolocationUsage(void) const
+{
+    WidgetSecuritySettingsRow row =
+        getWidgetSecuritySettingsRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_geolocation_usage();
+    return static_cast<SettingsType>(*result);
+}
+
+SettingsType WidgetDAOReadOnly::getWebNotificationUsage(void) const
+{
+    WidgetSecuritySettingsRow row =
+        getWidgetSecuritySettingsRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_web_notification_usage();
+    return static_cast<SettingsType>(*result);
+}
+
+SettingsType WidgetDAOReadOnly::getWebDatabaseUsage(void) const
+{
+    WidgetSecuritySettingsRow row =
+        getWidgetSecuritySettingsRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_web_database_usage();
+    return static_cast<SettingsType>(*result);
+}
+
+SettingsType WidgetDAOReadOnly::getFileSystemUsage(void) const
+{
+    WidgetSecuritySettingsRow row =
+        getWidgetSecuritySettingsRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_file_system_usage();
+    return static_cast<SettingsType>(*result);
 }
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
