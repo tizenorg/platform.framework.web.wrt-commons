@@ -301,6 +301,7 @@ enum PkgType
 {
     PKG_TYPE_UNKNOWN = 0, // unknown
     PKG_TYPE_NOMAL_WEB_APP,
+    PKG_TYPE_DIRECTORY_WEB_APP,
     PKG_TYPE_HOSTED_WEB_APP,    // request from browser
     PKG_TYPE_HYBRID_WEB_APP // Tizen webapp with C++ service app
 };
@@ -330,6 +331,7 @@ class PackagingType
 #define X(x) case x: return #x;
         X(PKG_TYPE_UNKNOWN)
         X(PKG_TYPE_NOMAL_WEB_APP)
+        X(PKG_TYPE_DIRECTORY_WEB_APP)
         X(PKG_TYPE_HOSTED_WEB_APP)
         X(PKG_TYPE_HYBRID_WEB_APP)
 #undef X
