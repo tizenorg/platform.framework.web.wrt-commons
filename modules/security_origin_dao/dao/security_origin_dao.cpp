@@ -223,20 +223,8 @@ void SecurityOriginDAO::removeSecurityOriginData(
 
 bool SecurityOriginDAO::hasResult(const SecurityOriginData &securityOriginData)
 {
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_securityOriginDBInterface);
-        select->Where(
-            And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.feature),
-                        Equals<SecurityOriginInfo::scheme>(securityOriginData.origin.scheme)),
-                    Equals<SecurityOriginInfo::host>(securityOriginData.origin.host)),
-                Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
-
-        SecurityOriginInfo::Select::RowList rows = select->GetRowList();
-
-        return !rows.empty();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get result for security origin")
+    Result res=getResult(securityOriginData);
+    return (res != RESULT_UNKNOWN);
 }
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
