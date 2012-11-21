@@ -218,7 +218,7 @@ inline const char* GetFingerprintListSchema()
 
 inline const char* GetVCoreDatabaseFilePath()
 {
-    return "/opt/dbspace/.vcore.db";
+    return "/opt/dbspace/.cert_svc_vcore.db";
 }
 
 /**
