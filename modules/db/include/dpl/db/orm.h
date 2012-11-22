@@ -632,6 +632,29 @@ public:
     }
 };
 
+namespace {
+class BindVisitor {
+private:
+    DataCommand *m_command;
+public:
+    ArgumentIndex m_bindArgumentIndex;
+
+    BindVisitor(DataCommand *command) :
+        m_command(command),
+        m_bindArgumentIndex(1)
+    {}
+
+    template<typename ColumnType>
+    void Visit(const char*, const ColumnType& value, bool isSet)
+    {
+        if ( isSet )
+        {
+            DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
+            m_bindArgumentIndex++;
+        }
+    }
+};
+} //anonymous namespace
 template<typename TableDefinition>
 class __attribute__ ((visibility("hidden"))) Insert : public Query<TableDefinition>
 {
@@ -688,27 +711,6 @@ protected:
                 Query<TableDefinition>::m_interface);
         }
     }
-
-    class BindVisitor {
-    private:
-        DataCommand *m_command;
-        ArgumentIndex m_bindArgumentIndex;
-    public:
-        BindVisitor(DataCommand *command) :
-            m_command(command),
-            m_bindArgumentIndex(1)
-        {}
-
-        template<typename ColumnType>
-        void Visit(const char*, const ColumnType& value, bool isSet)
-        {
-            if ( isSet )
-            {
-                DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
-                m_bindArgumentIndex++;
-            }
-        }
-    };
 
     void Bind()
     {
@@ -998,29 +1000,6 @@ protected:
             LogPedantic("Prepared SQL command " << this->m_commandString);
         }
     }
-
-    class BindVisitor {
-    private:
-        DataCommand *m_command;
-
-    public:
-        ArgumentIndex m_bindArgumentIndex;
-
-        BindVisitor(DataCommand *command) :
-            m_command(command),
-            m_bindArgumentIndex(1)
-        {}
-
-        template<typename ColumnType>
-        void Visit(const char*, const ColumnType& value, bool isSet)
-        {
-            if ( isSet )
-            {
-                DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
-                m_bindArgumentIndex++;
-            }
-        }
-    };
 
     void Bind()
     {
