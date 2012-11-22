@@ -302,7 +302,7 @@ enum PkgType
     PKG_TYPE_UNKNOWN = 0, // unknown
     PKG_TYPE_NOMAL_WEB_APP,
     PKG_TYPE_HOSTED_WEB_APP,    // request from browser
-    PKG_TYPE_HYBRID_WEB_APP, // Tizen webapp with C++ service app
+    PKG_TYPE_HYBRID_WEB_APP // Tizen webapp with C++ service app
 };
 
 class PackagingType
@@ -341,6 +341,13 @@ class PackagingType
     PkgType pkgType;
 };
 
+enum SettingsType
+{
+    SETTINGS_TYPE_UNKNOWN = 0,
+    SETTINGS_TYPE_ON,
+    SETTINGS_TYPE_ALWAYS_ASK,
+    SETTINGS_TYPE_OFF
+};
 } // namespace WrtDB
 
 struct WidgetSetting
