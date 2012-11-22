@@ -126,6 +126,27 @@ SecurityOriginDAO::~SecurityOriginDAO()
     m_securityOriginDBInterface.DetachFromThread();
 }
 
+SecurityOriginDataList SecurityOriginDAO::getSecurityOriginDataList(void)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        SecurityOriginDataList list;
+        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_securityOriginDBInterface);
+        typedef std::list<SecurityOriginInfo::Row> RowList;
+        RowList rowList = select->GetRowList();
+
+        FOREACH(it, rowList) {
+            Origin origin(it->Get_scheme(), it->Get_host(), it->Get_port());
+            list.push_back(
+                SecurityOriginDataPtr(
+                    new SecurityOriginData(
+                        static_cast<Feature>(it->Get_feature()), origin)));
+        }
+        return list;
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get data  list")
+}
+
 Result SecurityOriginDAO::getResult(const SecurityOriginData &securityOriginData)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -175,6 +196,27 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
             insert->Execute();
         }
         transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
+}
+
+void SecurityOriginDAO::removeSecurityOriginData(
+    const SecurityOriginData &securityOriginData)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        ScopedTransaction transaction(&m_securityOriginDBInterface);
+
+        if (true == hasResult(securityOriginData)) {
+            SECURITY_ORIGIN_DB_DELETE(del, SecurityOriginInfo, &m_securityOriginDBInterface)
+            del->Where(
+                And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.feature),
+                            Equals<SecurityOriginInfo::scheme>(securityOriginData.origin.scheme)),
+                        Equals<SecurityOriginInfo::host>(securityOriginData.origin.host)),
+                    Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
+            del->Execute();
+            transaction.Commit();
+        }
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
 }
