@@ -1,3 +1,14 @@
+wrt-commons (0.2.73) unstable; urgency=low
+
+  * Distinguish between system headers and project headers
+  * Implement security origin dao for setting menu
+  * Implement security settings in the widgetDAO
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.73
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 22 Nov 2012 20:46:40 +0900
+
 wrt-commons (0.2.72) unstable; urgency=low
 
   * Change widget installed path request by app fw
