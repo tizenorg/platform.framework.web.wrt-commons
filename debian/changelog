@@ -1,3 +1,13 @@
+wrt-commons (0.2.75) unstable; urgency=low
+
+  * Throw an exception when pthread_key_create fails
+  * Symbolic link pointed by GetVCoreDatabaseFilePath will be removed.
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.75
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Fri, 23 Nov 2012 22:01:00 +0900
+
 wrt-commons (0.2.74) unstable; urgency=low
 
   * Removing copy&paste code, part 1
