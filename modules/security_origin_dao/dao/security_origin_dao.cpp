@@ -221,6 +221,19 @@ void SecurityOriginDAO::removeSecurityOriginData(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
 }
 
+void SecurityOriginDAO::removeSecurityOriginData(const Result result)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        ScopedTransaction transaction(&m_securityOriginDBInterface);
+        SECURITY_ORIGIN_DB_DELETE(del, SecurityOriginInfo, &m_securityOriginDBInterface)
+        del->Where(Equals<SecurityOriginInfo::result>(result));
+        del->Execute();
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to remove data by result")
+}
+
 bool SecurityOriginDAO::hasResult(const SecurityOriginData &securityOriginData)
 {
     Result res=getResult(securityOriginData);

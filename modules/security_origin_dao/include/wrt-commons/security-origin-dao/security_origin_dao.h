@@ -45,6 +45,7 @@ class SecurityOriginDAO
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
                                const Result result);
     void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
+    void removeSecurityOriginData(const Result result);
   private:
     std::string m_securityOriginDBPath;
     DPL::DB::ThreadDatabaseSupport m_securityOriginDBInterface;
