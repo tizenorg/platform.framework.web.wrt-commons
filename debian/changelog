@@ -1,3 +1,14 @@
+wrt-commons (0.2.74) unstable; urgency=low
+
+  * Removing copy&paste code, part 1
+  * Removal of factory_widget attribute and related functions
+  * Implement security origin dao for allow,deny one time
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.74
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 23 Nov 2012 10:09:27 +0900
+
 wrt-commons (0.2.73) unstable; urgency=low
 
   * Distinguish between system headers and project headers
