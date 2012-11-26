@@ -17,7 +17,7 @@
 rm -rf /opt/share/widget/system/*
 
 #Removing of widget desktop icons
-WIDGET_EXEC_PATH=/opt/apps/
+WIDGET_EXEC_PATH=/opt/usr/apps/
 WIDGET_DESKTOP_PATH=/opt/share/applications/
 WRT_DB=/opt/dbspace/.wrt.db
 PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/share/widget/
