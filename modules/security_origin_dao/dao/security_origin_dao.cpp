@@ -76,6 +76,27 @@ std::string createDatabasePath(int widgetHandle)
 
 }
 
+std::string createDatabasePath(const DPL::String& tizenId)
+{
+    using namespace DPL::DB::ORM;
+    using namespace WrtDB::WidgetConfig;
+    using namespace WrtDB::GlobalConfig;
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        std::stringstream filename;
+        WrtDB::WidgetDAOReadOnly widgetDAO(tizenId);
+        DPL::String pkgname = widgetDAO.getPkgname_NOTNULL();
+
+        filename << GetWidgetPersistentStoragePath(pkgname)
+                 << "/"
+                 << SECURITY_ORIGIN_DB_NAME;
+        return filename.str();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to get database Path")
+
+}
+
 void checkDatabase(std::string databasePath)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -115,6 +136,14 @@ void checkDatabase(std::string databasePath)
 
 SecurityOriginDAO::SecurityOriginDAO(int handle) :
     m_securityOriginDBPath(createDatabasePath(handle)),
+    m_securityOriginDBInterface(m_securityOriginDBPath, SECURITY_ORIGIN_DB_TYPE)
+{
+    checkDatabase(m_securityOriginDBPath);
+    m_securityOriginDBInterface.AttachToThread(SECURITY_ORIGIN_DB_OPTION);
+}
+
+SecurityOriginDAO::SecurityOriginDAO(const DPL::String& tizenId):
+    m_securityOriginDBPath(createDatabasePath(tizenId)),
     m_securityOriginDBInterface(m_securityOriginDBPath, SECURITY_ORIGIN_DB_TYPE)
 {
     checkDatabase(m_securityOriginDBPath);
