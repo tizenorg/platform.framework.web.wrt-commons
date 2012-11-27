@@ -26,12 +26,12 @@
 #include <typeinfo>
 #include <utility>
 #include <set>
+#include <memory>
 
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/orm_interface.h>
 #include <dpl/string.h>
 #include <dpl/optional.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/type_list.h>
 #include <dpl/assert.h>
 #include <dpl/foreach.h>
@@ -84,7 +84,7 @@ public:
     virtual ArgumentIndex BindTo(DataCommand *command, ArgumentIndex index) = 0;
 };
 
-typedef DPL::SharedPtr<Expression> ExpressionPtr;
+typedef std::shared_ptr<Expression> ExpressionPtr;
 
 template<const char* Operator, typename LeftExpression, typename RightExpression>
 class __attribute__ ((visibility("hidden"))) BinaryExpression : public Expression {
@@ -586,7 +586,7 @@ public:
                 str.str());
         }
         //TODO maybe don't make a copy here but just generate the string part of the query.
-        m_whereExpression.Reset(new Expression(expression));
+        m_whereExpression.reset(new Expression(expression));
     }
 
 };

@@ -417,7 +417,7 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
                 Usage();
                 return -1;
             }
-            currentCollector.Reset(TestResultsCollectorBase::Create(arg));
+            currentCollector.reset(TestResultsCollectorBase::Create(arg));
             if (!currentCollector) {
                 InvalidArgs("Unsupported output type!");
                 Usage();
@@ -469,7 +469,7 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         }
     }
 
-    currentCollector.Reset();
+    currentCollector.reset();
 
     // Show help
     if (showHelp)

@@ -29,9 +29,9 @@
 #include <map>
 #include <vector>
 #include <list>
-#include <dpl/optional_typedefs.h>
-#include <dpl/shared_ptr.h>
 #include <memory>
+#include <dpl/optional_typedefs.h>
+
 
 namespace WrtDB {
 class PluginMetafileData
@@ -63,7 +63,7 @@ class PluginObjectsDAO
 {
   public:
     typedef std::set<std::string> Objects;
-    typedef DPL::SharedPtr<Objects> ObjectsPtr;
+    typedef std::shared_ptr<Objects> ObjectsPtr;
 
   public:
     explicit PluginObjectsDAO() {}

@@ -23,8 +23,7 @@
 #ifndef WRT_SRC_POPUP_POPUP_H_
 #define WRT_SRC_POPUP_POPUP_H_
 
-#include <dpl/enable_shared_from_this.h>
-#include <dpl/shared_ptr.h>
+#include <memory>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
 #include <string>
@@ -43,9 +42,9 @@ struct AnswerCallbackData
 
 class PopupManager;
 class IPopup;
-typedef DPL::SharedPtr<IPopup> IPopupPtr;
+typedef std::shared_ptr<IPopup> IPopupPtr;
 
-class IPopup : protected DPL::EnableSharedFromThis<IPopup>
+class IPopup : public std::enable_shared_from_this<IPopup>
 {
   public:
     virtual void SetTitle(const std::string &title) = 0;
@@ -63,7 +62,7 @@ class IPopup : protected DPL::EnableSharedFromThis<IPopup>
 
   private:
     friend class PopupManager;
-    friend class DPL::SharedPtr<IPopup>;
+    friend class std::shared_ptr<IPopup>;
 };
 
 } // namespace Popup

@@ -26,8 +26,8 @@
 
 #include <string>
 #include <list>
+#include <memory>
 #include <dpl/exception.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
@@ -35,7 +35,7 @@ namespace WrtDB {
 typedef std::list<DbPluginHandle> PluginHandleList;
 typedef std::set<DbPluginHandle> PluginHandleSet;
 typedef std::list<std::string> ImplementedObjectsList;
-typedef DPL::SharedPtr<PluginHandleSet> PluginHandleSetPtr;
+typedef std::shared_ptr<PluginHandleSet> PluginHandleSetPtr;
 
 //TODO make it friend to FeatureDAO or inherit
 class PluginDAOReadOnly

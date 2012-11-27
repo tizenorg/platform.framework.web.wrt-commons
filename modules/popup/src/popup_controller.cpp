@@ -56,7 +56,7 @@ CtrlPopup::~CtrlPopup()
 void CtrlPopup::EmitAnswer(const AnswerCallbackData & answer)
 {
     AnswerCallbackData l_answer = answer;
-    PopupAnswerEvent event(SharedFromThis(), m_callback, l_answer);
+    PopupAnswerEvent event(shared_from_this(), m_callback, l_answer);
     DPL::Event::EventSupport<PopupAnswerEvent>::EmitEvent(event);
 }
 

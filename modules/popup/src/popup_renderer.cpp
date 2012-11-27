@@ -24,7 +24,6 @@
 #include <dpl/popup/popup_renderer.h>
 #include <dpl/popup/popup_manager.h>
 #include <dpl/popup/evas_object.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/scoped_array.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
@@ -93,7 +92,7 @@ class PopupRenderer::Impl
     void Deinitialize()
     {
         Assert(m_initialized);
-        m_current.Reset(NULL);
+        m_current.reset();
         while (!m_popupsToRender.empty()) {
             m_popupsToRender.pop();
         }
@@ -112,7 +111,7 @@ class PopupRenderer::Impl
         answerData.chackState = m_checkState;
         answerData.password = m_password;
         m_current->ForwardAnswer(answerData);
-        m_current.Reset();
+        m_current.reset();
 
         FOREACH(it, m_createdObjects)
         {
@@ -398,8 +397,8 @@ void PopupRenderer::Deinitialize()
 
 IPopupPtr PopupRenderer::CreatePopup()
 {
-    return DPL::StaticPointerCast<IPopup>(IPopupPtr
-                                              (new Popup(SharedFromThis())));
+    return std::static_pointer_cast<IPopup>(IPopupPtr
+                                              (new Popup(shared_from_this())));
 }
 
 void PopupRenderer::Render(PopupPtr popup)

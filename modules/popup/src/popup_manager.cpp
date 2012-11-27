@@ -22,9 +22,7 @@
 #include <stddef.h>
 #include <dpl/popup/popup_manager.h>
 #include <dpl/popup/popup.h>
-
 #include <dpl/log/log.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/assert.h>
 #include <dpl/singleton_impl.h>
 
@@ -45,7 +43,7 @@ void PopupManager::Deinitialize()
 {
     m_popupRenderer->Deinitialize();
     Assert(m_initialized);
-    m_popupRenderer.Reset();
+    m_popupRenderer.reset();
     m_initialized = false;
 }
 
