@@ -191,6 +191,8 @@ class ConfigParserData
     typedef std::list<ServiceInfo> ServiceInfoList;
     typedef std::list<DPL::OptionalString> DependsPkgList;
 
+    typedef std::set<DPL::String> CategoryList;
+
     StringsList nameSpaces;
 
     LocalizedDataSet localizedDataSet;
@@ -242,6 +244,8 @@ class ConfigParserData
     DPL::OptionalString splashImgSrc;
     // Background page filename
     DPL::OptionalString backgroundPage;
+    // For category
+    CategoryList categoryList;
 
     ConfigParserData() :
         flashNeeded(false),
