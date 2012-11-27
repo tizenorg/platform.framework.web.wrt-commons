@@ -108,6 +108,13 @@ inline const char* GetWidgetPrivateStoragePath()
     return "data";
 }
 
+/**
+ * widgets share directory path
+ */
+inline const char* GetWidgetSharePath()
+{
+    return "share";
+}
 
 /**
  * widgets desktop files path
