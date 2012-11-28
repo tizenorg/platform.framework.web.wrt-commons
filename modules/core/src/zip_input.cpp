@@ -29,7 +29,7 @@
 #include <dpl/scoped_close.h>
 #include <dpl/binary_queue.h>
 #include <dpl/scoped_free.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/scoped_array.h>
 #include <dpl/foreach.h>
 #include <dpl/log/log.h>
@@ -304,7 +304,7 @@ ZipInput::ZipInput(const std::string &fileName)
 
     // Create master device
     LogPedantic("Creating master device");
-    ScopedPtr<Device> device(new Device(fileName));
+    std::unique_ptr<Device> device(new Device(fileName));
 
     // Open master file
     zlib_filefunc64_def interface;
@@ -315,7 +315,7 @@ ZipInput::ZipInput(const std::string &fileName)
     interface.zseek64_file = &Device::seek64_file;
     interface.zclose_file = &Device::close_file;
     interface.zerror_file = &Device::testerror_file;
-    interface.opaque = device.Get();
+    interface.opaque = device.get();
 
     LogPedantic("Opening zip file");
     unzFile file = unzOpen2_64(NULL, &interface);
@@ -339,7 +339,7 @@ ZipInput::ZipInput(const std::string &fileName)
 
     // Release scoped unz close
     m_masterFile = scopedUnzClose.Release();
-    m_device = device.Release();
+    m_device = device.release();
 
     LogPedantic("Zip file opened");
 }

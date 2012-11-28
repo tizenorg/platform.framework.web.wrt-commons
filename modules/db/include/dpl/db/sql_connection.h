@@ -25,7 +25,7 @@
 #include <dpl/noncopyable.h>
 #include <dpl/exception.h>
 #include <dpl/optional.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/string.h>
 #include <dpl/log/log.h>
 #include <sqlite3.h>
@@ -423,7 +423,7 @@ protected:
     int m_dataCommandsCount;
 
     // Synchronization object
-    ScopedPtr<SynchronizationObject> m_synchronizationObject;
+    std::unique_ptr<SynchronizationObject> m_synchronizationObject;
 
     virtual void Connect(const std::string &address,
                          Flag::Type = Flag::None, Flag::Option = Flag::RO);

@@ -25,7 +25,7 @@
 #include <dpl/rpc/abstract_rpc_connection.h>
 #include <dpl/abstract_waitable_input_output.h>
 #include <dpl/socket/waitable_input_output_execution_context_support.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 
 namespace DPL
 {
@@ -42,7 +42,7 @@ private:
     virtual void OnInputStreamClosed();
     virtual void OnInputStreamBroken();
 
-    ScopedPtr<AbstractWaitableInputOutput> m_inputOutput;
+    std::unique_ptr<AbstractWaitableInputOutput> m_inputOutput;
 
 public:
     /**
