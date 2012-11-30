@@ -105,37 +105,19 @@ DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
 }
 
 namespace W3CFileLocalization {
-
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         DbWidgetHandle widgetHandle,
         const DPL::String &url)
 {
-    return getFilePathInWidgetPackageFromUrl(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
-            url);
-}
-
-DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-        const WrtDB::WidgetPkgName &pkgname,
-        const DPL::String &url)
-{
-    return getFilePathInWidgetPackageFromUrl(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
-            url);
-}
-
-DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-        WrtDB::WidgetDAOReadOnlyPtr dao,
-        const DPL::String &url)
-{
     DPL::String req = url;
+    WidgetDAOReadOnly dao(widgetHandle);
 
     if (req.find(WIDGET_URI_BEGIN) == 0) {
         req.erase(0, WIDGET_URI_BEGIN.length());
     } else if (req.find(FILE_URI_BEGIN) == 0) {
         req.erase(0, FILE_URI_BEGIN.length());
-        if (req.find(dao->getPath()) == 0) {
-            req.erase(0, dao->getPath().length());
+        if (req.find(dao.getPath()) == 0) {
+            req.erase(0, dao.getPath().length());
         }
         if (req.find(LOCALE_PREFIX) == 0) {
             req.erase(0, LOCALE_PREFIX.length());
@@ -151,7 +133,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         return DPL::Optional<DPL::String>::Null;
     }
 
-    auto widgetPath = dao->getPath();
+    auto widgetPath = dao.getPath();
 
     DPL::Optional<DPL::String> found =
         GetFilePathInWidgetPackageInternal(widgetPath, req);
@@ -170,25 +152,8 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         WrtDB::DbWidgetHandle widgetHandle,
         const DPL::String& file)
 {
-    return getFilePathInWidgetPackage(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
-            file);
-}
-
-DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-        const WrtDB::WidgetPkgName &pkgname,
-        const DPL::String& file)
-{
-    return getFilePathInWidgetPackage(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
-            file);
-}
-
-DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-        WrtDB::WidgetDAOReadOnlyPtr dao,
-        const DPL::String& file)
-{
-    return GetFilePathInWidgetPackageInternal(dao->getPath(), file);
+    WidgetDAOReadOnly dao(widgetHandle);
+    return GetFilePathInWidgetPackageInternal(dao.getPath(), file);
 }
 
 DPL::OptionalString getStartFile(const WrtDB::WidgetPkgName & pkgname)
@@ -273,28 +238,18 @@ OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao)
     return OptionalWidgetIcon::Null;
 }
 
-WidgetIconList getValidIconsList(WrtDB::DbWidgetHandle widgetHandle)
+WidgetIconList getValidIconsList(
+        WrtDB::DbWidgetHandle widgetHandle)
 {
-    return getValidIconsList(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
-}
-
-WidgetIconList getValidIconsList(const WrtDB::WidgetPkgName &pkgname)
-{
-    return getValidIconsList(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
-}
-
-WidgetIconList getValidIconsList(WrtDB::WidgetDAOReadOnlyPtr dao)
-{
-    WidgetDAOReadOnly::WidgetIconList list = dao->getIconList();
+    WidgetDAOReadOnly dao(widgetHandle);
+    WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
 
     WidgetIconList outlist;
 
     FOREACH(it, list)
     {
         LogDebug(":" << it->iconSrc);
-        if (!!getFilePathInWidgetPackage(dao->getHandle(),
+        if (!!getFilePathInWidgetPackage(widgetHandle,
                                          it->iconSrc))
         {
             WidgetIcon ret;
@@ -307,27 +262,15 @@ WidgetIconList getValidIconsList(WrtDB::WidgetDAOReadOnlyPtr dao)
     return outlist;
 }
 
-OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::DbWidgetHandle widgetHandle)
-{
-    return getStartFileInfo(
-        WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
-}
-
-OptionalWidgetStartFileInfo getStartFileInfo(const WrtDB::WidgetPkgName &pkgname)
-{
-    return getStartFileInfo(
-        WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
-
-}
-
-
-OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::WidgetDAOReadOnlyPtr dao)
+OptionalWidgetStartFileInfo getStartFileInfo(
+        WrtDB::DbWidgetHandle widgetHandle)
 {
     WidgetStartFileInfo info;
 
+    WidgetDAOReadOnly dao(widgetHandle);
     WidgetDAOReadOnly::LocalizedStartFileList locList =
-        dao->getLocalizedStartFileList();
-    WidgetDAOReadOnly::WidgetStartFileList list = dao->getStartFileList();
+        dao.getLocalizedStartFileList();
+    WidgetDAOReadOnly::WidgetStartFileList list = dao.getStartFileList();
     const LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     FOREACH(tag, tagsList)

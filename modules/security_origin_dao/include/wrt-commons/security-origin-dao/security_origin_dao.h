@@ -24,7 +24,6 @@
 
 #include <dpl/db/thread_database_support.h>
 #include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
-#include <dpl/string.h>
 
 namespace SecurityOriginDB {
 
@@ -40,7 +39,6 @@ class SecurityOriginDAO
     };
 
     explicit SecurityOriginDAO(int handle);
-    explicit SecurityOriginDAO(const DPL::String& tizenId);
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);
