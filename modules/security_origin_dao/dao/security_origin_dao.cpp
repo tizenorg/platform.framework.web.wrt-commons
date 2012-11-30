@@ -65,9 +65,9 @@ std::string createDatabasePath(int widgetHandle)
     {
         std::stringstream filename;
         WrtDB::WidgetDAOReadOnly widgetDAO(widgetHandle);
-        DPL::String pkgname = widgetDAO.getPkgname_NOTNULL();
+        DPL::Optional<DPL::String> pkgname = widgetDAO.getPkgname();
 
-        filename << GetWidgetPersistentStoragePath(pkgname)
+        filename << GetWidgetPersistentStoragePath(*pkgname)
                  << "/"
                  << SECURITY_ORIGIN_DB_NAME;
         return filename.str();

@@ -53,7 +53,6 @@ namespace WrtDB {
 
 WidgetDAO::WidgetDAO(DPL::OptionalString widgetGUID) :
     WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(widgetGUID))
-// TODO THIS WILL BE DELETED
 {
 }
 
@@ -98,29 +97,6 @@ void WidgetDAO::setProperty(
 }
 
 void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
-{
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace DPL::DB::ORM;
-        wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-
-        isWidgetInstalled(getHandle());
-
-        wrt::WidgetInfo::Row row;
-        row.Set_pkgname(pkgName);
-
-        WRT_DB_UPDATE(update, wrt::WidgetInfo, &WrtDatabase::interface())
-        update->Where(
-            Equals<wrt::WidgetInfo::app_id>(getHandle()));
-
-        update->Values(row);
-        update->Execute();
-        transaction.Commit();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
-}
-
-void WidgetDAO::setPkgName_NOTNULL(const DPL::String& pkgName)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {

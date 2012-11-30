@@ -175,10 +175,7 @@ struct WidgetRegisterInfo
     int isTestWidget;
     ConfigParserData configInfo;
     LocalizationData localizationData;
-
     DPL::OptionalString pkgname;
-    DPL::String pkgname_NOTNULL;
-
     time_t installedTime;
     PackagingType packagingType;
     EncryptedFileList encryptedFiles;
@@ -368,8 +365,6 @@ class WidgetDAOReadOnly
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
      */
     DPL::OptionalString getPkgname() const;
-
-    DPL::String getPkgname_NOTNULL() const;
 
     /**
      * This method returns the defaultlocale for the widget.
@@ -564,7 +559,6 @@ class WidgetDAOReadOnly
      * @return list of pkgname of installed packages
      */
     static WidgetPkgNameList getPkgnameList();
-    static WidgetPkgNameList_NOTNULL getPkgnameList_NOTNULL();
 
     /**
      * This method returns a list of all the installed widgets.
@@ -575,6 +569,7 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     static DbWidgetDAOReadOnlyList getWidgetList();
+
    /**
      * This method removes a widget's information from EmDB.
      *

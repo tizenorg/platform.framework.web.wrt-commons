@@ -134,8 +134,6 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     void setPkgName(const DPL::OptionalString& pkgName);
 
-    void setPkgName_NOTNULL(const DPL::String& pkgName);
-
     /* This function will update of api-feature status.
      * If status is true (feature rejected) plugin connected with this
      * api feature mustn't be loaded durign widget launch.
