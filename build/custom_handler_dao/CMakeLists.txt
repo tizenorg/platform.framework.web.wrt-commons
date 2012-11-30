@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2012 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -13,24 +13,9 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
-# @version     1.0
+# @author      Krzysztof Jackiewicz (k.jackiewicz@samsung.com)
 # @brief
 #
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(event)
-ADD_SUBDIRECTORY(socket)
-ADD_SUBDIRECTORY(rpc)
-ADD_SUBDIRECTORY(test)
-#ADD_SUBDIRECTORY(log)
-ADD_SUBDIRECTORY(widget_dao)
-ADD_SUBDIRECTORY(auto_save_dao)
-ADD_SUBDIRECTORY(security_origin_dao)
-ADD_SUBDIRECTORY(custom_handler_dao)
-ADD_SUBDIRECTORY(popup)
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(support)
-ADD_SUBDIRECTORY(encryption)
+configure_and_install_pkg(wrt-commons-custom-handler-dao-ro.pc)
+configure_and_install_pkg(wrt-commons-custom-handler-dao-rw.pc)

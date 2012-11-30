@@ -21,4 +21,5 @@ documentation.list
 modules/auto_save_dao/database_checksum_autosave.h
 modules/widget_dao/database_checksum.h
 modules/security_origin_dao/database_checksum_security_origin.h
+modules/custom_handler_dao/database_checksum_custom_handler.h
 

@@ -115,6 +115,8 @@ chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
 chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db
 chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db-journal
+chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db
+chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 

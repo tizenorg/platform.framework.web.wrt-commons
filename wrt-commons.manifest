@@ -4,6 +4,7 @@
     <provide>   
         <label name="wrt-commons::db_wrt"/>
         <label name="wrt-commons::db_wrt_autosave"/>
+        <label name="wrt-commons::db_wrt_custom_handler"/>
     </provide>
   </define>
   <request>

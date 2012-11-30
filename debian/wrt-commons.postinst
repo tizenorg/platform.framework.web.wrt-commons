@@ -10,14 +10,18 @@ else
     WRT_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
     AUTOSAVE_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt_autosave.db ".tables" | grep "DB_VERSION_"`
     AUTOSAVE_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_autosave_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
+    CUSTOM_HANDLER_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt_custom_handler.db ".tables" | grep "DB_VERSION_"`
+    CUSTOM_HANDLER_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_custom_handler_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
     echo "OLD wrt database version ${WRT_OLD_DB_VERSION}"
     echo "NEW wrt database version ${WRT_NEW_DB_VERSION}"
     echo "OLD wrt_autosave database version ${AUTOSAVE_OLD_DB_VERSION}"
     echo "NEW wrt_autosave database version ${AUTOSAVE_NEW_DB_VERSION}"
+    echo "OLD wrt_custom_handler database version ${CUSTOM_HANDLER_OLD_DB_VERSION}"
+    echo "NEW wrt_custom_handler database version ${CUSTOM_HANDLER_NEW_DB_VERSION}"
 
-    if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} -a ${AUTOSAVE_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} ]
+    if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} -a ${AUTOSAVE_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} -a ${CUSTOM_HANDLER_OLD_DB_VERSION} -a ${CUSTOM_HANDLER_NEW_DB_VERSION}]
     then
-        if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} = ${AUTOSAVE_OLD_DB_VERSION} ]
+        if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} = ${AUTOSAVE_OLD_DB_VERSION} -a ${CUSTOM_HANDLER_NEW_DB_VERSION} = ${CUSTOM_HANDLER_OLD_DB_VERSION}]
         then
             echo "Equal database detected so db installation ignored"
         else
