@@ -1,3 +1,15 @@
+wrt-commons (0.2.76) unstable; urgency=low
+
+  * Add share directory
+  * Add category element for manifest.xml
+  * Modify installed path for preload widget.
+  * Updated widget resources path in wrt_reset_all.sh
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.76
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 30 Nov 2012 17:47:24 +0900
+
 wrt-commons (0.2.75) unstable; urgency=low
 
   * Throw an exception when pthread_key_create fails
