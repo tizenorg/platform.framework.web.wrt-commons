@@ -21,6 +21,7 @@
  */
 #include <stddef.h>
 #include <dpl/wrt-dao-ro/property_dao_read_only.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
 #include <dpl/wrt-dao-ro/webruntime_database.h>
@@ -58,7 +59,7 @@ void convertWidgetPreferenceRow(const ORMWidgetPreferenceList& ormWidgetPrefRow,
     FOREACH(it, ormWidgetPrefRow) {
         WidgetPreferenceRow row;
 
-        row.app_id = it->Get_app_id();
+        row.pkgname = it->Get_pkgname();
         row.key_name = it->Get_key_name();
         row.key_value = it->Get_key_value();
         row.readonly = it->Get_readonly();
@@ -78,15 +79,50 @@ void convertWidgetPropertyKeyList(const ORMWidgetPropertyKeyList& propKeyList,
 
 }
 
+//deprecated
+DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
+                                  const WidgetPropertyKey &key)
+{
+    return CheckPropertyReadFlag(WidgetDAOReadOnly::getPkgName(widgetHandle),
+                                 key);
+}
+
+DPL::OptionalInt CheckPropertyReadFlag(WidgetPkgName pkgName,
+                                  const WidgetPropertyKey &key)
+{
+    LogDebug("Checking Property flag. pkgName: " << pkgName <<
+             ", key: " << key);
+
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
+        select->Where(And(Equals<WidgetPreference::pkgname>(pkgName),
+                          Equals<WidgetPreference::key_name>(key)));
+
+        return select->GetSingleValue<WidgetPreference::readonly>();
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(Exception::DatabaseError,
+                   "Failure during checking readonly flag for property");
+    }
+}
+
+//deprecated
 WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
 {
-    LogDebug("Get PropertyKey list. Handle: " << widgetHandle);
+    return GetPropertyKeyList(WidgetDAOReadOnly::getPkgName(widgetHandle));
+}
+
+WidgetPropertyKeyList GetPropertyKeyList(WidgetPkgName pkgName)
+{
+    LogDebug("Get PropertyKey list. pkgName: " << pkgName);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         ORMWidgetPropertyKeyList keyList;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        select->Where(Equals<WidgetPreference::pkgname>(pkgName));
         keyList = select->GetValueList<WidgetPreference::key_name>();
 
         WidgetPropertyKeyList retKeyList;
@@ -100,14 +136,26 @@ WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
     }
 }
 
+//deprecated
 WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 {
-    LogDebug("Get Property list. Handle: " << widgetHandle);
+    Try{
+        WidgetPkgName pkgName=WidgetDAOReadOnly::getPkgName(widgetHandle);
+        return GetPropertyList(pkgName);
+    }Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
+        WidgetPreferenceList empty;
+        return empty;
+    }
+}
+
+WidgetPreferenceList GetPropertyList(WidgetPkgName pkgName)
+{
+    LogDebug("Get Property list. pkgName: " << pkgName);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        select->Where(Equals<WidgetPreference::pkgname>(pkgName));
 
         ORMWidgetPreferenceList ormPrefList = select->GetRowList();
         WidgetPreferenceList prefList;
@@ -121,16 +169,23 @@ WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
     }
 }
 
+//deprecated
 WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
                                      const WidgetPropertyKey &key)
 {
-    LogDebug("Get Property value. Handle: " << widgetHandle <<
+    return GetPropertyValue(WidgetDAOReadOnly::getPkgName(widgetHandle),key);
+}
+
+WidgetPropertyValue GetPropertyValue(WidgetPkgName pkgName,
+                                     const WidgetPropertyKey &key)
+{
+    LogDebug("Get Property value. pkgName: " << pkgName <<
              ", key: " << key);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
+        select->Where(And(Equals<WidgetPreference::pkgname>(pkgName),
                           Equals<WidgetPreference::key_name>(key)));
 
         ORMWidgetPropertyValue ormPropValue =
@@ -145,26 +200,6 @@ WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(Exception::DatabaseError,
                    "Failure during getting property");
-    }
-}
-
-DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
-                                  const WidgetPropertyKey &key)
-{
-    LogDebug("Checking Property flag. Handle: " << widgetHandle <<
-             ", key: " << key);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
-                          Equals<WidgetPreference::key_name>(key)));
-
-        return select->GetSingleValue<WidgetPreference::readonly>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(Exception::DatabaseError,
-                   "Failure during checking readonly flag for property");
     }
 }
 

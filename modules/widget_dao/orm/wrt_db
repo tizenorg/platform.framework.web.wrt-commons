@@ -98,14 +98,14 @@ CREATE_TABLE(WidgetExtendedInfo)
 CREATE_TABLE_END()
 
 CREATE_TABLE(WidgetPreference)
-    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(pkgname,    VARCHAR(256),  DEFAULT 0)
     COLUMN_NOT_NULL(key_name,   VARCHAR(256),)
     COLUMN(key_value,           VARCHAR(8000),  DEFAULT '')
     COLUMN(readonly,            INT,            DEFAULT 0)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY(app_id, key_name),
-        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+        PRIMARY KEY(pkgname, key_name),
+        FOREIGN KEY(pkgname) REFERENCES WidgetInfo (pkgname) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 

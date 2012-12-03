@@ -113,6 +113,33 @@ WidgetSecuritySettingsRow getWidgetSecuritySettingsRow(int widgetHandle)
 
 const int MAX_TIZENID_LENGTH = 10;
 
+WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
+{
+    LogDebug("Getting WidgetPkgName by DbWidgetHandle: " << handle);
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::app_id>(handle));
+        WidgetInfo::Select::RowList rowList = select->GetRowList();
+
+        if (rowList.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                 "Failed to get widget by package name");
+        }
+        DPL::OptionalString pkgname = rowList.front().Get_pkgname();
+        if(pkgname.IsNull()){
+            ThrowMsg(WidgetDAOReadOnly::Exception::DatabaseError,
+                    "PkgName is null for this widget");
+        }
+        return *pkgname;
+
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
+
+    ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Failed to get widget by handle");
+}
 } // namespace
 
 
@@ -189,28 +216,43 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String pkgName)
                      "Failed to get widget by package name");
 }
 
+WidgetPkgName WidgetDAOReadOnly::getPkgName() const
+{
+    return getPkgNameByHandle(m_widgetHandle);
+}
+
+WidgetPkgName WidgetDAOReadOnly::getPkgName(const WidgetGUID GUID)
+{
+    return getPkgNameByHandle(getHandle(GUID));
+}
+
+WidgetPkgName WidgetDAOReadOnly::getPkgName(const DbWidgetHandle handle)
+{
+    return getPkgNameByHandle(handle);
+}
+
 PropertyDAOReadOnly::WidgetPropertyKeyList
 WidgetDAOReadOnly::getPropertyKeyList() const
 {
-    return PropertyDAOReadOnly::GetPropertyKeyList(m_widgetHandle);
+    return PropertyDAOReadOnly::GetPropertyKeyList(getPkgName());
 }
 
 PropertyDAOReadOnly::WidgetPreferenceList
 WidgetDAOReadOnly::getPropertyList() const
 {
-    return PropertyDAOReadOnly::GetPropertyList(m_widgetHandle);
+    return PropertyDAOReadOnly::GetPropertyList(getPkgName());
 }
 
 PropertyDAOReadOnly::WidgetPropertyValue WidgetDAOReadOnly::getPropertyValue(
         const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
-    return PropertyDAOReadOnly::GetPropertyValue(m_widgetHandle, key);
+    return PropertyDAOReadOnly::GetPropertyValue(getPkgName(), key);
 }
 
 DPL::OptionalInt WidgetDAOReadOnly::checkPropertyReadFlag(
         const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
-    return PropertyDAOReadOnly::CheckPropertyReadFlag(m_widgetHandle, key);
+    return PropertyDAOReadOnly::CheckPropertyReadFlag(getPkgName(), key);
 }
 
 DPL::String WidgetDAOReadOnly::getPath() const

@@ -317,6 +317,17 @@ class WidgetDAOReadOnly
     static DbWidgetHandle getHandle(const DPL::String pkgName);
 
     /**
+     * Returns pkgname for the specified widget
+     *
+     * @return pkgname
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+     */
+    WidgetPkgName getPkgName() const;
+    static WidgetPkgName getPkgName(const WidgetGUID GUID);
+    static WidgetPkgName getPkgName(const DbWidgetHandle handle);
+
+    /**
      * This method returns the root directory of widget resource.
      *
      * @return path name of root directory.
