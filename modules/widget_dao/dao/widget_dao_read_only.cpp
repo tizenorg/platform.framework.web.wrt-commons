@@ -375,6 +375,17 @@ DbWidgetHandleList WidgetDAOReadOnly::getHandleList()
 WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
 {
     LogDebug("Getting Pkgname List");
+    WidgetPkgNameList_TEMPORARY_API pkgnameList_TEMPORARY_API = getPkgnameList_TEMPORARY_API();
+    WidgetPkgNameList pkgnameList;
+    FOREACH(it,pkgnameList_TEMPORARY_API ){
+        pkgnameList.push_back(DPL::Optional<WidgetPkgName>(*it));
+    }
+    return pkgnameList;
+}
+
+WidgetPkgNameList_TEMPORARY_API WidgetDAOReadOnly::getPkgnameList_TEMPORARY_API()
+{
+    LogDebug("Getting Pkgname List ");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
@@ -488,6 +499,11 @@ WidgetGUID WidgetDAOReadOnly::getGUID() const
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getPkgname() const
+{
+    return DPL::OptionalString(getPkgname_TEMPORARY_API());
+}
+
+WidgetPkgName WidgetDAOReadOnly::getPkgname_TEMPORARY_API() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
     return row.Get_pkgname();
@@ -966,9 +982,9 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
     using namespace WrtDB::WidgetConfig;
     std::ostringstream path;
 
-    DPL::OptionalString pkgname = getPkgname();
+    WidgetPkgName pkgname = getPkgname_TEMPORARY_API();
 
-    path << GetWidgetPersistentStoragePath(*pkgname);
+    path << GetWidgetPersistentStoragePath(pkgname);
     path << "/";
     path << GlobalConfig::GetCookieDatabaseFile();
 
@@ -978,8 +994,8 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
 std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
 {
     std::ostringstream path;
-    DPL::OptionalString pkgname = getPkgname();
-    path << WidgetConfig::GetWidgetWebLocalStoragePath(*pkgname);
+    WidgetPkgName pkgname = getPkgname_TEMPORARY_API();
+    path << WidgetConfig::GetWidgetWebLocalStoragePath(pkgname);
     path << "/";
 
     return path.str();

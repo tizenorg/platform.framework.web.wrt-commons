@@ -98,6 +98,14 @@ void WidgetDAO::setProperty(
 
 void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
 {
+
+   // if(!!pkgName)
+        setPkgName_TEMPORARY_API(*pkgName);
+}
+
+
+void WidgetDAO::setPkgName_TEMPORARY_API(const WidgetPkgName& pkgName)
+{
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         using namespace DPL::DB::ORM;

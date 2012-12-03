@@ -133,6 +133,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     /* set PkgName
      */
     void setPkgName(const DPL::OptionalString& pkgName);
+    void setPkgName_TEMPORARY_API(const WidgetPkgName& pkgName);
 
     /* This function will update of api-feature status.
      * If status is true (feature rejected) plugin connected with this
