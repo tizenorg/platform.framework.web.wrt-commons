@@ -31,7 +31,6 @@
 #include <dpl/event/thread_event_dispatcher.h>
 #include <dpl/event/main_event_dispatcher.h>
 #include <dpl/fast_delegate.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/generic_event.h>
 #include <dpl/foreach.h>
 #include <dpl/recursive_mutex.h>
@@ -194,7 +193,7 @@ class ICDelegate
                ICD::Reuse reuse)
     {
         ICDSharedData* hlp = new ICDSharedData(base, outerDelegate, reuse);
-        m_helper.Reset(hlp);
+        m_helper.reset(hlp);
     }
 
     // Calling operator will pass all args passed to it to correct context and
@@ -203,7 +202,7 @@ class ICDelegate
     {
         Assert(m_helper);
         ICDPrivate::ICDSharedDataBase::ScopedLock lock(
-            DPL::StaticPointerCast<ICDPrivate::ICDSharedDataBase>(m_helper));
+            std::static_pointer_cast<ICDPrivate::ICDSharedDataBase>(m_helper));
         m_helper->CallDelegate(args ...);
     }
 
@@ -212,7 +211,7 @@ class ICDelegate
     {
         Assert(m_helper);
         ICDPrivate::ICDSharedDataBase::ScopedLock lock(
-            DPL::StaticPointerCast<ICDPrivate::ICDSharedDataBase>(m_helper));
+            std::static_pointer_cast<ICDPrivate::ICDSharedDataBase>(m_helper));
         m_helper->disable();
     }
 
@@ -220,7 +219,7 @@ class ICDelegate
     ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr
     getRelatedICDSharedData() const
     {
-        return DPL::StaticPointerCast<ICDPrivate::ICDSharedDataBase>(m_helper);
+        return std::static_pointer_cast<ICDPrivate::ICDSharedDataBase>(m_helper);
     }
 
   private:
@@ -245,7 +244,7 @@ class ICDelegate
     typedef DPL::FastDelegate<void (const PrivateEvent&)>
     ICDSharedDataDelegateType;
     class ICDSharedData : private DPL::Event::EventSupport<PrivateEvent>,
-        private std::enable_shared_from_this<ICDSharedData>,
+        public std::enable_shared_from_this<ICDSharedData>,
         public ICDPrivate::ICDSharedDataBase
     {
       public:
@@ -268,10 +267,10 @@ class ICDelegate
         void CallDelegate(ArgTypesList ... args)
         {
             ICDPrivate::ICDSharedDataBase::ScopedLock lock(
-                DPL::StaticPointerCast<ICDPrivate::ICDSharedDataBase>(
-                    this->SharedFromThis()));
+                std::static_pointer_cast<ICDPrivate::ICDSharedDataBase>(
+                    this->shared_from_this()));
             if (!isDisabled()) {
-                EmitEvent(PrivateEvent(this->SharedFromThis(),
+                EmitEvent(PrivateEvent(this->shared_from_this(),
                                        args ...));
             }
         }
@@ -279,8 +278,8 @@ class ICDelegate
         virtual void disable()
         {
             ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr ptr(
-                DPL::StaticPointerCast<ICDSharedDataBase>(
-                    this->SharedFromThis()));
+                std::static_pointer_cast<ICDSharedDataBase>(
+                    this->shared_from_this()));
             ICDPrivate::ICDSharedDataBase::ScopedLock lock(ptr);
             if (!isDisabled()) {
                 ICDPrivate::ICDSharedDataBase::disable();
@@ -299,7 +298,7 @@ class ICDelegate
         void delegateForwarder(const PrivateEvent& event)
         {
             ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr ptr(
-                DPL::StaticPointerCast<ICDSharedDataBase>(event.helper));
+                std::static_pointer_cast<ICDSharedDataBase>(event.helper));
             ICDPrivate::ICDSharedDataBase::ScopedLock lock(ptr);
 
             Assert(!m_outerDelegate.empty());
