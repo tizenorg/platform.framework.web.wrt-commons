@@ -24,7 +24,7 @@
 
 #include <dpl/db/thread_database_support.h>
 #include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
-#include <dpl/string.h>
+#include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace SecurityOriginDB {
 
@@ -39,8 +39,8 @@ class SecurityOriginDAO
         DECLARE_EXCEPTION_TYPE(Base, DataNotExist)
     };
 
-    explicit SecurityOriginDAO(int handle);
-    explicit SecurityOriginDAO(const DPL::String& tizenId);
+    explicit SecurityOriginDAO(int handle) __attribute__((deprecated));
+    explicit SecurityOriginDAO(const WrtDB::WidgetPkgName &pkgName);
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);

@@ -125,7 +125,7 @@ WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
 
         if (rowList.empty()) {
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                 "Failed to get widget by package name");
+                 "Failed to get widget by handle");
         }
         DPL::OptionalString pkgname = rowList.front().Get_pkgname();
         if(pkgname.IsNull()){
