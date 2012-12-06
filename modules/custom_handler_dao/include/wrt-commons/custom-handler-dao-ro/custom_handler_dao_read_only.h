@@ -27,6 +27,7 @@
 
 #include <dpl/string.h>
 #include <dpl/exception.h>
+#include "common_dao_types.h"
 
 namespace CustomHandlerDB {
 
@@ -47,7 +48,30 @@ class CustomHandlerDAOReadOnly
     explicit CustomHandlerDAOReadOnly(const DPL::String& pkgName);
     virtual ~CustomHandlerDAOReadOnly();
 
-    // TODO
+    /**
+     * Returns protocol handler
+     */
+    CustomHandlerPtr getProtocolHandler(const DPL::String& protocol,
+                                        const DPL::String& url);
+
+    /**
+     * Returns content handler
+     */
+    CustomHandlerPtr getContentHandler(const DPL::String& content,
+                                       const DPL::String& url);
+
+    /**
+     * Returns allowed handler for given protocol
+     */
+    CustomHandlerPtr getAllowedProtocolHandler(const DPL::String& protocol);
+
+    /**
+     * Returns allowed handler for given content
+     */
+    CustomHandlerPtr getAllowedContentHandler(const DPL::String& protocol);
+
+  protected:
+    DPL::String m_pkgName;
 };
 
 } // namespace CustomHandlerDB

@@ -24,24 +24,23 @@ DPL::DB::SqlConnection::Flag::Type CustomHandler_DB_FLAGS =
     DPL::DB::SqlConnection::Flag::UseLucene;
 }
 
-DPL::Mutex g_CustomHandlerDbQueriesMutex;
-DPL::DB::ThreadDatabaseSupport m_customHandlerdbInterface(
-        CustomHandler_DB_DATABASE, CustomHandler_DB_FLAGS);
-
+DPL::Mutex g_dbQueriesMutex;
+DPL::DB::ThreadDatabaseSupport g_dbInterface(CustomHandler_DB_DATABASE,
+                                             CustomHandler_DB_FLAGS);
 
 void attachDatabaseRO()
 {
-    m_customHandlerdbInterface.AttachToThread(DPL::DB::SqlConnection::Flag::RO);
+    g_dbInterface.AttachToThread(DPL::DB::SqlConnection::Flag::RO);
 }
 
 void attachDatabaseRW()
 {
-    m_customHandlerdbInterface.AttachToThread(DPL::DB::SqlConnection::Flag::RW);
+    g_dbInterface.AttachToThread(DPL::DB::SqlConnection::Flag::RW);
 }
 
 void detachDatabase()
 {
-    m_customHandlerdbInterface.DetachFromThread();
+    g_dbInterface.DetachFromThread();
 }
 
 } //namespace Interface

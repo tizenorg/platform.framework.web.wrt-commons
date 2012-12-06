@@ -21,32 +21,6 @@
 #include <dpl/mutex.h>
 #include <dpl/db/thread_database_support.h>
 
-extern DPL::Mutex g_CustomHandlerDbQueriesMutex;
-
-#define CUSTOM_HANDLER_DB_INTERNAL(tlsCommand, InternalType, interface)      \
-    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL; \
-    {                                                                        \
-        DPL::Mutex::ScopedLock lock(&customHandlerDbQueriesMutex);           \
-        if (!tlsCommand ## Ptr) {                                            \
-            static DPL::ThreadLocalVariable<InternalType> tmp;               \
-            tlsCommand ## Ptr = &tmp;                                        \
-        }                                                                    \
-    }                                                                        \
-    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr; \
-    if (tlsCommand.IsNull()) { tlsCommand = InternalType(interface); }
-
-#define CUSTOM_HANDLER_DB_SELECT(name, type, interface) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Select, interface)
-
-#define CUSTOM_HANDLER_DB_INSERT(name, type, interface) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Insert, interface)
-
-#define CUSTOM_HANDLER_DB_UPDATE(name, type, interface) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Update, interface)
-
-#define CUSTOM_HANDLER_DB_DELETE(name, type, interface) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Delete, interface)
-
 namespace CustomHandlerDB {
 namespace Interface {
 
@@ -54,10 +28,39 @@ void attachDatabaseRO();
 void attachDatabaseRW();
 void detachDatabase();
 
-extern DPL::DB::ThreadDatabaseSupport m_customHandlerdbInterface;
+extern DPL::Mutex g_dbQueriesMutex;
+extern DPL::DB::ThreadDatabaseSupport g_dbInterface;
 
 } // namespace Interface
 } // namespace CustomHandlerDB
+
+#define CUSTOM_HANDLER_DB_INTERNAL(tlsCommand, InternalType)                   \
+    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL;   \
+    {                                                                          \
+        DPL::Mutex::ScopedLock lock(                                           \
+                &CustomHandlerDB::Interface::g_dbQueriesMutex);                \
+        if (!tlsCommand ## Ptr) {                                              \
+            static DPL::ThreadLocalVariable<InternalType> tmp;                 \
+            tlsCommand ## Ptr = &tmp;                                          \
+        }                                                                      \
+    }                                                                          \
+    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr;   \
+    if (tlsCommand.IsNull())                                                   \
+    {                                                                          \
+        tlsCommand = InternalType(&CustomHandlerDB::Interface::g_dbInterface); \
+    }
+
+#define CUSTOM_HANDLER_DB_SELECT(name, type) \
+        CUSTOM_HANDLER_DB_INTERNAL(name, type::Select)
+
+#define CUSTOM_HANDLER_DB_INSERT(name, type) \
+        CUSTOM_HANDLER_DB_INTERNAL(name, type::Insert)
+
+#define CUSTOM_HANDLER_DB_UPDATE(name, type) \
+        CUSTOM_HANDLER_DB_INTERNAL(name, type::Update)
+
+#define CUSTOM_HANDLER_DB_DELETE(name, type) \
+        CUSTOM_HANDLER_DB_INTERNAL(name, type::Delete)
 
 #endif /* _CUSTOM_HANDLER_DATABASE_H_ */
 
