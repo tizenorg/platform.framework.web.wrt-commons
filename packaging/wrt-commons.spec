@@ -44,7 +44,8 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_INSTALL_PREFIX=%{_prefix} \
-        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}
+        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
+        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
 make %{?jobs:-j%jobs}
 
 %install
@@ -125,9 +126,8 @@ echo "[WRT] wrt-commons postinst done ..."
 %{_libdir}/*.so
 %{_libdir}/*.so.*
 /usr/share/wrt-engine/*
-%attr(775,root,root) %{_bindir}/wrt_commons_reset_db.sh
-%attr(775,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
 %{_datadir}/license/%{name}
+%attr(755,root,root) %{_bindir}/*
 
 %files devel
 %{_includedir}/dpl-efl/*

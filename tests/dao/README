@@ -1,0 +1,11 @@
+Wrt DAO
+System tests. Tests database access layer: widgets information database, global configuration, plugins.
+Binary file: wrt-tests-dao. Uses our test framework. Allows to use different types of output. Text output shows results on console - green passed.
+To run:
+1. Install wrt-extra on target
+2. Run wrt-tests-dao --output=text
+
+Automatic: YES
+Included in Daily Build: YES (http://build01.sprc.samsung.pl/browse/LINUXNGWAP-INT)
+Included in Gerrit Builds: YES (http://build01.sprc.samsung.pl/browse/LINUXNGWAP-GERRIT)
+Number of test cases: 45
