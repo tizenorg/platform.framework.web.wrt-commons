@@ -27,6 +27,7 @@
 #include <dpl/scoped_fclose.h>
 
 #include <string>
+#include <string.h>
 #include <cstdio>
 #include <fstream>
 #include <sstream>
@@ -438,8 +439,10 @@ class XmlCollector
             m_outputBuffer.erase(posBegin - 3, posEnd - posBegin + sizeof("</testcase>") + 2);
         }
 
+        if(remove(m_filename.c_str())!=0){
+            LogError("Can't remove file. Error: " << strerror(errno));
+        }
 
-        remove(m_filename.c_str());
         m_fp.Reset(fopen (m_filename.c_str(), "w"));
         Assert(!!m_fp && "File handle must not be null");
         fseek(m_fp.Get(), 0L, SEEK_SET);
