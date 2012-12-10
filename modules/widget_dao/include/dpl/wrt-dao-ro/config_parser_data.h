@@ -205,6 +205,43 @@ class ConfigParserData
         bool operator!=(const ServiceInfo&) const;
     };
     typedef std::list<ServiceInfo> ServiceInfoList;
+
+    typedef std::list<std::pair<DPL::String, DPL::String>> BoxSizeList;
+
+    struct LiveboxInfo
+    {
+        LiveboxInfo() { }
+
+        struct Box
+        {
+            DPL::String m_boxSrc;
+            BoxSizeList m_boxSize ;
+            DPL::String m_pdSrc;
+            DPL::String m_pdWidth;
+            DPL::String m_pdHeight;
+        }; typedef Box BoxInfo;
+
+        DPL::String m_appId;
+        DPL::String m_autoLaunch;
+        DPL::String m_period;
+        DPL::String m_network;
+        DPL::String m_nodisplay;
+        DPL::String m_primary;
+        DPL::String m_timeout;
+        DPL::String m_label;
+        DPL::String m_icon;
+        BoxInfo m_boxInfo;
+
+        bool operator==(const LiveboxInfo&) const;
+        bool operator!=(const LiveboxInfo&) const;
+        bool operator >(const LiveboxInfo&) const;
+        bool operator>=(const LiveboxInfo&) const;
+        bool operator <(const LiveboxInfo&) const;
+        bool operator<=(const LiveboxInfo&) const;
+    };
+    typedef std::list<DPL::Optional<LiveboxInfo>> LiveboxList;
+    LiveboxList m_livebox;
+
     typedef std::list<DPL::OptionalString> DependsPkgList;
 
     typedef std::set<DPL::String> CategoryList;
