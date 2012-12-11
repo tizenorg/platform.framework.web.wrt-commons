@@ -111,7 +111,10 @@ void WidgetDAO::setPkgName_TEMPORARY_API(const WidgetPkgName& pkgName)
         using namespace DPL::DB::ORM;
         wrt::ScopedTransaction transaction(&WrtDatabase::interface());
 
-        isWidgetInstalled(getHandle());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
 
         wrt::WidgetInfo::Row row;
         row.Set_pkgname(pkgName);
