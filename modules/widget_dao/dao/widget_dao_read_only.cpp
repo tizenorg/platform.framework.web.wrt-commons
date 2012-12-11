@@ -208,9 +208,6 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String pkgName)
         return rowList.front().Get_app_id();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
-
-    ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Failed to get widget by package name");
 }
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName() const
