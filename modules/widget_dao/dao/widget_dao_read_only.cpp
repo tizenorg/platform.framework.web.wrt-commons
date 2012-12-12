@@ -136,9 +136,6 @@ WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
 
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
-
-    ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Failed to get widget by handle");
 }
 } // namespace
 
