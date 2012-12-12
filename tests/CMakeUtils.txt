@@ -120,31 +120,28 @@ ENDFUNCTION(WRT_TEST_ADD_INTERNAL_DEPENDENCIES)
 # added automatically)
 FUNCTION(WRT_TEST_BUILD TARGET_NAME)
     SET(SOURCES "${ARGN}")
-    ADD_EXECUTABLE("${TARGET_NAME}"
-        ${WRT_DETAIL_SOURCES}
-        ${SOURCES}
-    )
+    ADD_EXECUTABLE("${TARGET_NAME}" ${SOURCES})
+
     # get include dirs global property
     GET_PROPERTY(INCLUDE_DIRS GLOBAL PROPERTY TESTS_INCLUDE_DIRS)
     GET_PROPERTY(TEST_INCLUDE_DIRS GLOBAL PROPERTY ${TARGET_NAME}_INCLUDE_DIRS)
     INCLUDE_DIRECTORIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}
         ${INCLUDE_DIRS}
         ${TEST_INCLUDE_DIRS}
     )
+
     # get library dirs global property
     GET_PROPERTY(LIBRARY_DIRS GLOBAL PROPERTY TESTS_LIBRARY_DIRS)
     GET_PROPERTY(TEST_LIBRARY_DIRS GLOBAL PROPERTY ${TARGET_NAME}_LIBRARY_DIRS)
     LINK_DIRECTORIES(
-        ${COMMON_LIBRARY_DIRS}
         ${LIBRARY_DIRS}
         ${TEST_LIBRARY_DIRS}
     )
+
     # get link libraries global property
     GET_PROPERTY(LINK_LIBRARIES GLOBAL PROPERTY TESTS_LIBRARIES)
     GET_PROPERTY(TEST_LIBRARIES GLOBAL PROPERTY ${TARGET_NAME}_LIBRARIES)
     TARGET_LINK_LIBRARIES("${TARGET_NAME}"
-        ${COMMON_LIBRARIES}
         ${LINK_LIBRARIES}
         ${TEST_LIBRARIES}
     )
@@ -166,3 +163,16 @@ FUNCTION(WRT_TEST_INSTALL)
                     WORLD_EXECUTE
     )
 ENDFUNCTION(WRT_TEST_INSTALL)
+
+# Takes arbitrary number of arguments and concatenates them using ':' character.
+# Rationale:
+#   CMake list when converted to a string is joined with ';' character. However,
+#   GCC takes strings with multiple elements separated with ':' (e.g. list of
+#   paths). Used typically when generating DB schemas with ORM mechanism.
+FUNCTION(WRT_CONVERT_TO_GCC_LIST OUTPUT_VARIABLE)
+    FOREACH(ITEM ${ARGN})
+        LIST(APPEND ITEMS ${ITEM})
+    ENDFOREACH(ITEM)
+    STRING(REPLACE ";" ":" OUTPUT "${ITEMS}")
+    SET("${OUTPUT_VARIABLE}" "${OUTPUT}" PARENT_SCOPE)
+ENDFUNCTION(WRT_CONVERT_TO_GCC_LIST)

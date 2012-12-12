@@ -38,6 +38,11 @@ Wrt common library development headers
 %prep
 %setup -q
 
+%define with_tests 0
+%if "%{WITH_TESTS}" == "ON" || "%{WITH_TESTS}" == "Y" || "%{WITH_TESTS}" == "YES" || "%{WITH_TESTS}" == "TRUE" || "%{WITH_TESTS}" == "1"
+    %define with_tests 1
+%endif
+
 %build
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
@@ -125,9 +130,18 @@ echo "[WRT] wrt-commons postinst done ..."
 %manifest wrt-commons.manifest
 %{_libdir}/*.so
 %{_libdir}/*.so.*
-/usr/share/wrt-engine/*
+%{_datadir}/wrt-engine/*
 %{_datadir}/license/%{name}
-%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
+%attr(755,root,root) %{_bindir}/wrt_commons_reset_db.sh
+%if %{with_tests}
+    %attr(755,root,root) %{_bindir}/dpl-tests-*
+    %attr(755,root,root) %{_bindir}/dpl-dbus-test-service
+    %attr(755,root,root) %{_bindir}/wrt-tests-*
+    %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
+    %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
+    /opt/share/wrt/wrt-commons/tests/*
+%endif
 
 %files devel
 %{_includedir}/dpl-efl/*
