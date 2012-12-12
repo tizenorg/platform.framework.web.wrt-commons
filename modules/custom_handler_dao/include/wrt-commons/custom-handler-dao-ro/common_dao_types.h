@@ -21,8 +21,8 @@
  * @brief This file contains the declaration of
  *           common data types for custom handler database.
  */
-#ifndef SHARE_COMMON_DAO_TYPES_H_
-#define SHARE_COMMON_DAO_TYPES_H_
+#ifndef SRC_MODULES_CUSTOM_HANDLERS_DAO_COMMON_DAO_TYPES_H_
+#define SRC_MODULES_CUSTOM_HANDLERS_DAO_COMMON_DAO_TYPES_H_
 
 #include <list>
 #include <memory>
@@ -35,6 +35,18 @@ namespace CustomHandlerDB {
  *
  * Describes custom handler for protocol and content.
  */
+enum HandlerState {
+    Agreed = 0x01,      //user agreed to use protocol only,
+                        //but want to ask in next occurence
+    Declined = 0x02,    //user declined to use protocol,
+                        //but want to ask in next occurence
+                        //in fact it is used when user wants to cover saved agreed
+                        //decision by agreeing to another one without save.
+    DecisionSaved = 0x04, //user dont want to ask again
+    AgreedPermanently = Agreed | DecisionSaved,
+    DeclinedPermanently = Declined | DecisionSaved
+};
+
 struct CustomHandler
 {
     DPL::String target;     // protocol/content ("mailto"/"application/x-soup")
@@ -42,10 +54,12 @@ struct CustomHandler
     DPL::String url;        // url used for protocol/content handling
     DPL::String title;      // user friendly handler name
     bool user_allowed;      // true if user has allowed the handler
+    HandlerState user_decision;
 };
 
 typedef std::shared_ptr<CustomHandler> CustomHandlerPtr;
+typedef std::list <CustomHandlerPtr> CustomHandlersList;
 
 } // namespace CustomHandlerDB
 
-#endif /* SHARE_COMMON_DAO_TYPES_H_ */
+#endif /* SRC_MODULES_CUSTOM_HANDLERS_DAO_COMMON_DAO_TYPES_H_ */

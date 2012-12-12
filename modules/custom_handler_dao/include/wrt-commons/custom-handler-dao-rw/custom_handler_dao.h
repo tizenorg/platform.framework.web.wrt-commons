@@ -54,6 +54,14 @@ class CustomHandlerDAO : public CustomHandlerDAOReadOnly
      */
     void unregisterProtocolHandler(const DPL::String& target,
                                    const DPL::String& url);
+
+    void unregisterContentHandler(const DPL::String& target,
+                                  const DPL::String& url,
+                                  const DPL::String& baseURL);
+
+    void unregisterProtocolHandler(const DPL::String& target,
+                                   const DPL::String& url,
+                                   const DPL::String& baseURL);
 };
 
 } // namespace CustomHandlerDB
