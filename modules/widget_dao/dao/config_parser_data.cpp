@@ -299,6 +299,36 @@ bool ConfigParserData::Feature::operator<=(const Feature& other) const
     return paramsList <= other.paramsList;
 }
 
+bool ConfigParserData::Privilege::operator==(const Privilege& other) const
+{
+    return name == other.name;
+}
+
+bool ConfigParserData::Privilege::operator!=(const Privilege& other) const
+{
+    return name != other.name;
+}
+
+bool ConfigParserData::Privilege::operator >(const Privilege& other) const
+{
+    return name > other.name;
+}
+
+bool ConfigParserData::Privilege::operator>=(const Privilege& other) const
+{
+    return name >= other.name;
+}
+
+bool ConfigParserData::Privilege::operator <(const Privilege& other) const
+{
+    return name < other.name;
+}
+
+bool ConfigParserData::Privilege::operator<=(const Privilege& other) const
+{
+    return name < other.name;
+}
+
 bool ConfigParserData::Icon::operator==(const Icon& other) const
 {
     return src == other.src;

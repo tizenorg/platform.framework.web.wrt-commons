@@ -77,6 +77,22 @@ class ConfigParserData
     };
     typedef std::set<Feature> FeaturesList;
 
+    struct Privilege
+    {
+        Privilege(const DPL::String& _name) : name(_name)
+        {
+        }
+        DPL::String name;
+
+        bool operator==(const Privilege&) const;
+        bool operator!=(const Privilege&) const;
+        bool operator >(const Privilege&) const;
+        bool operator>=(const Privilege&) const;
+        bool operator <(const Privilege&) const;
+        bool operator<=(const Privilege&) const;
+    };
+    typedef std::set<Privilege> PrivilegeList;
+
     struct Icon
     {
         Icon(const DPL::String& _src) : src(_src)
@@ -202,6 +218,7 @@ class ConfigParserData
     DPL::OptionalString authorEmail;
 
     FeaturesList featuresList;
+    PrivilegeList privilegeList;
 
     SettingsList settingsList;
 
