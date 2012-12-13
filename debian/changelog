@@ -1,3 +1,17 @@
+wrt-commons (0.2.79) unstable; urgency=low
+
+  * Replacing DbWidgetHandle with WidgetPkgName in SecurityOriginDAO
+  * Handle remove() return value
+  * Delete unreachable code
+  * Handle chmod return value
+  * CustomHandlerDAO implementation
+  * Unhandled isWidgetInstalled return value
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.79
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 13 Dec 2012 11:15:24 +0900
+
 wrt-commons (0.2.78) unstable; urgency=low
 
   * Removing copy&paste code, part 2

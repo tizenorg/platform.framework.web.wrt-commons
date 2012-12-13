@@ -34,7 +34,26 @@ class CustomHandlerDAO : public CustomHandlerDAOReadOnly
     explicit CustomHandlerDAO(const DPL::String& pkgName);
     virtual ~CustomHandlerDAO();
 
-    // TODO
+    /**
+     * Registers custom content handler
+     */
+    void registerContentHandler(const CustomHandler& handler);
+
+    /**
+     * Registers custom protocol handler
+     */
+    void registerProtocolHandler(const CustomHandler& handler);
+
+    /**
+     * Unregisters custom content handler
+     */
+    void unregisterContentHandler(const DPL::String& target,
+                                  const DPL::String& burl);
+    /**
+     * Unregisters custom protocol handler
+     */
+    void unregisterProtocolHandler(const DPL::String& target,
+                                   const DPL::String& url);
 };
 
 } // namespace CustomHandlerDB

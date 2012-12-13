@@ -24,7 +24,27 @@
 #ifndef SHARE_COMMON_DAO_TYPES_H_
 #define SHARE_COMMON_DAO_TYPES_H_
 
+#include <list>
+#include <memory>
+#include <dpl/string.h>
+
 namespace CustomHandlerDB {
+
+/**
+ * @brief Custom Handler struct
+ *
+ * Describes custom handler for protocol and content.
+ */
+struct CustomHandler
+{
+    DPL::String target;     // protocol/content ("mailto"/"application/x-soup")
+    DPL::String base_url;   // base url of registered page
+    DPL::String url;        // url used for protocol/content handling
+    DPL::String title;      // user friendly handler name
+    bool user_allowed;      // true if user has allowed the handler
+};
+
+typedef std::shared_ptr<CustomHandler> CustomHandlerPtr;
 
 } // namespace CustomHandlerDB
 

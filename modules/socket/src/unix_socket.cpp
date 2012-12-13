@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 namespace DPL
 {
@@ -102,8 +103,9 @@ void UnixSocket::Bind(const Address &address)
     GenericSocket<UnixSocket>::Bind(address);
 
     // Always set proper permissions to the socket file
-    chmod(address.GetAddress().c_str(), 0777);
+    if(chmod(address.GetAddress().c_str(), 0777)<0){
+        LogError("Error setting permissions to the socket file. Errno " << strerror(errno));
+    }
 }
-
 }
 } // namespace DPL
