@@ -338,6 +338,8 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetFeatures(widgetHandle, widgetRegInfo);
 
+    registerWidgetPrivilege(widgetHandle, widgetRegInfo);
+
     registerWidgetWindowModes(widgetHandle, widgetRegInfo);
 
     registerWidgetWarpInfo(widgetHandle, widgetRegInfo);
@@ -626,6 +628,22 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
 
             DO_INSERT(featureParam, wrt::FeatureParam)
         }
+    }
+}
+
+void WidgetDAO::registerWidgetPrivilege(DbWidgetHandle widgetHandle,
+                                        const WidgetRegisterInfo &regInfo)
+{
+    using namespace DPL::DB::ORM;
+    const ConfigParserData& widgetConfigurationInfo = regInfo.configInfo;
+
+    FOREACH(it, widgetConfigurationInfo.privilegeList)
+    {
+        wrt::WidgetPrivilege::Row widgetPrivilege;
+        widgetPrivilege.Set_app_id(widgetHandle);
+        widgetPrivilege.Set_name(it->name);
+
+        DO_INSERT(widgetPrivilege, wrt::WidgetPrivilege)
     }
 }
 

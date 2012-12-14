@@ -175,6 +175,9 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetFeatures(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
+    static void registerWidgetPrivilege(
+            DbWidgetHandle widgetHandle,
+            const WidgetRegisterInfo &regInfo);
     static void registerWidgetWindowModes(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);

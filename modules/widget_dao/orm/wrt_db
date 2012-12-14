@@ -124,9 +124,17 @@ CREATE_TABLE(FeatureParam)
     COLUMN_NOT_NULL(widget_feature_id,  INTEGER,)
     COLUMN_NOT_NULL(name,         TEXT,)
     COLUMN_NOT_NULL(value,        TEXT,)
-
     TABLE_CONSTRAINTS(
         FOREIGN KEY (widget_feature_id) REFERENCES WidgetFeature (widget_feature_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(WidgetPrivilege)
+    COLUMN_NOT_NULL(widget_privilege_id, INTEGER,        primary key autoincrement)
+    COLUMN_NOT_NULL(app_id,              INT,)
+    COLUMN_NOT_NULL(name,                VARCHAR(256),)
+    TABLE_CONSTRAINTS(
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 
