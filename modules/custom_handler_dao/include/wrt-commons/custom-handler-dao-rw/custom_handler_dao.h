@@ -62,6 +62,12 @@ class CustomHandlerDAO : public CustomHandlerDAOReadOnly
     void unregisterProtocolHandler(const DPL::String& target,
                                    const DPL::String& url,
                                    const DPL::String& baseURL);
+
+    /**
+     * Removes all widget entries connected to given ID
+     */
+    void removeWidgetProtocolHandlers();
+    void removeWidgetContentHandlers();
 };
 
 } // namespace CustomHandlerDB

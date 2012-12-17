@@ -268,4 +268,33 @@ void CustomHandlerDAO::unregisterProtocolHandler(const DPL::String& target,
 
 }
 
+void CustomHandlerDAO::removeWidgetProtocolHandlers()
+{
+    LogDebug("ente");
+    Try {
+        CUSTOM_HANDLER_DB_DELETE(deleteProtocol, ProtocolHandlers);
+        deleteProtocol->Where(Equals<ProtocolHandlers::app_id>(m_pkgName));
+        deleteProtocol->Execute();
+
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAO::Exception::DatabaseError,
+                   "Failed to remove widget protoc");
+    }
+}
+
+void CustomHandlerDAO::removeWidgetContentHandlers()
+{
+    LogDebug("ente");
+    Try {
+        CUSTOM_HANDLER_DB_DELETE(deleteContent, ContentHandlers);
+        deleteContent->Where(Equals<ContentHandlers::app_id>(m_pkgName));
+        deleteContent->Execute();
+
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAO::Exception::DatabaseError,
+                   "Failed to remove widget entries");
+    }
+}
+
+
 } // namespace CustomHandlerDB
