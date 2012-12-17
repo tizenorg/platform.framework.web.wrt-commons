@@ -535,6 +535,68 @@ RUNNER_TEST(widget_dao_test_register_widget_features)
 }
 
 /*
+Name: widget_dao_test_register_widget_security_settings
+Description: Tests registeration of dafault values of security settings
+Expected: widget should be registered in database.
+ Returned values should match dafault.
+*/
+RUNNER_TEST(widget_dao_test_register_widget_security_settings)
+{
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+
+    WidgetDAO dao(pkgname);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_ON, "SecurityPopupUsage is not deafult on");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON, "GeolocationUsage is not deafult on");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage is not deafult on");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage is not deafult on");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage is not deafult on");
+
+    dao.setSecurityPopupUsage(WrtDB::SETTINGS_TYPE_OFF);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+
+    dao.setGeolocationUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+
+    dao.setWebNotificationUsage(WrtDB::SETTINGS_TYPE_OFF);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+
+    dao.setWebDatabaseUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+
+    dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_OFF);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_OFF, "FileSystemUsage - wrong value");
+
+    dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_ON);
+    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+}
+
+/*
 Name: widget_dao_test_register_widget_win_modes
 Description: Tests registeration of window modes
 Expected: all modes should be returned from dao
