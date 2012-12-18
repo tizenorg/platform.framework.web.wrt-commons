@@ -23,6 +23,7 @@
 #include <dpl/test/test_runner.h>
 #include <dpl/log/log.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
+#include <wrt-commons/custom-handler-dao-ro/CustomHandlerDatabase.h>
 
 int main (int argc, char *argv[])
 {
@@ -34,10 +35,12 @@ int main (int argc, char *argv[])
     }
 
     WrtDB::WrtDatabase::attachToThreadRW();
+    CustomHandlerDB::Interface::attachDatabaseRW();
 
     LogInfo("Starting tests");
     int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
 
+    CustomHandlerDB::Interface::detachDatabase();
     WrtDB::WrtDatabase::detachFromThread();
 
     ret = system("/usr/bin/wrt_dao_tests_prepare_db.sh stop");
