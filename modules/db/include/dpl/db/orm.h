@@ -128,6 +128,14 @@ BinaryExpression<RelationTypes::And, LeftExpression, RightExpression>
             (leftExpression, rightExpression);
 }
 
+template<typename LeftExpression, typename RightExpression>
+BinaryExpression<RelationTypes::Or, LeftExpression, RightExpression>
+    Or(const LeftExpression& leftExpression, const RightExpression& rightExpression)
+{
+    return BinaryExpression<RelationTypes::Or, LeftExpression, RightExpression>
+            (leftExpression, rightExpression);
+}
+
 template<typename ArgumentType>
 class __attribute__ ((visibility("hidden"))) ExpressionWithArgument : public Expression {
 protected:

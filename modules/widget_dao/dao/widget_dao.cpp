@@ -827,24 +827,17 @@ void WidgetDAO::registerExternalLocations(DbWidgetHandle widgetHandle,
 
 void WidgetDAO::registerWidgetSecuritySettings(DbWidgetHandle widgetHandle)
 {
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+    WidgetSecuritySettings::Row row;
+    row.Set_app_id(widgetHandle);
+    row.Set_security_popup_usage(SETTINGS_TYPE_ON);
+    row.Set_geolocation_usage(SETTINGS_TYPE_ON);
+    row.Set_web_notification_usage(SETTINGS_TYPE_ON);
+    row.Set_web_database_usage(SETTINGS_TYPE_ON);
+    row.Set_file_system_usage(SETTINGS_TYPE_ON);
 
-        WidgetSecuritySettings::Row row;
-        row.Set_app_id(widgetHandle);
-        row.Set_security_popup_usage(SETTINGS_TYPE_ON);
-        row.Set_geolocation_usage(SETTINGS_TYPE_ON);
-        row.Set_web_notification_usage(SETTINGS_TYPE_ON);
-        row.Set_web_database_usage(SETTINGS_TYPE_ON);
-        row.Set_file_system_usage(SETTINGS_TYPE_ON);
-
-        DO_INSERT(row, WidgetSecuritySettings)
-        transaction.Commit();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register external files");
+    DO_INSERT(row, WidgetSecuritySettings)
 }
 
 void WidgetDAO::unregisterAllExternalLocations()

@@ -11,7 +11,7 @@ CREATE_TABLE(ProtocolHandlers)
     COLUMN_NOT_NULL(user_allowed,   INT,)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY (app_id, target, url)
+        PRIMARY KEY (app_id, target, base_url, url)
     )
 CREATE_TABLE_END()
 
@@ -24,7 +24,7 @@ CREATE_TABLE(ContentHandlers)
     COLUMN_NOT_NULL(user_allowed,   INT,)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY (app_id, target, url)
+        PRIMARY KEY (app_id, target, base_url, url)
     )
 CREATE_TABLE_END()
 

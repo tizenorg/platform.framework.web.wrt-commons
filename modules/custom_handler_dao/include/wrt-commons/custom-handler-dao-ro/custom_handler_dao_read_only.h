@@ -53,12 +53,29 @@ class CustomHandlerDAOReadOnly
      */
     CustomHandlerPtr getProtocolHandler(const DPL::String& protocol,
                                         const DPL::String& url);
+    CustomHandlerPtr getProtocolHandler(const DPL::String& protocol,
+                                        const DPL::String& url,
+                                        const DPL::String& baseURL);
+
+    /**
+     * Returns protocol handler that is agreed or agreed and saved and match tizenID
+     */
+    CustomHandlerPtr getActivProtocolHandler(const DPL::String& protocol);
+
+
 
     /**
      * Returns content handler
      */
     CustomHandlerPtr getContentHandler(const DPL::String& content,
                                        const DPL::String& url);
+                                       const DPL::String& url,
+                                       const DPL::String& baseURL);
+
+    /**
+     * Returns content handler that is agreed or agreed and saved and match tizenID
+     */
+    CustomHandlerPtr getActivContentHandler(const DPL::String& content);
 
     /**
      * Returns allowed handler for given protocol

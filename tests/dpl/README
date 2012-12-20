@@ -1,0 +1,13 @@
+Unit tests for dpl library functionality.
+There are 6 binaries: dpl-dbus-test-service, dpl-tests-core, dpl-tests-db,
+dpl-tests-dbus, dpl-tests-event, dpl-tests-utils.
+All binaries are using our test framework - it allows to use different types of
+output. Text output shows results on console - green passed.
+To run:
+1. Install wrt-extra on target
+2. Run for f in /usr/bin/dpl-tests-*; do $f --output=text; done
+
+Automatic: YES
+Included in Daily Build: YES (http://build01.sprc.samsung.pl/browse/LINUXNGWAP-INT)
+Included in Gerrit Builds: YES (http://build01.sprc.samsung.pl/browse/LINUXNGWAP-GERRIT)
+Number of test cases: 151

@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.81
+#git:framework/web/wrt-commons wrt-commons 0.2.82
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.81
+Version:    0.2.82
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -38,13 +38,19 @@ Wrt common library development headers
 %prep
 %setup -q
 
+%define with_tests 0
+%if "%{WITH_TESTS}" == "ON" || "%{WITH_TESTS}" == "Y" || "%{WITH_TESTS}" == "YES" || "%{WITH_TESTS}" == "TRUE" || "%{WITH_TESTS}" == "1"
+    %define with_tests 1
+%endif
+
 %build
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
 cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_INSTALL_PREFIX=%{_prefix} \
-        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type}
+        -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
+        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
 make %{?jobs:-j%jobs}
 
 %install
@@ -124,10 +130,18 @@ echo "[WRT] wrt-commons postinst done ..."
 %manifest wrt-commons.manifest
 %{_libdir}/*.so
 %{_libdir}/*.so.*
-/usr/share/wrt-engine/*
-%attr(775,root,root) %{_bindir}/wrt_commons_reset_db.sh
-%attr(775,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
+%{_datadir}/wrt-engine/*
 %{_datadir}/license/%{name}
+%attr(755,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
+%attr(755,root,root) %{_bindir}/wrt_commons_reset_db.sh
+%if %{with_tests}
+    %attr(755,root,root) %{_bindir}/dpl-tests-*
+    %attr(755,root,root) %{_bindir}/dpl-dbus-test-service
+    %attr(755,root,root) %{_bindir}/wrt-tests-*
+    %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
+    %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
+    /opt/share/wrt/wrt-commons/tests/*
+%endif
 
 %files devel
 %{_includedir}/dpl-efl/*

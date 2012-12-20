@@ -50,7 +50,9 @@ CustomHandlerPtr getSingleHandler(std::list<T> row)
         handler->base_url = row.front().Get_base_url();
         handler->url = row.front().Get_url();
         handler->title = row.front().Get_title();
-        handler->user_allowed = row.front().Get_user_allowed();
+        handler->user_allowed = static_cast<bool>(row.front().Get_user_allowed());
+        handler->user_decision =
+            static_cast<HandlerState>(row.front().Get_user_allowed());
     }
     return handler;
 }
@@ -97,6 +99,121 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
         select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
                       And(Equals<ContentHandlers::target>(content),
                           Equals<ContentHandlers::url>(url))));
+
+        std::list<ContentHandlers::Row> list = select->GetRowList();
+        return getSingleHandler(list);
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get content handler");
+    }
+}
+
+CustomHandlerPtr CustomHandlerDAOReadOnly::getActivProtocolHandler(
+        const DPL::String& protocol)
+{
+    LogDebug("Getting active protocol handler");
+    Try{
+        CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
+
+        select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
+                          Equals<ProtocolHandlers::target>(protocol)));
+
+        std::list<ProtocolHandlers::Row> list = select->GetRowList();
+        CustomHandlerPtr handler;
+
+        FOREACH(it, list) {
+            if (it->Get_user_allowed() & Agreed) {
+                handler.reset(new CustomHandler());
+                handler->base_url = it->Get_base_url();
+                handler->target = it->Get_target();
+                handler->title = it->Get_title();
+                handler->url = it->Get_url();
+                handler->user_allowed =
+                    static_cast<bool>(it->Get_user_allowed());
+                handler->user_decision =
+                    static_cast<HandlerState>(it->Get_user_allowed());
+            }
+        }
+        return handler;
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get protocol handler");
+    }
+}
+
+CustomHandlerPtr CustomHandlerDAOReadOnly::getProtocolHandler(
+        const DPL::String& protocol,
+        const DPL::String& url,
+        const DPL::String& baseURL)
+{
+    LogDebug("Check if protocol is registered");
+    Try{
+        CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
+
+        select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
+                          And(Equals<ProtocolHandlers::target>(protocol),
+                              And(Equals<ProtocolHandlers::url>(url),
+                                  Equals<ProtocolHandlers::base_url>(baseURL)
+                              )
+                           )
+                       )
+                 );
+
+        std::list<ProtocolHandlers::Row> list = select->GetRowList();
+        return getSingleHandler(list);
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get content handler");
+    }
+}
+
+
+CustomHandlerPtr CustomHandlerDAOReadOnly::getActivContentHandler(
+        const DPL::String& content)
+{
+    LogDebug("Getting active content handler");
+    Try{
+        CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers);
+
+        select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
+                          Equals<ContentHandlers::target>(content)));
+
+        std::list<ContentHandlers::Row> list = select->GetRowList();
+        CustomHandlerPtr handler;
+
+        FOREACH(it, list) {
+            if (it->Get_user_allowed() & Agreed) {
+                handler.reset(new CustomHandler());
+                handler->base_url = it->Get_base_url();
+                handler->target = it->Get_target();
+                handler->title = it->Get_title();
+                handler->url = it->Get_url();
+                handler->user_allowed =
+                    static_cast<bool>(it->Get_user_allowed());
+                handler->user_decision =
+                    static_cast<HandlerState>(it->Get_user_allowed());
+            }
+        }
+        return handler;
+    } Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(CustomHandlerDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get protocol handler");
+    }
+}
+
+CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
+        const DPL::String& content,
+        const DPL::String& url,
+        const DPL::String& baseURL)
+{
+    LogDebug("Check if content is registered");
+    Try{
+        CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers);
+
+        select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
+                      And(Equals<ContentHandlers::target>(content),
+                      And(Equals<ContentHandlers::url>(url),
+                          Equals<ContentHandlers::base_url>(baseURL)))));
 
         std::list<ContentHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
