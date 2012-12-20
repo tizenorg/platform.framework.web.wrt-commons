@@ -1,3 +1,17 @@
+wrt-commons (0.2.82) unstable; urgency=low
+
+  * CustomHandlersDB API updated to handle new functionalities.
+  * Add tests - DAO, DPL
+  * Custom Handlers DAO extended with new api
+  * registerWidgetSecuritySettings - nested transaction removal. New widget dao testcase
+  * Unit test for custom handler dao stub
+  * CustomHandlersDAO test
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.82
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 20 Dec 2012 09:04:59 +0900
+
 wrt-commons (0.2.81) unstable; urgency=low
 
   * Fix dependencies in DAO modules
