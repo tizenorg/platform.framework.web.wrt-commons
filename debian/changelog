@@ -1,3 +1,9 @@
+wrt-commons (0.2.83) unstable; urgency=low
+
+  * Replacing widget handle with tizenid in property DAO
+
+ -- KEONGEUN <lke01.lee@samsung.com>  Fri, 21 Dec 2012 17:03:54 +0900
+
 wrt-commons (0.2.82) unstable; urgency=low
 
   * CustomHandlersDB API updated to handle new functionalities.
