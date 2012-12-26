@@ -127,12 +127,9 @@ WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
                  "Failed to get widget by handle");
         }
-        DPL::OptionalString pkgname = rowList.front().Get_pkgname();
-        if(pkgname.IsNull()){
-            ThrowMsg(WidgetDAOReadOnly::Exception::DatabaseError,
-                    "PkgName is null for this widget");
-        }
-        return *pkgname;
+        WidgetPkgName pkgname = rowList.front().Get_pkgname();
+
+        return pkgname;
 
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
@@ -533,13 +530,7 @@ WidgetGUID WidgetDAOReadOnly::getGUID() const
 
 DPL::OptionalString WidgetDAOReadOnly::getPkgname() const
 {
-    return DPL::OptionalString(getPkgname_TEMPORARY_API());
-}
-
-WidgetPkgName WidgetDAOReadOnly::getPkgname_TEMPORARY_API() const
-{
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    return row.Get_pkgname();
+    return DPL::OptionalString(getPkgName());
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getDefaultlocale() const
@@ -1015,7 +1006,7 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
     using namespace WrtDB::WidgetConfig;
     std::ostringstream path;
 
-    WidgetPkgName pkgname = getPkgname_TEMPORARY_API();
+    WidgetPkgName pkgname = getPkgName();
 
     path << GetWidgetPersistentStoragePath(pkgname);
     path << "/";
@@ -1027,7 +1018,7 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
 std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
 {
     std::ostringstream path;
-    WidgetPkgName pkgname = getPkgname_TEMPORARY_API();
+    WidgetPkgName pkgname = getPkgName();
     path << WidgetConfig::GetWidgetWebLocalStoragePath(pkgname);
     path << "/";
 

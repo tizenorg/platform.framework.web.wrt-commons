@@ -177,7 +177,7 @@ struct WidgetRegisterInfo
     LocalizationData localizationData;
 
     DPL::OptionalString pkgname;
-    WidgetPkgName pkgname_TEMPORARY_API;
+    WidgetPkgName pkgName;
 
     time_t installedTime;
     PackagingType packagingType;
@@ -371,15 +371,15 @@ class WidgetDAOReadOnly
      */
     WidgetGUID getGUID() const;
 
+
     /**
-     * This method returns the Package name of the widget.
-     *
-     * @return pkgname
-     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
-     */
+    * This method returns the Package name of the widget.
+    *
+    * @return pkgname
+    * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+    * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+    */
     DPL::OptionalString getPkgname() const;
-    WidgetPkgName getPkgname_TEMPORARY_API() const;
 
     /**
      * This method returns the defaultlocale for the widget.

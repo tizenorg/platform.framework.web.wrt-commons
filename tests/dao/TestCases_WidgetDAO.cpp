@@ -88,7 +88,7 @@ WidgetPkgName _registerWidget(const WidgetRegisterInfo& regInfo,
 {
     WidgetPkgName pkgname;
     Try {
-        auto previous = WidgetDAO::getPkgnameList();
+        auto previous = WidgetDAO::getPkgnameList_TEMPORARY_API();
 
         // register widget
         pkgname = WidgetDAO::registerWidgetGenerateTizenId(regInfo, sec);
@@ -96,7 +96,7 @@ WidgetPkgName _registerWidget(const WidgetRegisterInfo& regInfo,
         RUNNER_ASSERT_MSG(!pkgname.empty(),
                           "(called from line " << line << ")");
 
-        auto current = WidgetDAO::getPkgnameList();
+        auto current = WidgetDAO::getPkgnameList_TEMPORARY_API();
         RUNNER_ASSERT_MSG(previous.size()+1 == current.size(),
                           "(called from line " << line << ")");
 
@@ -257,7 +257,7 @@ RUNNER_TEST(widget_dao_test_register_widget_minimum_info)
     WacSecurityMock sec;
     const std::size_t NUMBER_OF_WIDGETS = 5;
 
-    DPL::Optional<WidgetPkgName> lastPkgname;
+    WidgetPkgName lastPkgname;
 
     for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
     {
@@ -828,7 +828,7 @@ Expected: For all position in database should be returned one item in list
 */
 RUNNER_TEST(widget_dao_test_get_widget_pkgname_list)
 {
-    WidgetPkgNameList pkgnames = WidgetDAO::getPkgnameList();
+    WidgetPkgNameList_TEMPORARY_API pkgnames = WidgetDAO::getPkgnameList_TEMPORARY_API();
     RUNNER_ASSERT(pkgnames.size() >= 3);
 }
 
@@ -844,7 +844,6 @@ RUNNER_TEST(widget_dao_test_get_widget_list)
     RUNNER_ASSERT(list.size() >= 3);
     RUNNER_ASSERT_MSG(!!list.front(), "widget dao exists");
     WidgetDAOReadOnlyPtr dao = list.front();
-    RUNNER_ASSERT_MSG(!dao->getPkgname().IsNull(), "dao object do not have tizen id");
 }
 
 /*

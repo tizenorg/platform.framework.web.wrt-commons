@@ -28,10 +28,6 @@
 #include <memory>
 #include <dpl/string.h>
 
-#include <list>
-#include <memory>
-#include <dpl/string.h>
-
 namespace CustomHandlerDB {
 
 /**

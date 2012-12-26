@@ -69,6 +69,7 @@ class CustomHandlerDAOReadOnly
      */
     CustomHandlerPtr getContentHandler(const DPL::String& content,
                                        const DPL::String& url);
+    CustomHandlerPtr getContentHandler(const DPL::String& protocol,
                                        const DPL::String& url,
                                        const DPL::String& baseURL);
 
