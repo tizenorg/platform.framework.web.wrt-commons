@@ -212,25 +212,22 @@ class ConfigParserData
     {
         LiveboxInfo() { }
 
-        struct Box
+        struct BoxContent
         {
             DPL::String m_boxSrc;
             BoxSizeList m_boxSize ;
             DPL::String m_pdSrc;
             DPL::String m_pdWidth;
             DPL::String m_pdHeight;
-        }; typedef Box BoxInfo;
+        }; typedef BoxContent BoxContentInfo;
 
-        DPL::String m_appId;
-        DPL::String m_autoLaunch;
-        DPL::String m_period;
-        DPL::String m_network;
-        DPL::String m_nodisplay;
-        DPL::String m_primary;
-        DPL::String m_timeout;
         DPL::String m_label;
         DPL::String m_icon;
-        BoxInfo m_boxInfo;
+        DPL::String m_liveboxId;
+        DPL::String m_primary;
+        DPL::String m_autoLaunch;
+        DPL::String m_updatePeriod;
+        BoxContentInfo m_boxInfo;
 
         bool operator==(const LiveboxInfo&) const;
         bool operator!=(const LiveboxInfo&) const;

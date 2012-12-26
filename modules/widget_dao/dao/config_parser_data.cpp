@@ -460,26 +460,20 @@ bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
 
 bool ConfigParserData::LiveboxInfo::operator==(const LiveboxInfo& other) const
 {
-    return m_appId == other.m_appId &&
+    return m_liveboxId == other.m_liveboxId &&
         m_autoLaunch == other.m_autoLaunch &&
-        m_period == other.m_period &&
-        m_network == other.m_network &&
-        m_nodisplay == other.m_nodisplay &&
+        m_updatePeriod == other.m_updatePeriod &&
         m_primary == other.m_primary &&
-        m_timeout == other.m_timeout &&
         m_label == other.m_label &&
         m_icon == other.m_icon;
 }
 
 bool ConfigParserData::LiveboxInfo::operator!=(const LiveboxInfo& other) const
 {
-    return m_appId != other.m_appId &&
+    return m_liveboxId != other.m_liveboxId &&
 	 m_autoLaunch != other.m_autoLaunch &&
-        m_period != other.m_period &&
-        m_network != other.m_network &&
-        m_nodisplay != other.m_nodisplay &&
+        m_updatePeriod != other.m_updatePeriod &&
         m_primary != other.m_primary &&
-        m_timeout != other.m_timeout &&
         m_label != other.m_label &&
         m_icon != other.m_icon;
 }
