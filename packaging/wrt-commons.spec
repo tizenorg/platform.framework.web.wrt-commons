@@ -23,11 +23,6 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  pkgconfig(osp-appfw)
-BuildRequires:  osp-appfw-internal-devel
-
-# runtime requires
-Requires: osp-appfw
 
 %description
 Wrt common library

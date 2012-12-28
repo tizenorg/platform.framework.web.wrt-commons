@@ -23,7 +23,6 @@ INCLUDE(FindPkgConfig)
 PKG_CHECK_MODULES(SYS_ENCRYPTION
     dlog
     openssl
-    osp-appfw
     REQUIRED
 )
 
