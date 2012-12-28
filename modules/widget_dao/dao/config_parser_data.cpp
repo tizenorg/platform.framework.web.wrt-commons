@@ -457,4 +457,25 @@ bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
     m_scheme != info.m_scheme &&
     m_mime != info.m_mime;
 }
+
+bool ConfigParserData::LiveboxInfo::operator==(const LiveboxInfo& other) const
+{
+    return m_liveboxId == other.m_liveboxId &&
+        m_autoLaunch == other.m_autoLaunch &&
+        m_updatePeriod == other.m_updatePeriod &&
+        m_primary == other.m_primary &&
+        m_label == other.m_label &&
+        m_icon == other.m_icon;
+}
+
+bool ConfigParserData::LiveboxInfo::operator!=(const LiveboxInfo& other) const
+{
+    return m_liveboxId != other.m_liveboxId &&
+	 m_autoLaunch != other.m_autoLaunch &&
+        m_updatePeriod != other.m_updatePeriod &&
+        m_primary != other.m_primary &&
+        m_label != other.m_label &&
+        m_icon != other.m_icon;
+}
+
 } // namespace WrtDB

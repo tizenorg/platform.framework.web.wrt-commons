@@ -21,6 +21,11 @@
  */
 #include <stddef.h>
 #include <dpl/encryption/resource_decryption.h>
+#ifdef Try
+#undef Try
+#endif
+#include <FSecSecretKey.h>
+#include <security/FSec_DeviceKeyGenerator.h>
 
 #include <fcntl.h>
 #include <string>
@@ -28,19 +33,17 @@
 #include <dpl/exception.h>
 
 namespace {
-inline std::string GetDefaultEncryptKeyPath() {
-    return "/opt/share/widget/data/";
+#define BITS_SIZE 128
+#define KEY_SIZE 16
 }
-}
+
 namespace WRTDecryptor{
-ResourceDecryptor::ResourceDecryptor() :
-    m_decKey(NULL)
+ResourceDecryptor::ResourceDecryptor()
 {
     LogDebug("Started Decryption");
 }
 
-ResourceDecryptor::ResourceDecryptor(std::string userKey) :
-    m_decKey(NULL)
+ResourceDecryptor::ResourceDecryptor(std::string userKey)
 {
     LogDebug("Finished Decryption");
     SetDecryptionKey(userKey);
@@ -48,47 +51,57 @@ ResourceDecryptor::ResourceDecryptor(std::string userKey) :
 
 ResourceDecryptor::~ResourceDecryptor()
 {
-    delete m_decKey;
 }
 
 void ResourceDecryptor::SetDecryptionKey(std::string userKey)
 {
-    /* TODO : get key from secure storage */
-    std::string keyPath = GetDefaultEncryptKeyPath() + userKey + "_dec";
-    LogDebug("Description Key path : " << keyPath);
-
-    FILE* fp = fopen(keyPath.c_str(), "rb");
-    if (fp == NULL) {
-        ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
-                "Failed to get decryption key");
+    if (userKey.empty()) {
+        return;
     }
+    using namespace Tizen;
+    using namespace Tizen::Base;
 
-    m_decKey = new AES_KEY;
-    size_t resultSize =fread(m_decKey, 1, sizeof(AES_KEY),fp);
-    if (resultSize!= sizeof(AES_KEY))
+    Tizen::Base::String appId;
+    appId.Format(userKey.size(), L"%s", userKey.c_str());
+    Tizen::Security::ISecretKey* pSecretKey =
+        Tizen::Security::_DeviceKeyGenerator::GenerateDeviceKeyN(appId, KEY_SIZE);
+
+    Tizen::Base::ByteBuffer* bf = pSecretKey->GetEncodedN();
+    unsigned char *key = new unsigned char[KEY_SIZE+1];
+
+    int i=0;
+    while(bf->HasRemaining()) {
+        byte b;
+        bf->GetByte(b);
+        key[i] = b;
+        i++;
+    }
+    key[KEY_SIZE] = '\n';
+
+    if ( 0 > AES_set_decrypt_key(key, BITS_SIZE, &m_decKey)) {
+        delete key;
         ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
-                "Failed to get AES key");
-
-    fclose(fp);
+                "Failed to create decryption key");
+    }
+    delete key;
 }
 
 AES_KEY* ResourceDecryptor::GetDecryptionKey()
 {
-    return m_decKey;
+    return &m_decKey;
 }
 
 void ResourceDecryptor::GetDecryptedChunk(unsigned char*
         inBuf, unsigned char* decBuf, size_t inBufSize)
 {
     Assert(decBuf);
-    Assert(m_decKey);
-    if (decBuf == NULL || m_decKey == NULL) {
+    if (decBuf == NULL) {
         ThrowMsg(ResourceDecryptor::Exception::EncryptionFailed,
                 "Failed to Get Decryption Chunk");
     }
     unsigned char ivec[16] = {0, };
 
-    AES_cbc_encrypt(inBuf, decBuf, inBufSize, m_decKey, ivec, AES_DECRYPT);
+    AES_cbc_encrypt(inBuf, decBuf, inBufSize, &m_decKey, ivec, AES_DECRYPT);
     LogDebug("Success decryption");
 }
 

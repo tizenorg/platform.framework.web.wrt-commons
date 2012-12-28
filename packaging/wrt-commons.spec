@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.82
+#git:framework/web/wrt-commons wrt-commons 0.2.85
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.83
+Version:    0.2.85
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -23,6 +23,11 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
+BuildRequires:  pkgconfig(osp-appfw)
+BuildRequires:  osp-appfw-internal-devel
+
+# runtime requires
+Requires: osp-appfw
 
 %description
 Wrt common library

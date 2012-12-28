@@ -22,18 +22,20 @@
 #include <stddef.h>
 #include <dpl/encryption/resource_encryption.h>
 
+#ifdef Try
+#undef Try
+#endif
+#include <FSecSecretKey.h>
+#include <security/FSec_DeviceKeyGenerator.h>
+
 #include <fcntl.h>
 #include <dpl/log/log.h>
 
 namespace {
 #define BITS_SIZE 128
-const char* ENCRYPTION_FILE = "_enc";
-const char* DECRYPTION_FILE = "_dec";
+#define KEY_SIZE 16
+}
 
-inline std::string GetDefaultEncryptKeyPath() {
-    return "/opt/share/widget/data";
-}
-}
 namespace WRTEncryptor{
 ResourceEncryptor::ResourceEncryptor()
 {
@@ -59,44 +61,32 @@ void ResourceEncryptor::CreateEncryptionKey(std::string userKey)
         return;
     }
 
-    AES_KEY decKey;
-    const unsigned char* key = reinterpret_cast<unsigned char*>(
-                                    const_cast<char*>(userKey.c_str()));
+    using namespace Tizen;
+    using namespace Tizen::Base;
+    Tizen::Base::String appId;
+    appId.Format(userKey.size(), L"%s", userKey.c_str());
+    Tizen::Security::ISecretKey* pSecretKey =
+        Tizen::Security::_DeviceKeyGenerator::GenerateDeviceKeyN(appId, KEY_SIZE);
+
+    Tizen::Base::ByteBuffer* bf = pSecretKey->GetEncodedN();
+    unsigned char *key = new unsigned char[KEY_SIZE+1];
+
+    int i=0;
+    while(bf->HasRemaining()) {
+        byte b;
+        bf->GetByte(b);
+        key[i] = b;
+        i++;
+    }
+    key[KEY_SIZE] = '\n';
 
     if ( 0 > AES_set_encrypt_key(key, BITS_SIZE, &m_encKey)) {
+        delete key;
         ThrowMsg(ResourceEncryptor::Exception::CreateEncKeyFailed,
                 "Failed to create encryption key");
     }
-    if ( 0 > AES_set_decrypt_key(key, BITS_SIZE, &decKey)) {
-        ThrowMsg(ResourceEncryptor::Exception::CreateDecKeyFailed,
-                "Failed to create decryption key");
-    }
+    delete key;
 
-    std::string encPath, decPath;
-
-    encPath = GetDefaultEncryptKeyPath() + "/" + userKey + ENCRYPTION_FILE;
-    decPath = GetDefaultEncryptKeyPath() + "/" + userKey + DECRYPTION_FILE;
-
-    /* TODO : save keys to secure storage */
-    LogDebug("Encryption Key path " << encPath);
-    LogDebug("Decryption Key path " << decPath);
-
-    FILE* encFp = fopen(encPath.c_str(), "wb");
-    if (encFp == NULL) {
-        ThrowMsg(ResourceEncryptor::Exception::CreateEncKeyFileFailed,
-                "Failed to save encryption key");
-    }
-    fwrite(&m_encKey, 1, sizeof(m_encKey), encFp);
-    fclose(encFp);
-
-    FILE* decFp = fopen(decPath.c_str(), "wb");
-    if (decFp == NULL) {
-        ThrowMsg(ResourceEncryptor::Exception::CreateDecKeyFileFailed,
-                "Failed to save decryption key");
-    }
-
-    fwrite(&decKey, 1, sizeof(decKey), decFp);
-    fclose(decFp);
     LogDebug("Success to create ecryption and decryption key");
 }
 

@@ -1,4 +1,15 @@
-wrt-commons (0.2.83) unstable; urgency=low
+wrt-commons (0.2.85) unstable; urgency=low
+
+  * For livebox configuration
+  * livebox configuration valuables have been changed
+  * Modify get encryption/decryption key from device unique key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.85
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 14:05:27 +0900
+
+wrt-commons (0.2.84) unstable; urgency=low
 
   * Replacing widget handle with tizenid in property DAO
 
