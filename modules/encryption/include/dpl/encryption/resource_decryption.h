@@ -50,7 +50,7 @@ class ResourceDecryptor
 
   private:
       AES_KEY* GetDecryptionKey();
-      AES_KEY m_decKey;
+      AES_KEY *m_decKey;
 
 };
 } //namespace WRTDecryptor 
