@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.86
+#git:framework/web/wrt-commons wrt-commons 0.2.88
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.86
+Version:    0.2.88
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -44,6 +44,13 @@ Wrt common library development headers
 %endif
 
 %build
+
+%ifarch %{ix86}
+cp build/encryption/libs/libcal.i586.a build/encryption/libs/libcal.a
+%else
+cp build/encryption/libs/libcal.arm.a build/encryption/libs/libcal.a
+%endif
+
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
 cmake . -DVERSION=%{version} \

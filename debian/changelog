@@ -1,3 +1,21 @@
+wrt-commons (0.2.88) unstable; urgency=low
+
+  * Add path builder for vconf key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.88
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Sat, 29 Dec 2012 14:02:18 +0900
+
+wrt-commons (0.2.87) unstable; urgency=low
+
+  * changed to get encryption/decryption key from device unique key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.87
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 20:47:21 +0900
+
 wrt-commons (0.2.86) unstable; urgency=low
 
   * Revert "Modify get encryption/decryption key from device unique key"

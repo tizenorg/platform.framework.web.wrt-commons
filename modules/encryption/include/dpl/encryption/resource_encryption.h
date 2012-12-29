@@ -28,8 +28,9 @@
 #include <openssl/sha.h>
 #include <dpl/exception.h>
 
-namespace WRTEncryptor{
+extern char** calculate(char*pappId, int idLen, int keyLen);
 
+namespace WRTEncryptor{
 class ResourceEncryptor
 {
   public:
