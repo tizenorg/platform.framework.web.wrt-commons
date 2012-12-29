@@ -284,6 +284,37 @@ inline const char* GetTempInstallInfoPath()
 {
     return "/opt/share/widget/temp_info";
 }
+
+inline const char* GetVconfKeyPrefixPath()
+{
+    return "file/private";
+}
+
+inline const char* GetVconfKeyPopupUsagePath()
+{
+    return "/popup_usage";
+}
+
+inline const char* GetVconfKeyGeolocationUsagePath()
+{
+    return "/geolocation_usage";
+}
+
+inline const char* GetVconfKeyWebNotificationUsagePath()
+{
+    return "/web_notification_usage";
+}
+
+inline const char* GetVconfKeyWebDatabaseUsagePath()
+{
+    return "/web_database_usage";
+}
+
+inline const char* GetVconfKeyFilesystemUsagePath()
+{
+    return "/filesystem_usage";
+}
+
 } // namespace GlobalConfig
 } // namespace WrtDB
 
