@@ -83,6 +83,15 @@ inline std::string GetVconfKeyFilesystemUsage(DPL::String pkgName)
                .GetFullPath();
 }
 
+inline std::string GetVconfKeyMemorySavingMode(DPL::String pkgName)
+{
+    return PathBuilder()
+               .Append(GlobalConfig::GetVconfKeyPrefixPath())
+               .Append(DPL::ToUTF8String(pkgName))
+               .Concat(GlobalConfig::GetVconfKeyMemorySavingModePath())
+               .GetFullPath();
+}
+
 } // namespace VconfConfig
 } // namespace WrtDB
 
