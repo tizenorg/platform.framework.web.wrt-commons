@@ -1,3 +1,15 @@
+wrt-commons (0.2.89) unstable; urgency=low
+
+  * Handle return value from pthread_setspecific
+  * Deleted array to 0 comparison
+  * Deleted unreachable code
+  * Add vconf key for memory saving mode
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.89
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 02 Jan 2013 11:00:02 +0900
+
 wrt-commons (0.2.88) unstable; urgency=low
 
   * Add path builder for vconf key
