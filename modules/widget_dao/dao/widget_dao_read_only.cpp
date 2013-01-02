@@ -404,13 +404,13 @@ DbWidgetHandleList WidgetDAOReadOnly::getHandleList()
 
 WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
 {
-    LogDebug("Getting Pkgname List");
-    WidgetPkgNameList_TEMPORARY_API pkgnameList_TEMPORARY_API = getPkgnameList_TEMPORARY_API();
-    WidgetPkgNameList pkgnameList;
-    FOREACH(it,pkgnameList_TEMPORARY_API ){
-        pkgnameList.push_back(DPL::Optional<WidgetPkgName>(*it));
+    LogDebug("Getting Pkgname List ");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        return select->GetValueList<WidgetInfo::pkgname>();
     }
-    return pkgnameList;
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
 }
 
 WidgetPkgNameList_TEMPORARY_API WidgetDAOReadOnly::getPkgnameList_TEMPORARY_API()
