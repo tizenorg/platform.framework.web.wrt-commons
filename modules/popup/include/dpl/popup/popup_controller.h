@@ -65,14 +65,13 @@
 #ifndef WRT_SRC_POPUP_CONTROLLER_POPUP_CONTROLLER_H_
 #define WRT_SRC_POPUP_CONTROLLER_POPUP_CONTROLLER_H_
 
+#include <memory>
 #include <dpl/singleton.h>
 #include <dpl/event/controller.h>
 #include <dpl/event/event_listener.h>
 #include <dpl/generic_event.h>
 #include <dpl/mutex.h>
 #include <dpl/exception.h>
-#include <dpl/shared_ptr.h>
-#include <dpl/enable_shared_from_this.h>
 #include <dpl/noncopyable.h>
 #include <dpl/log/log.h>
 #include <dpl/popup/popup_manager.h>
@@ -99,7 +98,7 @@ struct PopupAnswerCallback
 class PopupController;
 class CtrlPopup;
 
-typedef DPL::SharedPtr<CtrlPopup> CtrlPopupPtr;
+typedef std::shared_ptr<CtrlPopup> CtrlPopupPtr;
 
 DECLARE_GENERIC_EVENT_3(PopupAnswerEvent,
                         CtrlPopupPtr,
@@ -111,18 +110,18 @@ DECLARE_GENERIC_EVENT_2(ShowPopupEventShort,
                         PopupAnswerCallback)
 
 class CtrlPopup : public DPL::Event::EventSupport<PopupAnswerEvent>,
-    protected DPL::EnableSharedFromThis<CtrlPopup>
+    public std::enable_shared_from_this<CtrlPopup>
 {
   public:
     void SetTitle(const std::string &title);
     void Append(PopupObject::IPopupObject *object);
 
+    ~CtrlPopup();
   private:
     friend class PopupController;
-    friend class DPL::SharedPtr<CtrlPopup>;
+    friend class std::shared_ptr<CtrlPopup>;
 
     explicit CtrlPopup(IPopupPtr popup);
-    ~CtrlPopup();
     void EmitAnswer(const AnswerCallbackData& answer);
 
     IPopupPtr m_popup;

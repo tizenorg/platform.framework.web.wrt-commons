@@ -1,0 +1,34 @@
+SQL(
+    BEGIN TRANSACTION;
+)
+
+CREATE_TABLE(ProtocolHandlers)
+    COLUMN_NOT_NULL(app_id,       	TEXT,)
+    COLUMN_NOT_NULL(target,       	TEXT,)
+    COLUMN_NOT_NULL(base_url,       TEXT,)
+    COLUMN_NOT_NULL(url,	        TEXT,)
+    COLUMN_NOT_NULL(title,          TEXT,)
+    COLUMN_NOT_NULL(user_allowed,   INT,)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY (app_id, target, base_url, url)
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(ContentHandlers)
+    COLUMN_NOT_NULL(app_id,       	TEXT,)
+    COLUMN_NOT_NULL(target,       	TEXT,)
+    COLUMN_NOT_NULL(base_url,       TEXT,)
+    COLUMN_NOT_NULL(url,	        TEXT,)
+    COLUMN_NOT_NULL(title,          TEXT,)
+    COLUMN_NOT_NULL(user_allowed,   INT,)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY (app_id, target, base_url, url)
+    )
+CREATE_TABLE_END()
+
+SQL(
+    COMMIT;
+)
+

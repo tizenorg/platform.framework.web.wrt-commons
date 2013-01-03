@@ -1,3 +1,5 @@
+SET(TARGET_WRT_DAO_DB "Sqlite3DbWRT")
+
 ADD_CUSTOM_COMMAND(
    OUTPUT ${CMAKE_BINARY_DIR}/modules/widget_dao/database_checksum.h
    COMMAND ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/gen_db_md5.sh
@@ -22,7 +24,7 @@ ADD_CUSTOM_COMMAND( OUTPUT .wrt.db-journal
    ARGS  ${CMAKE_CURRENT_BINARY_DIR}/.wrt.db-journal
    )
  
-ADD_CUSTOM_TARGET(Sqlite3DbWRT ALL DEPENDS .wrt.db .wrt.db-journal)
+ADD_CUSTOM_TARGET(${TARGET_WRT_DAO_DB} ALL DEPENDS .wrt.db .wrt.db-journal)
 
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/wrt_db.sql
     DESTINATION share/wrt-engine/
@@ -68,10 +70,10 @@ SET(WRT_DAO_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/modules/db/include
     ${PROJECT_SOURCE_DIR}/modules/log/include
     ${PROJECT_SOURCE_DIR}/modules/localization/include
-    ${WRT_DAO_DEPS_INCLUDE_DIRS}
-    )
+)
 
 INCLUDE_DIRECTORIES(${WRT_DAO_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${WRT_DAO_DEPS_INCLUDE_DIRS})
 
 ADD_LIBRARY(${TARGET_WRT_DAO_RO_LIB} SHARED
             ${WRT_DAO_RO_SOURCES}
@@ -90,6 +92,7 @@ target_link_libraries(${TARGET_WRT_DAO_RO_LIB}
     ${TARGET_DPL_EFL}
     ${TARGET_DPL_DB_EFL}
     ${WRT_DAO_DEPS_LIBRARIES})
+ADD_DEPENDENCIES(${TARGET_WRT_DAO_RO_LIB} ${TARGET_WRT_DAO_DB})
 
 ADD_LIBRARY(${TARGET_WRT_DAO_RW_LIB} SHARED ${WRT_DAO_RW_SOURCES})
 
@@ -104,6 +107,7 @@ SET_TARGET_PROPERTIES(${TARGET_WRT_DAO_RW_LIB} PROPERTIES
 
 target_link_libraries(${TARGET_WRT_DAO_RW_LIB}
     ${TARGET_WRT_DAO_RO_LIB})
+ADD_DEPENDENCIES(${TARGET_WRT_DAO_RW_LIB} ${TARGET_WRT_DAO_DB})
 
 INSTALL(TARGETS ${TARGET_WRT_DAO_RO_LIB}
     DESTINATION lib)
@@ -122,11 +126,12 @@ INSTALL(FILES
     include/dpl/wrt-dao-ro/plugin_dao_read_only.h
     include/dpl/wrt-dao-ro/property_dao_read_only.h
     include/dpl/wrt-dao-ro/widget_config.h
+    include/dpl/wrt-dao-ro/vconf_config.h
     include/dpl/wrt-dao-ro/widget_dao_read_only.h
     include/dpl/wrt-dao-ro/wrt_db_types.h
     include/dpl/wrt-dao-ro/WrtDatabase.h
     DESTINATION include/dpl-efl/dpl/wrt-dao-ro
-	)
+    )
 
 INSTALL(FILES
     include/dpl/wrt-dao-rw/feature_dao.h

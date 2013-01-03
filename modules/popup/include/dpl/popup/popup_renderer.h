@@ -25,20 +25,18 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
-#include <dpl/shared_ptr.h>
 #include <dpl/noncopyable.h>
 #include <dpl/log/log.h>
 #include <dpl/assert.h>
-#include <dpl/enable_shared_from_this.h>
 #include <dpl/foreach.h>
-
 #include <dpl/popup/popup.h>
 
 namespace DPL {
 namespace Popup {
 
-class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
+class PopupRenderer : public std::enable_shared_from_this<PopupRenderer>
 {
   public:
     PopupRenderer();
@@ -49,7 +47,7 @@ class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
     virtual void setExternalCanvas(void* externalCanvas);
   protected:
     class Popup;
-    typedef DPL::SharedPtr<Popup> PopupPtr;
+    typedef std::shared_ptr<Popup> PopupPtr;
 
     class Popup : public IPopup
     {
@@ -73,7 +71,7 @@ class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
             Assert(callback);
             m_data = data;
             m_callback = callback;
-            m_renderer->Render(DPL::StaticPointerCast<Popup>(SharedFromThis()));
+            m_renderer->Render(std::static_pointer_cast<Popup>(shared_from_this()));
         }
 
         const std::string& GetTitle() const
@@ -95,10 +93,10 @@ class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
 
       private:
         friend class PopupRenderer;
-        friend class DPL::SharedPtr<Popup>;
+        friend class std::shared_ptr<Popup>;
         friend class PopupObjectTheme;
 
-        Popup(DPL::SharedPtr<PopupRenderer> renderer) : m_renderer(renderer)
+        Popup(std::shared_ptr<PopupRenderer> renderer) : m_renderer(renderer)
         {
         }
 
@@ -111,7 +109,7 @@ class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
         void* m_data;
         IPopup::PopupCallbackType m_callback;
         PopupObject::PopupObjects m_popupObjectList;
-        DPL::SharedPtr<PopupRenderer> m_renderer;
+        std::shared_ptr<PopupRenderer> m_renderer;
     };
 
   private:
@@ -121,7 +119,7 @@ class PopupRenderer : public DPL::EnableSharedFromThis<PopupRenderer>
     Impl* m_impl;
 };
 
-typedef DPL::SharedPtr<PopupRenderer> PopupRendererPtr;
+typedef std::shared_ptr<PopupRenderer> PopupRendererPtr;
 
 } // namespace Popup
 } // namespace DPL

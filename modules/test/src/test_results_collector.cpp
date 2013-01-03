@@ -27,10 +27,13 @@
 #include <dpl/scoped_fclose.h>
 
 #include <string>
+#include <string.h>
 #include <cstdio>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+
+#define GREEN_RESULT_OK "[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", BOLD_GREEN_END
 
 namespace DPL
 {
@@ -42,6 +45,16 @@ namespace
 const char *DEFAULT_HTML_FILE_NAME = "index.html";
 const char *DEFAULT_TAP_FILE_NAME = "results.tap";
 const char *DEFAULT_XML_FILE_NAME = "results.xml";
+
+bool ParseCollectorFileArg(const std::string &arg, std::string &filename)
+{
+    const std::string argname = "--file=";
+    if (0 == arg.find(argname)) {
+        filename = arg.substr(argname.size());
+        return true;
+    }
+    return false;
+}
 
 class Statistic
 {
@@ -125,7 +138,7 @@ class ConsoleCollector
         printf("Running test case %-60s", tmp.c_str());
         switch(status) {
             case TestResultsCollectorBase::FailStatus::NONE:
-                printf("[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", BOLD_GREEN_END); break;
+                printf(GREEN_RESULT_OK); break;
             case TestResultsCollectorBase::FailStatus::FAILED:
                 PrintfErrorMessage(  " FAILED ", reason, true); break;
             case TestResultsCollectorBase::FailStatus::IGNORED:
@@ -265,13 +278,7 @@ class HtmlCollector
 
     virtual bool ParseCollectorSpecificArg(const std::string& arg)
     {
-        const std::string argname = "--file=";
-        if (0 == arg.find(argname)) {
-            m_filename = arg.substr(argname.size());
-            return true;
-        } else {
-            return false;
-        }
+        return ParseCollectorFileArg(arg, m_filename);
     }
 
     virtual void CollectResult(const std::string& id,
@@ -285,7 +292,7 @@ class HtmlCollector
         fprintf(m_fp.Get(), "Running test case %-100s", tmp.c_str());
         switch(status) {
             case TestResultsCollectorBase::FailStatus::NONE:
-                fprintf(m_fp.Get(), "[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", BOLD_GREEN_END); break;
+                fprintf(m_fp.Get(), GREEN_RESULT_OK); break;
             case TestResultsCollectorBase::FailStatus::FAILED:
                 PrintfErrorMessage(  " FAILED ", reason, true); break;
             case TestResultsCollectorBase::FailStatus::IGNORED:
@@ -432,8 +439,10 @@ class XmlCollector
             m_outputBuffer.erase(posBegin - 3, posEnd - posBegin + sizeof("</testcase>") + 2);
         }
 
+        if(remove(m_filename.c_str())!=0){
+            LogError("Can't remove file. Error: " << strerror(errno));
+        }
 
-        remove(m_filename.c_str());
         m_fp.Reset(fopen (m_filename.c_str(), "w"));
         Assert(!!m_fp && "File handle must not be null");
         fseek(m_fp.Get(), 0L, SEEK_SET);
@@ -443,13 +452,7 @@ class XmlCollector
 
     virtual bool ParseCollectorSpecificArg(const std::string& arg)
     {
-        const std::string argname = "--file=";
-        if (0 == arg.find(argname)) {
-            m_filename = arg.substr(argname.size());
-            return true;
-        } else {
-            return false;
-        }
+        return ParseCollectorFileArg(arg, m_filename);
     }
 
     virtual void CollectResult(const std::string& id,
@@ -698,16 +701,8 @@ class TAPCollector
 
     virtual bool ParseCollectorSpecificArg(const std::string& arg)
     {
-        const std::string argname = "--file=";
-        if (0 == arg.find(argname)) {
-            m_filename = arg.substr(argname.size());
-            return true;
-        } else {
-            return false;
-        }
+        return ParseCollectorFileArg(arg, m_filename);
     }
-
-
 
     virtual void CollectResult(const std::string& id,
                                const std::string& description,
@@ -832,3 +827,4 @@ int RegisterCollectorConstructors()
 
 }
 }
+#undef GREEN_RESULT_OK

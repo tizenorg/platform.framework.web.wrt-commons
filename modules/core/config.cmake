@@ -40,7 +40,6 @@ SET(DPL_CORE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/core/src/lexical_cast.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/mutex.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_base_pipe.cpp
-    ${PROJECT_SOURCE_DIR}/modules/core/src/named_input_pipe.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_output_pipe.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/noncopyable.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/once.cpp

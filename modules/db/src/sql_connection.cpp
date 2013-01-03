@@ -69,7 +69,7 @@ SqlConnection::DataCommand::DataCommand(SqlConnection *connection,
     Assert(connection != NULL);
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.get());
 
     for (;;)
     {
@@ -324,7 +324,7 @@ bool SqlConnection::DataCommand::Step()
 {
     // Notify all after potentially synchronized database connection access
     ScopedNotifyAll notifyAll(
-        m_masterConnection->m_synchronizationObject.Get());
+        m_masterConnection->m_synchronizationObject.get());
 
     for (;;)
     {
@@ -765,7 +765,7 @@ void SqlConnection::ExecCommand(const char *format, ...)
     LogPedantic("Executing SQL command: " << buffer.Get());
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(m_synchronizationObject.get());
 
     for (;;)
     {

@@ -98,12 +98,23 @@ void WidgetDAO::setProperty(
 
 void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
 {
+
+   // if(!!pkgName)
+        setPkgName_TEMPORARY_API(*pkgName);
+}
+
+
+void WidgetDAO::setPkgName_TEMPORARY_API(const WidgetPkgName& pkgName)
+{
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         using namespace DPL::DB::ORM;
         wrt::ScopedTransaction transaction(&WrtDatabase::interface());
 
-        isWidgetInstalled(getHandle());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
 
         wrt::WidgetInfo::Row row;
         row.Set_pkgname(pkgName);
@@ -117,6 +128,136 @@ void WidgetDAO::setPkgName(const DPL::OptionalString& pkgName)
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
+}
+
+void WidgetDAO::setSecurityPopupUsage(const SettingsType value)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
+
+        WidgetSecuritySettings::Row row;
+        row.Set_security_popup_usage(value);
+
+        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
+        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set security popup usage")
+}
+
+void WidgetDAO::setGeolocationUsage(const SettingsType value)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
+
+        WidgetSecuritySettings::Row row;
+        row.Set_geolocation_usage(value);
+
+        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
+        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set geolocation usage")
+}
+
+void WidgetDAO::setWebNotificationUsage(const SettingsType value)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
+
+        WidgetSecuritySettings::Row row;
+        row.Set_web_notification_usage(value);
+
+        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
+        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set web notification usage")
+}
+
+void WidgetDAO::setWebDatabaseUsage(const SettingsType value)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
+
+        WidgetSecuritySettings::Row row;
+        row.Set_web_database_usage(value);
+
+        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
+        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set web database usage")
+}
+
+void WidgetDAO::setFileSystemUsage(const SettingsType value)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(getHandle())) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Cannot find widget. Handle: " << getHandle());
+        }
+
+        WidgetSecuritySettings::Row row;
+        row.Set_file_system_usage(value);
+
+        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
+        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set filesystem usage")
 }
 
 void WidgetDAO::registerWidget(
@@ -197,6 +338,8 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetFeatures(widgetHandle, widgetRegInfo);
 
+    registerWidgetPrivilege(widgetHandle, widgetRegInfo);
+
     registerWidgetWindowModes(widgetHandle, widgetRegInfo);
 
     registerWidgetWarpInfo(widgetHandle, widgetRegInfo);
@@ -218,6 +361,8 @@ void WidgetDAO::registerWidgetInternal(
     registerEncryptedResouceInfo(widgetHandle, widgetRegInfo);
 
     registerExternalLocations(widgetHandle, widgetRegInfo.externalLocations);
+
+    registerWidgetSecuritySettings(widgetHandle);
 }
 
 void WidgetDAO::registerOrUpdateWidget(
@@ -260,7 +405,7 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
     row.Set_background_page(regInfo.configInfo.backgroundPage);
-
+    row.Set_installed_path(regInfo.widgetInstalledPath);
 
     DO_INSERT(row, WidgetExtendedInfo)
 }
@@ -486,6 +631,22 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
     }
 }
 
+void WidgetDAO::registerWidgetPrivilege(DbWidgetHandle widgetHandle,
+                                        const WidgetRegisterInfo &regInfo)
+{
+    using namespace DPL::DB::ORM;
+    const ConfigParserData& widgetConfigurationInfo = regInfo.configInfo;
+
+    FOREACH(it, widgetConfigurationInfo.privilegeList)
+    {
+        wrt::WidgetPrivilege::Row widgetPrivilege;
+        widgetPrivilege.Set_app_id(widgetHandle);
+        widgetPrivilege.Set_name(it->name);
+
+        DO_INSERT(widgetPrivilege, wrt::WidgetPrivilege)
+    }
+}
+
 void WidgetDAO::updateFeatureRejectStatus(const DbWidgetFeature &widgetFeature){
     // This function could be merged with registerWidgetFeature but it requires desing change:
     // 1. Check "ace step" in installer must be done before "update database step"
@@ -662,6 +823,21 @@ void WidgetDAO::registerExternalLocations(DbWidgetHandle widgetHandle,
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register external files");
+}
+
+void WidgetDAO::registerWidgetSecuritySettings(DbWidgetHandle widgetHandle)
+{
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+    WidgetSecuritySettings::Row row;
+    row.Set_app_id(widgetHandle);
+    row.Set_security_popup_usage(SETTINGS_TYPE_ON);
+    row.Set_geolocation_usage(SETTINGS_TYPE_ON);
+    row.Set_web_notification_usage(SETTINGS_TYPE_ON);
+    row.Set_web_database_usage(SETTINGS_TYPE_ON);
+    row.Set_file_system_usage(SETTINGS_TYPE_ON);
+
+    DO_INSERT(row, WidgetSecuritySettings)
 }
 
 void WidgetDAO::unregisterAllExternalLocations()

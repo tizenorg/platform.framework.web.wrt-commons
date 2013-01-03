@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /*
- * @file        named_input_pipe.cpp
+ * @file        file_input.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
  * @brief       This file is the implementation file of named input pipe
@@ -30,6 +30,7 @@
 
 namespace DPL
 {
+
 namespace // anonymous
 {
 const size_t DEFAULT_READ_BUFFER_SIZE = 4096;

@@ -14,7 +14,7 @@
 #    limitations under the License.
 #
 
-for name in wrt wrt_autosave
+for name in wrt wrt_autosave wrt_custom_handler
 do
     rm -f /opt/dbspace/.$name.db
     rm -f /opt/dbspace/.$name.db-journal

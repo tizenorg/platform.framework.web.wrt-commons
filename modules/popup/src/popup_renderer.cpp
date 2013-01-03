@@ -24,7 +24,6 @@
 #include <dpl/popup/popup_renderer.h>
 #include <dpl/popup/popup_manager.h>
 #include <dpl/popup/evas_object.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/scoped_array.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
@@ -93,7 +92,7 @@ class PopupRenderer::Impl
     void Deinitialize()
     {
         Assert(m_initialized);
-        m_current.Reset(NULL);
+        m_current.reset();
         while (!m_popupsToRender.empty()) {
             m_popupsToRender.pop();
         }
@@ -112,7 +111,7 @@ class PopupRenderer::Impl
         answerData.chackState = m_checkState;
         answerData.password = m_password;
         m_current->ForwardAnswer(answerData);
-        m_current.Reset();
+        m_current.reset();
 
         FOREACH(it, m_createdObjects)
         {
@@ -192,35 +191,28 @@ class PopupRenderer::Impl
 
         elm_object_text_set(btn, object.getLabel().c_str());
         elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn);
-	btn.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+        btn.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
                                        &Impl::ButtonCallback,
                                        this,
                                        reinterpret_cast<void*>(object.getLabelId()));
-	m_createdObjects.push_back(btn);
+        m_createdObjects.push_back(btn);
     }
 
     void DoRender(const PopupObject::Button& object1,
             const PopupObject::Button& object2,
             EvasObject &parent)
     {
-        EvasObject btn1(elm_button_add(parent));
-        EvasObject btn2(elm_button_add(parent));
+        DoRender(object1, parent);
 
-        elm_object_text_set(btn1, object1.getLabel().c_str());
-        elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn1);
-	btn1.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
-                                        &Impl::ButtonCallback,
-                                        this,
-                                        reinterpret_cast<void*>(object1.getLabelId()));
+        EvasObject btn2(elm_button_add(parent));
 
         elm_object_text_set(btn2, object2.getLabel().c_str());
         elm_object_part_content_set(parent, POPUP_PART_BUTTON2, btn2);
-	btn2.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+        btn2.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
                                         &Impl::ButtonCallback,
                                         this,
                                         reinterpret_cast<void*>(object2.getLabelId()));
-	m_createdObjects.push_back(btn1);
-	m_createdObjects.push_back(btn2);
+        m_createdObjects.push_back(btn2);
     }
 
     void DoRender(const PopupObject::Button& object1,
@@ -228,33 +220,17 @@ class PopupRenderer::Impl
             const PopupObject::Button& object3,
             EvasObject &parent)
     {
-        EvasObject btn1(elm_button_add(parent));
-        EvasObject btn2(elm_button_add(parent));
+        DoRender(object1, object2, parent);
+
         EvasObject btn3(elm_button_add(parent));
-
-        elm_object_text_set(btn1, object1.getLabel().c_str());
-        elm_object_part_content_set(parent, POPUP_PART_BUTTON1, btn1);
-	btn1.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
-                                        &Impl::ButtonCallback,
-                                        this,
-                                        reinterpret_cast<void*>(object1.getLabelId()));
-
-        elm_object_text_set(btn2, object2.getLabel().c_str());
-        elm_object_part_content_set(parent, POPUP_PART_BUTTON2, btn2);
-	btn2.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
-                                        &Impl::ButtonCallback,
-                                        this,
-                                        reinterpret_cast<void*>(object2.getLabelId()));
 
         elm_object_text_set(btn3, object3.getLabel().c_str());
         elm_object_part_content_set(parent, POPUP_PART_BUTTON3, btn3);
-	btn3.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
+        btn3.ConnectMemberSmartCallback(BUTTON_CLICKED_CALLBACK_NAME,
                                         &Impl::ButtonCallback,
                                         this,
                                         reinterpret_cast<void*>(object3.getLabelId()));
-	m_createdObjects.push_back(btn1);
-	m_createdObjects.push_back(btn2);
-	m_createdObjects.push_back(btn3);
+        m_createdObjects.push_back(btn3);
     }
 
     EvasObject getBaseObject()
@@ -421,8 +397,8 @@ void PopupRenderer::Deinitialize()
 
 IPopupPtr PopupRenderer::CreatePopup()
 {
-    return DPL::StaticPointerCast<IPopup>(IPopupPtr
-                                              (new Popup(SharedFromThis())));
+    return std::static_pointer_cast<IPopup>(IPopupPtr
+                                              (new Popup(shared_from_this())));
 }
 
 void PopupRenderer::Render(PopupPtr popup)

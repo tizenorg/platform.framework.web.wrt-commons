@@ -133,12 +133,22 @@ class WidgetDAO : public WidgetDAOReadOnly
     /* set PkgName
      */
     void setPkgName(const DPL::OptionalString& pkgName);
+    void setPkgName_TEMPORARY_API(const WidgetPkgName& pkgName);
 
     /* This function will update of api-feature status.
      * If status is true (feature rejected) plugin connected with this
      * api feature mustn't be loaded durign widget launch.
      */
     void updateFeatureRejectStatus(const DbWidgetFeature &widgetFeature);
+
+     /*
+      * This method change security settings value
+      */
+    void setSecurityPopupUsage(const SettingsType value);
+    void setGeolocationUsage(const SettingsType value);
+    void setWebNotificationUsage(const SettingsType value);
+    void setWebDatabaseUsage(const SettingsType value);
+    void setFileSystemUsage(const SettingsType value);
 
   private:
     //Methods used during widget registering
@@ -163,6 +173,9 @@ class WidgetDAO : public WidgetDAOReadOnly
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
     static void registerWidgetFeatures(
+            DbWidgetHandle widgetHandle,
+            const WidgetRegisterInfo &regInfo);
+    static void registerWidgetPrivilege(
             DbWidgetHandle widgetHandle,
             const WidgetRegisterInfo &regInfo);
     static void registerWidgetWindowModes(
@@ -193,6 +206,8 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     static void registerExternalLocations(DbWidgetHandle widgetHandle,
                                 const ExternalLocationList & externals);
+    static void registerWidgetSecuritySettings(DbWidgetHandle widgetHandle);
+
 
     static void registerWidgetInternal(
             const WidgetPkgName & widgetName,

@@ -115,7 +115,6 @@ String FromUTF8String(const std::string& aIn)
         ThrowMsg(StringException::IconvConvertErrorUTF8ToUTF32,
                  "iconv failed for " << "UTF-32 <- UTF-8" << "error: "
                             << GetErrnoString());
-        return String();
     }
 
     // Ignore BOM in front of UTF-32
@@ -158,7 +157,6 @@ std::string ToUTF8String(const DPL::String& aIn)
         ThrowMsg(StringException::IconvConvertErrorUTF32ToUTF8,
                  "iconv failed for " << "UTF-8 <- UTF-32"
                             << "error: " << GetErrnoString());
-        return std::string();
     }
 
     return &output[0];

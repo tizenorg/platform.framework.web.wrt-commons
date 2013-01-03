@@ -38,7 +38,7 @@ typedef DPL::OptionalString WidgetPropertyValue;
 typedef std::list<WidgetPropertyKey> WidgetPropertyKeyList;
 
 struct WidgetPreferenceRow {
-    int                 app_id;
+    WidgetPkgName       pkgname;
     WidgetPropertyKey   key_name;
     WidgetPropertyValue key_value;
     DPL::OptionalInt    readonly;
@@ -57,22 +57,47 @@ class Exception
     DECLARE_EXCEPTION_TYPE(Base, ReadOnlyProperty)
 };
 
+//deprecated
 /* This method checks read only flag for given property
  */
 DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
+                                  const WidgetPropertyKey &key)
+                                        __attribute__((deprecated));
+
+/* This method checks read only flag for given property
+ */
+DPL::OptionalInt CheckPropertyReadFlag(WidgetPkgName pkgName,
                                   const WidgetPropertyKey &key);
+
+//deprecated
+/* This method gets widget property key list
+ */
+WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
+                            __attribute__((deprecated));
 
 /* This method gets widget property key list
  */
-WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle);
+WidgetPropertyKeyList GetPropertyKeyList(WidgetPkgName pkgName);
+
+//deprecated
+/* This method gets widget property list
+ */
+WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
+                            __attribute__((deprecated));
 
 /* This method gets widget property list
  */
-WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle);
+WidgetPreferenceList GetPropertyList(WidgetPkgName pkgName);
 
+//deprecated
 /* This method get widget property value
  */
 WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
+                                     const WidgetPropertyKey &key);
+
+/* This method get widget property value
+ */
+WidgetPropertyValue GetPropertyValue(WidgetPkgName pkgName,
                                      const WidgetPropertyKey &key);
 
 } // PropertyDAOReadOnly

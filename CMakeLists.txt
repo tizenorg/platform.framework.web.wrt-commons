@@ -45,6 +45,8 @@ ELSE(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
     MESSAGE(STATUS "Logging disabled for DPL")
 ENDIF(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
 
+OPTION(WITH_TESTS "Build tests" OFF)
+
 # Compiler flags
 SET(CMAKE_C_FLAGS_PROFILING    "-O2")
 SET(CMAKE_CXX_FLAGS_PROFILING  "-O2 -std=c++0x")
@@ -105,6 +107,7 @@ MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCC: " ${CMAKE_COMPILER_IS_GNUCC})
 MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX})
 MESSAGE(STATUS "CMAKE_AR: " ${CMAKE_AR})
 MESSAGE(STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB})
+MESSAGE(STATUS "WITH_TESTS: " ${WITH_TESTS})
 MESSAGE(STATUS "========================================")
 
 # Build 3rd party libraries first
@@ -170,7 +173,6 @@ ADD_DEFINITIONS("-std=c++0x")
 SET(DPL_3RDPARTY_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/3rdparty)
 
-
 # Set names of binaries being created
 SET(TARGET_DPL_EFL "lib${PROJECT_NAME}-efl")
 SET(TARGET_DPL_DBUS_EFL "lib${PROJECT_NAME}-dbus-efl")
@@ -186,6 +188,8 @@ SET(TARGET_WRT_DAO_RO_LIB "dpl-wrt-dao-ro")
 SET(TARGET_AUTO_SAVE_DAO_LIB "wrt-commons-auto-save-dao")
 SET(TARGET_AUTO_SAVE_DAO_RW_LIB "wrt-commons-auto-save-dao-rw")
 SET(TARGET_AUTO_SAVE_DAO_RO_LIB "wrt-commons-auto-save-dao-ro")
+SET(TARGET_CUSTOM_HANDLER_DAO_RW_LIB "wrt-commons-custom-handler-dao-rw")
+SET(TARGET_CUSTOM_HANDLER_DAO_RO_LIB "wrt-commons-custom-handler-dao-ro")
 SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
 SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
@@ -200,3 +204,6 @@ ADD_SUBDIRECTORY(modules)
 ADD_SUBDIRECTORY(build)
 ADD_SUBDIRECTORY(etc)
 
+IF(WITH_TESTS)
+  ADD_SUBDIRECTORY(tests)
+ENDIF(WITH_TESTS)

@@ -38,9 +38,21 @@ typedef std::list<WidgetIcon> WidgetIconList;
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         WrtDB::DbWidgetHandle widgetHandle,
         const DPL::String &url);
+DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
+        const WrtDB::WidgetPkgName &pkgname,
+        const DPL::String &url);
+DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
+        WrtDB::WidgetDAOReadOnlyPtr dao,
+        const DPL::String &url);
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         WrtDB::DbWidgetHandle widgetHandle,
+        const DPL::String& file);
+DPL::Optional<DPL::String> getFilePathInWidgetPackage(
+        const WrtDB::WidgetPkgName &pkgname,
+        const DPL::String& file);
+DPL::Optional<DPL::String> getFilePathInWidgetPackage(
+        WrtDB::WidgetDAOReadOnlyPtr dao,
         const DPL::String& file);
 
 DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle handle);
@@ -53,9 +65,17 @@ OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao);
 
 WidgetIconList getValidIconsList(
         WrtDB::DbWidgetHandle widgetHandle);
+WidgetIconList getValidIconsList(
+        const WrtDB::WidgetPkgName &pkgname);
+WidgetIconList getValidIconsList(
+        WrtDB::WidgetDAOReadOnlyPtr dao);
 
 OptionalWidgetStartFileInfo getStartFileInfo(
         WrtDB::DbWidgetHandle widgetHandle);
+OptionalWidgetStartFileInfo getStartFileInfo(
+        const WrtDB::WidgetPkgName &pkgname);
+OptionalWidgetStartFileInfo getStartFileInfo(
+        WrtDB::WidgetDAOReadOnlyPtr dao);
 
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::DbWidgetHandle widgetHandle);
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(const WrtDB::WidgetPkgName & pkgname);

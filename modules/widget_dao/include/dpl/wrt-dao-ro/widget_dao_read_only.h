@@ -175,11 +175,15 @@ struct WidgetRegisterInfo
     int isTestWidget;
     ConfigParserData configInfo;
     LocalizationData localizationData;
+
     DPL::OptionalString pkgname;
+    WidgetPkgName pkgName;
+
     time_t installedTime;
     PackagingType packagingType;
     EncryptedFileList encryptedFiles;
     ExternalLocationList externalLocations;
+    DPL::OptionalString widgetInstalledPath;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -313,6 +317,17 @@ class WidgetDAOReadOnly
     static DbWidgetHandle getHandle(const DPL::String pkgName);
 
     /**
+     * Returns pkgname for the specified widget
+     *
+     * @return pkgname
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+     */
+    WidgetPkgName getPkgName() const;
+    static WidgetPkgName getPkgName(const WidgetGUID GUID);
+    static WidgetPkgName getPkgName(const DbWidgetHandle handle);
+
+    /**
      * This method returns the root directory of widget resource.
      *
      * @return path name of root directory.
@@ -356,13 +371,14 @@ class WidgetDAOReadOnly
      */
     WidgetGUID getGUID() const;
 
+
     /**
-     * This method returns the Package name of the widget.
-     *
-     * @return pkgname
-     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
-     */
+    * This method returns the Package name of the widget.
+    *
+    * @return pkgname
+    * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+    * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+    */
     DPL::OptionalString getPkgname() const;
 
     /**
@@ -558,6 +574,7 @@ class WidgetDAOReadOnly
      * @return list of pkgname of installed packages
      */
     static WidgetPkgNameList getPkgnameList();
+    static WidgetPkgNameList_TEMPORARY_API getPkgnameList_TEMPORARY_API();
 
     /**
      * This method returns a list of all the installed widgets.
@@ -750,6 +767,28 @@ class WidgetDAOReadOnly
      * @return new tizen id
      */
     static WidgetPkgName generateTizenId();
+
+    /**
+     * @brief This method return each value for security setting
+     *
+     * @return SettingsType
+     *         SETTINGS_TYPE_UNKNOWN     : unknow value
+     *         SETTINGS_TYPE_ON                : enable
+     *         SETTINGS_TYPE_ALWAYS_ASK : ask by popup
+     *         SETTINGS_TYPE_OFF               : disable
+     */
+    SettingsType getSecurityPopupUsage() const;
+    SettingsType getGeolocationUsage() const;
+    SettingsType getWebNotificationUsage() const;
+    SettingsType getWebDatabaseUsage() const;
+    SettingsType getFileSystemUsage() const;
+
+    /**
+     * This method returns widget's installed path
+     *
+     * @return path of widget installed
+     */
+    DPL::OptionalString getWidgetInstalledPath() const;
 };
 
 } // namespace WrtDB

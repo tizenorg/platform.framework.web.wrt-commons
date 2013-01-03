@@ -26,12 +26,12 @@
 #include <typeinfo>
 #include <utility>
 #include <set>
+#include <memory>
 
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/orm_interface.h>
 #include <dpl/string.h>
 #include <dpl/optional.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/type_list.h>
 #include <dpl/assert.h>
 #include <dpl/foreach.h>
@@ -84,7 +84,7 @@ public:
     virtual ArgumentIndex BindTo(DataCommand *command, ArgumentIndex index) = 0;
 };
 
-typedef DPL::SharedPtr<Expression> ExpressionPtr;
+typedef std::shared_ptr<Expression> ExpressionPtr;
 
 template<const char* Operator, typename LeftExpression, typename RightExpression>
 class __attribute__ ((visibility("hidden"))) BinaryExpression : public Expression {
@@ -125,6 +125,14 @@ BinaryExpression<RelationTypes::And, LeftExpression, RightExpression>
     And(const LeftExpression& leftExpression, const RightExpression& rightExpression)
 {
     return BinaryExpression<RelationTypes::And, LeftExpression, RightExpression>
+            (leftExpression, rightExpression);
+}
+
+template<typename LeftExpression, typename RightExpression>
+BinaryExpression<RelationTypes::Or, LeftExpression, RightExpression>
+    Or(const LeftExpression& leftExpression, const RightExpression& rightExpression)
+{
+    return BinaryExpression<RelationTypes::Or, LeftExpression, RightExpression>
             (leftExpression, rightExpression);
 }
 
@@ -586,7 +594,7 @@ public:
                 str.str());
         }
         //TODO maybe don't make a copy here but just generate the string part of the query.
-        m_whereExpression.Reset(new Expression(expression));
+        m_whereExpression.reset(new Expression(expression));
     }
 
 };
@@ -632,6 +640,29 @@ public:
     }
 };
 
+namespace {
+class BindVisitor {
+private:
+    DataCommand *m_command;
+public:
+    ArgumentIndex m_bindArgumentIndex;
+
+    BindVisitor(DataCommand *command) :
+        m_command(command),
+        m_bindArgumentIndex(1)
+    {}
+
+    template<typename ColumnType>
+    void Visit(const char*, const ColumnType& value, bool isSet)
+    {
+        if ( isSet )
+        {
+            DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
+            m_bindArgumentIndex++;
+        }
+    }
+};
+} //anonymous namespace
 template<typename TableDefinition>
 class __attribute__ ((visibility("hidden"))) Insert : public Query<TableDefinition>
 {
@@ -688,27 +719,6 @@ protected:
                 Query<TableDefinition>::m_interface);
         }
     }
-
-    class BindVisitor {
-    private:
-        DataCommand *m_command;
-        ArgumentIndex m_bindArgumentIndex;
-    public:
-        BindVisitor(DataCommand *command) :
-            m_command(command),
-            m_bindArgumentIndex(1)
-        {}
-
-        template<typename ColumnType>
-        void Visit(const char*, const ColumnType& value, bool isSet)
-        {
-            if ( isSet )
-            {
-                DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
-                m_bindArgumentIndex++;
-            }
-        }
-    };
 
     void Bind()
     {
@@ -998,29 +1008,6 @@ protected:
             LogPedantic("Prepared SQL command " << this->m_commandString);
         }
     }
-
-    class BindVisitor {
-    private:
-        DataCommand *m_command;
-
-    public:
-        ArgumentIndex m_bindArgumentIndex;
-
-        BindVisitor(DataCommand *command) :
-            m_command(command),
-            m_bindArgumentIndex(1)
-        {}
-
-        template<typename ColumnType>
-        void Visit(const char*, const ColumnType& value, bool isSet)
-        {
-            if ( isSet )
-            {
-                DataCommandUtils::BindArgument(m_command, m_bindArgumentIndex, value);
-                m_bindArgumentIndex++;
-            }
-        }
-    };
 
     void Bind()
     {

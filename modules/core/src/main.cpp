@@ -359,60 +359,6 @@ void Main::HandleDirectInvoker()
 // GLIB loop intergration workaround
 int Main::EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
-#if 0
-    // Check each descriptor to see if it is valid
-    for (int i = 0; i < nfds; i++)
-    {
-        if (FD_ISSET(i, readfds) || FD_ISSET(i, writefds) || FD_ISSET(i, exceptfds))
-        {
-            // Try to get descriptor flags
-            int result = fcntl(i, F_GETFL);
-
-            if (result == -1)
-            {
-                if (errno == EBADF)
-                {
-                    // This a bad descriptor. Remove all occurrences of it.
-                    if (FD_ISSET(i, readfds))
-                    {
-                        LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad read descriptor: " << i);
-                        FD_CLR(i, readfds);
-                    }
-
-                    if (FD_ISSET(i, writefds))
-                    {
-                        LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad write descriptor: " << i);
-                        FD_CLR(i, writefds);
-                    }
-
-                    if (FD_ISSET(i, exceptfds))
-                    {
-                        LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad exception descriptor: " << i);
-                        FD_CLR(i, exceptfds);
-                    }
-                }
-                else
-                {
-                    // Unexpected error
-                    Assert(0);
-                }
-            }
-        }
-    }
-
-    // Find out new maximum
-    int newNfds = 0;
-
-    for (int i = 0; i < nfds; i++)
-    {
-        if (FD_ISSET(i, readfds) || FD_ISSET(i, writefds) || FD_ISSET(i, exceptfds))
-            newNfds = i;
-    }
-
-    return MainSingleton::Instance().m_oldEcoreSelect(newNfds + 1, readfds, writefds, exceptfds, timeout);
-
-#else
-
     // We have to check error code here and make another try because of some glib error's.
     fd_set rfds, wfds, efds;
     memcpy(&rfds, readfds, sizeof(fd_set));
@@ -482,7 +428,6 @@ int Main::EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd
     }
 
     return ret;
-#endif
 }
 #endif // DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
 } // namespace DPL

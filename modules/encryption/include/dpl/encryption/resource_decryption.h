@@ -28,8 +28,9 @@
 #include <openssl/sha.h>
 #include <dpl/exception.h>
 
-namespace WRTDecryptor{
+extern char** calculate(char*pappId, int idLen, int keyLen);
 
+namespace WRTDecryptor{
 class ResourceDecryptor
 {
   public:
@@ -50,7 +51,7 @@ class ResourceDecryptor
 
   private:
       AES_KEY* GetDecryptionKey();
-      AES_KEY *m_decKey;
+      AES_KEY m_decKey;
 
 };
 } //namespace WRTDecryptor 

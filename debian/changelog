@@ -1,3 +1,168 @@
+wrt-commons (0.2.89) unstable; urgency=low
+
+  * Handle return value from pthread_setspecific
+  * Deleted array to 0 comparison
+  * Deleted unreachable code
+  * Add vconf key for memory saving mode
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.89
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 02 Jan 2013 11:00:02 +0900
+
+wrt-commons (0.2.88) unstable; urgency=low
+
+  * Add path builder for vconf key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.88
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Sat, 29 Dec 2012 14:02:18 +0900
+
+wrt-commons (0.2.87) unstable; urgency=low
+
+  * changed to get encryption/decryption key from device unique key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.87
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 20:47:21 +0900
+
+wrt-commons (0.2.86) unstable; urgency=low
+
+  * Revert "Modify get encryption/decryption key from device unique key"
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.86
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 17:42:06 +0900
+
+wrt-commons (0.2.85) unstable; urgency=low
+
+  * For livebox configuration
+  * livebox configuration valuables have been changed
+  * Modify get encryption/decryption key from device unique key
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.85
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 14:05:27 +0900
+
+wrt-commons (0.2.83) unstable; urgency=low
+
+  * Replacing widget handle with tizenid in property DAO
+
+ -- KEONGEUN <lke01.lee@samsung.com>  Fri, 21 Dec 2012 17:03:54 +0900
+
+wrt-commons (0.2.82) unstable; urgency=low
+
+  * CustomHandlersDB API updated to handle new functionalities.
+  * Add tests - DAO, DPL
+  * Custom Handlers DAO extended with new api
+  * registerWidgetSecuritySettings - nested transaction removal. New widget dao testcase
+  * Unit test for custom handler dao stub
+  * CustomHandlersDAO test
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.82
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 20 Dec 2012 09:04:59 +0900
+
+wrt-commons (0.2.81) unstable; urgency=low
+
+  * Fix dependencies in DAO modules
+  * Missing boilerplate added
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.81
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Sun, 16 Dec 2012 09:09:42 +0900
+
+wrt-commons (0.2.80) unstable; urgency=low
+
+  * Implement privilege database table
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.80
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 14 Dec 2012 10:30:48 +0900
+
+wrt-commons (0.2.79) unstable; urgency=low
+
+  * Replacing DbWidgetHandle with WidgetPkgName in SecurityOriginDAO
+  * Handle remove() return value
+  * Delete unreachable code
+  * Handle chmod return value
+  * CustomHandlerDAO implementation
+  * Unhandled isWidgetInstalled return value
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.79
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 13 Dec 2012 11:15:24 +0900
+
+wrt-commons (0.2.78) unstable; urgency=low
+
+  * Removing copy&paste code, part 2
+  * Changed SharedPtr to std:shared_ptr
+  * Changed ScopedPtr to std::unique_ptr
+  * Klocwork analysis related fix
+  * SharedFromTHis replace by STL C++0x ones
+  * Overload methods to run with tizen id instead of widgetHandle
+  * Changed PkgName type from DPL::Optional<DPL::String> to DPL::String
+  * Default "en" language tag removed from provider
+  * CustomHandlers DAO libraries stubs added
+  * Replacing widget handle with tizenid in property DAO
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.78
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Mon, 10 Dec 2012 10:11:26 +0900
+
+wrt-commons (0.2.76) unstable; urgency=low
+
+  * Add share directory
+  * Add category element for manifest.xml
+  * Modify installed path for preload widget.
+  * Updated widget resources path in wrt_reset_all.sh
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.76
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 30 Nov 2012 17:47:24 +0900
+
+wrt-commons (0.2.75) unstable; urgency=low
+
+  * Throw an exception when pthread_key_create fails
+  * Symbolic link pointed by GetVCoreDatabaseFilePath will be removed.
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.75
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Fri, 23 Nov 2012 22:01:00 +0900
+
+wrt-commons (0.2.74) unstable; urgency=low
+
+  * Removing copy&paste code, part 1
+  * Removal of factory_widget attribute and related functions
+  * Implement security origin dao for allow,deny one time
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.74
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 23 Nov 2012 10:09:27 +0900
+
+wrt-commons (0.2.73) unstable; urgency=low
+
+  * Distinguish between system headers and project headers
+  * Implement security origin dao for setting menu
+  * Implement security settings in the widgetDAO
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.73
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 22 Nov 2012 20:46:40 +0900
+
 wrt-commons (0.2.72) unstable; urgency=low
 
   * Change widget installed path request by app fw

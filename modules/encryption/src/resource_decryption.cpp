@@ -28,19 +28,16 @@
 #include <dpl/exception.h>
 
 namespace {
-inline std::string GetDefaultEncryptKeyPath() {
-    return "/opt/share/widget/data/";
-}
+#define BITS_SIZE 128
+#define KEY_SIZE 16
 }
 namespace WRTDecryptor{
-ResourceDecryptor::ResourceDecryptor() :
-    m_decKey(NULL)
+ResourceDecryptor::ResourceDecryptor()
 {
     LogDebug("Started Decryption");
 }
 
-ResourceDecryptor::ResourceDecryptor(std::string userKey) :
-    m_decKey(NULL)
+ResourceDecryptor::ResourceDecryptor(std::string userKey) 
 {
     LogDebug("Finished Decryption");
     SetDecryptionKey(userKey);
@@ -48,47 +45,39 @@ ResourceDecryptor::ResourceDecryptor(std::string userKey) :
 
 ResourceDecryptor::~ResourceDecryptor()
 {
-    delete m_decKey;
 }
 
 void ResourceDecryptor::SetDecryptionKey(std::string userKey)
 {
-    /* TODO : get key from secure storage */
-    std::string keyPath = GetDefaultEncryptKeyPath() + userKey + "_dec";
-    LogDebug("Description Key path : " << keyPath);
-
-    FILE* fp = fopen(keyPath.c_str(), "rb");
-    if (fp == NULL) {
-        ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
-                "Failed to get decryption key");
+    if (userKey.empty()) {
+        return;
     }
 
-    m_decKey = new AES_KEY;
-    size_t resultSize =fread(m_decKey, 1, sizeof(AES_KEY),fp);
-    if (resultSize!= sizeof(AES_KEY))
-        ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
-                "Failed to get AES key");
+    char **duk = calculate(const_cast<char*>(userKey.c_str()), userKey.size(), KEY_SIZE);
+    unsigned char *key = reinterpret_cast<unsigned char*>(*duk);
 
-    fclose(fp);
+    if ( 0 > AES_set_decrypt_key(key, BITS_SIZE, &m_decKey)) {
+        ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
+                "Failed to create decryption key");
+    }
 }
 
 AES_KEY* ResourceDecryptor::GetDecryptionKey()
 {
-    return m_decKey;
+    return &m_decKey;
 }
 
 void ResourceDecryptor::GetDecryptedChunk(unsigned char*
         inBuf, unsigned char* decBuf, size_t inBufSize)
 {
     Assert(decBuf);
-    Assert(m_decKey);
-    if (decBuf == NULL || m_decKey == NULL) {
+    if (decBuf == NULL) {
         ThrowMsg(ResourceDecryptor::Exception::EncryptionFailed,
                 "Failed to Get Decryption Chunk");
     }
     unsigned char ivec[16] = {0, };
 
-    AES_cbc_encrypt(inBuf, decBuf, inBufSize, m_decKey, ivec, AES_DECRYPT);
+    AES_cbc_encrypt(inBuf, decBuf, inBufSize, &m_decKey, ivec, AES_DECRYPT);
     LogDebug("Success decryption");
 }
 

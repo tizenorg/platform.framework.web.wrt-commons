@@ -53,17 +53,25 @@ inline const char* GetDevicePluginPath()
 }
 
 /**
- * WRT factory widgets that are loaded by default
+ * WRT widgets that are downloaded and installed by user
  */
-inline const char* GetFactoryInstalledWidgetPath()
+inline const char* GetUserInstalledWidgetPath()
 {
-    return "/opt/share/widget/system";
+    return "/opt/usr/apps";
+}
+
+/**
+ * WRT widgets that are preloaded
+ */
+inline const char* GetUserPreloadedWidgetPath()
+{
+    return "/usr/apps";
 }
 
 /**
  * WRT widgets that are downloaded and installed by user
  */
-inline const char* GetUserInstalledWidgetPath()
+inline const char* GetWidgetUserDataPath()
 {
     return "/opt/usr/apps";
 }
@@ -116,6 +124,13 @@ inline const char* GetWidgetPrivateStoragePath()
     return "data";
 }
 
+/**
+ * widgets share directory path
+ */
+inline const char* GetWidgetSharePath()
+{
+    return "share";
+}
 
 /**
  * widgets desktop files path
@@ -226,7 +241,7 @@ inline const char* GetFingerprintListSchema()
 
 inline const char* GetVCoreDatabaseFilePath()
 {
-    return "/opt/dbspace/.vcore.db";
+    return "/opt/dbspace/.cert_svc_vcore.db";
 }
 
 /**
@@ -269,6 +284,42 @@ inline const char* GetTempInstallInfoPath()
 {
     return "/opt/share/widget/temp_info";
 }
+
+inline const char* GetVconfKeyPrefixPath()
+{
+    return "file/private";
+}
+
+inline const char* GetVconfKeyPopupUsagePath()
+{
+    return "/popup_usage";
+}
+
+inline const char* GetVconfKeyGeolocationUsagePath()
+{
+    return "/geolocation_usage";
+}
+
+inline const char* GetVconfKeyWebNotificationUsagePath()
+{
+    return "/web_notification_usage";
+}
+
+inline const char* GetVconfKeyWebDatabaseUsagePath()
+{
+    return "/web_database_usage";
+}
+
+inline const char* GetVconfKeyFilesystemUsagePath()
+{
+    return "/filesystem_usage";
+}
+
+inline const char* GetVconfKeyMemorySavingModePath()
+{
+    return "/memory_saving_mode";
+}
+
 } // namespace GlobalConfig
 } // namespace WrtDB
 

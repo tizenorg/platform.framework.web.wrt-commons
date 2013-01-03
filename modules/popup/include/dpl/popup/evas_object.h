@@ -22,23 +22,23 @@
 #ifndef WRT_SRC_DOMAIN_EFL_EVAS_OBJECT_H
 #define WRT_SRC_DOMAIN_EFL_EVAS_OBJECT_H
 
+#include <dpl/noncopyable.h>
 #include <dpl/framework_efl.h>
 #include <dpl/assert.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/foreach.h>
 #include <dpl/apply.h>
 #include <set>
 #include <string>
 #include <tuple>
 #include <utility>
-
+#include <memory>
 namespace DPL {
 namespace Popup {
 
 class EvasObject
 {
     class EvasObjectShared;
-    typedef DPL::SharedPtr<EvasObjectShared> EvasObjectSharedPtr;
+    typedef std::shared_ptr<EvasObjectShared> EvasObjectSharedPtr;
 
   public:
     class IConnection

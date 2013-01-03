@@ -23,12 +23,12 @@
 #ifndef DPL_TEST_RESULTS_COLLECTOR_H
 #define DPL_TEST_RESULTS_COLLECTOR_H
 
-#include <dpl/shared_ptr.h>
 #include <dpl/noncopyable.h>
 #include <vector>
 #include <list>
 #include <map>
 #include <string>
+#include <memory>
 
 namespace DPL
 {
@@ -36,7 +36,7 @@ namespace Test
 {
 
 class TestResultsCollectorBase;
-typedef DPL::SharedPtr<TestResultsCollectorBase>
+typedef std::shared_ptr<TestResultsCollectorBase>
     TestResultsCollectorBasePtr;
 
 class TestResultsCollectorBase

@@ -67,7 +67,7 @@ MachineType getMachineType()
     // get current machine name
     struct utsname u;
     if (0 == uname(&u)) {
-        if ((!u.machine) || (0 == strlen(u.machine))) {
+        if (0 == strlen(u.machine)) {
             return MACHINE_TYPE_UNKNOWN;
         } else {
             // If current machine is emul,

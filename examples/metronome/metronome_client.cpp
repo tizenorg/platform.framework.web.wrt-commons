@@ -34,7 +34,7 @@ class MetronomeClientApplication
 {
 private:
     DPL::TcpSocketRPCClient m_rpcClient;
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcConnection;
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::AsyncCallEvent &event)
     {
@@ -68,7 +68,7 @@ private:
     {
         // Save connection pointer
         LogInfo("Connected to metronome server");
-        m_rpcConnection.Reset(event.GetArg1());
+        m_rpcConnection.reset(event.GetArg1());
 
         // Attach event listeners
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::AddListener(this);
@@ -93,12 +93,12 @@ public:
     virtual ~MetronomeClientApplication()
     {
         // Delete all RPC connections
-        if (m_rpcConnection.Get())
+        if (m_rpcConnection.get())
         {
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::RemoveListener(this);
-            m_rpcConnection.Reset();
+            m_rpcConnection.reset();
         }
 
         // Close RPC server

@@ -23,8 +23,8 @@
 #ifndef WRT_SRC_POPUP_POPUP_MANAGER_H_
 #define WRT_SRC_POPUP_POPUP_MANAGER_H_
 
+#include <memory>
 #include <dpl/assert.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/noncopyable.h>
 #include <dpl/singleton.h>
 #include <dpl/optional.h>

@@ -234,6 +234,7 @@ public:
     public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, NullReference)
+        DECLARE_EXCEPTION_TYPE(Base, KeyCreateFailed)
     };
 
 private:
@@ -310,9 +311,10 @@ public:
     ThreadLocalVariable()
     {
         int result = pthread_key_create(&m_key, &InternalDestroy);
-
-        Assert(result == 0 &&
-               "Failed to allocate thread local variable");
+        if (result != 0) {
+            ThrowMsg(typename Exception::KeyCreateFailed,
+                    "Failed to allocate thread local variable: " << result);
+        }
     }
 
     ~ThreadLocalVariable()

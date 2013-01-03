@@ -29,9 +29,9 @@
 #include <map>
 #include <vector>
 #include <list>
-#include <dpl/optional_typedefs.h>
-#include <dpl/shared_ptr.h>
 #include <memory>
+#include <dpl/optional_typedefs.h>
+
 
 namespace WrtDB {
 class PluginMetafileData
@@ -63,7 +63,7 @@ class PluginObjectsDAO
 {
   public:
     typedef std::set<std::string> Objects;
-    typedef DPL::SharedPtr<Objects> ObjectsPtr;
+    typedef std::shared_ptr<Objects> ObjectsPtr;
 
   public:
     explicit PluginObjectsDAO() {}
@@ -237,6 +237,7 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 
 typedef std::list<DPL::Optional<WidgetPkgName> > WidgetPkgNameList; //TODO: this cannot be null -> appropriate changes in db schema needed
+typedef std::list<WidgetPkgName> WidgetPkgNameList_TEMPORARY_API; //TODO: this cannot be null -> appropriate changes in db schema needed
 
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
@@ -301,8 +302,9 @@ enum PkgType
 {
     PKG_TYPE_UNKNOWN = 0, // unknown
     PKG_TYPE_NOMAL_WEB_APP,
+    PKG_TYPE_DIRECTORY_WEB_APP,
     PKG_TYPE_HOSTED_WEB_APP,    // request from browser
-    PKG_TYPE_HYBRID_WEB_APP, // Tizen webapp with C++ service app
+    PKG_TYPE_HYBRID_WEB_APP // Tizen webapp with C++ service app
 };
 
 class PackagingType
@@ -330,6 +332,7 @@ class PackagingType
 #define X(x) case x: return #x;
         X(PKG_TYPE_UNKNOWN)
         X(PKG_TYPE_NOMAL_WEB_APP)
+        X(PKG_TYPE_DIRECTORY_WEB_APP)
         X(PKG_TYPE_HOSTED_WEB_APP)
         X(PKG_TYPE_HYBRID_WEB_APP)
 #undef X
@@ -341,6 +344,13 @@ class PackagingType
     PkgType pkgType;
 };
 
+enum SettingsType
+{
+    SETTINGS_TYPE_UNKNOWN = 0,
+    SETTINGS_TYPE_ON,
+    SETTINGS_TYPE_ALWAYS_ASK,
+    SETTINGS_TYPE_OFF
+};
 } // namespace WrtDB
 
 struct WidgetSetting

@@ -216,10 +216,9 @@ void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
     Try {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(
                 &WrtDatabase::interface());
-        DbPluginHandle handle;
 
         if (!isPluginInstalled(pluginHandle)) {
-            LogInfo("PluginHandle is invalid. Handle: " << handle);
+            LogInfo("PluginHandle is invalid. Handle: " << pluginHandle);
             return;
 
         } else {
@@ -232,7 +231,7 @@ void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
             del->Execute();
 
             transaction.Commit();
-            LogDebug(" >> Plugin Unregistered. Handle: " << handle);
+            LogDebug(" >> Plugin Unregistered. Handle: " << pluginHandle);
         }
     }
     Catch(DPL::DB::SqlConnection::Exception::Base)

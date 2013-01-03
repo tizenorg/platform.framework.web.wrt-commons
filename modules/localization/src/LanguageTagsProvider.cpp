@@ -38,16 +38,11 @@ const LanguageTags LanguageTagsProvider::getLanguageTags() const
 void LanguageTagsProvider::setLanguageTags(const LanguageTags& taglist)
 {
     m_languageTagsList = taglist;
-    /* If given list does not contain default values ("en" and empty string)
-     * than append them to the list.
-     * In case of empty list given as parameter only two default values
+    /* If given list does not contain default value (empty string)
+     * than append it to the list.
+     * In case of empty list given as parameter only default value
      * will exist on m_languageTagsList. */
-    DPL::String tofind = L"en";
-    if(std::find(m_languageTagsList.begin(), m_languageTagsList.end(),
-            tofind) == m_languageTagsList.end()) {
-        m_languageTagsList.push_back(L"en");
-    }
-    tofind = L"";
+    DPL::String tofind = L"";
     if(std::find(m_languageTagsList.begin(), m_languageTagsList.end(),
             tofind) == m_languageTagsList.end()) {
         m_languageTagsList.push_back(L"");
@@ -133,7 +128,6 @@ void LanguageTagsProvider::createTagsFromLocales(const char* language)
         LogDebug("Setting default language tags");
         /* If NULL language given than set default language tags
          * and return. */
-        m_languageTagsList.push_back(L"en");
         m_languageTagsList.push_back(L"");
         return;
     }
@@ -158,12 +152,6 @@ void LanguageTagsProvider::createTagsFromLocales(const char* language)
             }
             langdescr = langdescr.substr(0, position);
         }
-    }
-    /* If current content of langdescr (thus last added added tag)
-     * is not "en" then add english as default locales.
-     * "en" and empty tag are added even when langdescr is not valid. */
-    if (langdescr.compare(L"en") != 0){
-        m_languageTagsList.push_back(L"en");
     }
     /* Add empty tag for non-localized content */
     m_languageTagsList.push_back(L"");
