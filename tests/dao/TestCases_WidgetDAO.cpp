@@ -88,7 +88,7 @@ WidgetPkgName _registerWidget(const WidgetRegisterInfo& regInfo,
 {
     WidgetPkgName pkgname;
     Try {
-        auto previous = WidgetDAO::getPkgnameList_TEMPORARY_API();
+        auto previous = WidgetDAO::getPkgnameList();
 
         // register widget
         pkgname = WidgetDAO::registerWidgetGenerateTizenId(regInfo, sec);
@@ -96,7 +96,7 @@ WidgetPkgName _registerWidget(const WidgetRegisterInfo& regInfo,
         RUNNER_ASSERT_MSG(!pkgname.empty(),
                           "(called from line " << line << ")");
 
-        auto current = WidgetDAO::getPkgnameList_TEMPORARY_API();
+        auto current = WidgetDAO::getPkgnameList();
         RUNNER_ASSERT_MSG(previous.size()+1 == current.size(),
                           "(called from line " << line << ")");
 
@@ -828,7 +828,7 @@ Expected: For all position in database should be returned one item in list
 */
 RUNNER_TEST(widget_dao_test_get_widget_pkgname_list)
 {
-    WidgetPkgNameList_TEMPORARY_API pkgnames = WidgetDAO::getPkgnameList_TEMPORARY_API();
+    WidgetPkgNameList pkgnames = WidgetDAO::getPkgnameList();
     RUNNER_ASSERT(pkgnames.size() >= 3);
 }
 
