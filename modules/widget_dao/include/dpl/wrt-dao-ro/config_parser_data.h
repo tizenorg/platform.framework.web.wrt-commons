@@ -183,6 +183,9 @@ class ConfigParserData
 
     typedef std::set<Setting> SettingsList;
 
+    /* ServiceInfo will be removed.
+     * ServiceInfo will be changed AppControl
+     */
     struct ServiceInfo
     {
         ServiceInfo(
@@ -204,7 +207,25 @@ class ConfigParserData
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;
     };
-    typedef std::list<ServiceInfo> ServiceInfoList;
+
+    struct AppControlInfo
+    {
+        AppControlInfo(
+            const DPL::String& operation) :
+            m_operation(operation)
+        {
+        }
+        DPL::String m_src;
+        DPL::String m_operation;
+        std::set <DPL::String> m_uriList;
+        std::set <DPL::String> m_mimeList;
+
+        bool operator==(const AppControlInfo&) const;
+        bool operator!=(const AppControlInfo&) const;
+    };
+
+    typedef std::list<ServiceInfo> ServiceInfoList; // It will be removed.
+    typedef std::list<AppControlInfo> AppControlInfoList;
 
     typedef std::list<std::pair<DPL::String, DPL::String>> BoxSizeList;
 
@@ -288,7 +309,9 @@ class ConfigParserData
     DPL::OptionalString tizenMinVersionRequired;
 
     //Application service model list
-    ServiceInfoList appServiceList;
+    ServiceInfoList appServiceList; //It will be removed.
+    AppControlInfoList appControlList;
+
     // For link shared directory
     DependsPkgList dependsPkgList;
     // Splash image path
