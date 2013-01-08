@@ -1,3 +1,10 @@
+wrt-commons (0.2.90) unstable; urgency=low
+
+  * Changed PkgName type from DPL::Optional<DPL::String> to DPL::String. PART 4
+  * User agent database update
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Tue, 08 Jan 2013 11:12:49 +0900
+
 wrt-commons (0.2.89) unstable; urgency=low
 
   * Handle return value from pthread_setspecific
