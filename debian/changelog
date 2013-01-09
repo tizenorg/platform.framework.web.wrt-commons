@@ -1,3 +1,13 @@
+wrt-commons (0.2.91) unstable; urgency=low
+
+  * Fix issue Prevent Defect -17677
+  * Fixing issues: 17677
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.91
+
+ -- leerang <leerang.song@samsung.com>  Wed, 09 Jan 2013 18:03:04 +0900
+
 wrt-commons (0.2.90) unstable; urgency=low
 
   * Changed PkgName type from DPL::Optional<DPL::String> to DPL::String. PART 4
