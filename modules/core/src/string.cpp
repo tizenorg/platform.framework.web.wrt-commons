@@ -145,7 +145,6 @@ std::string ToUTF8String(const DPL::String& aIn)
         ThrowMsg(StringException::IconvInitErrorUTF32ToUTF8,
                  "iconv_open failed for " << "UTF-8 <- UTF-32"
                             << "error: " << GetErrnoString());
-        return std::string();
     }
 
     size_t iconvRet = iconv(iconvHandle, &inbuf, &inbytes, &outbuf, &outbytesleft);
