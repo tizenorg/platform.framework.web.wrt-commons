@@ -20,7 +20,6 @@
 
 # common part
 FILE(GLOB DAO_TESTS_SOURCES "${PROJECT_SOURCE_DIR}/tests/dao/*DAO.cpp")
-MESSAGE(STATUS "DAO_TESTS_SOURCES: ${DAO_TESTS_SOURCES}")
 
 # target wrt-tests-dao
 SET(TARGET_DAO_TEST "wrt-tests-dao")
