@@ -71,7 +71,7 @@ protected:
     // Cross thread send support
     WrappedEventCallList m_wrappedCrossEventCallList;
     Mutex m_crossEventCallMutex;
-    WaitableEvent m_crossEventCallInvoker;
+    WaitableEvent* m_crossEventCallInvoker;
 
     Ecore_Event_Handler *m_eventCallHandler;
     Ecore_Fd_Handler *m_crossEventCallHandler;
@@ -110,6 +110,7 @@ public:
 
     virtual void AddEventCall(AbstractEventCall *abstractEventCall);
     virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime);
+    virtual void ResetCrossEventCallHandler();
 };
 
 MainEventDispatcher& GetMainEventDispatcherInstance();
