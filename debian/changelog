@@ -1,4 +1,13 @@
-wrt-commons (0.2.91) precise; urgency=low
+wrt-commons (0.2.92) unstable; urgency=low
+
+  * Removal of popup implementation
+  * Clean up unnecessary cmake log
+  * Improve XML test results collector
+  * Add method for reset crossEventCallHandler
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 16 Jan 2013 10:49:45 +0900
+
+wrt-commons (0.2.91) unstable; urgency=low
 
   * Fix issue Prevent Defect -17677
   * Fixing issues: 17677
@@ -6,7 +15,7 @@ wrt-commons (0.2.91) precise; urgency=low
   * Git : framework/web/wrt-commons
   * Tag : wrt-commons_0.2.91
 
- -- leerang <jihoon.chung@samsung.com>  Thu, 10 Jan 2013 19:30:41 +0900
+ -- leerang <leerang.song@samsung.com>  Wed, 09 Jan 2013 18:03:04 +0900
 
 wrt-commons (0.2.90) unstable; urgency=low
 
@@ -65,7 +74,7 @@ wrt-commons (0.2.85) unstable; urgency=low
 
  -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 28 Dec 2012 14:05:27 +0900
 
-wrt-commons (0.2.84) unstable; urgency=low
+wrt-commons (0.2.83) unstable; urgency=low
 
   * Replacing widget handle with tizenid in property DAO
 

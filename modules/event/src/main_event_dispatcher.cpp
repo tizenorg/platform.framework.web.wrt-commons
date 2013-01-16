@@ -64,8 +64,11 @@ MainEventDispatcher::MainEventDispatcher()
     if ((m_eventCallHandler = ecore_event_handler_add(m_eventId, &StaticDispatchEvent, this)) == NULL)
         ThrowMsg(Exception::CreateFailed, "Failed to register event handler!");
 
+    // Allocate WaitableEvent
+    m_crossEventCallInvoker = new WaitableEvent();
+
     // Register cross event handler
-    m_crossEventCallHandler = ecore_main_fd_handler_add(m_crossEventCallInvoker.GetHandle(), ECORE_FD_READ, &StaticDispatchCrossInvoker, this, NULL, NULL);
+    m_crossEventCallHandler = ecore_main_fd_handler_add(m_crossEventCallInvoker->GetHandle(), ECORE_FD_READ, &StaticDispatchCrossInvoker, this, NULL, NULL);
 
     if (m_crossEventCallHandler == NULL)
         ThrowMsg(Exception::CreateFailed, "Failed to register cross event handler!");
@@ -75,15 +78,18 @@ MainEventDispatcher::MainEventDispatcher()
 
 MainEventDispatcher::~MainEventDispatcher()
 {
-    // Remove event class handler
-    ecore_event_handler_del(m_eventCallHandler);
-    m_eventCallHandler = NULL;
-
     // Remove cross event handler
     ecore_main_fd_handler_del(m_crossEventCallHandler);
     m_crossEventCallHandler = NULL;
-
     LogPedantic("ECORE cross-event handler unregistered");
+
+    // Remove m_crossEventCallInvoker
+    delete m_crossEventCallInvoker;
+    m_crossEventCallInvoker = NULL;
+
+    // Remove event class handler
+    ecore_event_handler_del(m_eventCallHandler);
+    m_eventCallHandler = NULL;
 
     // Decrement ECORE init count
     // We do not need ecore routines any more
@@ -92,6 +98,33 @@ MainEventDispatcher::~MainEventDispatcher()
     // Late EFL event handling
     Assert(g_lateMainEventDispatcher == this);
     g_lateMainEventDispatcher = NULL;
+}
+
+void MainEventDispatcher::ResetCrossEventCallHandler()
+{
+    // Remove cross event handler
+    ecore_main_fd_handler_del(m_crossEventCallHandler);
+    m_crossEventCallHandler = NULL;
+    LogPedantic("ECORE cross-event handler unregistered");
+
+    // Re-allocate WaitableEvent
+    delete m_crossEventCallInvoker;
+    m_crossEventCallInvoker = new WaitableEvent();
+
+    // Register cross event handler
+    m_crossEventCallHandler =
+        ecore_main_fd_handler_add(m_crossEventCallInvoker->GetHandle(),
+                                  ECORE_FD_READ,
+                                  &StaticDispatchCrossInvoker,
+                                  this,
+                                  NULL,
+                                  NULL);
+
+    if (m_crossEventCallHandler == NULL) {
+        ThrowMsg(Exception::CreateFailed, "Failed to register cross event handler!");
+    }
+
+    LogPedantic("ECORE cross-event handler re-registered");
 }
 
 void MainEventDispatcher::StaticDeleteEvent(void *data, void *event)
@@ -226,7 +259,7 @@ void MainEventDispatcher::DispatchCrossInvoker()
 
     // Critical section
     {
-        m_crossEventCallInvoker.Reset();
+        m_crossEventCallInvoker->Reset();
         Mutex::ScopedLock lock(&m_crossEventCallMutex);
         m_wrappedCrossEventCallList.swap(stolenCrossEvents);
     }
@@ -261,7 +294,7 @@ void MainEventDispatcher::AddEventCall(AbstractEventCall *abstractEventCall)
         {
             Mutex::ScopedLock lock(&m_crossEventCallMutex);
             m_wrappedCrossEventCallList.push_back(WrappedEventCall(abstractEventCall, false, 0.0));
-            m_crossEventCallInvoker.Signal();
+            m_crossEventCallInvoker->Signal();
         }
 
         LogPedantic("Event pushed to cross-thread event list");
@@ -283,7 +316,7 @@ void MainEventDispatcher::AddTimedEventCall(AbstractEventCall *abstractEventCall
         {
             Mutex::ScopedLock lock(&m_crossEventCallMutex);
             m_wrappedCrossEventCallList.push_back(WrappedEventCall(abstractEventCall, true, dueTime));
-            m_crossEventCallInvoker.Signal();
+            m_crossEventCallInvoker->Signal();
         }
 
         LogPedantic("Event pushed to cross-thread event list");

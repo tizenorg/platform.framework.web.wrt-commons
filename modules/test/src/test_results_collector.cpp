@@ -19,12 +19,14 @@
  * @version     1.0
  * @brief       Implementation file some concrete TestResulstsCollector
  */
-#include <stddef.h>
+#include <cstddef>
 #include <dpl/test/test_results_collector.h>
 #include <dpl/colors.h>
 #include <dpl/assert.h>
 #include <dpl/foreach.h>
 #include <dpl/scoped_fclose.h>
+#include <dpl/exception.h>
+#include <dpl/errno_string.h>
 
 #include <string>
 #include <string.h>
@@ -80,11 +82,11 @@ class Statistic
         }
     }
 
-    size_t GetTotal() const { return m_count; }
-    size_t GetPassed() const { return m_passed; }
-    size_t GetSuccesed() const { return m_passed; }
-    size_t GetFailed() const { return m_failed; }
-    size_t GetIgnored() const { return m_ignored; }
+    std::size_t GetTotal() const { return m_count; }
+    std::size_t GetPassed() const { return m_passed; }
+    std::size_t GetSuccesed() const { return m_passed; }
+    std::size_t GetFailed() const { return m_failed; }
+    std::size_t GetIgnored() const { return m_ignored; }
     float GetPassedOrIgnoredPercend() const
     {
         float passIgnoredPercent =
@@ -95,10 +97,10 @@ class Statistic
     }
 
   private:
-    size_t m_failed;
-    size_t m_ignored;
-    size_t m_passed;
-    size_t m_count;
+    std::size_t m_failed;
+    std::size_t m_ignored;
+    std::size_t m_passed;
+    std::size_t m_count;
 };
 
 class ConsoleCollector
@@ -387,19 +389,39 @@ class XmlCollector
 
     virtual void CollectCurrentTestGroupName(const std::string& name)
     {
-        std::string groupHeader;
-        groupHeader.append("\n\t<testsuite name=\"");
-        groupHeader.append(EscapeSpecialCharacters(name));
-        groupHeader.append("\">\n\t\t<testcase name=\"unknown\" status=\"FAILED\">\n");
-        groupHeader.append("\t\t\t<failure type=\"FAILED\" message=\"segmentation fault\"/>\n");
-        groupHeader.append("\t\t</testcase>\n\t</testsuite>");
-        size_t pos = m_outputBuffer.find("</testsuites>");
-        m_outputBuffer.insert(pos - 1, groupHeader);
-        m_currentGroup = name;
-        fseek(m_fp.Get(), 0L, SEEK_SET);
-        fprintf(m_fp.Get(), "%s", m_outputBuffer.c_str());
-        fflush(m_fp.Get());
+        std::size_t pos = GetCurrentGroupPosition();
+        if (std::string::npos != pos)
+        {
+            GroupFinish(pos);
+            FlushOutput();
+            m_stats = Statistic();
+        }
 
+        pos = m_outputBuffer.find("</testsuites>");
+        if (std::string::npos == pos)
+        {
+            ThrowMsg(DPL::Exception, "Could not find test suites closing tag");
+        }
+        GroupStart(pos, name);
+    }
+
+    void GroupStart(const std::size_t pos, const std::string& name)
+    {
+        std::stringstream groupHeader;
+        groupHeader << "\n\t<testsuite";
+        groupHeader << " name=\"" << EscapeSpecialCharacters(name) << "\"";
+        groupHeader << R"( tests="1")"; // include SegFault
+        groupHeader << R"( failures="1")"; // include SegFault
+        groupHeader << R"( skipped="0")";
+        groupHeader << ">";
+
+        groupHeader << "\n\t\t<testcase name=\"unknown\" status=\"FAILED\">";
+        groupHeader << "\n\t\t\t<failure type=\"FAILED\" message=\"segmentation fault\"/>";
+        groupHeader << "\n\t\t</testcase>";
+
+        groupHeader << "\n\t</testsuite>";
+
+        m_outputBuffer.insert(pos - 1, groupHeader.str());
     }
 
     virtual bool Configure()
@@ -423,31 +445,17 @@ class XmlCollector
         Assert(!!m_fp && "File handle must not be null");
         m_outputBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         m_outputBuffer.append("<testsuites>\n</testsuites>");
-        fseek(m_fp.Get(), 0L, SEEK_SET);
-        fprintf(m_fp.Get(), "%s", m_outputBuffer.c_str());
-        fflush(m_fp.Get());
-
+        FlushOutput();
     }
 
     virtual void Finish()
     {
-        // Show result
-        FOREACH(group, m_groupsStats) {
-            PrintStats(group->first, group->second);
-            size_t posBegin = m_outputBuffer.find("<testcase name=\"unknown\"");
-            size_t posEnd = m_outputBuffer.find("</testcase>", posBegin);
-            m_outputBuffer.erase(posBegin - 3, posEnd - posBegin + sizeof("</testcase>") + 2);
+        std::size_t pos = GetCurrentGroupPosition();
+        if (std::string::npos != pos)
+        {
+            GroupFinish(pos);
+            FlushOutput();
         }
-
-        if(remove(m_filename.c_str())!=0){
-            LogError("Can't remove file. Error: " << strerror(errno));
-        }
-
-        m_fp.Reset(fopen (m_filename.c_str(), "w"));
-        Assert(!!m_fp && "File handle must not be null");
-        fseek(m_fp.Get(), 0L, SEEK_SET);
-        fprintf(m_fp.Get(),"%s", m_outputBuffer.c_str());
-        fflush(m_fp.Get());
     }
 
     virtual bool ParseCollectorSpecificArg(const std::string& arg)
@@ -469,7 +477,7 @@ class XmlCollector
                 m_resultBuffer.append(" status=\"OK\"/>\n");
                 break;
             case TestResultsCollectorBase::FailStatus::FAILED:
-                m_resultBuffer.append(" status=\"FAILED\">\n\t\t\t<failure");
+                m_resultBuffer.append(" status=\"FAILED\">\n");
                 PrintfErrorMessage("FAILED", EscapeSpecialCharacters(reason), true);
                 m_resultBuffer.append("\t\t</testcase>\n");
                 break;
@@ -479,22 +487,138 @@ class XmlCollector
                 m_resultBuffer.append("\t\t</testcase>\n");
                 break;
             case TestResultsCollectorBase::FailStatus::INTERNAL:
-                m_resultBuffer.append(" status=\"INTERNAL\">\n\t\t\t<failure");
+                m_resultBuffer.append(" status=\"FAILED\">\n");
                 PrintfErrorMessage("INTERNAL", EscapeSpecialCharacters(reason), true);
                 m_resultBuffer.append("\t\t</testcase>");
                 break;
             default:
                 Assert(false && "Bad status");
         }
-        size_t group_pos = m_outputBuffer.find(m_currentGroup);
-        size_t last_case_pos = m_outputBuffer.find("<testcase name=\"unknown\"", group_pos);
+        std::size_t group_pos = GetCurrentGroupPosition();
+        if (std::string::npos == group_pos)
+        {
+            ThrowMsg(DPL::Exception, "No current group set");
+        }
+
+        std::size_t last_case_pos = m_outputBuffer.find("<testcase name=\"unknown\"", group_pos);
+        if (std::string::npos == last_case_pos)
+        {
+            ThrowMsg(DPL::Exception, "Could not find SegFault test case");
+        }
         m_outputBuffer.insert(last_case_pos - 2, m_resultBuffer);
-        fseek(m_fp.Get(), 0L, SEEK_SET);
-        fprintf(m_fp.Get(), "%s", m_outputBuffer.c_str());
-        fflush(m_fp.Get());
-        m_groupsStats[m_currentGroup].AddTest(status);
+
         m_stats.AddTest(status);
 
+        UpdateGroupHeader(group_pos,
+                          m_stats.GetTotal() + 1, // include SegFault
+                          m_stats.GetFailed() + 1, // include SegFault
+                          m_stats.GetIgnored());
+        FlushOutput();
+    }
+
+    std::size_t GetCurrentGroupPosition() const
+    {
+        return m_outputBuffer.rfind("<testsuite ");
+    }
+
+    void UpdateGroupHeader(const std::size_t groupPosition,
+                           const unsigned int tests,
+                           const unsigned int failures,
+                           const unsigned int skipped)
+    {
+        UpdateElementAttribute(groupPosition, "tests", UIntToString(tests));
+        UpdateElementAttribute(groupPosition, "failures", UIntToString(failures));
+        UpdateElementAttribute(groupPosition, "skipped", UIntToString(skipped));
+    }
+
+    void UpdateElementAttribute(const std::size_t elementPosition,
+                                const std::string& name,
+                                const std::string& value)
+    {
+        std::string pattern = name + "=\"";
+
+        std::size_t start = m_outputBuffer.find(pattern, elementPosition);
+        if (std::string::npos == start)
+        {
+            ThrowMsg(DPL::Exception, "Could not find attribute " << name << " beginning");
+        }
+
+        std::size_t end = m_outputBuffer.find("\"", start + pattern.length());
+        if (std::string::npos == end)
+        {
+            ThrowMsg(DPL::Exception, "Could not find attribute " << name << " end");
+        }
+
+        m_outputBuffer.replace(start + pattern.length(),
+                               end - start - pattern.length(),
+                               value);
+    }
+
+    std::string UIntToString(const unsigned int value)
+    {
+        std::stringstream result;
+        result << value;
+        return result.str();
+    }
+
+    void GroupFinish(const std::size_t groupPosition)
+    {
+        std::size_t segFaultStart =
+                m_outputBuffer.find("<testcase name=\"unknown\"", groupPosition);
+        if (std::string::npos == segFaultStart)
+        {
+            ThrowMsg(DPL::Exception, "Could not find SegFault test case start position");
+        }
+        segFaultStart -= 2; // to erase tabs
+
+        std::string closeTag = "</testcase>";
+        std::size_t segFaultEnd = m_outputBuffer.find(closeTag, segFaultStart);
+        if (std::string::npos == segFaultEnd)
+        {
+            ThrowMsg(DPL::Exception, "Could not find SegFault test case end position");
+        }
+        segFaultEnd += closeTag.length() + 1; // to erase new line
+
+        m_outputBuffer.erase(segFaultStart, segFaultEnd - segFaultStart);
+
+        UpdateGroupHeader(groupPosition,
+                          m_stats.GetTotal(),
+                          m_stats.GetFailed(),
+                          m_stats.GetIgnored());
+    }
+
+    void FlushOutput()
+    {
+        int fd = fileno(m_fp.Get());
+        if (-1 == fd)
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(ftruncate(fd, 0L)))
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(fseek(m_fp.Get(), 0L, SEEK_SET)))
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (0 > fprintf(m_fp.Get(), m_outputBuffer.c_str()))
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(fflush(m_fp.Get())))
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
     }
 
     void PrintfErrorMessage(const char* type,
@@ -502,7 +626,7 @@ class XmlCollector
                             bool verbosity)
     {
         if (verbosity) {
-            m_resultBuffer.append(" type=\"");
+            m_resultBuffer.append("\t\t\t<failure type=\"");
             m_resultBuffer.append(EscapeSpecialCharacters(type));
             m_resultBuffer.append("\" message=\"");
             m_resultBuffer.append(EscapeSpecialCharacters(message));
@@ -510,7 +634,7 @@ class XmlCollector
 
         } else {
 
-            m_resultBuffer.append(" type=\"");
+            m_resultBuffer.append("\t\t\t<failure type=\"");
             m_resultBuffer.append(EscapeSpecialCharacters(type));
             m_resultBuffer.append("\"/>\n");
         }
@@ -534,26 +658,9 @@ class XmlCollector
         }
     }
 
-    void PrintStats(const std::string& name, const Statistic& stats)
-    {
-        std::stringstream totalStats;
-        totalStats << " tests=\"";
-        totalStats << stats.GetTotal();
-        totalStats << "\" failures=\"";
-        totalStats << stats.GetFailed();
-        totalStats << "\" skipped=\"";
-        totalStats << stats.GetIgnored();
-        totalStats << "\"";
-        std::string suiteHeader;
-        suiteHeader.append("<testsuite name=\"");
-        suiteHeader.append(EscapeSpecialCharacters(name));
-        size_t pos = m_outputBuffer.find(suiteHeader);
-        m_outputBuffer.insert(pos+suiteHeader.size()+1,totalStats.str());
-    }
-
     std::string EscapeSpecialCharacters(std::string s)
     {
-        for(unsigned int i = 0; i < s.size();){
+        for (unsigned int i = 0; i < s.size();) {
             switch(s[i]){
             case '"':
                 s.erase(i,1);
@@ -595,8 +702,6 @@ class XmlCollector
     std::string m_filename;
     ScopedFClose m_fp;
     Statistic m_stats;
-    std::string m_currentGroup;
-    std::map<std::string, Statistic> m_groupsStats;
     std::string m_outputBuffer;
     std::string m_resultBuffer;
 };
