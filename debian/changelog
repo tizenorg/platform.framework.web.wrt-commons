@@ -1,3 +1,22 @@
+wrt-commons (0.2.92) unstable; urgency=low
+
+  * Removal of popup implementation
+  * Clean up unnecessary cmake log
+  * Improve XML test results collector
+  * Add method for reset crossEventCallHandler
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 16 Jan 2013 10:49:45 +0900
+
+wrt-commons (0.2.91) unstable; urgency=low
+
+  * Fix issue Prevent Defect -17677
+  * Fixing issues: 17677
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.91
+
+ -- leerang <leerang.song@samsung.com>  Wed, 09 Jan 2013 18:03:04 +0900
+
 wrt-commons (0.2.90) unstable; urgency=low
 
   * Changed PkgName type from DPL::Optional<DPL::String> to DPL::String. PART 4
