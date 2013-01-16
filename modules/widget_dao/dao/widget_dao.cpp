@@ -530,25 +530,7 @@ void WidgetDAO::registerWidgetIcons(DbWidgetHandle widgetHandle,
             row.Set_app_id(widgetHandle);
             row.Set_icon_id(icon_id);
             row.Set_widget_locale(*j);
-            WRT_DB_SELECT(select, WidgetLocalizedIcon, &WrtDatabase::interface())
-            select->Where(And(Equals<WidgetLocalizedIcon::app_id>(widgetHandle),
-                              Equals<WidgetLocalizedIcon::widget_locale>(*j)));
-            WidgetLocalizedIcon::Select::RowList rows = select->GetRowList();
-
-            bool flag = !rows.empty();
-
-            if(flag == true)
-            {
-                // already default icon value of same locale exists
-                WRT_DB_UPDATE(update, WidgetLocalizedIcon, &WrtDatabase::interface())
-                update->Where(And(Equals<WidgetLocalizedIcon::app_id>(widgetHandle),
-                                  Equals<WidgetLocalizedIcon::widget_locale>(*j)));
-                update->Values(row);
-                update->Execute();
-            }else{
-                // any icon value of same locale doesn't exist
-                DO_INSERT(row, WidgetLocalizedIcon)
-            }
+            DO_INSERT(row, WidgetLocalizedIcon)
         }
     }
 }

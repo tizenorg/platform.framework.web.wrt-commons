@@ -719,6 +719,7 @@ WidgetDAOReadOnly::WidgetIconList WidgetDAOReadOnly::getIconList() const
     {
         WRT_DB_SELECT(select, wrt::WidgetIcon, &WrtDatabase::interface())
         select->Where(Equals<wrt::WidgetIcon::app_id>(m_widgetHandle));
+        select->OrderBy(DPL::TypeListDecl<OrderingAscending<wrt::WidgetIcon::icon_id> >());
 
         std::list<WidgetIcon::Row> list =
                 select->GetRowList();
