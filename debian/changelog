@@ -1,3 +1,12 @@
+wrt-commons (0.2.92) unstable; urgency=low
+
+  * Removal of popup implementation
+  * Clean up unnecessary cmake log
+  * Improve XML test results collector
+  * Add method for reset crossEventCallHandler
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 16 Jan 2013 10:49:45 +0900
+
 wrt-commons (0.2.91) unstable; urgency=low
 
   * Fix issue Prevent Defect -17677
