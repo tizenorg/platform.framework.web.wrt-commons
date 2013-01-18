@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <dpl/db/orm.h>
 
+
 namespace DPL {
 namespace DB {
 namespace ORM {
