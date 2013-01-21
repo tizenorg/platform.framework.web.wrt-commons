@@ -109,7 +109,7 @@ Connection::~Connection()
 
     std::for_each(m_registeredObjects.begin(),
                   m_registeredObjects.end(),
-                  [m_connection] (const RegisteredObjects::value_type& value)
+                  [this] (const RegisteredObjects::value_type& value)
                   {
                       g_dbus_connection_unregister_object(
                               m_connection,
