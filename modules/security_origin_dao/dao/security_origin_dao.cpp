@@ -72,16 +72,16 @@ std::string createDatabasePath(int widgetHandle)
     using namespace WrtDB::WidgetConfig;
     using namespace WrtDB::GlobalConfig;
 
-    WrtDB::WidgetPkgName pkgname;
+    WrtDB::TizenAppId appid;
 
     Try
     {
-        pkgname = WrtDB::WidgetDAOReadOnly::getPkgName(widgetHandle);
+        appid = WrtDB::WidgetDAOReadOnly::getTzAppId(widgetHandle);
     }
     Catch(DPL::DB::SqlConnection::Exception::Base) {
         LogError("Failed to get database Path");
     }
-    return createDatabasePath(pkgname);
+    return createDatabasePath(appid);
 }
 
 void checkDatabase(std::string databasePath)

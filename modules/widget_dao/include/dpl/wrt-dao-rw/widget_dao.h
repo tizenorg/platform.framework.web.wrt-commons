@@ -46,7 +46,7 @@ class WidgetDAO : public WidgetDAOReadOnly
 
     WidgetDAO(DbWidgetHandle handle);
     WidgetDAO(DPL::OptionalString widgetGUID);
-    WidgetDAO(DPL::String pkgName);
+    WidgetDAO(DPL::String tzAppId);
 
     /**
      * Destructor
@@ -58,12 +58,12 @@ class WidgetDAO : public WidgetDAOReadOnly
      *
      * @see WidgetRegisterInfo
      * @see UnRegisterWidget()
-     * @param[in] widgetPkgname Widget Pkgname that will be registered.
+     * @param[in] TizenAppId Widget app id that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information needed to be registered.
      * @param[in] wacSecurity   Widget's security certificates.
      */
     static void registerWidget(
-            const WidgetPkgName & widgetPkgname,
+            const TizenAppId& tzAppId,
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
 
@@ -79,9 +79,9 @@ class WidgetDAO : public WidgetDAOReadOnly
      *
      * @param pWidgetRegisterInfo registeration information
      * @param wacSecurity Widget's security certificates.
-     * @return pkgname generated
+     * @return tzAppId generated
      */
-    static WidgetPkgName registerWidgetGenerateTizenId(
+    static TizenAppId registerWidgetGeneratePkgId(
                 const WidgetRegisterInfo &pWidgetRegisterInfo,
                 const IWacSecurity &wacSecurity);
 
@@ -91,12 +91,12 @@ class WidgetDAO : public WidgetDAOReadOnly
      * It performs unregistration and new registration of widget in db in one transaction.
      *
      * @see WidgetRegisterInfo
-     * @param[in] widgetName  Widget pkgname that will be registered.
+     * @param[in] tzAppId  Widget tizen app id that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information needed to be registered.
      * @param[in] wacSecurity   Widget's security certificates.
      */
     static void registerOrUpdateWidget(
-            const WidgetPkgName & widgetName,
+            const TizenAppId & tzAppId,
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
 
@@ -109,9 +109,9 @@ class WidgetDAO : public WidgetDAOReadOnly
      * This method removes a widget's information from EmDB.
      *
      * @see RegisterWidget()
-     * @param[in] pkgName widgets name to be unregistered
+     * @param[in] tzAppId widgets name to be unregistered
      */
-    static void unregisterWidget(const WidgetPkgName & pkgName);
+    static void unregisterWidget(const TizenAppId & tzAppId);
 
     static void unregisterWidget(WrtDB::DbWidgetHandle handle) __attribute__((deprecated));
 
@@ -130,9 +130,9 @@ class WidgetDAO : public WidgetDAOReadOnly
             const PropertyDAOReadOnly::WidgetPropertyValue &value,
             bool readOnly = false);
 
-    /* set PkgName
+    /* set tzAppId
      */
-    void setPkgName(const WidgetPkgName& pkgName);
+    void setTizenAppId(const DPL::OptionalString& tzAppId);
 
     /* This function will update of api-feature status.
      * If status is true (feature rejected) plugin connected with this
@@ -152,7 +152,7 @@ class WidgetDAO : public WidgetDAOReadOnly
   private:
     //Methods used during widget registering
     static DbWidgetHandle registerWidgetInfo(
-            const WidgetPkgName & widgetName,
+            const TizenAppId & widgetName,
             const WidgetRegisterInfo &regInfo,
             const IWacSecurity &wacSecurity,
             const DPL::Optional<DbWidgetHandle> handle = DPL::Optional<DbWidgetHandle>());
@@ -209,12 +209,12 @@ class WidgetDAO : public WidgetDAOReadOnly
 
 
     static void registerWidgetInternal(
-            const WidgetPkgName & widgetName,
+            const TizenAppId & tzAppId,
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity,
             const DPL::Optional<DbWidgetHandle> handle = DPL::Optional<DbWidgetHandle>());
     static void unregisterWidgetInternal(
-            const WidgetPkgName & pkgName);
+            const TizenAppId & tzAppId);
 };
 
 } // namespace WrtDB

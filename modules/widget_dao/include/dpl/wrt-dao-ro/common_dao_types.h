@@ -81,6 +81,8 @@ class PluginObjectsDAO
  * FindWidgetModel routine.
  */
 typedef int DbWidgetHandle;
+typedef DPL::String TizenPkgId;
+typedef DPL::String TizenAppId;
 typedef DPL::String WidgetPkgName;
 
 /**
@@ -237,6 +239,7 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 
 typedef std::list<WidgetPkgName> WidgetPkgNameList; //TODO: this cannot be null -> appropriate changes in db schema needed
+typedef std::list<TizenAppId> TizenAppIdList; //TODO: this cannot be null -> appropriate changes in db schema needed
 
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;

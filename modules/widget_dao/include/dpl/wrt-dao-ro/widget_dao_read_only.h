@@ -178,6 +178,8 @@ struct WidgetRegisterInfo
 
     DPL::OptionalString pkgname;
     WidgetPkgName pkgName;
+    TizenPkgId tzPkgid;
+    TizenAppId tzAppid;
 
     time_t installedTime;
     PackagingType packagingType;
@@ -298,7 +300,7 @@ class WidgetDAOReadOnly
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
     WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
-    WidgetDAOReadOnly(DPL::String pkgName);
+    WidgetDAOReadOnly(DPL::String tzAppid);
 
     /**
      * Destructor
@@ -317,12 +319,25 @@ class WidgetDAOReadOnly
     static DbWidgetHandle getHandle(const DPL::String pkgName);
 
     /**
-     * Returns pkgname for the specified widget
+     * Returns tizenAppId for the specified widget
      *
-     * @return pkgname
+     * @return tzAppid; 
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
      */
+
+    TizenAppId getTzAppId() const;
+    static TizenAppId getTzAppId(const WidgetGUID GUID);
+    static TizenAppId getTzAppId(const DbWidgetHandle handle);
+
+    /**
+     * Returns WidgetPkgName for the specified widget
+     *
+     * @return pkgName; 
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+     */
+
     WidgetPkgName getPkgName() const;
     static WidgetPkgName getPkgName(const WidgetGUID GUID);
     static WidgetPkgName getPkgName(const DbWidgetHandle handle);
@@ -371,6 +386,15 @@ class WidgetDAOReadOnly
      */
     WidgetGUID getGUID() const;
 
+
+    /**
+    * This method returns the App id of the widget.
+    *
+    * @return appid
+    * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+    * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+    */
+    DPL::OptionalString getTizenAppId() const;
 
     /**
      * This method returns the defaultlocale for the widget.
@@ -564,6 +588,7 @@ class WidgetDAOReadOnly
      * This method returns list of pkgname of installed packages
      * @return list of pkgname of installed packages
      */
+    static TizenAppIdList getTizenAppidList();
     static WidgetPkgNameList getPkgnameList();
 
     /**
@@ -701,7 +726,7 @@ class WidgetDAOReadOnly
     bool getBackSupported() const;
 
     static bool isWidgetInstalled(DbWidgetHandle handle);
-    static bool isWidgetInstalled(const WidgetPkgName & pkgName);
+    static bool isWidgetInstalled(const TizenAppId & tzAppId);
 
     /* This method get path of the splash image.
      *
@@ -749,14 +774,17 @@ class WidgetDAOReadOnly
     DPL::OptionalString getBackgroundPage() const;
 
     /**
-     * @brief generateTizenId generates new tizen id
+     * @brief generateTizenId generates new package id
      *
-     * If widget do not supplies it's own tizen id, this method can be used,
+     * If widget do not supplies it's own tizen package id, this method can be used,
      * although it should be removed in future.
      *
-     * @return new tizen id
+     * @return new tizen package id
      */
-    static WidgetPkgName generateTizenId();
+    static TizenPkgId generatePkgId();
+    static TizenPkgId generateTizenId() {
+        return generatePkgId();
+    }
 
     /**
      * @brief This method return each value for security setting
@@ -779,6 +807,13 @@ class WidgetDAOReadOnly
      * @return path of widget installed
      */
     DPL::OptionalString getWidgetInstalledPath() const;
+
+    /**
+     * This method returns tizen package id
+     *
+     * @return tizen package id
+     */
+    TizenPkgId getTizenPkgId() const;
 };
 
 } // namespace WrtDB
