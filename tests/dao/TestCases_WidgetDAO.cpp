@@ -82,33 +82,33 @@ private:
 
 };
 
-WidgetPkgName _registerWidget(const WidgetRegisterInfo& regInfo,
+TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
                              const IWacSecurity& sec,
                              int line)
 {
-    WidgetPkgName pkgname;
+    TizenAppId tizenAppId;
     Try {
-        auto previous = WidgetDAO::getPkgnameList();
+        auto previous = WidgetDAO::getTizenAppidList();
 
         // register widget
-        pkgname = WidgetDAO::registerWidgetGenerateTizenId(regInfo, sec);
+        tizenAppId = WidgetDAO::registerWidgetGeneratePkgId(regInfo, sec);
 
-        RUNNER_ASSERT_MSG(!pkgname.empty(),
+        RUNNER_ASSERT_MSG(!tizenAppId.empty(),
                           "(called from line " << line << ")");
 
-        auto current = WidgetDAO::getPkgnameList();
+        auto current = WidgetDAO::getTizenAppidList();
         RUNNER_ASSERT_MSG(previous.size()+1 == current.size(),
                           "(called from line " << line << ")");
 
-        RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(pkgname),
-                          "(called from line " << line << " pkgname: " << pkgname << ")");
+        RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId),
+                          "(called from line " << line << " tizenAppId: " << tizenAppId << ")");
     }
     Catch (WidgetDAO::Exception::AlreadyRegistered) {
         RUNNER_ASSERT_MSG(
                 false,
                 "Unexpected exception (called from line " << line << ")");
     }
-    return pkgname;
+    return tizenAppId;
 }
 
 #define REGISTER_WIDGET(regInfo, sec) _registerWidget((regInfo),(sec), __LINE__)
@@ -257,16 +257,16 @@ RUNNER_TEST(widget_dao_test_register_widget_minimum_info)
     WacSecurityMock sec;
     const std::size_t NUMBER_OF_WIDGETS = 5;
 
-    WidgetPkgName lastPkgname;
+    TizenAppId lastTizenAppId;
 
     for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
     {
         WidgetRegisterInfo regInfo;
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-        lastPkgname = pkgname;
+        lastTizenAppId = tizenAppId;
 
-        WidgetDAO dao(pkgname);
+        WidgetDAO dao(tizenAppId);
         //TODO check nulls
     }
 }
@@ -302,9 +302,9 @@ RUNNER_TEST(widget_dao_test_register_widget_info)
         regInfo.minVersion = DPL::FromUTF8String("1.0");
         regInfo.configInfo.backSupported = true;
 
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-        WidgetDAO dao(pkgname);
+        WidgetDAO dao(tizenAppId);
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getGUID(), str.str());
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getVersion(), str.str());
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getAuthorName(), str.str());
@@ -340,9 +340,9 @@ RUNNER_TEST(widget_dao_test_register_widget_extended_info)
 //        regInfo.shareHref = str.str();
         regInfo.configInfo.backgroundPage = L"background.html";
 
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-        WidgetDAO dao(pkgname);
+        WidgetDAO dao(tizenAppId);
 //        RUNNER_ASSERT_WHAT_EQUALS(dao.GetShareHref(), str.str());
 
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getBackgroundPage(),
@@ -391,9 +391,9 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
                     std::make_pair(DPL::FromUTF8String("pl"),locDataPl));
         }
 
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-        WidgetDAO dao(pkgname);
+        WidgetDAO dao(tizenAppId);
         RUNNER_ASSERT_MSG(dao.getLanguageTags().size() == 2,
                           "language tags list invalid");
 
@@ -450,9 +450,9 @@ RUNNER_TEST(widget_dao_test_register_widget_icons)
     WidgetRegisterInfo::LocalizedIcon locIcon(icon,locs);
     regInfo.localizationData.icons.push_back(locIcon);
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
     WidgetDAOReadOnly::WidgetIconList list = dao.getIconList();
 
     RUNNER_ASSERT(list.size() == regInfo.localizationData.icons.size());
@@ -524,9 +524,9 @@ RUNNER_TEST(widget_dao_test_register_widget_features)
     FOREACH(it, features)
         regInfo.configInfo.featuresList.insert(*it);
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
     WidgetFeatureSet out = dao.getFeaturesList();
     RUNNER_ASSERT_MSG(out.size() == features.size(),
                       "wrong number of features");
@@ -544,9 +544,9 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
 {
     WacSecurityMock sec;
     WidgetRegisterInfo regInfo;
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
     RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_ON, "SecurityPopupUsage is not deafult on");
     RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON, "GeolocationUsage is not deafult on");
     RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage is not deafult on");
@@ -613,9 +613,9 @@ RUNNER_TEST(widget_dao_test_register_widget_win_modes)
     FOREACH(it, modes)
         regInfo.configInfo.windowModes.insert(*it);
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
     std::list<DPL::String> wins = dao.getWindowModes();
     RUNNER_ASSERT_MSG(modes.size() == wins.size(),
                       "wrong number of window modes");
@@ -643,9 +643,9 @@ RUNNER_TEST(widget_dao_test_register_widget_warp_info)
     FOREACH(it, orig)
         regInfo.configInfo.accessInfoSet.insert(*it);
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
 
     WidgetAccessInfoList out;
     dao.getWidgetAccessInfo(out);
@@ -680,9 +680,9 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
     certListRef.push_back(cert);
 
     // register widget
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
 
     // certificates
     WidgetCertificateDataList recList = dao.getCertificateDataList();
@@ -763,9 +763,9 @@ RUNNER_TEST(widget_dao_test_is_widget_installed)
     WacSecurityMock sec;
     WidgetRegisterInfo regInfo;
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    RUNNER_ASSERT(WidgetDAO::isWidgetInstalled(pkgname));
+    RUNNER_ASSERT(WidgetDAO::isWidgetInstalled(tizenAppId));
 }
 
 /*
@@ -780,9 +780,9 @@ RUNNER_TEST(widget_dao_test_unregister_widget)
 
     WidgetRegisterInfo regInfo;
 
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO::unregisterWidget(pkgname);
+    WidgetDAO::unregisterWidget(tizenAppId);
 
     RUNNER_ASSERT_MSG(handles.size() == WidgetDAO::getHandleList().size(),
                       "Widget unregister failed");
@@ -805,38 +805,38 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
     regInfo2.configInfo.version = L"1.1";
     regInfo2.configInfo.authorName = L"BBB";
 
-    WrtDB::WidgetPkgName pkgname(L"abcdefghij");
+    WrtDB::TizenAppId tizenAppId(L"abcdefghij");
 
     //first installation
-    WidgetDAO::registerWidget(pkgname, regInfo, sec);
-    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(pkgname), "Widget is not registered");
+    WidgetDAO::registerWidget(tizenAppId, regInfo, sec);
+    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId), "Widget is not registered");
 
     //success full update
-    WidgetDAO::registerOrUpdateWidget(pkgname, regInfo2, sec);
-    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(pkgname), "Widget is not reregistered");
-    WidgetDAO dao(pkgname);
+    WidgetDAO::registerOrUpdateWidget(tizenAppId, regInfo2, sec);
+    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId), "Widget is not reregistered");
+    WidgetDAO dao(tizenAppId);
     RUNNER_ASSERT_MSG(*dao.getVersion() == L"1.1", "Data widget was not updated");
     RUNNER_ASSERT_MSG(*dao.getAuthorName() == L"BBB", "Data widget was not updated");
 
-    WidgetDAO::unregisterWidget(pkgname);
+    WidgetDAO::unregisterWidget(tizenAppId);
 }
 
 /*
-Name: widget_dao_test_get_widget_pkgname_list
-Description: Tests getPkgnameList API for backendlib
+Name: widget_dao_test_get_widget_tizenAppId_list
+Description: Tests getTizenAppidList API for backendlib
 Expected: For all position in database should be returned one item in list
 */
-RUNNER_TEST(widget_dao_test_get_widget_pkgname_list)
+RUNNER_TEST(widget_dao_test_get_widget_tizenAppId_list)
 {
-    WidgetPkgNameList pkgnames = WidgetDAO::getPkgnameList();
-    RUNNER_ASSERT(pkgnames.size() >= 3);
+    TizenAppIdList tizenAppIds = WidgetDAO::getTizenAppidList();
+    RUNNER_ASSERT(tizenAppIds.size() >= 3);
 }
 
 /*
 Name: widget_dao_test_get_widget_list
-Description: Tests getPkgnameList API for backendlib
+Description: Tests getTizenAppidList API for backendlib
 Expected: For all position in database should be returned one item in list
- Those item should contain valid pkgname
+ Those item should contain valid tizenAppId
 */
 RUNNER_TEST(widget_dao_test_get_widget_list)
 {
@@ -854,8 +854,8 @@ Expected: Attributes should match values inserted into database
 RUNNER_TEST(widget_dao_test_get_widget_attributes)
 {
     {
-        WidgetPkgName pkgname = L"tizenid201";
-        WidgetDAO dao(pkgname);
+        TizenAppId tizenAppId = L"tizenid201";
+        WidgetDAO dao(tizenAppId);
 
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getGUID(), "w_id_2000");
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getVersion(), "1.0.0");
@@ -907,9 +907,9 @@ RUNNER_TEST(widget_dao_test_localization)
     regInfo.localizationData.startFiles.push_back(file);
 
     // register widget
-    WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
-    WidgetDAO dao(pkgname);
+    WidgetDAO dao(tizenAppId);
 
     // check localized icons
     WidgetDAO::WidgetLocalizedIconList locList = dao.getLocalizedIconList();
@@ -956,8 +956,8 @@ RUNNER_TEST(widget_dao_test_wac_security)
     WidgetRegisterInfo regInfo;
     {
         // register widget
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
-        WidgetDAO dao(pkgname);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+        WidgetDAO dao(tizenAppId);
 
         RUNNER_ASSERT(!dao.isDistributorSigned());
         RUNNER_ASSERT(!dao.isRecognized());
@@ -968,8 +968,8 @@ RUNNER_TEST(widget_dao_test_wac_security)
     sec.setWacSigned(true);
     {
         // register widget
-        WidgetPkgName pkgname = REGISTER_WIDGET(regInfo, sec);
-        WidgetDAO dao(pkgname);
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+        WidgetDAO dao(tizenAppId);
 
         RUNNER_ASSERT(dao.isDistributorSigned());
         RUNNER_ASSERT(dao.isRecognized());
