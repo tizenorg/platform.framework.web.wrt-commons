@@ -1,3 +1,11 @@
+wrt-commons (0.2.94) unstable; urgency=low
+
+  * Revert "Change pkgname to appid and add package id PART 1."
+  * Revert "change pkgname to appid PART 2."
+  * Fix build break in tests after API has been changed.
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Fri, 25 Jan 2013 22:32:36 +0900
+
 wrt-commons (0.2.93) unstable; urgency=low
 
   * Changed PkgName type from Optional<String> to String PART 5
