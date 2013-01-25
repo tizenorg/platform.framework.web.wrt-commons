@@ -32,41 +32,41 @@
 namespace WrtDB {
 namespace WidgetConfig {
 
-inline std::string GetWidgetBasePath(DPL::String tzPkgId)
+inline std::string GetWidgetBasePath(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetWidgetUserDataPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .GetFullPath();
 }
 
-inline std::string GetWidgetWebLocalStoragePath(DPL::String tzPkgId)
+inline std::string GetWidgetWebLocalStoragePath(DPL::String pkgName)
 {
-    return PathBuilder(GetWidgetBasePath(tzPkgId))
+    return PathBuilder(GetWidgetBasePath(pkgName))
                .Append(GlobalConfig::GetWidgetLocalStoragePath())
                .GetFullPath();
 }
 
-inline std::string GetWidgetPersistentStoragePath(DPL::String tzPkgId)
+inline std::string GetWidgetPersistentStoragePath(DPL::String pkgName)
 {
-    return PathBuilder(GetWidgetBasePath(tzPkgId))
+    return PathBuilder(GetWidgetBasePath(pkgName))
                .Append(GlobalConfig::GetWidgetPrivateStoragePath())
                .GetFullPath();
 }
 
-inline std::string GetWidgetTemporaryStoragePath(DPL::String tzPkgId)
+inline std::string GetWidgetTemporaryStoragePath(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetTmpDirPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .GetFullPath();
 }
 
-inline std::string GetWidgetDesktopFilePath(DPL::String tzPkgId)
+inline std::string GetWidgetDesktopFilePath(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetUserWidgetDesktopPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(".desktop")
                .GetFullPath();
 }

@@ -38,13 +38,12 @@ CREATE_TABLE(WidgetInfo)
     COLUMN_NOT_NULL(back_supported, TINYINT,       DEFAULT 0)
     COLUMN(access_network,          TINYINT,       DEFAULT 0)
     COLUMN(defaultlocale,           VARCHAR(256),  DEFAULT 0)
-    COLUMN_NOT_NULL(tizen_pkgid,    VARCHAR(256),  DEFAULT '')
-    COLUMN_NOT_NULL(tizen_appid,    VARCHAR(256),  DEFAULT 0 UNIQUE)
+    COLUMN_NOT_NULL(pkgname,        VARCHAR(256),  DEFAULT 0 UNIQUE)
     COLUMN(pkg_type,                INT,  DEFAULT 0)
 CREATE_TABLE_END()
 
 SQL(
-    CREATE INDEX IF NOT EXISTS WidgetInfo_AppidIndex ON WidgetInfo(tizen_appid);
+    CREATE INDEX IF NOT EXISTS WidgetInfo_PkgnameIndex ON WidgetInfo(pkgname);
 )
 
 CREATE_TABLE(WidgetCertificate)
@@ -99,14 +98,14 @@ CREATE_TABLE(WidgetExtendedInfo)
 CREATE_TABLE_END()
 
 CREATE_TABLE(WidgetPreference)
-    COLUMN_NOT_NULL(tizen_appid,    VARCHAR(256),  DEFAULT 0)
+    COLUMN_NOT_NULL(pkgname,    VARCHAR(256),  DEFAULT 0)
     COLUMN_NOT_NULL(key_name,   VARCHAR(256),)
     COLUMN(key_value,           VARCHAR(8000),  DEFAULT '')
     COLUMN(readonly,            INT,            DEFAULT 0)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY(tizen_appid, key_name),
-        FOREIGN KEY(tizen_appid) REFERENCES WidgetInfo (tizen_appid) ON DELETE CASCADE
+        PRIMARY KEY(pkgname, key_name),
+        FOREIGN KEY(pkgname) REFERENCES WidgetInfo (pkgname) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 

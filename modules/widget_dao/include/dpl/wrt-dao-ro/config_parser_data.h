@@ -307,8 +307,6 @@ class ConfigParserData
     // tizen id / required platform min version for TIZEN webapp
     DPL::OptionalString tizenId;
     DPL::OptionalString tizenMinVersionRequired;
-    DPL::OptionalString tizenPkgId;
-    DPL::OptionalString tizenAppId;
 
     //Application service model list
     ServiceInfoList appServiceList; //It will be removed.

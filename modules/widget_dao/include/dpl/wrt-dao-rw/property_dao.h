@@ -36,7 +36,7 @@ void RemoveProperty(DbWidgetHandle widgetHandle,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
                                         __attribute__((deprecated));
 
-void RemoveProperty(TizenAppId tzAppid,
+void RemoveProperty(WidgetPkgName pkgName,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key);
 
 //deprecated
@@ -50,7 +50,7 @@ void SetProperty(DbWidgetHandle widgetHandle,
 
 /* This method sets widget property
  */
-void SetProperty(TizenAppId tzAppid,
+void SetProperty(WidgetPkgName pkgName,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly = false);
@@ -66,7 +66,7 @@ void RegisterProperties(DbWidgetHandle widgetHandle,
 /* This method registers properties for widget.
  * Properties unregistering is done via "delete cascade" mechanism in SQL
  */
-void RegisterProperties(TizenAppId tzAppid,
+void RegisterProperties(WidgetPkgName pkgName,
                         const WidgetRegisterInfo &regInfo);
 
 } // namespace PropertyDAO

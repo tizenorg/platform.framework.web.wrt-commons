@@ -34,22 +34,22 @@ namespace PropertyDAO {
 void RemoveProperty(DbWidgetHandle widgetHandle,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
 {
-    RemoveProperty(WidgetDAOReadOnly::getTzAppId(widgetHandle),key);
+    RemoveProperty(WidgetDAOReadOnly::getPkgName(widgetHandle),key);
 }
 
-void RemoveProperty(TizenAppId tzAppid,
+void RemoveProperty(WidgetPkgName pkgName,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
 {
     //TODO below there are two queries.
     // First query asks if given property can be removed,
     // Second removes it. Maybe it should be combined two one.
 
-    LogDebug("Removing Property. appid: " << tzAppid << ", key: " << key);
+    LogDebug("Removing Property. pkgName: " << pkgName << ", key: " << key);
     Try {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
-                tzAppid,
+                pkgName,
                 key);
         if (!readonly.IsNull() && *readonly == 1) {
             LogError("'" << key <<
@@ -64,7 +64,7 @@ void RemoveProperty(TizenAppId tzAppid,
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_DELETE(del, WidgetPreference, &WrtDatabase::interface())
         del->Where(And(
-                       Equals<WidgetPreference::tizen_appid>(tzAppid),
+                       Equals<WidgetPreference::pkgname>(pkgName),
                        Equals<WidgetPreference::key_name>(key)));
         del->Execute();
 
@@ -82,15 +82,15 @@ void SetProperty(DbWidgetHandle widgetHandle,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly)
 {
-    SetProperty(WidgetDAOReadOnly::getTzAppId(widgetHandle),key,value,readOnly);
+    SetProperty(WidgetDAOReadOnly::getPkgName(widgetHandle),key,value,readOnly);
 }
 
-void SetProperty(TizenAppId tzAppid,
+void SetProperty(WidgetPkgName pkgName,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly)
 {
-    LogDebug("Setting/updating Property. appid: " << tzAppid <<
+    LogDebug("Setting/updating Property. pkgName: " << pkgName <<
              ", key: " << key);
     Try {
         using namespace DPL::DB::ORM;
@@ -98,7 +98,7 @@ void SetProperty(TizenAppId tzAppid,
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
-                tzAppid,
+                pkgName,
                 key);
         if (!readonly.IsNull() && *readonly == 1) {
             LogError("'" << key <<
@@ -109,7 +109,7 @@ void SetProperty(TizenAppId tzAppid,
 
         if (readonly.IsNull()) {
             WidgetPreference::Row row;
-            row.Set_tizen_appid(tzAppid);
+            row.Set_pkgname(pkgName);
             row.Set_key_name(key);
             row.Set_key_value(value);
             row.Set_readonly(readOnly ? 1 : 0);
@@ -123,7 +123,7 @@ void SetProperty(TizenAppId tzAppid,
 
             WRT_DB_UPDATE(update, WidgetPreference, &WrtDatabase::interface())
             update->Where(And(
-                              Equals<WidgetPreference::tizen_appid>(tzAppid),
+                              Equals<WidgetPreference::pkgname>(pkgName),
                               Equals<WidgetPreference::key_name>(key)));
 
             update->Values(row);
@@ -141,13 +141,13 @@ void SetProperty(TizenAppId tzAppid,
 void RegisterProperties(DbWidgetHandle widgetHandle,
                         const WidgetRegisterInfo &regInfo)
 {
-    RegisterProperties(WidgetDAOReadOnly::getTzAppId(widgetHandle),regInfo);
+    RegisterProperties(WidgetDAOReadOnly::getPkgName(widgetHandle),regInfo);
 }
 
-void RegisterProperties(TizenAppId tzAppid,
+void RegisterProperties(WidgetPkgName pkgName,
                         const WidgetRegisterInfo &regInfo)
 {
-    LogDebug("Registering proferences for widget. appid: " << tzAppid);
+    LogDebug("Registering proferences for widget. pkgName: " << pkgName);
 
     // Try-Catch in WidgetDAO
 
@@ -159,7 +159,7 @@ void RegisterProperties(TizenAppId tzAppid,
     {
         { // Insert into table Widget Preferences
             WidgetPreference::Row row;
-            row.Set_tizen_appid(tzAppid);
+            row.Set_pkgname(pkgName);
             row.Set_key_name(it->name);
             row.Set_key_value(it->value);
             int readonly = true == it->readonly ? 1 : 0;

@@ -30,64 +30,64 @@
 
 namespace WrtDB {
 namespace VconfConfig {
-inline std::string GetVconfKeyRootPath(DPL::String tzPkgId)
+inline std::string GetVconfKeyRootPath(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyPopupUsage(DPL::String tzPkgId)
+inline std::string GetVconfKeyPopupUsage(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyPopupUsagePath())
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyGeolocationUsage(DPL::String tzPkgId)
+inline std::string GetVconfKeyGeolocationUsage(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyGeolocationUsagePath())
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyWebNotificationUsage(DPL::String tzPkgId)
+inline std::string GetVconfKeyWebNotificationUsage(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyWebNotificationUsagePath())
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyWebDatabaseUsage(DPL::String tzPkgId)
+inline std::string GetVconfKeyWebDatabaseUsage(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyWebDatabaseUsagePath())
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyFilesystemUsage(DPL::String tzPkgId)
+inline std::string GetVconfKeyFilesystemUsage(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyFilesystemUsagePath())
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyMemorySavingMode(DPL::String tzPkgId)
+inline std::string GetVconfKeyMemorySavingMode(DPL::String pkgName)
 {
     return PathBuilder()
                .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+               .Append(DPL::ToUTF8String(pkgName))
                .Concat(GlobalConfig::GetVconfKeyMemorySavingModePath())
                .GetFullPath();
 }

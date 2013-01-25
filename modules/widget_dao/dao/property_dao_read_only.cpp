@@ -59,7 +59,7 @@ void convertWidgetPreferenceRow(const ORMWidgetPreferenceList& ormWidgetPrefRow,
     FOREACH(it, ormWidgetPrefRow) {
         WidgetPreferenceRow row;
 
-        row.tizen_appid = it->Get_tizen_appid();
+        row.pkgname = it->Get_pkgname();
         row.key_name = it->Get_key_name();
         row.key_value = it->Get_key_value();
         row.readonly = it->Get_readonly();
@@ -83,21 +83,21 @@ void convertWidgetPropertyKeyList(const ORMWidgetPropertyKeyList& propKeyList,
 DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
                                   const WidgetPropertyKey &key)
 {
-    return CheckPropertyReadFlag(WidgetDAOReadOnly::getTzAppId(widgetHandle),
+    return CheckPropertyReadFlag(WidgetDAOReadOnly::getPkgName(widgetHandle),
                                  key);
 }
 
-DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
+DPL::OptionalInt CheckPropertyReadFlag(WidgetPkgName pkgName,
                                   const WidgetPropertyKey &key)
 {
-    LogDebug("Checking Property flag. appid: " << tzAppid <<
+    LogDebug("Checking Property flag. pkgName: " << pkgName <<
              ", key: " << key);
 
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
+        select->Where(And(Equals<WidgetPreference::pkgname>(pkgName),
                           Equals<WidgetPreference::key_name>(key)));
 
         return select->GetSingleValue<WidgetPreference::readonly>();
@@ -111,18 +111,18 @@ DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
 //deprecated
 WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
 {
-    return GetPropertyKeyList(WidgetDAOReadOnly::getTzAppId(widgetHandle));
+    return GetPropertyKeyList(WidgetDAOReadOnly::getPkgName(widgetHandle));
 }
 
-WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
+WidgetPropertyKeyList GetPropertyKeyList(WidgetPkgName pkgName)
 {
-    LogDebug("Get PropertyKey list. appid: " << tzAppid);
+    LogDebug("Get PropertyKey list. pkgName: " << pkgName);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         ORMWidgetPropertyKeyList keyList;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppid));
+        select->Where(Equals<WidgetPreference::pkgname>(pkgName));
         keyList = select->GetValueList<WidgetPreference::key_name>();
 
         WidgetPropertyKeyList retKeyList;
@@ -140,22 +140,22 @@ WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
 WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 {
     Try{
-        TizenAppId tzAppid = WidgetDAOReadOnly::getTzAppId(widgetHandle);
-        return GetPropertyList(tzAppid);
+        WidgetPkgName pkgName=WidgetDAOReadOnly::getPkgName(widgetHandle);
+        return GetPropertyList(pkgName);
     }Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
         WidgetPreferenceList empty;
         return empty;
     }
 }
 
-WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
+WidgetPreferenceList GetPropertyList(WidgetPkgName pkgName)
 {
-    LogDebug("Get Property list. tizenAppId: " << tzAppId);
+    LogDebug("Get Property list. pkgName: " << pkgName);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppId));
+        select->Where(Equals<WidgetPreference::pkgname>(pkgName));
 
         ORMWidgetPreferenceList ormPrefList = select->GetRowList();
         WidgetPreferenceList prefList;
@@ -173,19 +173,19 @@ WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
 WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
                                      const WidgetPropertyKey &key)
 {
-    return GetPropertyValue(WidgetDAOReadOnly::getTzAppId(widgetHandle),key);
+    return GetPropertyValue(WidgetDAOReadOnly::getPkgName(widgetHandle),key);
 }
 
-WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
+WidgetPropertyValue GetPropertyValue(WidgetPkgName pkgName,
                                      const WidgetPropertyKey &key)
 {
-    LogDebug("Get Property value. appid: " << tzAppid <<
+    LogDebug("Get Property value. pkgName: " << pkgName <<
              ", key: " << key);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
+        select->Where(And(Equals<WidgetPreference::pkgname>(pkgName),
                           Equals<WidgetPreference::key_name>(key)));
 
         ORMWidgetPropertyValue ormPropValue =
