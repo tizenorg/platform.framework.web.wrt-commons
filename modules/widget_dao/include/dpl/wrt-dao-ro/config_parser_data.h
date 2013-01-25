@@ -237,7 +237,8 @@ class ConfigParserData
         struct BoxContent
         {
             DPL::String m_boxSrc;
-            BoxSizeList m_boxSize ;
+            DPL::String m_boxMouseEvent;
+            BoxSizeList m_boxSize;
             DPL::String m_pdSrc;
             DPL::String m_pdWidth;
             DPL::String m_pdHeight;
@@ -247,6 +248,7 @@ class ConfigParserData
         DPL::String m_icon;
         DPL::String m_liveboxId;
         DPL::String m_primary;
+        DPL::String m_type;
         DPL::String m_autoLaunch;
         DPL::String m_updatePeriod;
         BoxContentInfo m_boxInfo;
