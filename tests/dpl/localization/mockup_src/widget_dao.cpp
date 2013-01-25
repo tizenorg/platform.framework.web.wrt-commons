@@ -44,7 +44,7 @@ DbWidgetHandle WidgetDAO::getHandle(const WidgetGUID /* GUID */) const
     return 0;
 }
 
-DbWidgetHandle WidgetDAO::getHandle(const DPL::String /* pkgName */)
+DbWidgetHandle WidgetDAO::getHandle(const DPL::String /* tizenAppId */)
 {
     LogError("Not implemented!");
     return 0;

@@ -373,15 +373,6 @@ class WidgetDAOReadOnly
 
 
     /**
-    * This method returns the Package name of the widget.
-    *
-    * @return pkgname
-    * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
-    * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
-    */
-    DPL::OptionalString getPkgname() const;
-
-    /**
      * This method returns the defaultlocale for the widget.
      *
      * @return defaultlocale
@@ -574,7 +565,6 @@ class WidgetDAOReadOnly
      * @return list of pkgname of installed packages
      */
     static WidgetPkgNameList getPkgnameList();
-    static WidgetPkgNameList_TEMPORARY_API getPkgnameList_TEMPORARY_API();
 
     /**
      * This method returns a list of all the installed widgets.

@@ -511,7 +511,7 @@ public:
 
         this->m_storage.Set(value);
 
-        EmitEvent(PropertyEvent<Type>(value, this->m_model),
+        this->EmitEvent(PropertyEvent<Type>(value, this->m_model),
                   EmitMode::Auto);
     }
 

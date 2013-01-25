@@ -413,16 +413,6 @@ WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
 }
 
-WidgetPkgNameList_TEMPORARY_API WidgetDAOReadOnly::getPkgnameList_TEMPORARY_API()
-{
-    LogDebug("Getting Pkgname List ");
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        return select->GetValueList<WidgetInfo::pkgname>();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
-}
 
 DbWidgetDAOReadOnlyList WidgetDAOReadOnly::getWidgetList()
 {
@@ -526,11 +516,6 @@ WidgetGUID WidgetDAOReadOnly::getGUID() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
     return row.Get_widget_id();
-}
-
-DPL::OptionalString WidgetDAOReadOnly::getPkgname() const
-{
-    return DPL::OptionalString(getPkgName());
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getDefaultlocale() const
@@ -734,6 +719,7 @@ WidgetDAOReadOnly::WidgetIconList WidgetDAOReadOnly::getIconList() const
     {
         WRT_DB_SELECT(select, wrt::WidgetIcon, &WrtDatabase::interface())
         select->Where(Equals<wrt::WidgetIcon::app_id>(m_widgetHandle));
+        select->OrderBy(DPL::TypeListDecl<OrderingAscending<wrt::WidgetIcon::icon_id> >());
 
         std::list<WidgetIcon::Row> list =
                 select->GetRowList();

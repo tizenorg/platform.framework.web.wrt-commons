@@ -158,7 +158,7 @@ class WidgetDAO
      */
     DbWidgetHandle getHandle() const { return m_widgetHandle; }
     DbWidgetHandle getHandle(const WidgetGUID GUID) const;
-    static DbWidgetHandle getHandle(const DPL::String pkgName);
+    static DbWidgetHandle getHandle(const DPL::String tizenAppId);
 
     /**
      * This method returns the root directory of widget resource.

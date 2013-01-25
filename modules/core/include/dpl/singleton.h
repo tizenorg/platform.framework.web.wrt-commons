@@ -45,7 +45,6 @@ private:
     }
 
     typedef Optional<Thread *> OptionalThreadPtr;
-    OptionalThreadPtr m_guard;
 
     static Singleton &InternalInstance();
 
@@ -55,10 +54,6 @@ public:
     }
 
     static Class &Instance();
-
-    // Thread guarding
-    static void SetThreadGuard(Thread *thread);
-    static void ResetThreadGuard();
 };
 
 } // namespace DPL

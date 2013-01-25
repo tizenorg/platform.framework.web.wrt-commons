@@ -35,31 +35,11 @@ template<>                                                                     \
 Class &Singleton<Class>::Instance()                                            \
 {                                                                              \
     Singleton<Class>& instance = Singleton<Class>::InternalInstance();         \
-    if (!!instance.m_guard)                                                    \
-    {                                                                          \
-        Assert(Thread::GetCurrentThread() == *instance.m_guard &&              \
-               "Singleton thread guard failed. A forbidden call from foreign thread was detected!");\
-    }                                                                          \
     return instance;                                                           \
 }                                                                              \
                                                                                \
-template<>                                                                     \
-void Singleton<Class>::SetThreadGuard(Thread *thread)                          \
-{                                                                              \
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();         \
-    instance.m_guard = OptionalThreadPtr(thread);                              \
-}                                                                              \
-                                                                               \
-template<>                                                                     \
-void Singleton<Class>::ResetThreadGuard()                                      \
-{                                                                              \
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();         \
-    instance.m_guard = OptionalThreadPtr::Null;                                \
-}                                                                              \
 template Singleton<Class>& Singleton<Class>::InternalInstance();               \
 template Class& Singleton<Class>::Instance();                                  \
-template void Singleton<Class>::SetThreadGuard(Thread *thread);                \
-template void Singleton<Class>::ResetThreadGuard();                            \
 } // namespace DPL
 
 

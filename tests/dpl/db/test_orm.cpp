@@ -412,7 +412,7 @@ RUNNER_TEST(ORM_Delete)
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::dpl_orm_test;
     TestTableDelete::Select selectStart(interface.get());
-    selectStart.OrderBy("ColumnInt2 ASC");
+    selectStart.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableDelete::ColumnInt2> >());
     std::list<TestTableDelete::Row> list = selectStart.GetRowList();
     std::list<TestTableDelete::Row> originalList = list;
 
@@ -847,5 +847,57 @@ RUNNER_TEST(ORM_Join)
         RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from second column: "
                 << text << " expected: " << oss.str() << " iteration: " <<cnt);
         oss.str(std::string());
+    }
+}
+
+RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
+{
+    SmartAttach interface;
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::dpl_orm_test;
+    {
+        TestTableJoin3::Select select(interface.get());
+
+        // testing: " ORDER BY Value3 ASC, TestID DESC, TestID ASC"
+        select.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableJoin3::Value3>,
+                                OrderingDescending<TestTableJoin3::TestText33>,
+                                OrderingAscending<TestTableJoin3::TestID> >());
+
+        std::list<TestTableJoin3::Row> result = select.GetRowList();
+        std::list<TestTableJoin3::Row>::const_iterator iter = result.begin();
+        { //1 row
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 6"), "Wrong row 1 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 10, "Wrong row 1 order");
+            iter++;
+        }
+        { //2 row
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 5"), "Wrong row 2 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 7, "Wrong row 2 order");
+            iter++;
+        }
+        { //3 row
+            RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 3 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 2"), "Wrong row 3 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 2, "Wrong row 3 order");
+            iter++;
+        }
+        { //4 row
+            RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 4 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 1"), "Wrong row 4 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 1, "Wrong row 4 order");
+            iter++;
+        }
+        { //5 row
+            RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 5 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 4"), "Wrong row 5 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 6, "Wrong row 5 order");
+            iter++;
+        }
+        { //6 row
+            RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 6 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 3"), "Wrong row 6 order");
+            RUNNER_ASSERT_MSG(iter->Get_TestID() == 3, "Wrong row 6 order");
+            iter++;
+        }
     }
 }

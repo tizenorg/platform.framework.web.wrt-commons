@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <dpl/log/log.h>
 #include <dpl/utils/wrt_utility.h>
 
