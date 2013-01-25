@@ -321,7 +321,7 @@ class WidgetDAOReadOnly
     /**
      * Returns tizenAppId for the specified widget
      *
-     * @return tzAppid; 
+     * @return tzAppid;
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
      */
@@ -333,7 +333,7 @@ class WidgetDAOReadOnly
     /**
      * Returns WidgetPkgName for the specified widget
      *
-     * @return pkgName; 
+     * @return pkgName;
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
      */
@@ -496,6 +496,13 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     DPL::OptionalString getVersion() const;
+
+    /**
+     * This method is used as a getter for csp policy of widget. It should be
+     * provided in configuration file.
+     * @return global csp policy for widget
+     */
+    DPL::OptionalString getCspPolicy() const;
 
     /**
      * This method returns list filed with Common Name entries from certificate.

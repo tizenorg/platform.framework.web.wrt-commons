@@ -670,6 +670,12 @@ bool WidgetDAOReadOnly::isTestWidget() const
     }
 }
 
+DPL::OptionalString WidgetDAOReadOnly::getCspPolicy() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    return row.Get_csp_policy();
+}
+
 bool WidgetDAOReadOnly::getWebkitPluginsRequired() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);

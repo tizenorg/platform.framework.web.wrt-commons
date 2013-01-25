@@ -977,4 +977,41 @@ RUNNER_TEST(widget_dao_test_wac_security)
     }
 }
 
+/*
+Name: widget_dao_test_register_scp
+Description: Tests inserting and returning scp policy information
+Expected: Value inserted into database should match values received from database
+*/
+RUNNER_TEST(widget_dao_test_register_scp)
+{
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+    DPL::OptionalString policy = DPL::FromUTF8String("Some awesome csp policy");
+    regInfo.configInfo.cspPolicy = policy;
+    {
+        // register widget
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+        WidgetDAO dao(tizenAppId);
+
+        RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getCspPolicy(), DPL::ToUTF8String(*policy));
+    }
+}
+
+/*
+Name: widget_dao_test_register_csp_empty
+Description: Tests inserting and returning empty csp policy
+Expected: Value inserted into database should match values received from database
+*/
+RUNNER_TEST(widget_dao_test_register_csp_empty)
+{
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+    {
+        // register widget
+        TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+        WidgetDAO dao(tizenAppId);
+
+        RUNNER_ASSERT_MSG(dao.getCspPolicy().IsNull(), "Policy is not null");
+    }
+}
 #undef RUNNER_ASSERT_WHAT_EQUALS

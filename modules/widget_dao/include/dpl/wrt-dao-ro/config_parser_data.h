@@ -313,6 +313,9 @@ class ConfigParserData
     DPL::OptionalString tizenPkgId;
     DPL::OptionalString tizenAppId;
 
+    //csp polic for widget
+    DPL::OptionalString cspPolicy;
+
     //Application service model list
     ServiceInfoList appServiceList; //It will be removed.
     AppControlInfoList appControlList;
