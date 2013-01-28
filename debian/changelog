@@ -1,3 +1,11 @@
+wrt-commons (0.2.95) unstable; urgency=low
+
+  * Change pkgname to appid and add package id PART 1.
+  * change pkgname to appid PART 2.
+  * Change pkgname to appid Part 3.
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Mon, 28 Jan 2013 17:41:56 +0900
+
 wrt-commons (0.2.94) unstable; urgency=low
 
   * Revert "Change pkgname to appid and add package id PART 1."
