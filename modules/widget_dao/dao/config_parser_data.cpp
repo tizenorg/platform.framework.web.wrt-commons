@@ -152,7 +152,7 @@ void NormalizeString(DPL::String& str)
     str = *opt;
 }
 
-void NormalizeString (DPL::Optional<DPL::String>& txt)
+void NormalizeString (DPL::Optional<DPL::String>& txt, bool isTrimSpace)
 {
     if (!!txt) {
         std::string tmp = DPL::ToUTF8String(*txt);
@@ -182,7 +182,7 @@ void NormalizeString (DPL::Optional<DPL::String>& txt)
                 if (c[0] == 0x0) {
                     break;
                 }
-                if (first) {
+                if (first && !isTrimSpace) {
                     xmlChar space[6] = { 0x20 };
                     CopyChar(s, space);
                     s += xmlUTF8Size(s);
@@ -197,6 +197,11 @@ void NormalizeString (DPL::Optional<DPL::String>& txt)
         txt = DPL::FromUTF8String(reinterpret_cast<char*>(tmpnew));
         xmlFree(tmpnew);
     }
+}
+
+void NormalizeAndTrimSpaceString(DPL::OptionalString& txt)
+{
+    NormalizeString(txt, true);
 }
 
 bool ConfigParserData::Param::operator==(const Param& other) const

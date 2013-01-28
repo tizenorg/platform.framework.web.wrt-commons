@@ -113,9 +113,9 @@ WidgetSecuritySettingsRow getWidgetSecuritySettingsRow(int widgetHandle)
 
 const int MAX_TIZENID_LENGTH = 10;
 
-WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
+TizenAppId getTizenAppIdByHandle(const DbWidgetHandle handle)
 {
-    LogDebug("Getting WidgetPkgName by DbWidgetHandle: " << handle);
+    LogDebug("Getting TizenAppId by DbWidgetHandle: " << handle);
 
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
@@ -127,9 +127,9 @@ WidgetPkgName getPkgNameByHandle(const DbWidgetHandle handle)
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
                  "Failed to get widget by handle");
         }
-        WidgetPkgName pkgname = rowList.front().Get_pkgname();
+        TizenAppId tzAppid = rowList.front().Get_tizen_appid();
 
-        return pkgname;
+        return tzAppid;
 
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
@@ -151,8 +151,8 @@ WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
 {
 }
 
-WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::String pkgName) :
-    m_widgetHandle(WidgetDAOReadOnly::getHandle(pkgName))
+WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::String tzAppid) :
+    m_widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid))
 {
 
 }
@@ -185,14 +185,14 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const WidgetGUID GUID)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
 
-DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String pkgName)
+DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String tzAppId)
 {
-    LogDebug("Getting WidgetHandle by Package Name [" << pkgName << "]");
+    LogDebug("Getting WidgetHandle by tizen app id [" << tzAppId << "]");
 
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetInfo::pkgname>(pkgName));
+        select->Where(Equals<WidgetInfo::tizen_appid>(tzAppId));
         WidgetInfo::Select::RowList rowList = select->GetRowList();
 
         if (rowList.empty()) {
@@ -206,41 +206,56 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String pkgName)
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName() const
 {
-    return getPkgNameByHandle(m_widgetHandle);
+    return getTzAppId();
 }
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName(const WidgetGUID GUID)
 {
-    return getPkgNameByHandle(getHandle(GUID));
+    return getTzAppId(GUID);
 }
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName(const DbWidgetHandle handle)
 {
-    return getPkgNameByHandle(handle);
+    return getTzAppId(handle);
+}
+
+TizenAppId WidgetDAOReadOnly::getTzAppId() const
+{
+   return getTizenAppIdByHandle(m_widgetHandle);
+}
+
+TizenAppId WidgetDAOReadOnly::getTzAppId(const WidgetGUID GUID)
+{
+    return getTizenAppIdByHandle(getHandle(GUID));
+}
+
+TizenAppId WidgetDAOReadOnly::getTzAppId(const DbWidgetHandle handle)
+{
+    return getTizenAppIdByHandle(handle);
 }
 
 PropertyDAOReadOnly::WidgetPropertyKeyList
 WidgetDAOReadOnly::getPropertyKeyList() const
 {
-    return PropertyDAOReadOnly::GetPropertyKeyList(getPkgName());
+    return PropertyDAOReadOnly::GetPropertyKeyList(getTzAppId());
 }
 
 PropertyDAOReadOnly::WidgetPreferenceList
 WidgetDAOReadOnly::getPropertyList() const
 {
-    return PropertyDAOReadOnly::GetPropertyList(getPkgName());
+    return PropertyDAOReadOnly::GetPropertyList(getTzAppId());
 }
 
 PropertyDAOReadOnly::WidgetPropertyValue WidgetDAOReadOnly::getPropertyValue(
         const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
-    return PropertyDAOReadOnly::GetPropertyValue(getPkgName(), key);
+    return PropertyDAOReadOnly::GetPropertyValue(getTzAppId(), key);
 }
 
 DPL::OptionalInt WidgetDAOReadOnly::checkPropertyReadFlag(
         const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
-    return PropertyDAOReadOnly::CheckPropertyReadFlag(getPkgName(), key);
+    return PropertyDAOReadOnly::CheckPropertyReadFlag(getTzAppId(), key);
 }
 
 DPL::String WidgetDAOReadOnly::getPath() const
@@ -408,11 +423,21 @@ WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        return select->GetValueList<WidgetInfo::pkgname>();
+        return select->GetValueList<WidgetInfo::tizen_appid>();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
 }
 
+TizenAppIdList WidgetDAOReadOnly::getTizenAppidList()
+{
+    LogDebug("Getting Pkgname List ");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        return select->GetValueList<WidgetInfo::tizen_appid>();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
+}
 
 DbWidgetDAOReadOnlyList WidgetDAOReadOnly::getWidgetList()
 {
@@ -439,13 +464,13 @@ bool WidgetDAOReadOnly::isWidgetInstalled(DbWidgetHandle handle)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to check if widget exist")
 }
 
-bool WidgetDAOReadOnly::isWidgetInstalled(const WidgetPkgName & pkgName)
+bool WidgetDAOReadOnly::isWidgetInstalled(const TizenAppId &tzAppId)
 {
-    LogDebug("Checking if widget exist. package name " << pkgName);
+    LogDebug("Checking if widget exist. tizen app id" << tzAppId);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetInfo::pkgname>(pkgName));
+        select->Where(Equals<WidgetInfo::tizen_appid>(tzAppId));
 
         WidgetInfo::Select::RowList rows = select->GetRowList();
 
@@ -516,6 +541,11 @@ WidgetGUID WidgetDAOReadOnly::getGUID() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
     return row.Get_widget_id();
+}
+
+DPL::OptionalString WidgetDAOReadOnly::getTizenAppId() const
+{
+    return DPL::OptionalString(getTzAppId());
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getDefaultlocale() const
@@ -992,9 +1022,9 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
     using namespace WrtDB::WidgetConfig;
     std::ostringstream path;
 
-    WidgetPkgName pkgname = getPkgName();
+    TizenAppId tzAppId = getTzAppId();
 
-    path << GetWidgetPersistentStoragePath(pkgname);
+    path << GetWidgetPersistentStoragePath(tzAppId);
     path << "/";
     path << GlobalConfig::GetCookieDatabaseFile();
 
@@ -1004,8 +1034,8 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
 std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
 {
     std::ostringstream path;
-    WidgetPkgName pkgname = getPkgName();
-    path << WidgetConfig::GetWidgetWebLocalStoragePath(pkgname);
+    TizenAppId tzAppId = getTzAppId();
+    path << WidgetConfig::GetWidgetWebLocalStoragePath(tzAppId);
     path << "/";
 
     return path.str();
@@ -1109,18 +1139,18 @@ DPL::OptionalString WidgetDAOReadOnly::getBackgroundPage() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get background page")
 }
 
-WidgetPkgName WidgetDAOReadOnly::generateTizenId() {
+TizenPkgId WidgetDAOReadOnly::generatePkgId() {
     std::string allowed("0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz");
-    WidgetPkgName tizenId;
-    tizenId.resize(MAX_TIZENID_LENGTH);
+    TizenPkgId pkgId;
+    pkgId.resize(MAX_TIZENID_LENGTH);
     do {
     for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
-        tizenId[i] = allowed[rand() % allowed.length()];
+        pkgId[i] = allowed[rand() % allowed.length()];
     }
-    } while (isWidgetInstalled(tizenId));
-    return tizenId;
+    } while (isWidgetInstalled(pkgId));
+    return pkgId;
 }
 
 SettingsType WidgetDAOReadOnly::getSecurityPopupUsage(void) const
@@ -1182,6 +1212,13 @@ DPL::OptionalString WidgetDAOReadOnly::getWidgetInstalledPath() const
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get widdget installed path")
 }
+
+TizenPkgId WidgetDAOReadOnly::getTizenPkgId() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    return row.Get_tizen_pkgid();
+}
+
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE

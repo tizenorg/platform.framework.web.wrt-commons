@@ -56,8 +56,8 @@ WidgetDAO::WidgetDAO(DPL::OptionalString widgetGUID) :
 {
 }
 
-WidgetDAO::WidgetDAO(DPL::String pkgName) :
-    WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(pkgName))
+WidgetDAO::WidgetDAO(DPL::String tzAppId) :
+    WidgetDAOReadOnly(WidgetDAOReadOnly::getHandle(tzAppId))
 {
 }
 
@@ -96,7 +96,7 @@ void WidgetDAO::setProperty(
     }
 }
 
-void WidgetDAO::setPkgName(const WidgetPkgName& pkgName)
+void WidgetDAO::setTizenAppId(const DPL::OptionalString& tzAppId)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
@@ -109,7 +109,7 @@ void WidgetDAO::setPkgName(const WidgetPkgName& pkgName)
         }
 
         wrt::WidgetInfo::Row row;
-        row.Set_pkgname(pkgName);
+        row.Set_tizen_appid(*tzAppId);
 
         WRT_DB_UPDATE(update, wrt::WidgetInfo, &WrtDatabase::interface())
         update->Where(
@@ -253,7 +253,7 @@ void WidgetDAO::setFileSystemUsage(const SettingsType value)
 }
 
 void WidgetDAO::registerWidget(
-        const WidgetPkgName & widgetPkgname,
+        const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity)
 {
@@ -261,7 +261,7 @@ void WidgetDAO::registerWidget(
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        registerWidgetInternal(widgetPkgname, widgetRegInfo, wacSecurity);
+        registerWidgetInternal(tzAppId, widgetRegInfo, wacSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
@@ -299,24 +299,24 @@ DbWidgetHandle WidgetDAO::registerWidget(
     return widgetHandle;
 }
 
-WidgetPkgName WidgetDAO::registerWidgetGenerateTizenId(
+TizenAppId WidgetDAO::registerWidgetGeneratePkgId(
             const WidgetRegisterInfo &pWidgetRegisterInfo,
             const IWacSecurity &wacSecurity)
 {
-    WidgetPkgName widgetPkgName = generateTizenId();
-    registerWidget(widgetPkgName, pWidgetRegisterInfo, wacSecurity);
-    return widgetPkgName;
+    TizenAppId tzAppId = generatePkgId();
+    registerWidget(tzAppId, pWidgetRegisterInfo, wacSecurity);
+    return tzAppId;
 }
 
 void WidgetDAO::registerWidgetInternal(
-        const WidgetPkgName & widgetName,
+        const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity,
         const DPL::Optional<DbWidgetHandle> handle)
 {
     //Register into WidgetInfo has to be first
     //as all other tables depend upon that
-    DbWidgetHandle widgetHandle = registerWidgetInfo(widgetName, widgetRegInfo, wacSecurity, handle);
+    DbWidgetHandle widgetHandle = registerWidgetInfo(tzAppId, widgetRegInfo, wacSecurity, handle);
 
     registerWidgetExtendedInfo(widgetHandle, widgetRegInfo);
 
@@ -358,7 +358,7 @@ void WidgetDAO::registerWidgetInternal(
 }
 
 void WidgetDAO::registerOrUpdateWidget(
-        const WidgetPkgName & widgetName,
+        const TizenAppId & widgetName,
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity)
 {
@@ -403,7 +403,7 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
 }
 
 DbWidgetHandle WidgetDAO::registerWidgetInfo(
-        const WidgetPkgName & widgetName,
+        const TizenAppId & tzAppId,
         const WidgetRegisterInfo &regInfo,
         const IWacSecurity &wacSecurity,
         const DPL::Optional<DbWidgetHandle> handle)
@@ -442,7 +442,8 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_recognized(wacSecurity.isRecognized());
     row.Set_wac_signed(wacSecurity.isWacSigned());
     row.Set_distributor_signed(wacSecurity.isDistributorSigned());
-    row.Set_pkgname(widgetName);
+    row.Set_tizen_appid(tzAppId);
+    row.Set_tizen_pkgid(regInfo.tzPkgid);
     {
         std::stringstream tmp;
         tmp << regInfo.minVersion;
@@ -466,7 +467,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     {
         //get autoincremented value of widgetHandle
         WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetInfo::pkgname>(widgetName));
+        select->Where(Equals<WidgetInfo::tizen_appid>(tzAppId));
         return select->GetSingleValue<WidgetInfo::app_id>();
     }
     else
@@ -824,13 +825,13 @@ void WidgetDAO::unregisterAllExternalLocations()
     del->Execute();
 }
 
-void WidgetDAO::unregisterWidget(const WidgetPkgName & pkgName)
+void WidgetDAO::unregisterWidget(const TizenAppId & tzAppId)
 {
-    LogDebug("Unregistering widget from DB. PkgName: " << pkgName);
+    LogDebug("Unregistering widget from DB. tzAppId: " << tzAppId);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        unregisterWidgetInternal(pkgName);
+        unregisterWidgetInternal(tzAppId);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to unregister widget")
@@ -856,12 +857,12 @@ void WidgetDAO::unregisterWidget(WrtDB::DbWidgetHandle handle)
 }
 
 void WidgetDAO::unregisterWidgetInternal(
-        const WidgetPkgName & pkgName)
+        const TizenAppId & tzAppId)
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
 
-    DbWidgetHandle handle = getHandle(pkgName);
+    DbWidgetHandle handle = getHandle(tzAppId);
 
     // Delete from table Widget Info
     WRT_DB_DELETE(del, WidgetInfo, &WrtDatabase::interface())

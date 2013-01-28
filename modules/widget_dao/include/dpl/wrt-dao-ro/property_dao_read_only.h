@@ -38,7 +38,7 @@ typedef DPL::OptionalString WidgetPropertyValue;
 typedef std::list<WidgetPropertyKey> WidgetPropertyKeyList;
 
 struct WidgetPreferenceRow {
-    WidgetPkgName       pkgname;
+    TizenAppId          tizen_appid;
     WidgetPropertyKey   key_name;
     WidgetPropertyValue key_value;
     DPL::OptionalInt    readonly;
@@ -66,7 +66,7 @@ DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
 
 /* This method checks read only flag for given property
  */
-DPL::OptionalInt CheckPropertyReadFlag(WidgetPkgName pkgName,
+DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
                                   const WidgetPropertyKey &key);
 
 //deprecated
@@ -77,7 +77,7 @@ WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
 
 /* This method gets widget property key list
  */
-WidgetPropertyKeyList GetPropertyKeyList(WidgetPkgName pkgName);
+WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid);
 
 //deprecated
 /* This method gets widget property list
@@ -87,7 +87,7 @@ WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 
 /* This method gets widget property list
  */
-WidgetPreferenceList GetPropertyList(WidgetPkgName pkgName);
+WidgetPreferenceList GetPropertyList(TizenAppId tzAppid);
 
 //deprecated
 /* This method get widget property value
@@ -97,7 +97,7 @@ WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
 
 /* This method get widget property value
  */
-WidgetPropertyValue GetPropertyValue(WidgetPkgName pkgName,
+WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                                      const WidgetPropertyKey &key);
 
 } // PropertyDAOReadOnly

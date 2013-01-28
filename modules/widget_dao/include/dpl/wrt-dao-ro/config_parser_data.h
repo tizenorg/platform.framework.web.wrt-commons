@@ -32,9 +32,10 @@
 
 namespace WrtDB {
 
-void NormalizeString(DPL::OptionalString& txt);
+void NormalizeString(DPL::OptionalString& txt, bool isTrimSpace = false);
 void NormalizeString(DPL::String& str);
 DPL::String GetSingleAttributeValue(const DPL::String value);
+void NormalizeAndTrimSpaceString(DPL::OptionalString& txt);
 
 class WidgetConfigurationManager;
 
@@ -307,6 +308,8 @@ class ConfigParserData
     // tizen id / required platform min version for TIZEN webapp
     DPL::OptionalString tizenId;
     DPL::OptionalString tizenMinVersionRequired;
+    DPL::OptionalString tizenPkgId;
+    DPL::OptionalString tizenAppId;
 
     //Application service model list
     ServiceInfoList appServiceList; //It will be removed.
