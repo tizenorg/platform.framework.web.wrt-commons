@@ -32,9 +32,10 @@
 
 namespace WrtDB {
 
-void NormalizeString(DPL::OptionalString& txt);
+void NormalizeString(DPL::OptionalString& txt, bool isTrimSpace = false);
 void NormalizeString(DPL::String& str);
 DPL::String GetSingleAttributeValue(const DPL::String value);
+void NormalizeAndTrimSpaceString(DPL::OptionalString& txt);
 
 class WidgetConfigurationManager;
 
