@@ -1,3 +1,12 @@
+wrt-commons (0.2.96) unstable; urgency=low
+
+  * Add specific fields to config parser struct for livebox
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.96
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 30 Jan 2013 17:09:01 +0900
+
 wrt-commons (0.2.95) unstable; urgency=low
 
   * Change pkgname to appid and add package id PART 1.
