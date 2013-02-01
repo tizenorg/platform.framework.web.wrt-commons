@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
+# Copyright (c) 2013 Samsung Electronics Co., Ltd All Rights Reserved
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Krzysztof Jackiewicz (k.jackiewicz@samsung.com)
+# @author      Bartlomiej Grzelewski (b.grzelewski@samsung.com)
 # @version     1.0
 # @brief
 #
 
-SET(TESTS_DPL_DIR "${TESTS_DIR}/dpl")
+SET(TARGET_NAME "dpl-tests-test")
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(event)
-#ADD_SUBDIRECTORY(localization) TODO localization mockups need to be fixed 
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(test)
+# Set DPL tests sources
+SET(DPL_TESTS_UTIL_SOURCES
+    ${TESTS_DPL_DIR}/test/main.cpp
+    ${TESTS_DPL_DIR}/test/runner_child.cpp
+)
+
+#WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_UTIL_SOURCES})
+WRT_TEST_INSTALL(${TARGET_NAME})
