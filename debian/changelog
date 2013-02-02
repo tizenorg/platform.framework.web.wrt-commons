@@ -1,3 +1,9 @@
+wrt-commons (0.2.93) unstable; urgency=low
+
+  * Change DPL::WaitableHandleWatchSupport's destructor not to call DPL:Aassert explicitly. 
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Sat, 02 Feb 2013 17:25:09 +0900
+
 wrt-commons (0.2.92) unstable; urgency=low
 
   * Removal of popup implementation
