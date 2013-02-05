@@ -28,7 +28,8 @@ then
     PKG_NAME_SET=$(sqlite3 $WRT_DB 'select tizen_appid from WidgetInfo;')
     for appid in $PKG_NAME_SET
     do
-        rm -rf ${WIDGET_EXEC_PATH}${appid}
+        pkgId=`echo "$appid" | cut -f1 -d"."`
+        rm -rf ${WIDGET_EXEC_PATH}${pkgId}
         widget_desktop_file="${WIDGET_DESKTOP_PATH}${appid}.desktop";
         if [ -f ${widget_desktop_file} ]; then
             rm -f $widget_desktop_file;
