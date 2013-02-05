@@ -140,7 +140,7 @@ typedef enum class_definition_iframe_behaviour_e
     //object should be copied as reference to each iframe
     REFERENCE,
     //object should be created for each iframe and NOT inform plugin
-    CREATE_INSTANCE,
+    CREATE_INSTANCE
 } class_definition_iframe_behaviour_t;
 
 typedef enum class_definition_iframe_notice_e

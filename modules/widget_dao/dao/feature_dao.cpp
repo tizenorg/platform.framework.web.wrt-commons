@@ -91,7 +91,7 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
 
                 WRT_DB_INSERT(insert, DeviceCapabilities, &WrtDatabase::interface())
                 insert->Values(row);
-                deviceCapID = insert->Execute();
+                deviceCapID = static_cast<int>(insert->Execute());
             }
 
             FeatureDeviceCapProxy::Row row;

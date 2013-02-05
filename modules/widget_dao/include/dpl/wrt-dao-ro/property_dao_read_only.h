@@ -69,12 +69,6 @@ DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
 DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
                                   const WidgetPropertyKey &key);
 
-//deprecated
-/* This method gets widget property key list
- */
-WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
-                            __attribute__((deprecated));
-
 /* This method gets widget property key list
  */
 WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid);
@@ -88,12 +82,6 @@ WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 /* This method gets widget property list
  */
 WidgetPreferenceList GetPropertyList(TizenAppId tzAppid);
-
-//deprecated
-/* This method get widget property value
- */
-WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
-                                     const WidgetPropertyKey &key);
 
 /* This method get widget property value
  */

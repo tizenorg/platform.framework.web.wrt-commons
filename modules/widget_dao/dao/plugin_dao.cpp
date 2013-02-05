@@ -70,7 +70,7 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
 
             WRT_DB_INSERT(insert, PluginProperties, &WrtDatabase::interface())
             insert->Values(row);
-            handle = insert->Execute();
+            handle = static_cast<WrtDB::DbWidgetHandle>(insert->Execute());
             LogDebug(" >> Plugin Registered. Handle: " << handle);
         }
         transaction.Commit();

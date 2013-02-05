@@ -47,6 +47,8 @@ void DBusTest::run(unsigned int timeout)
                                                 __LINE__,
                                                 m_message);
 
+    case Status::SUCCESS:
+    case Status::NONE:
     default:
         break;
     }

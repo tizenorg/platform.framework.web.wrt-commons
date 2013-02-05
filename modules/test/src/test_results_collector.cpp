@@ -608,7 +608,7 @@ class XmlCollector
             ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
         }
 
-        if (0 > fprintf(m_fp.Get(), m_outputBuffer.c_str()))
+        if (m_outputBuffer.size() != fwrite(m_outputBuffer.c_str(), 1, m_outputBuffer.size(), m_fp.Get()))
         {
             int error = errno;
             ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));

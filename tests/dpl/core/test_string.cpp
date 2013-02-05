@@ -80,7 +80,7 @@ int wbxml_base64_decode(const char *buffer, char **result)
     /* Malloc result buffer */
     if ((*result = (char*) malloc(nbytesdecoded + 1)) == NULL)
         return 0;
-    memset(*result, nbytesdecoded + 1, 0);
+    memset(*result, 0, nbytesdecoded + 1);
 
     bufout = *result;
     bufin = buffer;

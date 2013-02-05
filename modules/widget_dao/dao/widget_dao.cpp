@@ -70,32 +70,6 @@ WidgetDAO::~WidgetDAO()
 {
 }
 
-void WidgetDAO::removeProperty(
-        const PropertyDAOReadOnly::WidgetPropertyKey &key)
-{
-    Try {
-        PropertyDAO::RemoveProperty(m_widgetHandle, key);
-    }
-    Catch(PropertyDAOReadOnly::Exception::ReadOnlyProperty){
-        ReThrowMsg(WidgetDAO::Exception::DatabaseError,
-                   "Failure during removing property");
-    }
-}
-
-void WidgetDAO::setProperty(
-        const PropertyDAOReadOnly::WidgetPropertyKey &key,
-        const PropertyDAOReadOnly::WidgetPropertyValue &value,
-        bool readOnly)
-{
-    Try {
-        PropertyDAO::SetProperty(m_widgetHandle, key, value, readOnly);
-    }
-    Catch(PropertyDAOReadOnly::Exception::ReadOnlyProperty){
-        ReThrowMsg(WidgetDAO::Exception::DatabaseError,
-                   "Failure during setting/updating property");
-    }
-}
-
 void WidgetDAO::setTizenAppId(const DPL::OptionalString& tzAppId)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -267,21 +241,6 @@ void WidgetDAO::registerWidget(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
 }
 
-void WidgetDAO::registerWidget(
-        WrtDB::DbWidgetHandle handle,
-        const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity)
-{
-    LogDebug("Registering widget");
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-        registerWidgetInternal(generateTizenId(), widgetRegInfo, wacSecurity, handle);
-        transaction.Commit();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
-}
-
 DbWidgetHandle WidgetDAO::registerWidget(
             const WidgetRegisterInfo &pWidgetRegisterInfo,
             const IWacSecurity &wacSecurity)
@@ -295,7 +254,7 @@ DbWidgetHandle WidgetDAO::registerWidget(
         widgetHandle = rand();
     } while (isWidgetInstalled(widgetHandle));
 
-    registerWidget(widgetHandle, pWidgetRegisterInfo, wacSecurity);
+    registerWidget(*pWidgetRegisterInfo.configInfo.tizenAppId, pWidgetRegisterInfo, wacSecurity);
     return widgetHandle;
 }
 
@@ -326,7 +285,7 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetStartFile(widgetHandle, widgetRegInfo);
 
-    PropertyDAO::RegisterProperties(widgetHandle, widgetRegInfo);
+    PropertyDAO::RegisterProperties(tzAppId, widgetRegInfo);
 
     registerWidgetFeatures(widgetHandle, widgetRegInfo);
 
@@ -523,7 +482,7 @@ void WidgetDAO::registerWidgetIcons(DbWidgetHandle widgetHandle,
 
             WRT_DB_INSERT(insert, wrt::WidgetIcon, &WrtDatabase::interface())
             insert->Values(row);
-            icon_id = insert->Execute();
+            icon_id = static_cast<int>(insert->Execute());
         }
 
         FOREACH(j, i->availableLocales)
@@ -554,7 +513,7 @@ void WidgetDAO::registerWidgetStartFile(DbWidgetHandle widgetHandle,
 
             WRT_DB_INSERT(insert, WidgetStartFile, &WrtDatabase::interface())
             insert->Values(row);
-            startFileID = insert->Execute();
+            startFileID = static_cast<int>(insert->Execute());
         }
 
         FOREACH(j, i->propertiesForLocales)
@@ -590,7 +549,7 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
         {
             WRT_DB_INSERT(insert, wrt::WidgetFeature, &WrtDatabase::interface())
             insert->Values(widgetFeature);
-            widgetFeatureID = insert->Execute();
+            widgetFeatureID = static_cast<int>(insert->Execute());
         }
 
         // Insert into table FeatureParam

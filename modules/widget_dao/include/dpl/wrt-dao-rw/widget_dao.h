@@ -100,11 +100,6 @@ class WidgetDAO : public WidgetDAOReadOnly
             const WidgetRegisterInfo &widgetRegInfo,
             const IWacSecurity &wacSecurity);
 
-    static void registerWidget(
-            WrtDB::DbWidgetHandle handle,
-            const WidgetRegisterInfo &widgetRegInfo,
-            const IWacSecurity &wacSecurity) __attribute__((deprecated));
-
     /**
      * This method removes a widget's information from EmDB.
      *

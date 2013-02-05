@@ -215,7 +215,7 @@ int isLargeFile(const char* filename)
 
   if(pFile != NULL)
   {
-    int n = fseeko64(pFile, 0, SEEK_END);
+    (void)fseeko64(pFile, 0, SEEK_END);
 
     pos = ftello64(pFile);
 

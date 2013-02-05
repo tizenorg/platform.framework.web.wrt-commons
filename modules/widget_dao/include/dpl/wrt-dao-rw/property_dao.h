@@ -31,11 +31,6 @@ struct WidgetRegisterInfo; //forward declaration
 
 namespace PropertyDAO {
 
-//deprecated
-void RemoveProperty(DbWidgetHandle widgetHandle,
-                    const PropertyDAOReadOnly::WidgetPropertyKey &key)
-                                        __attribute__((deprecated));
-
 void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key);
 
@@ -54,14 +49,6 @@ void SetProperty(TizenAppId tzAppid,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly = false);
-
-//deprecated
-/* This method registers properties for widget.
- * Properties unregistering is done via "delete cascade" mechanism in SQL
- */
-void RegisterProperties(DbWidgetHandle widgetHandle,
-                        const WidgetRegisterInfo &regInfo)
-                                        __attribute__((deprecated));
 
 /* This method registers properties for widget.
  * Properties unregistering is done via "delete cascade" mechanism in SQL

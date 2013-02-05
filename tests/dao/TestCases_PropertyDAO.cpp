@@ -31,7 +31,7 @@
 using namespace WrtDB;
 using namespace WrtDB::PropertyDAOReadOnly;
 
-// Widgets used 2000, 2001, 2002, 2003(saved by wrt_dao_tests_prepare_db.sh)
+// Widgets used "tizenid201", "tizenid202", "tizenid203", 2003(saved by wrt_dao_tests_prepare_db.sh)
 
 #define RUNNER_ASSERT_WHAT_EQUALS(in, test)                   \
     {std::string tmp(in);                                     \
@@ -53,11 +53,11 @@ Expected: data received should match those, which were inserted in prepare scrip
 RUNNER_TEST(property_dao_get_lists)
 {
     {//property list
-        std::map<WidgetHandle, size_t> prefsMap;
-        prefsMap.insert(std::pair<WidgetHandle, size_t>(2000, 2));
-        prefsMap.insert(std::pair<WidgetHandle, size_t>(2001, 1));
-        prefsMap.insert(std::pair<WidgetHandle, size_t>(2002, 2));
-        prefsMap.insert(std::pair<WidgetHandle, size_t>(1, 0)); //no widget
+        std::map<WrtDB::TizenAppId, size_t> prefsMap;
+        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid201", 2));
+        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid202", 1));
+        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid203", 2));
+        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"non_exists", 0)); //no widget
 
         FOREACH(it, prefsMap) {
             PropertyDAOReadOnly::WidgetPreferenceList prefs =
@@ -78,13 +78,13 @@ RUNNER_TEST(property_dao_get_lists)
         orig_2002.push_back(DPL::FromUTF8String("key1_for_2002"));
         orig_2002.push_back(DPL::FromUTF8String("key2_for_2002"));
 
-        std::map<WidgetHandle, WidgetPropertyKeyList *> prefsKeyMap;
-        prefsKeyMap.insert(std::pair<WidgetHandle, WidgetPropertyKeyList *>(
-                2000, &orig_2000));
-        prefsKeyMap.insert(std::pair<WidgetHandle, WidgetPropertyKeyList *>(
-                2001, &orig_2001));
-        prefsKeyMap.insert(std::pair<WidgetHandle, WidgetPropertyKeyList *>(
-                2002, &orig_2002));
+        std::map<WrtDB::TizenAppId, WidgetPropertyKeyList *> prefsKeyMap;
+        prefsKeyMap.insert(std::pair<WrtDB::TizenAppId, WidgetPropertyKeyList *>(
+                L"tizenid201", &orig_2000));
+        prefsKeyMap.insert(std::pair<WrtDB::TizenAppId, WidgetPropertyKeyList *>(
+                L"tizenid202", &orig_2001));
+        prefsKeyMap.insert(std::pair<WrtDB::TizenAppId, WidgetPropertyKeyList *>(
+                L"tizenid203", &orig_2002));
 
         FOREACH(it_out, prefsKeyMap) {
             WidgetPropertyKeyList got = PropertyDAOReadOnly::GetPropertyKeyList(
@@ -106,38 +106,38 @@ Expected: given operation should works
 */
 RUNNER_TEST(property_dao_set_update_remove)
 {
-    WidgetPropertyKeyList keys = PropertyDAOReadOnly::GetPropertyKeyList(2000);
+    WidgetPropertyKeyList keys = PropertyDAOReadOnly::GetPropertyKeyList(L"tizenid201");
 
     //ADD
-    PropertyDAO::SetProperty(2000,
+    PropertyDAO::SetProperty(L"tizenid201",
                              DPL::FromUTF8String("new_key"),
                              DPL::FromUTF8String("new_value1"));
 
     RUNNER_ASSERT_MSG(
-        keys.size() + 1 == PropertyDAOReadOnly::GetPropertyKeyList(2000).size(),
+        keys.size() + 1 == PropertyDAOReadOnly::GetPropertyKeyList(L"tizenid201").size(),
         "new property not added");
     RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(
-        PropertyDAOReadOnly::GetPropertyValue(2000,
+        PropertyDAOReadOnly::GetPropertyValue(L"tizenid201",
                                               DPL::FromUTF8String("new_key")),
         "new_value1");
 
     //UPDATE
-    PropertyDAO::SetProperty(2000,
+    PropertyDAO::SetProperty(L"tizenid201",
                              DPL::FromUTF8String("new_key"),
                              DPL::FromUTF8String("new_value2"));
     RUNNER_ASSERT_MSG(
-        keys.size() + 1 == PropertyDAOReadOnly::GetPropertyKeyList(2000).size(),
+        keys.size() + 1 == PropertyDAOReadOnly::GetPropertyKeyList(L"tizenid201").size(),
         "new property not added");
     RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(
-        PropertyDAOReadOnly::GetPropertyValue(2000,
+        PropertyDAOReadOnly::GetPropertyValue(L"tizenid201",
                                               DPL::FromUTF8String("new_key")),
         "new_value2");
 
     //REMOVE
-    PropertyDAO::RemoveProperty(2000, DPL::FromUTF8String("new_key"));
+    PropertyDAO::RemoveProperty(L"tizenid201", DPL::FromUTF8String("new_key"));
 
     RUNNER_ASSERT_MSG(
-        keys.size() == PropertyDAOReadOnly::GetPropertyKeyList(2000).size(),
+        keys.size() == PropertyDAOReadOnly::GetPropertyKeyList(L"tizenid201").size(),
         "property not removed");
 
 }
@@ -151,12 +151,12 @@ RUNNER_TEST(property_dao_get_value)
 {
     RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(
             PropertyDAOReadOnly::GetPropertyValue(
-                    2000, DPL::FromUTF8String("key1_for_2000")),
+                    L"tizenid201", DPL::FromUTF8String("key1_for_2000")),
                 "value_for_key1_2000");
 
     RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(
             PropertyDAOReadOnly::GetPropertyValue(
-                    2000, DPL::FromUTF8String("key2_for_2000")),
+                    L"tizenid201", DPL::FromUTF8String("key2_for_2000")),
                 "value_for_key2_2000");
 }
 

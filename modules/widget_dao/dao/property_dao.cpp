@@ -30,12 +30,6 @@
 
 namespace WrtDB {
 namespace PropertyDAO {
-//deprecated
-void RemoveProperty(DbWidgetHandle widgetHandle,
-                    const PropertyDAOReadOnly::WidgetPropertyKey &key)
-{
-    RemoveProperty(WidgetDAOReadOnly::getTzAppId(widgetHandle),key);
-}
 
 void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
@@ -135,13 +129,6 @@ void SetProperty(TizenAppId tzAppid,
         ReThrowMsg(PropertyDAOReadOnly::Exception::DatabaseError,
                    "Failure during setting/updating property");
     }
-}
-
-//deprecated
-void RegisterProperties(DbWidgetHandle widgetHandle,
-                        const WidgetRegisterInfo &regInfo)
-{
-    RegisterProperties(WidgetDAOReadOnly::getTzAppId(widgetHandle),regInfo);
 }
 
 void RegisterProperties(TizenAppId tzAppid,

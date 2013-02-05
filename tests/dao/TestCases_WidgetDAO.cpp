@@ -57,7 +57,7 @@ public:
     virtual bool isWacSigned() const { return mWacSigned; }
     virtual void getCertificateChainList(CertificateChainList& /*lst*/) const {}
     virtual void getCertificateChainList(CertificateChainList& /*lst*/,
-        CertificateSource source) const {}
+        CertificateSource /*source*/) const {}
 
     WrtDB::WidgetCertificateDataList& getCertificateListRef()
     {

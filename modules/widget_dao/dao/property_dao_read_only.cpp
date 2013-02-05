@@ -108,12 +108,6 @@ DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
     }
 }
 
-//deprecated
-WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
-{
-    return GetPropertyKeyList(WidgetDAOReadOnly::getTzAppId(widgetHandle));
-}
-
 WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
 {
     LogDebug("Get PropertyKey list. appid: " << tzAppid);
@@ -167,13 +161,6 @@ WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
         ReThrowMsg(Exception::DatabaseError,
                    "Failure during getting property list");
     }
-}
-
-//deprecated
-WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
-                                     const WidgetPropertyKey &key)
-{
-    return GetPropertyValue(WidgetDAOReadOnly::getTzAppId(widgetHandle),key);
 }
 
 WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
