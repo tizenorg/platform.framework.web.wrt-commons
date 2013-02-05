@@ -23,6 +23,9 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
+BuildRequires:  libcryptsvc-devel
+BuildRequires:  dukgenerator
+Requires: libcryptsvc
 
 %description
 Wrt common library
@@ -44,12 +47,6 @@ Wrt common library development headers
 %endif
 
 %build
-
-%ifarch %{ix86}
-cp build/encryption/libs/libcal.i586.a build/encryption/libs/libcal.a
-%else
-cp build/encryption/libs/libcal.arm.a build/encryption/libs/libcal.a
-%endif
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
