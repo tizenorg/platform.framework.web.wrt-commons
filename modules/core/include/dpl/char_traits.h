@@ -17,8 +17,10 @@
  * @file        char_traits.h
  * @author      Piotr Marcinkiewicz (p.marcinkiew@samsung.com)
  * @version     1.0
- * @brief       Char traits are used to create basic_string extended with additional features
- *              Current char traits could be extended in feature to boost performance
+ * @brief       Char traits are used to create basic_string extended with
+ * additional features
+ *              Current char traits could be extended in feature to boost
+ * performance
  */
 #ifndef DPL_CHAR_TRAITS
 #define DPL_CHAR_TRAITS
@@ -29,11 +31,8 @@
 #include <algorithm>
 #include <dpl/exception.h>
 
-namespace DPL
-{
-
+namespace DPL {
 typedef std::char_traits<wchar_t> CharTraits;
-
 } // namespace DPL
 
 #endif // DPL_CHAR_TRAITS

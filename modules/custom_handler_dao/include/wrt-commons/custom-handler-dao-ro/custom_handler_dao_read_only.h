@@ -30,7 +30,6 @@
 #include "common_dao_types.h"
 
 namespace CustomHandlerDB {
-
 class CustomHandlerDAOReadOnly
 {
   public:
@@ -58,11 +57,10 @@ class CustomHandlerDAOReadOnly
                                         const DPL::String& baseURL);
 
     /**
-     * Returns protocol handler that is agreed or agreed and saved and match tizenID
+     * Returns protocol handler that is agreed or agreed and saved and match
+     * tizenID
      */
     CustomHandlerPtr getActivProtocolHandler(const DPL::String& protocol);
-
-
 
     /**
      * Returns content handler
@@ -74,7 +72,8 @@ class CustomHandlerDAOReadOnly
                                        const DPL::String& baseURL);
 
     /**
-     * Returns content handler that is agreed or agreed and saved and match tizenID
+     * Returns content handler that is agreed or agreed and saved and match
+     * tizenID
      */
     CustomHandlerPtr getActivContentHandler(const DPL::String& content);
 
@@ -91,7 +90,6 @@ class CustomHandlerDAOReadOnly
   protected:
     DPL::String m_pkgName;
 };
-
 } // namespace CustomHandlerDB
 
 #endif // _CUSTOM_HANDLER_DAO_READ_ONLY_H_

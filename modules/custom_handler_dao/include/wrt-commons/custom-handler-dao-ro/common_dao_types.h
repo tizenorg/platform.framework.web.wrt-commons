@@ -29,7 +29,6 @@
 #include <dpl/string.h>
 
 namespace CustomHandlerDB {
-
 /**
  * @brief Custom Handler struct
  *
@@ -40,7 +39,8 @@ enum HandlerState {
                         //but want to ask in next occurence
     Declined = 0x02,    //user declined to use protocol,
                         //but want to ask in next occurence
-                        //in fact it is used when user wants to cover saved agreed
+                        //in fact it is used when user wants to cover saved
+                        // agreed
                         //decision by agreeing to another one without save.
     DecisionSaved = 0x04, //user dont want to ask again
     AgreedPermanently = Agreed | DecisionSaved,
@@ -59,7 +59,6 @@ struct CustomHandler
 
 typedef std::shared_ptr<CustomHandler> CustomHandlerPtr;
 typedef std::list <CustomHandlerPtr> CustomHandlersList;
-
 } // namespace CustomHandlerDB
 
 #endif /* SRC_MODULES_CUSTOM_HANDLERS_DAO_COMMON_DAO_TYPES_H_ */

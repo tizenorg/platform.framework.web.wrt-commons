@@ -30,13 +30,9 @@
 #include <dpl/event/event_support.h>
 #include <dpl/dbus/connection.h>
 
-namespace DPL
-{
-namespace DBus
-{
-
-namespace ServerEvents
-{
+namespace DPL {
+namespace DBus {
+namespace ServerEvents {
 /**
  * Emitted when new connection is accepted.
  *
@@ -57,7 +53,7 @@ typedef std::shared_ptr<Server> ServerPtr;
  */
 class Server : public DPL::Event::EventSupport<ServerEvents::NewConnectionEvent>
 {
-public:
+  public:
     /**
      * Creates server.
      *
@@ -78,17 +74,16 @@ public:
      */
     void stop();
 
-protected:
+  protected:
     explicit Server(GDBusServer* server);
 
-private:
+  private:
     static gboolean onNewConnection(GDBusServer* server,
                                     GDBusConnection* connection,
                                     gpointer data);
 
     GDBusServer* m_server;
 };
-
 }
 }
 

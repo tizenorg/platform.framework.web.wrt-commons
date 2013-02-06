@@ -28,12 +28,9 @@
 #include <dpl/exception.h>
 #include <dpl/address.h>
 
-namespace DPL
-{
-namespace Socket
-{
-namespace AbstractSocketEvents
-{
+namespace DPL {
+namespace Socket {
+namespace AbstractSocketEvents {
 // Successfuly connected to server socket
 DECLARE_GENERIC_EVENT_0(ConnectedEvent)
 
@@ -47,51 +44,144 @@ DECLARE_GENERIC_EVENT_0(ReadEvent)
 DECLARE_GENERIC_EVENT_0(WriteEvent)
 } // namespace AbstractSocketEvents
 
-class AbstractSocket
-    : public AbstractWaitableInputOutput,
-      public DPL::Event::EventSupport<AbstractSocketEvents::ConnectedEvent>,
-      public DPL::Event::EventSupport<AbstractSocketEvents::AcceptEvent>,
-      public DPL::Event::EventSupport<AbstractSocketEvents::ReadEvent>,
-      public DPL::Event::EventSupport<AbstractSocketEvents::WriteEvent>
+class AbstractSocket :
+    public AbstractWaitableInputOutput,
+    public DPL::Event::EventSupport<AbstractSocketEvents::ConnectedEvent>,
+    public DPL::Event::EventSupport<AbstractSocketEvents::AcceptEvent>,
+    public DPL::Event::EventSupport<AbstractSocketEvents::ReadEvent>,
+    public DPL::Event::EventSupport<AbstractSocketEvents::WriteEvent>
 {
-public:
+  public:
     class Exception
     {
-    public:
-        DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)       ///< Base abstract socket exception
+      public:
+        DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)       ///< Base abstract
+                                                           // socket exception
 
-        DECLARE_EXCEPTION_TYPE(Base, OpenFailed)           ///< Fatal error occurred during open socket descriptor. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, OpenFailed)           ///< Fatal error
+                                                           // occurred during
+                                                           // open socket
+                                                           // descriptor. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, ConnectFailed)        ///< Fatal error occurred during connect. Socket state is inconsistent and it should be not used anymore.
-                                                           ///< Warning: This exception does not mean that socket did not succeed to connect, see CannotConnect
-                                                           ///< for this specific scenario
+        DECLARE_EXCEPTION_TYPE(Base, ConnectFailed)        ///< Fatal error
+                                                           // occurred during
+                                                           // connect. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
+                                                           ///< Warning: This
+                                                           // exception does not
+                                                           // mean that socket
+                                                           // did not succeed to
+                                                           // connect, see
+                                                           // CannotConnect
+                                                           ///< for this
+                                                           // specific scenario
 
-        DECLARE_EXCEPTION_TYPE(Base, SetNonBlockingFailed) ///< Fatal error occurred during setting socket to non-blocking mode. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, SetNonBlockingFailed) ///< Fatal error
+                                                           // occurred during
+                                                           // setting socket to
+                                                           // non-blocking mode.
+                                                           // Socket state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, BindFailed)           ///< Fatal error occurred during bind. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, BindFailed)           ///< Fatal error
+                                                           // occurred during
+                                                           // bind. Socket state
+                                                           // is inconsistent
+                                                           // and it should be
+                                                           // not used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, AcceptFailed)         ///< Fatal error occurred during accept. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, AcceptFailed)         ///< Fatal error
+                                                           // occurred during
+                                                           // accept. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, ListenFailed)         ///< Fatal error occurred during listen. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, ListenFailed)         ///< Fatal error
+                                                           // occurred during
+                                                           // listen. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, CloseFailed)          ///< Fatal error occurred during close. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, CloseFailed)          ///< Fatal error
+                                                           // occurred during
+                                                           // close. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, ReadFailed)           ///< Fatal error occurred during read. Socket state is inconsistent and it should be not used anymore.
-                                                           ///< Warning: This exception does not mean that connection was broken, see ConnectionBroken
-                                                           ///< for this specific scenario
+        DECLARE_EXCEPTION_TYPE(Base, ReadFailed)           ///< Fatal error
+                                                           // occurred during
+                                                           // read. Socket state
+                                                           // is inconsistent
+                                                           // and it should be
+                                                           // not used anymore.
+                                                           ///< Warning: This
+                                                           // exception does not
+                                                           // mean that
+                                                           // connection was
+                                                           // broken, see
+                                                           // ConnectionBroken
+                                                           ///< for this
+                                                           // specific scenario
 
-        DECLARE_EXCEPTION_TYPE(Base, WriteFailed)          ///< Fatal error occurred during write. Socket state is inconsistent and it should be not used anymore.
-                                                           ///< Warning: This exception does not mean that connection was broken, see ConnectionBroken
-                                                           ///< for this specific scenario
+        DECLARE_EXCEPTION_TYPE(Base, WriteFailed)          ///< Fatal error
+                                                           // occurred during
+                                                           // write. Socket
+                                                           // state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
+                                                           ///< Warning: This
+                                                           // exception does not
+                                                           // mean that
+                                                           // connection was
+                                                           // broken, see
+                                                           // ConnectionBroken
+                                                           ///< for this
+                                                           // specific scenario
 
-        DECLARE_EXCEPTION_TYPE(Base, GetPeerNameFailed)    ///< Fatal error occurred during getpeername or getsockname. Socket state is inconsistent and it should be not used anymore.
+        DECLARE_EXCEPTION_TYPE(Base, GetPeerNameFailed)    ///< Fatal error
+                                                           // occurred during
+                                                           // getpeername or
+                                                           // getsockname.
+                                                           // Socket state is
+                                                           // inconsistent and
+                                                           // it should be not
+                                                           // used anymore.
 
-        DECLARE_EXCEPTION_TYPE(Base, CannotConnect)        ///< Cannot connect to remote socket. This is not fatal error, socket state is still consistent and it can be reconnected.
+        DECLARE_EXCEPTION_TYPE(Base, CannotConnect)        ///< Cannot connect
+                                                           // to remote socket.
+                                                           // This is not fatal
+                                                           // error, socket
+                                                           // state is still
+                                                           // consistent and it
+                                                           // can be
+                                                           // reconnected.
 
-        DECLARE_EXCEPTION_TYPE(Base, ConnectionBroken)     ///< Connection was broken. This is not fatal error, socket state is still consistent and it can be reconnected.
+        DECLARE_EXCEPTION_TYPE(Base, ConnectionBroken)     ///< Connection was
+                                                           // broken. This is
+                                                           // not fatal error,
+                                                           // socket state is
+                                                           // still consistent
+                                                           // and it can be
+                                                           // reconnected.
     };
 
-public:
+  public:
     virtual ~AbstractSocket() {}
 
     // Connect to remote host
@@ -119,7 +209,6 @@ public:
     // Remote socket address
     virtual Address GetRemoteAddress() const = 0;
 };
-
 }
 } // namespace DPL
 

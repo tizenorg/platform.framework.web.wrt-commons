@@ -29,9 +29,9 @@ bool g_wasFooDeleted;
 
 class Foo
 {
-public:
+  public:
     int id;
-    Foo(int i=0): id(i)
+    Foo(int i = 0) : id(i)
     {
         LogInfo("Foo: ctor: " << id);
     }
@@ -51,10 +51,10 @@ public:
 typedef DPL::ThreadLocalVariable<Foo> TlsFoo;
 TlsFoo g_foo;
 
-class FooThread
-    : public DPL::Thread
+class FooThread :
+    public DPL::Thread
 {
-protected:
+  protected:
     virtual int ThreadEntry()
     {
         LogInfo("In thread");

@@ -62,17 +62,17 @@ RUNNER_TEST(wrt_utility_WrtUtilMakeDir)
     WrtUtilMakeDir("/tmp/test/1/2/3/4/5/6/7/8/9", 0755);
     if (stat("/tmp/test/1/2/3/4/5/6/7/8/9", &st) == 0) {
         RUNNER_ASSERT_MSG(st.st_mode & S_IRWXU,
-                "read, write, execute/search by owner");
+                          "read, write, execute/search by owner");
         RUNNER_ASSERT_MSG(st.st_mode & S_IXGRP,
-                "execute/search permission, group");
+                          "execute/search permission, group");
         RUNNER_ASSERT_MSG(st.st_mode & S_IRGRP, "read permission, group");
         RUNNER_ASSERT_MSG(!(st.st_mode & S_IWGRP),
-                "NO write permission, group ");
+                          "NO write permission, group ");
         RUNNER_ASSERT_MSG(st.st_mode & S_IXOTH,
-                "execute/search permission, others");
+                          "execute/search permission, others");
         RUNNER_ASSERT_MSG(st.st_mode & S_IROTH, "read permission, others");
         RUNNER_ASSERT_MSG(!(st.st_mode & S_IWOTH),
-                "NO write permission, others ");
+                          "NO write permission, others ");
     } else {
         RUNNER_ASSERT_MSG(false, "Cannot stat folder");
     }
@@ -90,23 +90,25 @@ RUNNER_TEST(wrt_utility_WrtUtilMakeDir_PermissionError)
         if (p == NULL) {
             int error = errno;
             RUNNER_ASSERT_MSG(false, "Getting app user UID failed: "
-                    << (error == 0 ? "No error detected" : strerror(error)));
+                              << (error ==
+                                  0 ? "No error detected" : strerror(error)));
         }
         if (setuid(p->pw_uid) != 0) {
             int error = errno;
             RUNNER_ASSERT_MSG(false, "Changing to app user's UID failed: "
-                    << (error == 0 ? "No error detected" : strerror(error)));
+                              << (error ==
+                                  0 ? "No error detected" : strerror(error)));
         }
     }
-    RUNNER_ASSERT_MSG(WrtUtilMakeDir("/tmp/test2/1", 0055) == false,
-            "Creating directory '1' in /temp/test2/ should have failed");
+    RUNNER_ASSERT_MSG(WrtUtilMakeDir("/tmp/test2/1",
+                                     0055) == false,
+                      "Creating directory '1' in /temp/test2/ should have failed");
     //Going back to root UID
     if (setuid(0) != 0) {
         int error = errno;
         LogWarning("Changing back to root UID failed: "
-                << (error == 0 ? "No error detected" : strerror(error)));
+                   << (error == 0 ? "No error detected" : strerror(error)));
     }
-
 }
 
 /**
@@ -115,18 +117,18 @@ RUNNER_TEST(wrt_utility_WrtUtilMakeDir_PermissionError)
  */
 RUNNER_TEST(wrt_utility_WrtUtilRemoveDir) {
     RUNNER_ASSERT_MSG(WrtUtilMakeDir("/tmp/test3/", 0755) == true,
-            "Could not set up directory for test");
+                      "Could not set up directory for test");
 
     std::ofstream file;
     file.open("/tmp/test3/example.txt");
     file.close();
     struct stat tmp;
-    RUNNER_ASSERT_MSG(stat("/tmp/test3/example.txt",&tmp) == 0,
-            "Couldn't create the test file");
+    RUNNER_ASSERT_MSG(stat("/tmp/test3/example.txt", &tmp) == 0,
+                      "Couldn't create the test file");
 
     WrtUtilRemove("/tmp/test3");
     if (stat("/tmp/test3", &tmp) != 0) {
-        int error=errno;
+        int error = errno;
         RUNNER_ASSERT(error == ENOENT);
         return;
     }
@@ -142,7 +144,7 @@ RUNNER_TEST(wrt_utility_WrtUtilRemoveDir_NoDirError)
     WrtUtilRemove("/tmp/NOT_EXISTING");
 
     RUNNER_ASSERT_MSG(WrtUtilRemove("/tmp/NOT_EXISTING") == false,
-            "Removing non existing directory returned success");
+                      "Removing non existing directory returned success");
 }
 
 RUNNER_TEST(wrt_utility_WrtUtilFileExists)

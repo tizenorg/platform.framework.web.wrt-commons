@@ -41,12 +41,9 @@
 #include <map>
 #include <list>
 
-namespace DPL
-{
-namespace Event
-{
-namespace EmitMode
-{
+namespace DPL {
+namespace Event {
+namespace EmitMode {
 enum Type
 {
     Auto,     ///< If calling thread is the same as receiver's use
@@ -62,10 +59,10 @@ enum Type
 } // namespace EmitMode
 
 template<typename EventType>
-class EventSupport
-    : private Noncopyable
+class EventSupport :
+    private Noncopyable
 {
-public:
+  public:
     typedef EventSupport<EventType> EventSupportType;
 
     typedef EventListener<EventType> EventListenerType;
@@ -74,10 +71,10 @@ public:
     class EventSupportData; // Forward declaration
     typedef EventSupportData *EventSupportDataPtr;
 
-private:
+  private:
     typedef typename GenericEventCall<EventType, EventSupportDataPtr>::
         template Rebind<EventType, EventSupportDataPtr>::
-            Other GenericEventCallType;
+        Other GenericEventCallType;
 
     // Event listener list
     typedef std::map<EventListenerType *, Thread *> EventListenerList;
@@ -103,10 +100,10 @@ private:
     // Events list mutex
     Mutex m_eventListMutex;
 
-public:
+  public:
     class EventSupportData
     {
-    private:
+      private:
         typedef void (EventSupportType::*ReceiveAbstractEventCallMethod)(
             const EventType &event,
             EventListenerType *eventListener,
@@ -123,22 +120,20 @@ public:
 
         Mutex m_dataMutex;
 
-    public:
+      public:
         EventSupportData(EventSupportType *support,
                          ReceiveAbstractEventCallMethod method,
-                         WaitableEvent *synchronization)
-            : m_eventSupport(support),
-              m_method(method),
-              m_synchronization(synchronization)
-        {
-        }
+                         WaitableEvent *synchronization) :
+            m_eventSupport(support),
+            m_method(method),
+            m_synchronization(synchronization)
+        {}
 
         ~EventSupportData()
         {
             Mutex::ScopedLock lock(&m_dataMutex);
 
-            if (!m_eventSupport)
-            {
+            if (!m_eventSupport) {
                 LogPedantic("EventSupport for this call does not exist");
                 return;
             }
@@ -160,15 +155,12 @@ public:
             {
                 Mutex::ScopedLock lock(&m_dataMutex);
 
-                if (m_eventSupport != NULL)
-                {
+                if (m_eventSupport != NULL) {
                     (*m_eventSupport.*m_method)(event,
                                                 listener,
                                                 delegate,
                                                 m_synchronization);
-                }
-                else
-                {
+                } else {
                     LogPedantic("EventSupport for this call does not "
                                 "exist anymore. Ignored.");
                 }
@@ -190,7 +182,7 @@ public:
         }
     };
 
-private:
+  private:
     GenericEventCallType *RegisterEventCall(const EventType &event,
                                             EventListenerType *eventListener,
                                             DelegateType delegate,
@@ -241,7 +233,7 @@ private:
         }
         UNHANDLED_EXCEPTION_HANDLER_END
 
-        --m_guardedCallInProgress;
+        -- m_guardedCallInProgress;
 
         LogPedantic("Guarded event listener finished");
     }
@@ -260,7 +252,7 @@ private:
         }
         UNHANDLED_EXCEPTION_HANDLER_END
 
-        --m_guardedCallInProgress;
+        -- m_guardedCallInProgress;
 
         LogPedantic("Guarded delegate call finished");
     }
@@ -275,44 +267,41 @@ private:
         Thread *targetThread;
 
         // Listener might have been removed, ensure that it still exits
-        if (eventListener != NULL)
-        {
+        if (eventListener != NULL) {
             Mutex::ScopedLock lock(&m_listenerDelegateMutex);
 
             typename EventListenerList::iterator iterator =
                 m_eventListenerList.find(eventListener);
 
-            if (iterator == m_eventListenerList.end())
-            {
+            if (iterator == m_eventListenerList.end()) {
                 LogPedantic("Abstract event call listener disappeared."
                             "Event ignored.");
 
                 // Even though, synchronize caller if needed
-                if (synchronization != NULL)
+                if (synchronization != NULL) {
                     synchronization->Signal();
+                }
 
                 return;
             }
 
             // Get target thread id
             targetThread = iterator->second;
-        }
-        else
-        {
+        } else {
             // Delegate might have been removed, ensure that it still exits
             Mutex::ScopedLock lock(&m_listenerDelegateMutex);
 
             typename DelegateList::iterator iterator =
                 m_delegateList.find(delegate);
 
-            if (iterator == m_delegateList.end())
-            {
+            if (iterator == m_delegateList.end()) {
                 LogPedantic("Abstract event call delegate disappeared."
                             "Event ignored.");
 
                 // Even though, synchronize caller if needed
-                if (synchronization != NULL)
+                if (synchronization != NULL) {
                     synchronization->Signal();
+                }
 
                 return;
             }
@@ -322,22 +311,19 @@ private:
         }
 
         // Ensure that we are now in proper thread now
-        if (targetThread != Thread::GetCurrentThread())
-        {
+        if (targetThread != Thread::GetCurrentThread()) {
             LogPedantic("Detected event dispatching ping-pong scenario");
 
             // Retry if it was not synchronized
-            if (synchronization == NULL)
-            {
+            if (synchronization == NULL) {
                 // Cheat with event delivery
                 EmitEvent(event, EmitMode::Queued);
 
                 LogPedantic("Ping-Pong: Resent as queued event");
-            }
-            else
-            {
+            } else {
                 // There is a problem
-                // Developer did something nasty, and we will not clean up his mess
+                // Developer did something nasty, and we will not clean up his
+                // mess
                 synchronization->Signal();
 
                 LogPedantic("### Ping-Pong: Failed to deliver synchronized"
@@ -348,17 +334,19 @@ private:
         }
 
         // Guard listener code for exceptions
-        if (eventListener != NULL)
+        if (eventListener != NULL) {
             GuardedEventCall(event, eventListener);
-        else
+        } else {
             GuardedEventCall(event, delegate);
+        }
 
         // Release caller if synchronizing
-        if (synchronization != NULL)
+        if (synchronization != NULL) {
             synchronization->Signal();
+        }
     }
 
-protected:
+  protected:
     void EmitEvent(const EventType &event,
                    EmitMode::Type mode = EmitMode::Queued,
                    double dueTime = 0.0)
@@ -368,26 +356,25 @@ protected:
             new Mutex::ScopedLock(&m_listenerDelegateMutex));
 
         // Show some info
-        switch (mode)
-        {
-            case EmitMode::Auto:
-                LogPedantic("Emitting AUTO event...");
-                break;
+        switch (mode) {
+        case EmitMode::Auto:
+            LogPedantic("Emitting AUTO event...");
+            break;
 
-            case EmitMode::Queued:
-                LogPedantic("Emitting QUEUED event...");
-                break;
+        case EmitMode::Queued:
+            LogPedantic("Emitting QUEUED event...");
+            break;
 
-            case EmitMode::Blocking:
-                LogPedantic("Emitting BLOCKING event...");
-                break;
+        case EmitMode::Blocking:
+            LogPedantic("Emitting BLOCKING event...");
+            break;
 
-            case EmitMode::Deffered:
-                LogPedantic("Emitting DEFFERED event...");
-                break;
+        case EmitMode::Deffered:
+            LogPedantic("Emitting DEFFERED event...");
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         // In some configurations there is a barrier
@@ -399,14 +386,11 @@ protected:
             // Switch to proper dispatcher and emit event
             AbstractEventDispatcher *dispatcher = NULL;
 
-            if (iterator->second == NULL)
-            {
+            if (iterator->second == NULL) {
                 // Send to main thread
                 LogPedantic("Sending event to main dispatcher");
                 dispatcher = &GetMainEventDispatcherInstance();
-            }
-            else
-            {
+            } else {
                 // Setup thread dispatcher, and send to proper thread
                 LogPedantic("Sending event to thread dispatcher");
                 m_threadEventDispatcher.SetThread(iterator->second);
@@ -417,66 +401,59 @@ protected:
             WaitableEvent *synchronization;
 
             // TODO: Pool synchronization objects
-            switch (mode)
-            {
-                case EmitMode::Auto:
-                    // Check thread
-                    if (iterator->second == Thread::GetCurrentThread())
-                    {
-                        // Guard listener code for exceptions
-                        GuardedEventCall(event, iterator->first);
-                    }
-                    else
-                    {
-                        // Handle non-synchronized event
-                        dispatcher->AddEventCall(
-                            RegisterEventCall(event, iterator->first,
-                                              DelegateType(), NULL));
-                    }
-                    break;
-
-                case EmitMode::Queued:
+            switch (mode) {
+            case EmitMode::Auto:
+                // Check thread
+                if (iterator->second == Thread::GetCurrentThread()) {
+                    // Guard listener code for exceptions
+                    GuardedEventCall(event, iterator->first);
+                } else {
                     // Handle non-synchronized event
                     dispatcher->AddEventCall(
                         RegisterEventCall(event, iterator->first,
                                           DelegateType(), NULL));
+                }
+                break;
 
-                    break;
+            case EmitMode::Queued:
+                // Handle non-synchronized event
+                dispatcher->AddEventCall(
+                    RegisterEventCall(event, iterator->first,
+                                      DelegateType(), NULL));
 
-                case EmitMode::Blocking:
-                    // Check thread
-                    if (iterator->second == Thread::GetCurrentThread())
-                    {
-                        // Guard listener code for exceptions
-                        GuardedEventCall(event, iterator->first);
-                    }
-                    else
-                    {
-                        // New synchronization object is needed
-                        synchronization = new WaitableEvent();
+                break;
 
-                        // Handle synchronized event
-                        dispatcher->AddEventCall(
-                            RegisterEventCall(event, iterator->first,
-                                              DelegateType(), synchronization));
+            case EmitMode::Blocking:
+                // Check thread
+                if (iterator->second == Thread::GetCurrentThread()) {
+                    // Guard listener code for exceptions
+                    GuardedEventCall(event, iterator->first);
+                } else {
+                    // New synchronization object is needed
+                    synchronization = new WaitableEvent();
 
-                        // Add to barrier
-                        synchronizationBarrier.push_back(synchronization);
-                    }
-                    break;
-
-                case EmitMode::Deffered:
-                    // Handle deffered events
-                    Assert(dueTime >= 0.0 && "Due time must be non-negative");
-
-                    dispatcher->AddTimedEventCall(
+                    // Handle synchronized event
+                    dispatcher->AddEventCall(
                         RegisterEventCall(event, iterator->first,
-                                          DelegateType(), NULL), dueTime);
+                                          DelegateType(), synchronization));
 
-                    break;
+                    // Add to barrier
+                    synchronizationBarrier.push_back(synchronization);
+                }
+                break;
 
-                default:
-                    Assert("Invalid emit mode");
+            case EmitMode::Deffered:
+                // Handle deffered events
+                Assert(dueTime >= 0.0 && "Due time must be non-negative");
+
+                dispatcher->AddTimedEventCall(
+                    RegisterEventCall(event, iterator->first,
+                                      DelegateType(), NULL), dueTime);
+
+                break;
+
+            default:
+                Assert("Invalid emit mode");
             }
         }
 
@@ -488,14 +465,11 @@ protected:
             // Switch to proper dispatcher and emit event
             AbstractEventDispatcher *dispatcher = NULL;
 
-            if (iterator->second == NULL)
-            {
+            if (iterator->second == NULL) {
                 // Send to main thread
                 LogPedantic("Sending event to main dispatcher");
                 dispatcher = &GetMainEventDispatcherInstance();
-            }
-            else
-            {
+            } else {
                 // Setup thread dispatcher, and send to proper thread
                 LogPedantic("Sending event to thread dispatcher");
                 m_threadEventDispatcher.SetThread(iterator->second);
@@ -506,82 +480,74 @@ protected:
             WaitableEvent *synchronization;
 
             // TODO: Pool synchronization objects
-            switch (mode)
-            {
-                case EmitMode::Auto:
-                    // Check thread
-                    if (iterator->second == Thread::GetCurrentThread())
-                    {
-                        // Guard listener code for exceptions
-                        GuardedEventCall(event, iterator->first);
-                    }
-                    else
-                    {
-                        // Handle non-synchronized event
-                        dispatcher->AddEventCall(
-                            RegisterEventCall(event,
-                                              NULL,
-                                              iterator->first,
-                                              NULL));
-                    }
-                    break;
-
-                case EmitMode::Queued:
+            switch (mode) {
+            case EmitMode::Auto:
+                // Check thread
+                if (iterator->second == Thread::GetCurrentThread()) {
+                    // Guard listener code for exceptions
+                    GuardedEventCall(event, iterator->first);
+                } else {
                     // Handle non-synchronized event
                     dispatcher->AddEventCall(
                         RegisterEventCall(event,
                                           NULL,
                                           iterator->first,
                                           NULL));
+                }
+                break;
 
-                    break;
+            case EmitMode::Queued:
+                // Handle non-synchronized event
+                dispatcher->AddEventCall(
+                    RegisterEventCall(event,
+                                      NULL,
+                                      iterator->first,
+                                      NULL));
 
-                case EmitMode::Blocking:
-                    // Check thread
-                    if (iterator->second == Thread::GetCurrentThread())
-                    {
-                        // Guard listener code for exceptions
-                        GuardedEventCall(event, iterator->first);
-                    }
-                    else
-                    {
-                        // New synchronization object is needed
-                        synchronization = new WaitableEvent();
+                break;
 
-                        // Handle synchronized event
-                        dispatcher->AddEventCall(
-                            RegisterEventCall(event,
-                                              NULL,
-                                              iterator->first,
-                                              synchronization));
+            case EmitMode::Blocking:
+                // Check thread
+                if (iterator->second == Thread::GetCurrentThread()) {
+                    // Guard listener code for exceptions
+                    GuardedEventCall(event, iterator->first);
+                } else {
+                    // New synchronization object is needed
+                    synchronization = new WaitableEvent();
 
-                        // Add to barrier
-                        synchronizationBarrier.push_back(synchronization);
-                    }
-                    break;
-
-                case EmitMode::Deffered:
-                    // Handle deffered events
-                    Assert(dueTime >= 0.0 && "Due time must be non-negative");
-
-                    dispatcher->AddTimedEventCall(
+                    // Handle synchronized event
+                    dispatcher->AddEventCall(
                         RegisterEventCall(event,
                                           NULL,
                                           iterator->first,
-                                          NULL), dueTime);
+                                          synchronization));
 
-                    break;
+                    // Add to barrier
+                    synchronizationBarrier.push_back(synchronization);
+                }
+                break;
 
-                default:
-                    Assert("Invalid emit mode");
+            case EmitMode::Deffered:
+                // Handle deffered events
+                Assert(dueTime >= 0.0 && "Due time must be non-negative");
+
+                dispatcher->AddTimedEventCall(
+                    RegisterEventCall(event,
+                                      NULL,
+                                      iterator->first,
+                                      NULL), dueTime);
+
+                break;
+
+            default:
+                Assert("Invalid emit mode");
             }
         }
 
         LogPedantic("Added event to dispatchers");
 
         // Leave listeners lock in case of blocking call
-        if (!synchronizationBarrier.empty())
-        {
+        if (!synchronizationBarrier.empty()) {
             LogPedantic("Leaving lock due to existing barrier");
             lock.reset();
         }
@@ -590,13 +556,12 @@ protected:
 
         // Synchronize with barrier
         // TODO: Implement generic WaitForAllMultipleHandles call
-        while (!synchronizationBarrier.empty())
-        {
+        while (!synchronizationBarrier.empty()) {
             // Get barrier waitable handles
             WaitableHandleList barrierHandles;
 
             FOREACH(iterator, synchronizationBarrier)
-                barrierHandles.push_back((*iterator)->GetHandle());
+            barrierHandles.push_back((*iterator)->GetHandle());
 
             // Await more events
             WaitableHandleIndexList indexList =
@@ -618,8 +583,9 @@ protected:
 
             FOREACH(iterator, synchronizationBarrier)
             {
-                if (*iterator == NULL)
+                if (*iterator == NULL) {
                     continue;
+                }
 
                 clearedSynchronizationBarrier.push_back(*iterator);
             }
@@ -633,11 +599,10 @@ protected:
         LogPedantic("Event emitted");
     }
 
-public:
-    EventSupport()
-        : m_guardedCallInProgress(false)
-    {
-    }
+  public:
+    EventSupport() :
+        m_guardedCallInProgress(false)
+    {}
 
     virtual ~EventSupport()
     {
@@ -773,15 +738,14 @@ public:
 
         // Switch all listeners and delegates
         FOREACH(iterator, m_eventListenerList)
-            iterator->second = thread;
+        iterator->second = thread;
 
         FOREACH(iterator, m_delegateList)
-            iterator->second = thread;
+        iterator->second = thread;
 
         LogPedantic("All listeners and delegates switched");
     }
 };
-
 }
 } // namespace DPL
 

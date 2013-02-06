@@ -28,9 +28,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
-
-namespace LoopControl
-{
+namespace LoopControl {
 void init_loop(int argc, char *argv[])
 {
     (void)argc;
@@ -71,5 +69,4 @@ void *abstract_window()
 {
     return elm_win_add(NULL, "hello", ELM_WIN_BASIC);
 }
-
-}//end of LoopControl namespace
+} //end of LoopControl namespace

@@ -34,7 +34,6 @@
 
 namespace WrtDB {
 namespace Powder {
-
 typedef std::set<DPL::String> StringSet;
 //! Widget description
 struct Description
@@ -68,7 +67,7 @@ struct Description
         //! \param[in] level POWDER content level
         //! \param[in] context POWDER context
         bool isContextValid(LevelEnum level,
-                const DPL::OptionalString& context) const;
+                            const DPL::OptionalString& context) const;
     };
 
     struct CategoryEntry
@@ -81,8 +80,8 @@ struct Description
         //! \param[in] level POWDER content level
         //! \param[in] context POWDER context
         bool isCategoryValid(LevelEntry& reason,
-                LevelEnum level,
-                const DPL::OptionalString& context) const;
+                             LevelEnum level,
+                             const DPL::OptionalString& context) const;
     };
 
     //! POWDER Category -> Category entry map for Widget
@@ -106,7 +105,6 @@ struct Description
 } // namespace Powder
 
 namespace ChildProtection {
-
 //! Blacklist with forbidden URLs
 //! It should be stored in WidgetDAO
 typedef std::vector<DPL::String> BlackList;
@@ -119,8 +117,7 @@ struct Record
     bool enabled;
     explicit Record(bool enabled) :
         enabled(enabled)
-    {
-    }
+    {}
 };
 
 //! Powder processing
@@ -147,10 +144,12 @@ struct PowderRules
         DPL::String category;
         Powder::Description::LevelEnum level;
         DPL::OptionalString context;
-        explicit CategoryRule(const DPL::String& category = DPL::String(),
-                Powder::Description::LevelEnum level =
-                    Powder::Description::LevelUnknown,
-                const DPL::OptionalString& context = DPL::OptionalString());
+        explicit CategoryRule(
+            const DPL::String& category = DPL::String(),
+            Powder::Description::LevelEnum level =
+                Powder::Description::LevelUnknown,
+            const DPL::OptionalString& context =
+                DPL::OptionalString());
     };
 
     struct PowderResult
@@ -169,10 +168,12 @@ struct PowderRules
             Valid //!< Description valid
         };
         InvalidReason reason;
-        explicit PowderResult(InvalidReason reason = Valid,
-                const Powder::Description::LevelEntry& invalidDescription =
-                    Powder::Description::LevelEntry(),
-                const CategoryRule& invalidRule = CategoryRule());
+        explicit PowderResult(
+            InvalidReason reason = Valid,
+            const Powder::Description::LevelEntry&
+            invalidDescription =
+                Powder::Description::LevelEntry(),
+            const CategoryRule& invalidRule = CategoryRule());
     };
 
     typedef std::pair<bool, PowderResult> ResultPair;
@@ -183,13 +184,14 @@ struct PowderRules
     //! \retval true rule is valid
     //! \retval false rule is invalid
     ResultPair isRuleValidForDescription(const CategoryRule& rule,
-            const Powder::Description& description) const;
+                                         const Powder::Description& description)
+    const;
     //! Function checks if age limit is fulfilled by description
     //! \param[in] description
     //! \retval true age is valid
     //! \retval false age is invalid
     ResultPair isAgeValidForDescription(
-            const Powder::Description& description) const;
+        const Powder::Description& description) const;
 
     //! It is the maximum age rating valid for child
     //! Uniform age is stored in WidgetDAO
@@ -214,8 +216,7 @@ struct PowderRules
 
     PowderRules() :
         isAgeRatingRequired(false)
-    {
-    }
+    {}
 };
 } // namespace ChildProtection
 
@@ -237,8 +238,7 @@ class PluginMetafileData
   public:
 
     PluginMetafileData()
-    {
-    }
+    {}
 
     std::string m_libraryName;
     std::string m_featuresInstallURI;
@@ -281,11 +281,10 @@ struct DbWidgetSize
     DPL::OptionalInt height;
 
     DbWidgetSize(DPL::OptionalInt w = DPL::OptionalInt::Null,
-            DPL::OptionalInt h = DPL::OptionalInt::Null) :
+                 DPL::OptionalInt h = DPL::OptionalInt::Null) :
         width(w),
         height(h)
-    {
-    }
+    {}
 };
 
 inline bool operator ==(const DbWidgetSize &objA, const DbWidgetSize &objB)
@@ -360,24 +359,24 @@ struct DbWidgetFeature
 {
     DPL::String name;        /// Feature name
     bool required;           /// Whether feature is required
-    DbPluginHandle pluginId;            /// Plugin id that implement this feature
+    DbPluginHandle pluginId;            /// Plugin id that implement this
+                                        // feature
     WidgetParamMap params;   /// Widget's params
 
     DbWidgetFeature() :
         required(false),
         pluginId(INVALID_PLUGIN_HANDLE)
-    {
-    }
+    {}
 };
 
 inline bool operator < (const DbWidgetFeature &objA,
-        const DbWidgetFeature &objB)
+                        const DbWidgetFeature &objB)
 {
     return objA.name.compare(objB.name) < 0;
 }
 
 inline bool operator==(const DbWidgetFeature &featureA,
-        const DbWidgetFeature &featureB)
+                       const DbWidgetFeature &featureB)
 {
     return featureA.name == featureB.name &&
            featureA.required == featureB.required &&
@@ -409,14 +408,12 @@ enum AppType
 class WidgetType
 {
   public:
-    WidgetType()
-    :appType(APP_TYPE_UNKNOWN)
-    {
-    }
-    WidgetType(const AppType type)
-    :appType(type)
-    {
-    }
+    WidgetType() :
+        appType(APP_TYPE_UNKNOWN)
+    {}
+    WidgetType(const AppType type) :
+        appType(type)
+    {}
     bool operator== (const AppType& other) const
     {
         return appType == other;
@@ -425,9 +422,9 @@ class WidgetType
     {
         switch (appType) {
 #define X(x) case x: return #x;
-        X(APP_TYPE_UNKNOWN)
-        X(APP_TYPE_WAC20)
-        X(APP_TYPE_TIZENWEBAPP)
+            X(APP_TYPE_UNKNOWN)
+            X(APP_TYPE_WAC20)
+            X(APP_TYPE_TIZENWEBAPP)
 #undef X
         default:
             return "UNKNOWN";
@@ -436,7 +433,6 @@ class WidgetType
 
     AppType appType;
 };
-
 } // namespace WrtDB
 
 struct WidgetSetting
@@ -447,12 +443,12 @@ struct WidgetSetting
     bool operator ==(const WidgetSetting& info) const
     {
         return (info.settingName == settingName &&
-               info.settingValue == settingValue);
+                info.settingValue == settingValue);
     }
     bool operator !=(const WidgetSetting& info) const
     {
         return (info.settingName != settingName ||
-               info.settingValue != settingValue);
+                info.settingValue != settingValue);
     }
 };
 
@@ -475,9 +471,9 @@ struct WidgetApplicationService
     bool operator== (const WidgetApplicationService& other) const
     {
         return src == other.src &&
-        operation == other.operation &&
-        scheme == other.scheme &&
-        mime == other.mime;
+               operation == other.operation &&
+               scheme == other.scheme &&
+               mime == other.mime;
     }
 };
 

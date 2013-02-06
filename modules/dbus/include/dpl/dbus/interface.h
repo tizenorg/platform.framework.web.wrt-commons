@@ -31,13 +31,12 @@
 
 namespace DPL {
 namespace DBus {
-
 class Interface;
 typedef std::shared_ptr<Interface> InterfacePtr;
 
 class Interface : private DPL::Noncopyable
 {
-public:
+  public:
     /**
      * Parses supplied XML string to produce DBus interface descriptions.
      *
@@ -46,9 +45,9 @@ public:
      * @throw DPL::DBus::Exception If error while parsing occurs.
      */
     static std::vector<InterfacePtr> fromXMLString(
-            const std::string& xmlString);
+        const std::string& xmlString);
 
-public:
+  public:
     ~Interface();
 
     /**
@@ -73,7 +72,7 @@ public:
      */
     void setDispatcher(Dispatcher* dispatcher);
 
-private:
+  private:
     static void onMethodCallFunc(GDBusConnection *connection,
                                  const gchar *sender,
                                  const gchar *objectPath,
@@ -108,7 +107,6 @@ private:
 
     Dispatcher* m_dispatcher;
 };
-
 }
 }
 

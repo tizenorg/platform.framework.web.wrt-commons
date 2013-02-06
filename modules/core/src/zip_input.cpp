@@ -36,30 +36,30 @@
 #include <minizip/framework_minizip.h>
 #include <new>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 const size_t EXTRACT_BUFFER_SIZE = 4096;
 
 class ScopedUnzClose
 {
-private:
+  private:
     unzFile m_file;
 
-public:
-    ScopedUnzClose(unzFile file)
-        : m_file(file)
-    {
-    }
+  public:
+    ScopedUnzClose(unzFile file) :
+        m_file(file)
+    {}
 
     ~ScopedUnzClose()
     {
-        if (!m_file)
+        if (!m_file) {
             return;
+        }
 
-        if (unzClose(m_file) != UNZ_OK)
+        if (unzClose(m_file) != UNZ_OK) {
             LogPedantic("Failed to close zip input file");
+        }
     }
 
     unzFile Release()
@@ -86,13 +86,14 @@ public:
  *
  * About generalization:
  * To achieve the same results on abstract input device, there must be
- * provided a mechanism to read data from random address without synchronization.
+ * provided a mechanism to read data from random address without
+ * synchronization.
  * In other words: stateless. As described above, stateless property can be
  * achieved via memory mapping.
  */
 class Device
 {
-private:
+  private:
     int m_handle;
     off64_t m_size; // file mapping size
     unsigned char *m_address; // mapping base address
@@ -102,22 +103,20 @@ private:
         off64_t offset;
         Device *device;
 
-        File(Device *d)
-            : offset(0),
-              device(d)
-        {
-        }
+        File(Device *d) :
+            offset(0),
+            device(d)
+        {}
     };
 
-public:
+  public:
     Device(const std::string &fileName)
     {
         LogPedantic("Creating file mapping");
         // Open device and map it to user space
         int file = TEMP_FAILURE_RETRY(open(fileName.c_str(), O_RDONLY));
 
-        if (file == -1)
-        {
+        if (file == -1) {
             int error = errno;
             ThrowMsg(ZipInput::Exception::OpenFailed,
                      "Failed to open file. errno = " << error);
@@ -129,8 +128,7 @@ public:
         // Calculate file size
         off64_t size = lseek64(file, 0, SEEK_END);
 
-        if (size == static_cast<off64_t>(-1))
-        {
+        if (size == static_cast<off64_t>(-1)) {
             int error = errno;
             ThrowMsg(ZipInput::Exception::OpenFailed,
                      "Failed to seek file. errno = " << error);
@@ -140,8 +138,7 @@ public:
         void *address = mmap(0, static_cast<size_t>(size),
                              PROT_READ, MAP_SHARED, file, 0);
 
-        if (address == MAP_FAILED)
-        {
+        if (address == MAP_FAILED) {
             int error = errno;
             ThrowMsg(ZipInput::Exception::OpenFailed,
                      "Failed to map file. errno = " << error);
@@ -156,21 +153,20 @@ public:
 
         LogPedantic("Created file mapping: " << fileName <<
                     " of size: " << m_size <<
-                    " at address: " << std::hex << static_cast<void *>(m_address));
+                    " at address: " << std::hex <<
+                    static_cast<void *>(m_address));
     }
 
     ~Device()
     {
         // Close mapping
-        if (munmap(m_address, static_cast<size_t>(m_size)) == -1)
-        {
+        if (munmap(m_address, static_cast<size_t>(m_size)) == -1) {
             int error = errno;
             LogPedantic("Failed to munmap file. errno = " << error);
         }
 
         // Close file descriptor
-        if (close(m_handle) == -1)
-        {
+        if (close(m_handle) == -1) {
             int error = errno;
             LogPedantic("Failed to close file. errno = " << error);
         }
@@ -196,22 +192,22 @@ public:
         File *deviceFile = static_cast<File *>(pstream);
 
         // Check if offset is out of bounds
-        if (deviceFile->offset >= device->m_size)
-        {
+        if (deviceFile->offset >= device->m_size) {
             LogPedantic("Device: read offset out of bounds");
             return -1;
         }
 
         off64_t bytesLeft = device->m_size -
-                            deviceFile->offset;
+            deviceFile->offset;
 
         off64_t bytesToRead;
 
         // Calculate bytes to read
-        if (static_cast<off64_t>(size) > bytesLeft)
+        if (static_cast<off64_t>(size) > bytesLeft) {
             bytesToRead = bytesLeft;
-        else
+        } else {
             bytesToRead = static_cast<off64_t>(size);
+        }
 
         // Do copy
         memcpy(buf,
@@ -267,38 +263,37 @@ public:
         Device *device = static_cast<Device *>(opaque);
         File *deviceFile = static_cast<File *>(stream);
 
-        switch (origin)
-        {
-            case ZLIB_FILEFUNC_SEEK_SET:
-                deviceFile->offset = static_cast<off64_t>(offset);
+        switch (origin) {
+        case ZLIB_FILEFUNC_SEEK_SET:
+            deviceFile->offset = static_cast<off64_t>(offset);
 
-                break;
+            break;
 
-            case ZLIB_FILEFUNC_SEEK_CUR:
-                deviceFile->offset += static_cast<off64_t>(offset);
+        case ZLIB_FILEFUNC_SEEK_CUR:
+            deviceFile->offset += static_cast<off64_t>(offset);
 
-                break;
+            break;
 
-            case ZLIB_FILEFUNC_SEEK_END:
-                deviceFile->offset =
-                    device->m_size -
-                    static_cast<off64_t>(offset);
+        case ZLIB_FILEFUNC_SEEK_END:
+            deviceFile->offset =
+                device->m_size -
+                static_cast<off64_t>(offset);
 
-                break;
+            break;
 
-            default:
-                return -1;
+        default:
+            return -1;
         }
 
         return 0;
     }
 };
 
-ZipInput::ZipInput(const std::string &fileName)
-    : m_device(NULL),
-      m_numberOfFiles(0),
-      m_globalComment(),
-      m_fileInfos()
+ZipInput::ZipInput(const std::string &fileName) :
+    m_device(NULL),
+    m_numberOfFiles(0),
+    m_globalComment(),
+    m_fileInfos()
 {
     LogPedantic("Zip input file: " << fileName);
 
@@ -320,11 +315,10 @@ ZipInput::ZipInput(const std::string &fileName)
     LogPedantic("Opening zip file");
     unzFile file = unzOpen2_64(NULL, &interface);
 
-    if (file == NULL)
-    {
+    if (file == NULL) {
         LogPedantic("Failed to open zip file");
 
-         // Some errror occured
+        // Some errror occured
         ThrowMsg(Exception::OpenFailed,
                  "Failed to open zip file: " << fileName);
     }
@@ -347,8 +341,9 @@ ZipInput::ZipInput(const std::string &fileName)
 ZipInput::~ZipInput()
 {
     // Close zip
-    if (unzClose(static_cast<unzFile>(m_masterFile)) != UNZ_OK)
+    if (unzClose(static_cast<unzFile>(m_masterFile)) != UNZ_OK) {
         LogPedantic("Failed to close zip input file");
+    }
 
     // Close device
     delete m_device;
@@ -398,14 +393,12 @@ void ZipInput::ReadInfos(void *masterFile)
     // Read infos
     m_fileInfos.reserve(m_numberOfFiles);
 
-    if (unzGoToFirstFile(static_cast<unzFile>(masterFile)) != UNZ_OK)
-    {
+    if (unzGoToFirstFile(static_cast<unzFile>(masterFile)) != UNZ_OK) {
         LogPedantic("Failed to go to first file");
         ThrowMsg(Exception::SeekFileFailed, "Failed to seek first file");
     }
 
-    for (size_t i = 0; i < m_numberOfFiles; ++i)
-    {
+    for (size_t i = 0; i < m_numberOfFiles; ++i) {
         unz_file_pos_s filePos;
 
         if (unzGetFilePos(static_cast<unzFile>(masterFile),
@@ -451,19 +444,18 @@ void ZipInput::ReadInfos(void *masterFile)
                 FileHandle(
                     static_cast<size_t>(filePos.pos_in_zip_directory),
                     static_cast<size_t>(filePos.num_of_file)
-                ),
+                    ),
                 std::string(fileName.Get()),
                 std::string(fileComment.Get()),
                 static_cast<off64_t>(fileInfo.compressed_size),
                 static_cast<off64_t>(fileInfo.uncompressed_size)
-            )
-        );
+                )
+            );
 
         // If this is not the last file, go to next one
-        if (i != m_numberOfFiles - 1)
-        {
+        if (i != m_numberOfFiles - 1) {
             if (unzGoToNextFile(
-                    static_cast<unzFile>(masterFile))!= UNZ_OK)
+                    static_cast<unzFile>(masterFile)) != UNZ_OK)
             {
                 LogPedantic("Failed to go to next file");
 
@@ -503,8 +495,7 @@ ZipInput::File *ZipInput::OpenFile(const std::string &fileName)
 {
     FOREACH(iterator, m_fileInfos)
     {
-        if (iterator->name == fileName)
-        {
+        if (iterator->name == fileName) {
             return new File(m_device, iterator->handle);
         }
     }
@@ -529,11 +520,10 @@ ZipInput::File::File(class Device *device, FileHandle handle)
     LogPedantic("Opening zip file");
     unzFile file = unzOpen2_64(NULL, &interface);
 
-    if (file == NULL)
-    {
+    if (file == NULL) {
         LogPedantic("Failed to open zip file");
 
-         // Some errror occured
+        // Some errror occured
         ThrowMsg(ZipInput::Exception::OpenFileFailed,
                  "Failed to open zip file");
     }
@@ -542,27 +532,24 @@ ZipInput::File::File(class Device *device, FileHandle handle)
     ScopedUnzClose scopedUnzClose(file);
 
     // Look up file handle
-    unz64_file_pos filePos =
-    {
+    unz64_file_pos filePos = {
         static_cast<ZPOS64_T>(handle.first),
         static_cast<ZPOS64_T>(handle.second)
     };
 
-    if (unzGoToFilePos64(file, &filePos) != UNZ_OK)
-    {
+    if (unzGoToFilePos64(file, &filePos) != UNZ_OK) {
         LogPedantic("Failed to seek to zip file");
 
-         // Some errror occured
+        // Some errror occured
         ThrowMsg(ZipInput::Exception::OpenFileFailed,
                  "Failed to open zip file");
     }
 
     // Open current file for reading
-    if (unzOpenCurrentFile(file) != UNZ_OK)
-    {
+    if (unzOpenCurrentFile(file) != UNZ_OK) {
         LogPedantic("Failed to open current zip file");
 
-         // Some errror occured
+        // Some errror occured
         ThrowMsg(ZipInput::Exception::OpenFileFailed,
                  "Failed to open current zip file");
     }
@@ -576,30 +563,34 @@ ZipInput::File::File(class Device *device, FileHandle handle)
 ZipInput::File::~File()
 {
     // Close current file for reading
-    if (unzCloseCurrentFile(static_cast<unzFile>(m_file)) != UNZ_OK)
+    if (unzCloseCurrentFile(static_cast<unzFile>(m_file)) != UNZ_OK) {
         LogPedantic("Failed to close current zip input file");
+    }
 
     // Close zip file
-    if (unzClose(static_cast<unzFile>(m_file)) != UNZ_OK)
+    if (unzClose(static_cast<unzFile>(m_file)) != UNZ_OK) {
         LogPedantic("Failed to close zip input file");
+    }
 }
 
 DPL::BinaryQueueAutoPtr ZipInput::File::Read(size_t size)
 {
     // Do not even try to unzip if requested zero bytes
-    if (size == 0)
+    if (size == 0) {
         return DPL::BinaryQueueAutoPtr(new DPL::BinaryQueue());
+    }
 
     // Calc data to read
     size_t sizeToRead = size > EXTRACT_BUFFER_SIZE ?
-                        EXTRACT_BUFFER_SIZE :
-                        size;
+        EXTRACT_BUFFER_SIZE :
+        size;
 
     // Extract zip file data (one-copy)
     ScopedFree<void> rawBuffer(malloc(sizeToRead));
 
-    if (!rawBuffer)
+    if (!rawBuffer) {
         throw std::bad_alloc();
+    }
 
     // Do unpack
     int bytes = unzReadCurrentFile(static_cast<unzFile>(m_file),
@@ -607,8 +598,7 @@ DPL::BinaryQueueAutoPtr ZipInput::File::Read(size_t size)
                                    sizeToRead);
 
     // Internal unzipper error
-    if (bytes < 0)
-    {
+    if (bytes < 0) {
         LogPedantic("Extract failed. Error: " << bytes);
 
         ThrowMsg(ZipInput::Exception::ReadFileFailed,

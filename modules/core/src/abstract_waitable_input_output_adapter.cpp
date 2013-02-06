@@ -17,18 +17,16 @@
  * @file        abstract_waitable_input_output_adapter.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of abstract waitable input output adapter
+ * @brief       This file is the implementation file of abstract waitable input
+ * output adapter
  */
 #include <stddef.h>
 #include <dpl/abstract_waitable_input_output_adapter.h>
 
-namespace DPL
-{
-
-AbstractWaitableInputOutputAdapter::AbstractWaitableInputOutputAdapter(AbstractInputOutput *inputOutput)
-    : AbstractWaitableInputAdapter(inputOutput),
-      AbstractWaitableOutputAdapter(inputOutput)
-{
-}
-
+namespace DPL {
+AbstractWaitableInputOutputAdapter::AbstractWaitableInputOutputAdapter(
+    AbstractInputOutput *inputOutput) :
+    AbstractWaitableInputAdapter(inputOutput),
+    AbstractWaitableOutputAdapter(inputOutput)
+{}
 } // namespace DPL

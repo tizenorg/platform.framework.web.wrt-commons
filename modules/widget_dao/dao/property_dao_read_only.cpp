@@ -30,16 +30,14 @@
 
 namespace WrtDB {
 namespace PropertyDAOReadOnly {
-
 namespace {
-
 typedef DPL::DB::ORM::wrt::WidgetPreference::key_name::ColumnType
-    ORMWidgetPropertyKey;
+ORMWidgetPropertyKey;
 typedef DPL::DB::ORM::wrt::WidgetPreference::key_value::ColumnType
-    ORMWidgetPropertyValue;
-typedef std::list<DPL::DB::ORM::wrt::WidgetPreference::Row> ORMWidgetPreferenceList;
+ORMWidgetPropertyValue;
+typedef std::list<DPL::DB::ORM::wrt::WidgetPreference::Row>
+ORMWidgetPreferenceList;
 typedef std::list<WidgetPropertyKey> ORMWidgetPropertyKeyList;
-
 
 void convertPropertyKey(const ORMWidgetPropertyKey& ormKey,
                         WidgetPropertyKey& key)
@@ -75,20 +73,18 @@ void convertWidgetPropertyKeyList(const ORMWidgetPropertyKeyList& propKeyList,
         keyList.push_back(*it);
     }
 }
-
-
 }
 
 //deprecated
 DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
-                                  const WidgetPropertyKey &key)
+                                       const WidgetPropertyKey &key)
 {
     return CheckPropertyReadFlag(WidgetDAOReadOnly::getTzAppId(widgetHandle),
                                  key);
 }
 
 DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
-                                  const WidgetPropertyKey &key)
+                                       const WidgetPropertyKey &key)
 {
     LogDebug("Checking Property flag. appid: " << tzAppid <<
              ", key: " << key);
@@ -133,10 +129,10 @@ WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
 //deprecated
 WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 {
-    Try{
+    Try {
         TizenAppId tzAppid = WidgetDAOReadOnly::getTzAppId(widgetHandle);
         return GetPropertyList(tzAppid);
-    }Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
+    } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
         WidgetPreferenceList empty;
         return empty;
     }
@@ -176,7 +172,7 @@ WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                           Equals<WidgetPreference::key_name>(key)));
 
         ORMWidgetPropertyValue ormPropValue =
-                select->GetSingleValue<WidgetPreference::key_value>();
+            select->GetSingleValue<WidgetPreference::key_value>();
 
         WidgetPropertyValue propValue;
 
@@ -189,6 +185,5 @@ WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                    "Failure during getting property");
     }
 }
-
 } // namespace PropertyDAOReadOnly
 } // namespace WrtDB

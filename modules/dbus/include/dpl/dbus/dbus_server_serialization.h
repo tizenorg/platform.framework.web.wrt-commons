@@ -28,11 +28,9 @@
 
 namespace DPL {
 namespace DBus {
-
 struct ServerSerialization {
-
-    template<typename ...Args>
-    static GVariant* serialize(Args... args)
+    template<typename ... Args>
+    static GVariant* serialize(Args ... args)
     {
         GVariantBuilder* builder = g_variant_builder_new(G_VARIANT_TYPE_TUPLE);
         if (NULL == builder) {
@@ -43,10 +41,10 @@ struct ServerSerialization {
     }
 
     // serialization on GVariantBuilder
-    template<typename T, typename ...Args>
+    template<typename T, typename ... Args>
     static void serializeBuilder(GVariantBuilder* builder,
                                  const T& arg,
-                                 Args... args)
+                                 Args ... args)
     {
         serializeElem(builder, arg);
         serializeBuilder(builder, args ...);
@@ -86,12 +84,11 @@ struct ServerSerialization {
     }
 
     static void serializeElem(GVariantBuilder* builder,
-                                 const std::string& arg)
+                              const std::string& arg)
     {
         g_variant_builder_add_value(builder, g_variant_new_string(arg.c_str()));
     }
 };
-
 } // namespace DBus
 } // namespace DPL
 

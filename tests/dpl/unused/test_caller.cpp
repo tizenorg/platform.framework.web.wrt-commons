@@ -27,7 +27,8 @@
 RUNNER_TEST_GROUP_INIT(DPL)
 
 // test stream class
-class BinaryStream : public DPL::IStream {
+class BinaryStream : public DPL::IStream
+{
   public:
     virtual void Read(size_t num, void * bytes)
     {
@@ -46,7 +47,7 @@ class BinaryStream : public DPL::IStream {
     {
         readPosition = 0;
     }
-    virtual ~BinaryStream(){};
+    virtual ~BinaryStream(){}
 
   private:
     std::vector<unsigned char> data;
@@ -71,27 +72,27 @@ static void void_func(int a)
 
 static struct VoidDelegate
 {
-        void operator()(int a)
-        {
-            called = a;
-        }
+    void operator()(int a)
+    {
+        called = a;
+    }
 } voidDelegate;
 
 static struct ReturnDelegate
 {
-        int operator()(int a)
-        {
-            return a;
-        }
+    int operator()(int a)
+    {
+        return a;
+    }
 } returnDelegate;
 
 RUNNER_TEST(Caller_function_void)
 {
     int a = 23;
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,a);
+    DPL::Serialization::Serialize(stream, a);
     called = 0;
-    DPL::Caller::Call(stream,void_func);
+    DPL::Caller::Call(stream, void_func);
     RUNNER_ASSERT(called == a);
 }
 
@@ -100,9 +101,9 @@ RUNNER_TEST(Caller_function_return)
     int a = 23;
     bool b = true;
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,a);
-    DPL::Serialization::Serialize(stream,b);
-    int result = DPL::Caller::Call(stream,return_func);
+    DPL::Serialization::Serialize(stream, a);
+    DPL::Serialization::Serialize(stream, b);
+    int result = DPL::Caller::Call(stream, return_func);
     RUNNER_ASSERT(result == a);
 }
 
@@ -111,8 +112,8 @@ RUNNER_TEST(Caller_delegate_void)
     int a = 23;
     BinaryStream stream;
     called = 0;
-    DPL::Serialization::Serialize(stream,a);
-    DPL::Caller::CallDelegate(stream,voidDelegate);
+    DPL::Serialization::Serialize(stream, a);
+    DPL::Caller::CallDelegate(stream, voidDelegate);
     RUNNER_ASSERT(called == a);
 }
 
@@ -121,8 +122,8 @@ RUNNER_TEST(Caller_delegate_return)
     int a = 23;
     BinaryStream stream;
     called = 0;
-    DPL::Serialization::Serialize(stream,a);
+    DPL::Serialization::Serialize(stream, a);
     int result = 0;
-    DPL::Caller::CallDelegate(stream,returnDelegate,result);
+    DPL::Caller::CallDelegate(stream, returnDelegate, result);
     RUNNER_ASSERT(result == a);
 }

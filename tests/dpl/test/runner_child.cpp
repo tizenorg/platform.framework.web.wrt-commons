@@ -50,11 +50,11 @@ RUNNER_CHILD_TEST(t03_fail_timeout)
 
 RUNNER_CHILD_TEST(t04_fail)
 {
-   RUNNER_ASSERT_MSG(1, "This test should fail");
-   RUNNER_ASSERT_MSG(1, "This test should fail");
-   RUNNER_ASSERT_MSG(1, "This test should fail");
-   RUNNER_ASSERT_MSG(1, "This test should fail");
-   RUNNER_ASSERT_MSG(0, "This test should fail");
+    RUNNER_ASSERT_MSG(1, "This test should fail");
+    RUNNER_ASSERT_MSG(1, "This test should fail");
+    RUNNER_ASSERT_MSG(1, "This test should fail");
+    RUNNER_ASSERT_MSG(1, "This test should fail");
+    RUNNER_ASSERT_MSG(0, "This test should fail");
 }
 
 RUNNER_CHILD_TEST(t05_fail_child_died)

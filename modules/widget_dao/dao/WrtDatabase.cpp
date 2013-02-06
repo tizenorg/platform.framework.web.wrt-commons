@@ -23,7 +23,6 @@
 #include <dpl/wrt-dao-ro/global_config.h>
 
 namespace WrtDB {
-
 const char* WrtDatabase::Address()
 {
     using namespace WrtDB;
@@ -36,8 +35,8 @@ DPL::DB::SqlConnection::Flag::Type WrtDatabase::Flags()
 }
 
 DPL::DB::ThreadDatabaseSupport WrtDatabase::m_interface(
-        WrtDatabase::Address(),
-        WrtDatabase::Flags());
+    WrtDatabase::Address(),
+    WrtDatabase::Flags());
 
 void WrtDatabase::attachToThreadRO()
 {
@@ -63,5 +62,4 @@ bool WrtDatabase::CheckTableExist(const char *name)
 {
     return m_interface.CheckTableExist(name);
 }
-
 }

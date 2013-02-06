@@ -23,16 +23,9 @@
 #include <stddef.h>
 #include <dpl/colors.h>
 
-
-namespace DPL
-{
-
-namespace Colors
-{
-
-namespace Text
-{
-
+namespace DPL {
+namespace Colors {
+namespace Text {
 const char* BOLD_GREEN_BEGIN = "\033[1;32m";
 const char* BOLD_GREEN_END = "\033[m";
 const char* RED_BEGIN = "\033[0;31m";
@@ -51,12 +44,9 @@ const char* BOLD_GOLD_BEGIN = "\033[0;33m";
 const char* BOLD_GOLD_END = "\033[m";
 const char* BOLD_WHITE_BEGIN = "\033[1;37m";
 const char* BOLD_WHITE_END = "\033[m";
-
 } //namespace Text
 
-namespace Html
-{
-
+namespace Html {
 const char* BOLD_GREEN_BEGIN = "<font color=\"green\"><b>";
 const char* BOLD_GREEN_END = "</b></font>";
 const char* PURPLE_BEGIN = "<font color=\"purple\"><b>";
@@ -75,9 +65,6 @@ const char* BOLD_GOLD_BEGIN = "<font color=\"gold\"><b>";
 const char* BOLD_GOLD_END = "</b></font>";
 const char* BOLD_WHITE_BEGIN = "<font color=\"white\"><b>";
 const char* BOLD_WHITE_END = "</b></font>";
-
 } //namespace Html
-
 } //namespace Colors
-
 } //namespace DPL

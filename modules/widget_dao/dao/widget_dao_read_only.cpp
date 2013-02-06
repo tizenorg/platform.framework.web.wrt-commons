@@ -38,7 +38,6 @@
 #include <LanguageTagsProvider.h>
 
 namespace WrtDB {
-
 //TODO in current solution in each getter there exists a check
 //"IsWidgetInstalled". Maybe it should be verified, if it could be done
 //differently  (check in WidgetDAOReadOnly constructor)
@@ -61,15 +60,13 @@ namespace WrtDB {
                  "Cannot find widget. Handle: " << macro_handle);        \
     }
 
-
 typedef DPL::DB::ORM::wrt::WidgetInfo::Row WidgetInfoRow;
 typedef DPL::DB::ORM::wrt::WidgetFeature::widget_feature_id::ColumnType
-    WidgetFeatureId;
+WidgetFeatureId;
 typedef DPL::DB::ORM::wrt::WidgetSecuritySettings::Row
-    WidgetSecuritySettingsRow;
+WidgetSecuritySettingsRow;
 
 namespace {
-
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::wrt;
 
@@ -108,7 +105,8 @@ WidgetSecuritySettingsRow getWidgetSecuritySettingsRow(int widgetHandle)
         }
         return rows.front();
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getWidgetSecuritySettingsRow")
+    SQL_CONNECTION_EXCEPTION_HANDLER_END(
+        "Failed in getWidgetSecuritySettingsRow")
 }
 
 const int MAX_TIZENID_LENGTH = 10;
@@ -125,12 +123,11 @@ TizenAppId getTizenAppIdByHandle(const DbWidgetHandle handle)
 
         if (rowList.empty()) {
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                 "Failed to get widget by handle");
+                     "Failed to get widget by handle");
         }
         TizenAppId tzAppid = rowList.front().Get_tizen_appid();
 
         return tzAppid;
-
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
@@ -146,42 +143,33 @@ TizenAppId getTizenAppIdByPkgId(const TizenPkgId tzPkgid)
 
         if (rowList.empty()) {
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                 "Failed to get widget by handle");
+                     "Failed to get widget by handle");
         }
         TizenAppId tzAppid = rowList.front().Get_tizen_appid();
 
         return tzAppid;
-
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
-
 }
 } // namespace
 
-
 IWacSecurity::~IWacSecurity()
-{
-}
+{}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
     m_widgetHandle(widgetHandle)
-{
-}
+{}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
     m_widgetHandle(WidgetDAOReadOnly::getHandle(widgetGUID))
-{
-}
+{}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::String tzAppid) :
     m_widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid))
-{
-
-}
+{}
 
 WidgetDAOReadOnly::~WidgetDAOReadOnly()
-{
-}
+{}
 
 DbWidgetHandle WidgetDAOReadOnly::getHandle() const
 {
@@ -200,7 +188,7 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const WidgetGUID GUID)
 
         if (rowList.empty()) {
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                 "Failed to get widget by guid");
+                     "Failed to get widget by guid");
         }
         return rowList.front().Get_app_id();
     }
@@ -219,7 +207,7 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String tzAppId)
 
         if (rowList.empty()) {
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                 "Failed to get widget by package name");
+                     "Failed to get widget by package name");
         }
         return rowList.front().Get_app_id();
     }
@@ -243,7 +231,7 @@ WidgetPkgName WidgetDAOReadOnly::getPkgName(const DbWidgetHandle handle)
 
 TizenAppId WidgetDAOReadOnly::getTzAppId() const
 {
-   return getTizenAppIdByHandle(m_widgetHandle);
+    return getTizenAppIdByHandle(m_widgetHandle);
 }
 
 TizenAppId WidgetDAOReadOnly::getTzAppId(const WidgetGUID GUID)
@@ -274,13 +262,13 @@ WidgetDAOReadOnly::getPropertyList() const
 }
 
 PropertyDAOReadOnly::WidgetPropertyValue WidgetDAOReadOnly::getPropertyValue(
-        const PropertyDAOReadOnly::WidgetPropertyKey &key) const
+    const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
     return PropertyDAOReadOnly::GetPropertyValue(getTzAppId(), key);
 }
 
 DPL::OptionalInt WidgetDAOReadOnly::checkPropertyReadFlag(
-        const PropertyDAOReadOnly::WidgetPropertyKey &key) const
+    const PropertyDAOReadOnly::WidgetPropertyKey &key) const
 {
     return PropertyDAOReadOnly::CheckPropertyReadFlag(getTzAppId(), key);
 }
@@ -301,8 +289,8 @@ DPL::String WidgetDAOReadOnly::getFullPath() const
 }
 
 WidgetLocalizedInfo
-        WidgetDAOReadOnly::getLocalizedInfo(const DPL::String& languageTag)
-        const
+WidgetDAOReadOnly::getLocalizedInfo(const DPL::String& languageTag)
+const
 {
     LogDebug("Getting Localized Info. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -375,7 +363,7 @@ WidgetParamMap WidgetDAOReadOnly::getFeatureParams(int id)
         RowList list = select->GetRowList();
 
         FOREACH(i, list)
-            resultMap.insert(std::make_pair(i->Get_name(), i->Get_value()));
+        resultMap.insert(std::make_pair(i->Get_name(), i->Get_value()));
 
         return resultMap;
     }
@@ -525,7 +513,7 @@ ExternalLocationList WidgetDAOReadOnly::getWidgetExternalLocations() const
 }
 
 CertificateChainList WidgetDAOReadOnly::getWidgetCertificate(
-        CertificateSource source) const
+    CertificateSource source) const
 {
     WRT_DB_SELECT(select, WidgetCertificate, &WrtDatabase::interface())
     select->Where(
@@ -538,7 +526,7 @@ CertificateChainList WidgetDAOReadOnly::getWidgetCertificate(
     CertificateChainList result;
 
     FOREACH(iter, chainList)
-        result.push_back(DPL::ToUTF8String(iter->Get_encoded_chain()));
+    result.push_back(DPL::ToUTF8String(iter->Get_encoded_chain()));
     return result;
 }
 
@@ -708,7 +696,10 @@ bool WidgetDAOReadOnly::getWebkitPluginsRequired() const
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
     DPL::OptionalInt ret = row.Get_webkit_plugins_required();
 
-    if (ret.IsNull() || *ret == 0) { return false; } else { return true; }
+    if (ret.IsNull() || *ret == 0) {
+        return false;
+    } else { return true;
+    }
 }
 
 time_t WidgetDAOReadOnly::getInstallTime() const
@@ -752,7 +743,8 @@ DPL::OptionalString WidgetDAOReadOnly::getSplashImgSrc() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get splash image path")
 }
 
-WidgetDAOReadOnly::WidgetLocalizedIconList WidgetDAOReadOnly::getLocalizedIconList() const
+WidgetDAOReadOnly::WidgetLocalizedIconList WidgetDAOReadOnly::
+    getLocalizedIconList() const
 {
     //TODO check widget existance??
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -761,13 +753,13 @@ WidgetDAOReadOnly::WidgetLocalizedIconList WidgetDAOReadOnly::getLocalizedIconLi
         select->Where(Equals<WidgetLocalizedIcon::app_id>(m_widgetHandle));
 
         std::list<WidgetLocalizedIcon::Row> list =
-                select->GetRowList();
+            select->GetRowList();
         WidgetLocalizedIconList ret;
-        FOREACH(it,list)
+        FOREACH(it, list)
         {
-            WidgetLocalizedIconRow icon = {it->Get_app_id(),
-                                           it->Get_icon_id(),
-                                           it->Get_widget_locale()};
+            WidgetLocalizedIconRow icon = { it->Get_app_id(),
+                                            it->Get_icon_id(),
+                                            it->Get_widget_locale() };
             ret.push_back(icon);
         }
         return ret;
@@ -782,18 +774,19 @@ WidgetDAOReadOnly::WidgetIconList WidgetDAOReadOnly::getIconList() const
     {
         WRT_DB_SELECT(select, wrt::WidgetIcon, &WrtDatabase::interface())
         select->Where(Equals<wrt::WidgetIcon::app_id>(m_widgetHandle));
-        select->OrderBy(DPL::TypeListDecl<OrderingAscending<wrt::WidgetIcon::icon_id> >());
+        select->OrderBy(DPL::TypeListDecl<OrderingAscending<wrt::WidgetIcon::
+                                                                icon_id> >());
 
         std::list<WidgetIcon::Row> list =
-                select->GetRowList();
+            select->GetRowList();
         WidgetIconList ret;
-        FOREACH(it,list)
+        FOREACH(it, list)
         {
-            WidgetIconRow icon = {it->Get_icon_id(),
-                                  it->Get_app_id(),
-                                  it->Get_icon_src(),
-                                  it->Get_icon_width(),
-                                  it->Get_icon_height()};
+            WidgetIconRow icon = { it->Get_icon_id(),
+                                   it->Get_app_id(),
+                                   it->Get_icon_src(),
+                                   it->Get_icon_width(),
+                                   it->Get_icon_height() };
             ret.push_back(icon);
         }
         return ret;
@@ -801,7 +794,8 @@ WidgetDAOReadOnly::WidgetIconList WidgetDAOReadOnly::getIconList() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get icon data")
 }
 
-WidgetDAOReadOnly::LocalizedStartFileList WidgetDAOReadOnly::getLocalizedStartFileList() const
+WidgetDAOReadOnly::LocalizedStartFileList WidgetDAOReadOnly::
+    getLocalizedStartFileList() const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -812,15 +806,15 @@ WidgetDAOReadOnly::LocalizedStartFileList WidgetDAOReadOnly::getLocalizedStartFi
         select->OrderBy("start_file_id ASC");
 
         std::list<WidgetLocalizedStartFile::Row> list =
-                select->GetRowList();
+            select->GetRowList();
         LocalizedStartFileList ret;
-        FOREACH(it,list)
+        FOREACH(it, list)
         {
-            WidgetLocalizedStartFileRow file = {it->Get_start_file_id(),
-                                                it->Get_app_id(),
-                                                it->Get_widget_locale(),
-                                                it->Get_type(),
-                                                it->Get_encoding()};
+            WidgetLocalizedStartFileRow file = { it->Get_start_file_id(),
+                                                 it->Get_app_id(),
+                                                 it->Get_widget_locale(),
+                                                 it->Get_type(),
+                                                 it->Get_encoding() };
             ret.push_back(file);
         }
         return ret;
@@ -828,7 +822,8 @@ WidgetDAOReadOnly::LocalizedStartFileList WidgetDAOReadOnly::getLocalizedStartFi
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get start file list data")
 }
 
-WidgetDAOReadOnly::WidgetStartFileList WidgetDAOReadOnly::getStartFileList() const
+WidgetDAOReadOnly::WidgetStartFileList WidgetDAOReadOnly::getStartFileList()
+const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -838,13 +833,13 @@ WidgetDAOReadOnly::WidgetStartFileList WidgetDAOReadOnly::getStartFileList() con
         select->OrderBy("start_file_id ASC");
 
         std::list<WidgetStartFile::Row> list =
-                select->GetRowList();
+            select->GetRowList();
         WidgetStartFileList ret;
-        FOREACH(it,list)
+        FOREACH(it, list)
         {
-            WidgetStartFileRow file = {it->Get_start_file_id(),
-                                       it->Get_app_id(),
-                                       it->Get_src()};
+            WidgetStartFileRow file = { it->Get_start_file_id(),
+                                        it->Get_app_id(),
+                                        it->Get_src() };
             ret.push_back(file);
         }
         return ret;
@@ -886,7 +881,9 @@ WidgetCertificateDataList WidgetDAOReadOnly::getCertificateDataList() const
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        WRT_DB_SELECT(select, WidgetCertificateFingerprint, &WrtDatabase::interface())
+        WRT_DB_SELECT(select,
+                      WidgetCertificateFingerprint,
+                      &WrtDatabase::interface())
         select->Where(Equals<WidgetCertificateFingerprint::app_id>(
                           m_widgetHandle));
         select->OrderBy("chainid");
@@ -921,17 +918,20 @@ WidgetCertificateDataList WidgetDAOReadOnly::getCertificateDataList() const
 }
 
 FingerPrintList WidgetDAOReadOnly::getKeyFingerprints(
-        WidgetCertificateData::Owner owner,
-        WidgetCertificateData::Type type) const
+    WidgetCertificateData::Owner owner,
+    WidgetCertificateData::Type type) const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        WRT_DB_SELECT(select, WidgetCertificateFingerprint, &WrtDatabase::interface())
+        WRT_DB_SELECT(select,
+                      WidgetCertificateFingerprint,
+                      &WrtDatabase::interface())
         select->Where(And(And(
-            Equals<WidgetCertificateFingerprint::app_id>(m_widgetHandle),
-            Equals<WidgetCertificateFingerprint::owner>(owner)),
-            Equals<WidgetCertificateFingerprint::type>(type)));
+                              Equals<WidgetCertificateFingerprint::app_id>(
+                                  m_widgetHandle),
+                              Equals<WidgetCertificateFingerprint::owner>(owner)),
+                          Equals<WidgetCertificateFingerprint::type>(type)));
 
         WidgetCertificateFingerprint::Select::RowList rows =
             select->GetRowList();
@@ -954,17 +954,20 @@ FingerPrintList WidgetDAOReadOnly::getKeyFingerprints(
 }
 
 WidgetCertificateCNList WidgetDAOReadOnly::getKeyCommonNameList(
-        WidgetCertificateData::Owner owner,
-        WidgetCertificateData::Type type) const
+    WidgetCertificateData::Owner owner,
+    WidgetCertificateData::Type type) const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        WRT_DB_SELECT(select, WidgetCertificateFingerprint, &WrtDatabase::interface())
+        WRT_DB_SELECT(select,
+                      WidgetCertificateFingerprint,
+                      &WrtDatabase::interface())
         select->Where(And(And(
-            Equals<WidgetCertificateFingerprint::app_id>(m_widgetHandle),
-            Equals<WidgetCertificateFingerprint::owner>(owner)),
-            Equals<WidgetCertificateFingerprint::type>(type)));
+                              Equals<WidgetCertificateFingerprint::app_id>(
+                                  m_widgetHandle),
+                              Equals<WidgetCertificateFingerprint::owner>(owner)),
+                          Equals<WidgetCertificateFingerprint::type>(type)));
 
         WidgetCertificateFingerprint::Select::RowList rows =
             select->GetRowList();
@@ -981,7 +984,7 @@ WidgetCertificateCNList WidgetDAOReadOnly::getKeyCommonNameList(
 }
 
 ResourceAttributeList WidgetDAOReadOnly::getResourceAttribute(
-        const std::string &resourceId) const
+    const std::string &resourceId) const
 {
     WRT_DB_SELECT(select, WidgetFeature, &WrtDatabase::interface())
     select->Where(And(Equals<WidgetFeature::app_id>(m_widgetHandle),
@@ -995,13 +998,13 @@ ResourceAttributeList WidgetDAOReadOnly::getResourceAttribute(
         WidgetParamMap map = getFeatureParams(widgetFeatureId);
 
         FOREACH(i, map)
-            result.push_back(DPL::ToUTF8String(i->first));
+        result.push_back(DPL::ToUTF8String(i->first));
     }
     return result;
 }
 
 void WidgetDAOReadOnly::getWidgetAccessInfo(
-        WidgetAccessInfoList& outAccessInfoList) const
+    WidgetAccessInfoList& outAccessInfoList) const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -1075,7 +1078,7 @@ std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
 }
 
 void WidgetDAOReadOnly::getWidgetSettings(
-        WidgetSettings& outWidgetSettings) const
+    WidgetSettings& outWidgetSettings) const
 {
     //TODO check widget existance
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -1098,7 +1101,7 @@ void WidgetDAOReadOnly::getWidgetSettings(
 }
 
 void WidgetDAOReadOnly::getAppServiceList(
-        WidgetApplicationServiceList& outAppServiceList) const
+    WidgetApplicationServiceList& outAppServiceList) const
 {
     LogDebug("Getting getAppServiceList. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -1137,7 +1140,8 @@ PackagingType WidgetDAOReadOnly::getPackagingType() const
     return PackagingType(static_cast<PkgType>(*result));
 }
 
-void WidgetDAOReadOnly::getEncryptedFileList(EncryptedFileList& filesList) const
+void WidgetDAOReadOnly::getEncryptedFileList(EncryptedFileList& filesList)
+const
 {
     //TODO check widget existance
     WRT_DB_SELECT(select, EncryptedResourceList, &WrtDatabase::interface())
@@ -1172,16 +1176,17 @@ DPL::OptionalString WidgetDAOReadOnly::getBackgroundPage() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get background page")
 }
 
-TizenPkgId WidgetDAOReadOnly::generatePkgId() {
+TizenPkgId WidgetDAOReadOnly::generatePkgId()
+{
     std::string allowed("0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz");
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        "abcdefghijklmnopqrstuvwxyz");
     TizenPkgId pkgId;
     pkgId.resize(MAX_TIZENID_LENGTH);
     do {
-    for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
-        pkgId[i] = allowed[rand() % allowed.length()];
-    }
+        for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
+            pkgId[i] = allowed[rand() % allowed.length()];
+        }
     } while (isWidgetInstalled(pkgId));
     return pkgId;
 }
@@ -1255,5 +1260,4 @@ TizenPkgId WidgetDAOReadOnly::getTizenPkgId() const
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE
-
 } // namespace WrtDB

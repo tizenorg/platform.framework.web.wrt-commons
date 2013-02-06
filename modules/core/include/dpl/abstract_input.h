@@ -25,22 +25,21 @@
 #include <dpl/exception.h>
 #include <memory>
 
-namespace DPL
-{
+namespace DPL {
 class BinaryQueue;
 typedef std::auto_ptr<BinaryQueue> BinaryQueueAutoPtr;
 
 class AbstractInput
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, ReadFailed)
     };
 
-public:
+  public:
     virtual ~AbstractInput() {}
 
     /**

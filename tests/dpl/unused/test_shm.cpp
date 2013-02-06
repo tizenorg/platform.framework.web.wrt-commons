@@ -59,8 +59,8 @@ const int SINGLE_PROCESS_REPEATS = 50;
  * 30 seconds unexpected timeout for waitable events
  * We don't want to block tests
  */
-const size_t EXPECTED_WAITABLE_TIMEOUT = 5*1000;
-const size_t UNEXPECTED_WAITABLE_TIMEOUT = 30*1000;
+const size_t EXPECTED_WAITABLE_TIMEOUT = 5 * 1000;
+const size_t UNEXPECTED_WAITABLE_TIMEOUT = 30 * 1000;
 
 bool g_enumTestCorrect = false;
 bool g_enumTestIncorrect = false;
@@ -72,11 +72,10 @@ void Wait(DPL::WaitableEvent& event, bool expectedTimeout = false)
     DPL::WaitableHandleIndexList list = DPL::WaitForSingleHandle(
             event.GetHandle(),
             expectedTimeout ?
-                    EXPECTED_WAITABLE_TIMEOUT : UNEXPECTED_WAITABLE_TIMEOUT);
+            EXPECTED_WAITABLE_TIMEOUT : UNEXPECTED_WAITABLE_TIMEOUT);
     if (list.size() == 0) {
         LogDebug("...timeout.");
-    }
-    else {
+    } else {
         LogDebug("...signaled.");
         event.Reset();
     }
@@ -143,7 +142,7 @@ class ListeningController :
 
 template <typename SharedType>
 ListeningController<SharedType>::ListeningController(
-        DPL::WaitableEvent* waitable) :
+    DPL::WaitableEvent* waitable) :
     m_waitable(waitable)
 {
     Touch();
@@ -165,8 +164,7 @@ void ListeningController<SharedType>::OnEventReceived(const int& event)
         m_so = SharedObjectFactory<SharedType>::Create(SHM_KEY, SEM_NAME);
         OnEvent(event);
         m_waitable->Signal();
-    }
-    else if (event == DESTROY_EVENT) {
+    } else if (event == DESTROY_EVENT) {
         LogDebug("Destroying shared object");
         OnEvent(event);
 
@@ -175,8 +173,7 @@ void ListeningController<SharedType>::OnEventReceived(const int& event)
         LogDebug("4");
         m_waitable->Signal();
         LogDebug("5");
-    }
-    else {
+    } else {
         OnEvent(event);
     }
 }
@@ -208,8 +205,7 @@ class TestSharedObject4 : public SharedObject<SharedTypeList>
   protected:
     explicit TestSharedObject4(const std::string& semaphore) :
         SharedObject<SharedTypeList>(semaphore)
-    {
-    }
+    {}
 
   private:
     void Init()
@@ -218,9 +214,6 @@ class TestSharedObject4 : public SharedObject<SharedTypeList>
     }
     friend class SharedObjectFactory<TestSharedObject4>;
 };
-
-
-
 } // anonymus namespace
 
 //////////////////////////////////////////////
@@ -260,15 +253,15 @@ RUNNER_TEST(SharedMemory_003_AccessByIndex)
     str.Embedded<3, TestTypeList::Element<3>::Type>::value[1] = 20;
 
     RUNNER_ASSERT(
-            (str.Embedded<0, TestTypeList::Element<0>::Type>::value) == 4);
+        (str.Embedded<0, TestTypeList::Element<0>::Type>::value) == 4);
     RUNNER_ASSERT(
-            (str.Embedded<1, TestTypeList::Element<1>::Type>::value) == 5);
+        (str.Embedded<1, TestTypeList::Element<1>::Type>::value) == 5);
     RUNNER_ASSERT(
-            (str.Embedded<2, TestTypeList::Element<2>::Type>::value) == 'd');
+        (str.Embedded<2, TestTypeList::Element<2>::Type>::value) == 'd');
     RUNNER_ASSERT(
-            (str.Embedded<3, TestTypeList::Element<3>::Type>::value[0]) == 1);
+        (str.Embedded<3, TestTypeList::Element<3>::Type>::value[0]) == 1);
     RUNNER_ASSERT(
-            (str.Embedded<3, TestTypeList::Element<3>::Type>::value[1]) == 20);
+        (str.Embedded<3, TestTypeList::Element<3>::Type>::value[1]) == 20);
 }
 
 //////////////////////////////////////////////
@@ -332,7 +325,7 @@ RUNNER_TEST(SharedMemory_010_BaseShmTest)
     Try {
         shm.Reset(SharedMemory::Create<SharedStruct>(SHM_KEY, false));
     }
-    Catch (SharedMemory::Exception::NotFound) {
+    Catch(SharedMemory::Exception::NotFound) {
         shm.Reset(SharedMemory::Create<SharedStruct>(SHM_KEY, true, true));
     }
 
@@ -349,7 +342,7 @@ RUNNER_TEST(SharedMemory_010_BaseShmTest)
     Try {
         shm2.Reset(SharedMemory::Create<SharedStruct>(SHM_KEY, false));
     }
-    Catch (SharedMemory::Exception::NotFound) {
+    Catch(SharedMemory::Exception::NotFound) {
         shm2.Reset(SharedMemory::Create<SharedStruct>(SHM_KEY, true, true));
     }
 
@@ -387,10 +380,10 @@ RUNNER_TEST(SharedMemory_020_SharedObjectTest)
     typedef SharedObject<SharedTypeList> MySharedObj;
 
     MySharedObj::Ptr so =
-            SharedObjectFactory<MySharedObj>::Create(SHM_KEY, SEM_NAME);
+        SharedObjectFactory<MySharedObj>::Create(SHM_KEY, SEM_NAME);
 
     RUNNER_ASSERT((so->GetProperty<0, size_t>()) == 0);
-    so->SetProperty<0,size_t>(4);
+    so->SetProperty<0, size_t>(4);
     RUNNER_ASSERT((so->GetProperty<0, size_t>()) == 4);
 }
 
@@ -420,11 +413,11 @@ RUNNER_TEST(SharedMemory_021_InitTest)
     RemoveIpcs();   // we need non existing shm
 
     std::shared_ptr<InitTestSharedObject> sho =
-            SharedObjectFactory<InitTestSharedObject>::Create(
-                    SHM_KEY, SEM_NAME);
-    RUNNER_ASSERT((sho->GetProperty<0,int>()) == 1);
-    RUNNER_ASSERT((sho->GetProperty<1,int>()) == 2);
-    RUNNER_ASSERT((sho->GetProperty<2,char>()) == 'c');
+        SharedObjectFactory<InitTestSharedObject>::Create(
+            SHM_KEY, SEM_NAME);
+    RUNNER_ASSERT((sho->GetProperty<0, int>()) == 1);
+    RUNNER_ASSERT((sho->GetProperty<1, int>()) == 2);
+    RUNNER_ASSERT((sho->GetProperty<2, char>()) == 'c');
 }
 
 //////////////////////////////////////////////
@@ -435,7 +428,10 @@ class VersionTestSO1 : public TestSharedObject
     explicit VersionTestSO1(const std::string& semaphore) :
         TestSharedObject(semaphore) {}
 
-    virtual SizeType GetVersion() const { return 1; }    // from SharedObject
+    virtual SizeType GetVersion() const
+    {
+        return 1;
+    }                                                    // from SharedObject
 
   private:
     friend class SharedObjectFactory<VersionTestSO1>;
@@ -447,7 +443,10 @@ class VersionTestSO2 : public TestSharedObject
     explicit VersionTestSO2(const std::string& semaphore) :
         TestSharedObject(semaphore) {}
 
-    virtual SizeType GetVersion() const { return 2; }    // from SharedObject
+    virtual SizeType GetVersion() const
+    {
+        return 2;
+    }                                                    // from SharedObject
 
   private:
     friend class SharedObjectFactory<VersionTestSO2>;
@@ -458,11 +457,11 @@ RUNNER_TEST(SharedMemory_022_InvalidVersionTest)
     RemoveIpcs();   // we need non existing shm
 
     std::shared_ptr<VersionTestSO1> sho =
-            SharedObjectFactory<VersionTestSO1>::Create(SHM_KEY, SEM_NAME);
+        SharedObjectFactory<VersionTestSO1>::Create(SHM_KEY, SEM_NAME);
 
     Try {
         std::shared_ptr<VersionTestSO2> sho2 =
-                SharedObjectFactory<VersionTestSO2>::Create(SHM_KEY, SEM_NAME);
+            SharedObjectFactory<VersionTestSO2>::Create(SHM_KEY, SEM_NAME);
 
         RUNNER_ASSERT_MSG(false, "Invalid shm version has been accepted");
     }
@@ -501,7 +500,10 @@ class MagicTestSO1 : public TestSharedObject
         TestSharedObject(semaphore) {}
 
     // from SharedObject
-    virtual MagicType GetMagicNumber() const { return 661; }
+    virtual MagicType GetMagicNumber() const
+    {
+        return 661;
+    }
 
   private:
     friend class SharedObjectFactory<MagicTestSO1>;
@@ -514,7 +516,10 @@ class MagicTestSO2 : public TestSharedObject
         TestSharedObject(semaphore) {}
 
     // from SharedObject
-    virtual MagicType GetMagicNumber() const { return 662; }
+    virtual MagicType GetMagicNumber() const
+    {
+        return 662;
+    }
 
   private:
     friend class SharedObjectFactory<MagicTestSO2>;
@@ -525,11 +530,11 @@ RUNNER_TEST(SharedMemory_024_InvalidMagicTest)
     RemoveIpcs();   // we need non existing shm
 
     std::shared_ptr<MagicTestSO1> sho =
-            SharedObjectFactory<MagicTestSO1>::Create(SHM_KEY, SEM_NAME);
+        SharedObjectFactory<MagicTestSO1>::Create(SHM_KEY, SEM_NAME);
 
     Try {
         std::shared_ptr<MagicTestSO2> sho2 =
-                SharedObjectFactory<MagicTestSO2>::Create(SHM_KEY, SEM_NAME);
+            SharedObjectFactory<MagicTestSO2>::Create(SHM_KEY, SEM_NAME);
 
         RUNNER_ASSERT_MSG(false, "Invalid shm magic number has been accepted");
     }
@@ -546,7 +551,10 @@ RUNNER_TEST(SharedMemory_024_InvalidMagicTest)
 class EnumTestSO1 : public TestSharedObject
 {
   public:
-    void SetWaitable(DPL::WaitableEvent* waitable) { m_waitable = waitable; }
+    void SetWaitable(DPL::WaitableEvent* waitable)
+    {
+        m_waitable = waitable;
+    }
 
   protected:
     explicit EnumTestSO1(const std::string& semaphore) :
@@ -562,13 +570,11 @@ class EnumTestSO1 : public TestSharedObject
 
 void EnumTestSO1::PropertyChanged(size_t propertyEnum)
 {
-    if (propertyEnum == 1)
-    {
+    if (propertyEnum == 1) {
         LogDebug("Property enum " << propertyEnum << " correctly set");
         g_enumTestCorrect = true;
     }
-    if (propertyEnum == 4)
-    {
+    if (propertyEnum == 4) {
         // This is bad. We only have 4 types
         LogError("Property enum " << propertyEnum << " should be skipped");
         g_enumTestIncorrect = true;
@@ -622,7 +628,7 @@ RUNNER_TEST(SharedMemory_025_InvalidEnumTest)
 
     // create writing shared object
     std::shared_ptr<EnumTestSO2> sho2 =
-            SharedObjectFactory<EnumTestSO2>::Create(SHM_KEY, SEM_NAME);
+        SharedObjectFactory<EnumTestSO2>::Create(SHM_KEY, SEM_NAME);
     DPL::WaitableHandleIndexList list;
 
     // write property and wait for confirmation
@@ -662,9 +668,9 @@ void MultiThreadSO::TestAndSetProperty()
 {
     ScopedFlaggedLock lock(*this);
 
-    int value = PropertyRef<0,int>();
+    int value = PropertyRef<0, int>();
     DPL::Thread::MicroSleep(100);
-    SetPropertyInternal<0>(value+1);
+    SetPropertyInternal<0>(value + 1);
 }
 
 class ShmController : public ListeningController<MultiThreadSO>
@@ -685,14 +691,12 @@ void ShmController::OnEventReceived(const int& event)
     if (event == INIT_EVENT) {
         m_so = SharedObjectFactory<MultiThreadSO>::Create(SHM_KEY, SEM_NAME);
         PostEvent(2);
-    }
-    else if (event == DESTROY_EVENT) {
+    } else if (event == DESTROY_EVENT) {
         LogDebug("Destroying shared object");
         // deregister, destroy ad notify main thread
         m_so.Reset();
         m_waitable->Signal();
-    }
-    else if (event == 2){
+    } else if (event == 2) {
         m_so->TestAndSetProperty();
         m_counter++;
         if (m_counter >= TEST_AND_SET_REPEATS) {
@@ -714,41 +718,41 @@ RUNNER_TEST(SharedMemory_030_MultithreadTest)
     ShmController* controller[MAX_THREADS];
     DPL::WaitableEvent finalEvent[MAX_THREADS];
 
-    for (size_t i=0;i<MAX_THREADS;++i) {
+    for (size_t i = 0; i < MAX_THREADS; ++i) {
         controller[i] = new ShmController(&finalEvent[i]);
     }
 
-    for (size_t i=0;i<MAX_THREADS;++i) {
+    for (size_t i = 0; i < MAX_THREADS; ++i) {
         Wait(finalEvent[i]);
     }
 
-    for (size_t i=0;i<MAX_THREADS;++i) {
+    for (size_t i = 0; i < MAX_THREADS; ++i) {
         delete controller[i];
         controller[i] = NULL;
     }
 
-    int value = sho->GetProperty<0,int>();
-        LogDebug("Final value is " << value << ", expected " <<
-                 MAX_THREADS * TEST_AND_SET_REPEATS);
-        RUNNER_ASSERT(value == MAX_THREADS * TEST_AND_SET_REPEATS);
+    int value = sho->GetProperty<0, int>();
+    LogDebug("Final value is " << value << ", expected " <<
+             MAX_THREADS * TEST_AND_SET_REPEATS);
+    RUNNER_ASSERT(value == MAX_THREADS * TEST_AND_SET_REPEATS);
 }
 
 //////////////////////////////////////////////
 
-class MyModel10: public DPL::Model
+class MyModel10 : public DPL::Model
 {
   public:
-    explicit MyModel10(const TestSharedObject4Ptr& shared_object)
-        : DPL::Model(), boolValue(this, shared_object) {}
+    explicit MyModel10(const TestSharedObject4Ptr& shared_object) :
+        DPL::Model(), boolValue(this, shared_object) {}
 
     SharedProperty<bool, TestSharedObject4::BOOLEAN, TestSharedObject4>
-                  boolValue;
+    boolValue;
 };
 
 /*
  * Listening controller
  */
-class ShmController3: public ListeningController<TestSharedObject4>
+class ShmController3 : public ListeningController<TestSharedObject4>
 {
   public:
     explicit ShmController3(DPL::WaitableEvent* event) :
@@ -771,14 +775,14 @@ void ShmController3::OnEvent(const int event)
     if (event == INIT_EVENT) {
         m_model.Reset(new MyModel10(m_so));
         m_model->boolValue.AddListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<bool>&)>(
-                        this,
-                        &ShmController3::OnValueChanged));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<bool>&)>(
+                this,
+                &ShmController3::OnValueChanged));
     } else if (event == DESTROY_EVENT) {
         m_model->boolValue.RemoveListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<bool>&)>(
-                        this,
-                        &ShmController3::OnValueChanged));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<bool>&)>(
+                this,
+                &ShmController3::OnValueChanged));
         m_model.Reset();
     }
 }
@@ -820,7 +824,7 @@ RUNNER_TEST(SharedMemory_050_SharedProperty)
 
 //////////////////////////////////////////////
 
-class MyModel2: public DPL::Model
+class MyModel2 : public DPL::Model
 {
   public:
     explicit MyModel2(const TestSharedObjectPtr& shared_object) :
@@ -858,24 +862,23 @@ void SPController::OnEvent(const int event)
         m_model1.Reset(new MyModel2(m_so));
         m_model2.Reset(new MyModel2(m_so2));
         m_model1->counter.AddListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
-                        this,
-                        &SPController::OnValueChanged1));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
+                this,
+                &SPController::OnValueChanged1));
         m_model2->counter.AddListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
-                        this,
-                        &SPController::OnValueChanged2));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
+                this,
+                &SPController::OnValueChanged2));
         m_model1->counter.Set(1);
-    }
-    else if (event == DESTROY_EVENT) {
+    } else if (event == DESTROY_EVENT) {
         m_model1->counter.RemoveListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
-                        this,
-                        &SPController::OnValueChanged1));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
+                this,
+                &SPController::OnValueChanged1));
         m_model2->counter.RemoveListener(
-                DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
-                        this,
-                        &SPController::OnValueChanged2));
+            DPL::FastDelegate<void (const DPL::PropertyEvent<int>&)>(
+                this,
+                &SPController::OnValueChanged2));
 
         m_model1.Reset();
         m_model2.Reset();
@@ -892,7 +895,7 @@ void SPController::OnValueChanged1(const DPL::PropertyEvent<int>& event)
 
     LogDebug("[1] Value changed to " << event.value);
     m_repeats++;
-    m_model1->counter.Set(event.value+1);
+    m_model1->counter.Set(event.value + 1);
 }
 
 void SPController::OnValueChanged2(const DPL::PropertyEvent<int>& event)
@@ -904,7 +907,7 @@ void SPController::OnValueChanged2(const DPL::PropertyEvent<int>& event)
 
     LogDebug("[2] Value changed to " << event.value);
     m_repeats++;
-    m_model2->counter.Set(event.value+1);
+    m_model2->counter.Set(event.value + 1);
 }
 
 RUNNER_TEST(SharedMemory_060_SingleProcess)
@@ -923,7 +926,7 @@ RUNNER_TEST(SharedMemory_060_SingleProcess)
     // wait for destruction
     Wait(waitable);
 
-    int value = sho->GetProperty<0,int>();
+    int value = sho->GetProperty<0, int>();
 
     LogDebug("final value: " << value);
 
@@ -933,11 +936,11 @@ RUNNER_TEST(SharedMemory_060_SingleProcess)
 
 //////////////////////////////////////////////
 
-class ListenerTestController: public ListeningController<TestSharedObject>,
-                              public ISharedObjectListener<0,int>,
-                              public ISharedObjectListener<1,int>,
-                              public ISharedObjectListener<2,char>,
-                              public ISharedObjectListener<3,int[64]>
+class ListenerTestController : public ListeningController<TestSharedObject>,
+    public ISharedObjectListener<0, int>,
+    public ISharedObjectListener<1, int>,
+    public ISharedObjectListener<2, char>,
+    public ISharedObjectListener<3, int[64]>
 {
   public:
     explicit ListenerTestController(DPL::WaitableEvent* event) :
@@ -954,7 +957,7 @@ class ListenerTestController: public ListeningController<TestSharedObject>,
                               const char& value,
                               const void* info = NULL);
     virtual void ValueChanged(size_t propertyEnum,
-                              const int(& value)[64],
+                              const int(&value)[64],
                               const void* info = NULL);
 };
 
@@ -965,17 +968,16 @@ void ListenerTestController::OnEvent(const int event)
 {
     if (event == INIT_EVENT) {
         // add self as a listener to shared object
-        m_so->AddListener<0,int>(this);
-        m_so->AddListener<1,int>(this);
-        m_so->AddListener<2,char>(this);
-        m_so->AddListener<3,int[64]>(this);
-    }
-    else if (event == DESTROY_EVENT) {
+        m_so->AddListener<0, int>(this);
+        m_so->AddListener<1, int>(this);
+        m_so->AddListener<2, char>(this);
+        m_so->AddListener<3, int[64]>(this);
+    } else if (event == DESTROY_EVENT) {
         // remove self from listener list
-        m_so->RemoveListener<0,int>(this);
-        m_so->RemoveListener<1,int>(this);
-        m_so->RemoveListener<2,char>(this);
-        m_so->RemoveListener<3,int[64]>(this);
+        m_so->RemoveListener<0, int>(this);
+        m_so->RemoveListener<1, int>(this);
+        m_so->RemoveListener<2, char>(this);
+        m_so->RemoveListener<3, int[64]>(this);
     }
 }
 
@@ -984,7 +986,8 @@ void ListenerTestController::ValueChanged(size_t propertyEnum,
                                           const void* /*info*/)
 {
     LogDebug("ValueChanged(int) " << propertyEnum << " " << value);
-    if ((propertyEnum == 0 && value == 1) || (propertyEnum == 1 && value == 2))
+    if ((propertyEnum == 0 &&
+         value == 1) || (propertyEnum == 1 && value == 2))
     {
         g_values[propertyEnum]++;
         if (g_values[propertyEnum] == 3) {
@@ -998,8 +1001,7 @@ void ListenerTestController::ValueChanged(size_t propertyEnum,
                                           const void* /*info*/)
 {
     LogDebug("ValueChanged(char) " << propertyEnum << " " << value);
-    if (propertyEnum == 2 && value == 'c')
-    {
+    if (propertyEnum == 2 && value == 'c') {
         g_values[propertyEnum]++;
         if (g_values[propertyEnum] == 3) {
             m_waitable->Signal();
@@ -1008,12 +1010,11 @@ void ListenerTestController::ValueChanged(size_t propertyEnum,
 }
 
 void ListenerTestController::ValueChanged(size_t propertyEnum,
-                                          const int(& value)[64],
+                                          const int(&value)[64],
                                           const void* /*info*/)
 {
     LogDebug("ValueChanged(int[64]) " << propertyEnum << " " << value[5]);
-    if (propertyEnum == 3 && value[5] == 5)
-    {
+    if (propertyEnum == 3 && value[5] == 5) {
         g_values[propertyEnum]++;
         if (g_values[propertyEnum] == 3) {
             m_waitable->Signal();
@@ -1026,7 +1027,7 @@ RUNNER_TEST(SharedMemory_070_SharedObjectListeners)
     RemoveIpcs();
 
     // setup global flags
-    for (size_t i=0;i<TestTypeList::Size;++i) {
+    for (size_t i = 0; i < TestTypeList::Size; ++i) {
         g_values[i] = 0;
     }
 
@@ -1048,25 +1049,25 @@ RUNNER_TEST(SharedMemory_070_SharedObjectListeners)
     Wait(waitable);
 
     // set properties and wait for result
-    sho->SetProperty<0,int>(1);
+    sho->SetProperty<0, int>(1);
     Wait(waitable);
 
     RUNNER_ASSERT(g_values[0] == 3);
 
-    sho->SetProperty<1,int>(2);
+    sho->SetProperty<1, int>(2);
     Wait(waitable);
 
     RUNNER_ASSERT(g_values[1] == 3);
 
-    sho->SetProperty<2,char>('c');
+    sho->SetProperty<2, char>('c');
     Wait(waitable);
 
     RUNNER_ASSERT(g_values[2] == 3);
 
     int array[64];
-    memset(array,64*sizeof(array[0]),0);
+    memset(array, 64 * sizeof(array[0]), 0);
     array[5] = 5;
-    sho->SetProperty<3,int[64]>(array);
+    sho->SetProperty<3, int[64]>(array);
     Wait(waitable);
 
     RUNNER_ASSERT(g_values[3] == 3);
@@ -1092,9 +1093,15 @@ class DAO : public DPL::Noncopyable
   public:
     DAO() : m_boolValue(false) {}
 
-    void SetBoolValue(const bool& value) { m_boolValue = value; }
+    void SetBoolValue(const bool& value)
+    {
+        m_boolValue = value;
+    }
 
-    bool GetBoolValue() const { return m_boolValue; }
+    bool GetBoolValue() const
+    {
+        return m_boolValue;
+    }
 
   private:
     bool m_boolValue;
@@ -1103,7 +1110,7 @@ class DAO : public DPL::Noncopyable
 /*
  * Model with property having set delegate defined
  */
-class MyModel3: public DPL::Model
+class MyModel3 : public DPL::Model
 {
   public:
     typedef SharedPropertyEx<bool,
@@ -1114,8 +1121,7 @@ class MyModel3: public DPL::Model
         boolValue(this,
                   shared_object,
                   PropertyType::SetDelegate(dao, &DAO::SetBoolValue))
-    {
-    }
+    {}
 
     PropertyType boolValue;
 };
@@ -1132,8 +1138,8 @@ RUNNER_TEST(SharedMemory_090_SetPropertyDelegate)
 
     // set property but call dao delegate within semaphore
     sho->SetProperty<TestSharedObject4::BOOLEAN>(
-            true,
-            MyModel3::PropertyType::SetDelegate(&dao, &DAO::SetBoolValue));
+        true,
+        MyModel3::PropertyType::SetDelegate(&dao, &DAO::SetBoolValue));
 
     // check dao value
     RUNNER_ASSERT(dao.GetBoolValue() == true);
@@ -1169,13 +1175,15 @@ class LazySharedObject : public SharedObject<TestTypeList>
   public:
     explicit LazySharedObject(const std::string& semaphore) :
         SharedObject<TestTypeList>(semaphore)
-       ,m_read(false)
-    {
-    }
+        , m_read(false)
+    {}
 
     void Init();
 
-    bool IsRead() const { return m_read; }
+    bool IsRead() const
+    {
+        return m_read;
+    }
 
   private:
     friend class SharedObjectFactory<LazySharedObject>;
@@ -1235,7 +1243,6 @@ RUNNER_TEST(SharedMemory_100_LazyInit)
 
     RUNNER_ASSERT(sho3->IsRead() == true);
     RUNNER_ASSERT(value == 43);
-
 }
 
 //////////////////////////////////////////////
@@ -1276,7 +1283,7 @@ RUNNER_TEST(SharedMemory_120_ConditionalSet)
 
     g_delegateCalls = 0;
 
-    RUNNER_ASSERT(0 == (sho->GetProperty<0,int>()));
+    RUNNER_ASSERT(0 == (sho->GetProperty<0, int>()));
 
     DPL::FastDelegate<bool (const int&, int&)> condition(&SetCondition);
     DPL::FastDelegate<void (const int&)> delegate(&SetDelegate);
@@ -1286,23 +1293,23 @@ RUNNER_TEST(SharedMemory_120_ConditionalSet)
     succeeded = sho->ConditionalSetProperty<0>(-2, condition);
 
     RUNNER_ASSERT(succeeded);
-    RUNNER_ASSERT(-2 == (sho->GetProperty<0,int>()));
+    RUNNER_ASSERT(-2 == (sho->GetProperty<0, int>()));
 
     succeeded = sho->ConditionalSetProperty<0>(4, condition, delegate);
 
     RUNNER_ASSERT(succeeded);
-    RUNNER_ASSERT(10 == (sho->GetProperty<0,int>()));
+    RUNNER_ASSERT(10 == (sho->GetProperty<0, int>()));
     RUNNER_ASSERT(1 == g_delegateCalls);
 
     succeeded = sho->ConditionalSetProperty<0>(5, condition);
 
     RUNNER_ASSERT(!succeeded);
-    RUNNER_ASSERT(10 == (sho->GetProperty<0,int>()));
+    RUNNER_ASSERT(10 == (sho->GetProperty<0, int>()));
 
     succeeded = sho->ConditionalSetProperty<0>(666, condition, delegate);
 
     RUNNER_ASSERT(!succeeded);
-    RUNNER_ASSERT(10 == (sho->GetProperty<0,int>()));
+    RUNNER_ASSERT(10 == (sho->GetProperty<0, int>()));
     RUNNER_ASSERT(1 == g_delegateCalls);
 }
 
@@ -1316,8 +1323,7 @@ class MTSharedObject : public SharedObject<TestTypeList>
   public:
     explicit MTSharedObject(const std::string& semaphore) :
         SharedObject<TestTypeList>(semaphore)
-    {
-    }
+    {}
 
     void Clear();
 
@@ -1372,10 +1378,10 @@ void SharedObjectSingleton::Destroy()
  * Listening controller
  */
 class ShmController4 : public ListeningController<MTSharedObject>,
-                       public ISharedObjectListener<0,int>,
-                       public ISharedObjectListener<1,int>,
-                       public ISharedObjectListener<2,char>,
-                       public ISharedObjectListener<3,int[64]>
+    public ISharedObjectListener<0, int>,
+    public ISharedObjectListener<1, int>,
+    public ISharedObjectListener<2, char>,
+    public ISharedObjectListener<3, int[64]>
 {
   public:
     enum {
@@ -1397,7 +1403,7 @@ class ShmController4 : public ListeningController<MTSharedObject>,
                               const char& value,
                               const void* info = NULL);
     virtual void ValueChanged(size_t propertyEnum,
-                              const int(& value)[64],
+                              const int(&value)[64],
                               const void* info = NULL);
 
     bool NotRegistered();
@@ -1431,7 +1437,7 @@ void ShmController4::ValueChanged(size_t propertyEnum,
 }
 
 void ShmController4::ValueChanged(size_t propertyEnum,
-                                  const int(& value)[64],
+                                  const int(&value)[64],
                                   const void* /*info*/)
 {
     LogDebug("ValueChanged(int[64]) " << propertyEnum << " " << value[5]);
@@ -1443,7 +1449,7 @@ void ShmController4::ValueChanged(size_t propertyEnum,
 void ShmController4::Sleep()
 {
     DPL::Thread::GetCurrentThread()->MiliSleep(
-            rand() % MAX_SINGLETON_LISTENER_DELAY);
+        rand() % MAX_SINGLETON_LISTENER_DELAY);
 }
 
 void ShmController4::OnEventReceived(const int& event)
@@ -1463,26 +1469,26 @@ void ShmController4::OnEventReceived(const int& event)
 
     case ADD_LISTENERS:
         // add listener and notify
-        m_so->AddListener<0,int>(this);
+        m_so->AddListener<0, int>(this);
         Sleep();
-        m_so->AddListener<1,int>(this);
+        m_so->AddListener<1, int>(this);
         Sleep();
-        m_so->AddListener<2,char>(this);
+        m_so->AddListener<2, char>(this);
         Sleep();
-        m_so->AddListener<3,int[64]>(this);
+        m_so->AddListener<3, int[64]>(this);
         Sleep();
         m_waitable->Signal();
         break;
 
     case REMOVE_LISTENERS:
         // remove listener and notify
-        m_so->RemoveListener<0,int>(this);
+        m_so->RemoveListener<0, int>(this);
         Sleep();
-        m_so->RemoveListener<1,int>(this);
+        m_so->RemoveListener<1, int>(this);
         Sleep();
-        m_so->RemoveListener<2,char>(this);
+        m_so->RemoveListener<2, char>(this);
         Sleep();
-        m_so->RemoveListener<3,int[64]>(this);
+        m_so->RemoveListener<3, int[64]>(this);
         Sleep();
         m_waitable->Signal();
         break;
@@ -1497,10 +1503,10 @@ void ShmController4::OnEventReceived(const int& event)
     }
 }
 
-void MultipleWait(DPL::WaitableEvent (& event)[MAX_THREADS]);
-void MultipleWait(DPL::WaitableEvent (& event)[MAX_THREADS])
+void MultipleWait(DPL::WaitableEvent(&event)[MAX_THREADS]);
+void MultipleWait(DPL::WaitableEvent(&event)[MAX_THREADS])
 {
-    for (size_t i=0;i<MAX_THREADS;++i) {
+    for (size_t i = 0; i < MAX_THREADS; ++i) {
         Wait(event[i]);
     }
 }
@@ -1513,10 +1519,10 @@ void MultipleWait(DPL::WaitableEvent (& event)[MAX_THREADS])
     Try { \
         singleton->RemoveListener<(property)>(controller[i]); \
         LogError("Controller " << i << " is still listening for property " \
-                << #property); \
+                               << #property); \
         RUNNER_ASSERT_MSG(false, "No listeners expected"); \
     } \
-    Catch (MTSharedObject::Exception::ListenerNotFound) { \
+    Catch(MTSharedObject::Exception::ListenerNotFound) { \
         RUNNER_ASSERT(true); \
     } \
 
@@ -1534,12 +1540,12 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
     ShmController4* controller[MAX_THREADS];
     DPL::WaitableEvent waitable[MAX_THREADS];
 
-    const int array[64] = {0,1,2};
+    const int array[64] = { 0, 1, 2 };
 
     // Create and wait for notification. Make sure that the thread/controller 0
     // is created first
     LogInfo("Creating controllers");
-    for (size_t i=0;i<MAX_THREADS;++i) {
+    for (size_t i = 0; i < MAX_THREADS; ++i) {
         controller[i] = new ShmController4(&waitable[i]);
         Wait(waitable[i]);
     }
@@ -1547,22 +1553,22 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
     // singleton will be created by thread/controller 0 by now
     MTSharedObjectPtr singleton = SharedObjectSingleton::Instance();
 
-    for (size_t repeats = 0;repeats < SINGLETON_TEST_REPEATS;++repeats) {
+    for (size_t repeats = 0; repeats < SINGLETON_TEST_REPEATS; ++repeats) {
         LogInfo("%%%%%%%%%%%%%%%%%%%%%");
-        LogInfo("Iteration " << repeats+1 << " of " << SINGLETON_TEST_REPEATS);
+        LogInfo("Iteration " << repeats + 1 << " of " << SINGLETON_TEST_REPEATS);
         singleton->Clear();
 
         // add listeners
         LogInfo("Adding listeners");
-        for (size_t i=0;i<MAX_THREADS;++i) {
+        for (size_t i = 0; i < MAX_THREADS; ++i) {
             controller[i]->PostEvent(ShmController4::ADD_LISTENERS);
         }
         // wait for listeners
         MultipleWait(waitable);
 
-        RUNNER_ASSERT((singleton->GetProperty<0,int>()) == 0);
-        RUNNER_ASSERT((singleton->GetProperty<1,int>()) == 0);
-        RUNNER_ASSERT((singleton->GetProperty<2,char>()) == 0);
+        RUNNER_ASSERT((singleton->GetProperty<0, int>()) == 0);
+        RUNNER_ASSERT((singleton->GetProperty<1, int>()) == 0);
+        RUNNER_ASSERT((singleton->GetProperty<2, char>()) == 0);
 
         int checkArray[64] = {};
         singleton->GetProperty<3>(checkArray);
@@ -1596,7 +1602,7 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
 
         // remove listeners
         LogInfo("Removing listeners");
-        for (size_t i=0;i<MAX_THREADS;++i) {
+        for (size_t i = 0; i < MAX_THREADS; ++i) {
             controller[i]->PostEvent(ShmController4::REMOVE_LISTENERS);
         }
         // wait for listeners
@@ -1604,16 +1610,16 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
 
         // check if listeners array is empty
         LogInfo("Checking listeners");
-        for (size_t i=0;i<MAX_THREADS;++i) {
+        for (size_t i = 0; i < MAX_THREADS; ++i) {
             LISTENER_ASSERT(0);
             LISTENER_ASSERT(1);
             LISTENER_ASSERT(2);
             LISTENER_ASSERT(3);
         }
 
-        RUNNER_ASSERT((singleton->GetProperty<0,int>()) == 1);
-        RUNNER_ASSERT((singleton->GetProperty<1,int>()) == 11);
-        RUNNER_ASSERT((singleton->GetProperty<2,char>()) == 'a');
+        RUNNER_ASSERT((singleton->GetProperty<0, int>()) == 1);
+        RUNNER_ASSERT((singleton->GetProperty<1, int>()) == 11);
+        RUNNER_ASSERT((singleton->GetProperty<2, char>()) == 'a');
         singleton->GetProperty<3>(checkArray);
         RUNNER_ASSERT(checkArray[0] == 0);
         RUNNER_ASSERT(checkArray[1] == 1);
@@ -1625,10 +1631,10 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
     // Destroy controllers and wait for confirmation. Make sure that
     // thread/controller 0 is destroyed in the end
     LogInfo("Destroying controllers");
-    for (int i=MAX_THREADS-1;i>=0;--i) {
+    for (int i = MAX_THREADS - 1; i >= 0; --i) {
         controller[i]->PostEvent(DESTROY_EVENT);
         Wait(waitable[i]);
-        if (i==0) {
+        if (i == 0) {
             /*
              * Destroy singleton before thread that created it finishes.
              * This is to properly close all waitable handles opened by

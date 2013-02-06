@@ -30,7 +30,6 @@
 
 namespace DPL {
 namespace DBus {
-
 class Connection;
 
 /**
@@ -38,7 +37,7 @@ class Connection;
  */
 class ObjectProxy
 {
-public:
+  public:
     ~ObjectProxy();
 
     /**
@@ -51,25 +50,24 @@ public:
      * @return Proxy to remote method.
      * @throw DBus::ConnectionClosedException If connection is closed.
      */
-    template<typename Result, typename ...Args>
-    MethodProxyPtr<Result, Args...> createMethodProxy(
-            const std::string& interface,
-            const std::string& name)
+    template<typename Result, typename ... Args>
+    MethodProxyPtr<Result, Args ...> createMethodProxy(
+        const std::string& interface,
+        const std::string& name)
     {
-        if (g_dbus_connection_is_closed(m_connection))
-        {
+        if (g_dbus_connection_is_closed(m_connection)) {
             ThrowMsg(DBus::ConnectionClosedException, "Connection closed.");
         }
 
-        return MethodProxyPtr<Result, Args...>(
-                new MethodProxy<Result, Args...>(m_connection,
-                                                 m_serviceName,
-                                                 m_objectPath,
-                                                 interface,
-                                                 name));
+        return MethodProxyPtr<Result, Args ...>(
+                   new MethodProxy<Result, Args ...>(m_connection,
+                                                     m_serviceName,
+                                                     m_objectPath,
+                                                     interface,
+                                                     name));
     }
 
-private:
+  private:
     friend class Connection;
 
     ObjectProxy(GDBusConnection* connection,
@@ -80,7 +78,6 @@ private:
     std::string m_serviceName;
     std::string m_objectPath;
 };
-
 }
 }
 

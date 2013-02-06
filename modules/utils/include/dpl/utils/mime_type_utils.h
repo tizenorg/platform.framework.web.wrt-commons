@@ -44,7 +44,7 @@ class MimeTypeUtils
     typedef std::map<DPL::String, DPL::String> MimeAttributes;
     static bool isValidIcon(const DPL::String& path);
     static bool isValidStartFile(const DPL::String& path,
-            const DPL::OptionalString& providedMimeType);
+                                 const DPL::OptionalString& providedMimeType);
     static bool isMimeTypeSupportedForStartFile(const DPL::String& mimeType);
     static bool isMimeTypeSupportedForIcon(const DPL::String& mimeType);
     static MimeAttributes getMimeAttributes(const DPL::String& mimeType);

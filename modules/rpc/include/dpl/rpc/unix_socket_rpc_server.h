@@ -26,21 +26,18 @@
 #include <dpl/socket/unix_socket.h>
 #include <string>
 
-namespace DPL
+namespace DPL {
+namespace RPC {
+class UnixSocketRPCServer :
+    public GenericSocketRPCServer<DPL::Socket::UnixSocket>
 {
-namespace RPC
-{
+  protected:
+    virtual AbstractRPCConnection *OpenSpecificConnection(
+        DPL::Socket::UnixSocket *socket);
 
-class UnixSocketRPCServer
-    : public GenericSocketRPCServer<DPL::Socket::UnixSocket>
-{
-protected:
-    virtual AbstractRPCConnection *OpenSpecificConnection(DPL::Socket::UnixSocket *socket);
-
-public:
+  public:
     AbstractRPCConnectionID Open(const std::string &fileName);
 };
-
 }
 } // namespace DPL
 

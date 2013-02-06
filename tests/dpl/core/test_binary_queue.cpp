@@ -28,7 +28,7 @@ inline std::string BinaryQueueToString(const DPL::BinaryQueue &queue)
     char *buffer = new char[queue.Size()];
     queue.Flatten(buffer, queue.Size());
     std::string result = std::string(buffer, buffer + queue.Size());
-    delete [] buffer;
+    delete[] buffer;
     return result;
 }
 
@@ -78,7 +78,7 @@ RUNNER_TEST(BinaryQueue_InitialConsumeOne)
     {
         queue.Consume(1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -95,7 +95,7 @@ RUNNER_TEST(BinaryQueue_InitialFlattenConsumeOne)
         char data;
         queue.FlattenConsume(&data, 1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -112,7 +112,7 @@ RUNNER_TEST(BinaryQueue_InitialFlattenOne)
         char data;
         queue.Flatten(&data, 1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -279,41 +279,35 @@ RUNNER_TEST(BinaryQueue_AppendMoveTo)
     RUNNER_ASSERT(BinaryQueueToString(copy) == "abcdef");
 }
 
-class Visitor
-    : public DPL::BinaryQueue::BucketVisitor
+class Visitor :
+    public DPL::BinaryQueue::BucketVisitor
 {
-private:
+  private:
     int m_index;
 
-public:
-    Visitor()
-        : m_index(0)
-    {        
-    }
+  public:
+    Visitor() :
+        m_index(0)
+    {}
 
     virtual void OnVisitBucket(const void *buffer, size_t bufferSize)
     {
         const char *str = static_cast<const char *>(buffer);
-        
-        if (m_index == 0)
-        {
+
+        if (m_index == 0) {
             RUNNER_ASSERT(bufferSize == 4);
             RUNNER_ASSERT(str[0] == 'a');
             RUNNER_ASSERT(str[1] == 'b');
             RUNNER_ASSERT(str[2] == 'c');
             RUNNER_ASSERT(str[3] == 'd');
-        }
-        else if (m_index == 1)
-        {
+        } else if (m_index == 1) {
             RUNNER_ASSERT(bufferSize == 2);
             RUNNER_ASSERT(str[0] == 'e');
             RUNNER_ASSERT(str[1] == 'f');
-        }
-        else
-        {
+        } else {
             RUNNER_FAIL;
         }
-        
+
         ++m_index;
     }
 };

@@ -17,16 +17,17 @@
  * @file        orm_macros.h
  * @author      Bartosz Janiak (b.janiak@samsung.com)
  * @version     1.0
- * @brief       Macro definitions for generating the SQL input file from database definition.
+ * @brief       Macro definitions for generating the SQL input file from
+ * database definition.
  */
 
 //Do not include this file directly! It is used only for SQL code generation.
 
-#define CREATE_TABLE(name) CREATE TABLE name (
-#define COLUMN(name, type, ...) name type __VA_ARGS__ ,
+#define CREATE_TABLE(name) CREATE TABLE name(
+#define COLUMN(name, type, ...) name type __VA_ARGS__,
 #define COLUMN_NOT_NULL(name, type, ...) name type __VA_ARGS__ not null,
 #define SQL(...) __VA_ARGS__
-#define TABLE_CONSTRAINTS(...) __VA_ARGS__ ,
+#define TABLE_CONSTRAINTS(...) __VA_ARGS__,
 #define CREATE_TABLE_END() CHECK(1) );
 #define DATABASE_START(db_name)
 #define DATABASE_END()

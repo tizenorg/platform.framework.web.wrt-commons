@@ -29,25 +29,24 @@
 #include <dpl/scoped_resource.h>
 #include <dpl/errno_string.h>
 
-namespace DPL
-{
+namespace DPL {
 struct ScopedClosePolicy
 {
     typedef int Type;
-    static Type NullValue() { return -1; }
+    static Type NullValue()
+    {
+        return -1;
+    }
     static void Destroy(Type handle)
     {
-        if (handle != -1)
-        {
-            if (TEMP_FAILURE_RETRY(::fsync(handle)) == -1)
-            {
+        if (handle != -1) {
+            if (TEMP_FAILURE_RETRY(::fsync(handle)) == -1) {
                 std::string errString = GetErrnoString();
                 LogPedantic("Failed to fsync scoped close error: "
                             << errString);
             }
 
-            if (::close(handle) == -1)
-            {
+            if (::close(handle) == -1) {
                 std::string errString = GetErrnoString();
                 LogPedantic("Failed to scoped close error: "
                             << errString);

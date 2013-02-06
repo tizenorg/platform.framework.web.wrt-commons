@@ -22,17 +22,15 @@
 #ifndef BASH_UTILS_H
 #define BASH_UTILS_H
 
-#include<string>
+#include <string>
 
 namespace BashUtils {
-
 /**
  * Escapes bash special characters in string and return string in double quotes
  * @param source string to be escaped
  * @return escaped string
  */
 std::string escape_arg(const std::string & source);
-
 }
 
 #endif // BASH_UTILS_H

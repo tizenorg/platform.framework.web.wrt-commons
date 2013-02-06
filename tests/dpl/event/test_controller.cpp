@@ -34,23 +34,22 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
-class IntController
-    : public DPL::Event::Controller<DPL::TypeListDecl<int>::Type>
+class IntController :
+    public DPL::Event::Controller<DPL::TypeListDecl<int>::Type>
 {
-private:
+  private:
     int m_value;
 
-protected:
+  protected:
     virtual void OnEventReceived(const int &event)
     {
         m_value = event;
     }
 
-public:
-    IntController()
-        : m_value(-1)
-    {
-    }
+  public:
+    IntController() :
+        m_value(-1)
+    {}
 
     int Value() const
     {
@@ -60,24 +59,23 @@ public:
 
 DECLARE_GENERIC_EVENT_1(DoneSignalEvent, DPL::WaitableEvent *)
 
-class ThreadController
-    : public DPL::Event::Controller<DPL::TypeListDecl<DoneSignalEvent>::Type>
+class ThreadController :
+    public DPL::Event::Controller<DPL::TypeListDecl<DoneSignalEvent>::Type>
 {
-private:
+  private:
     DPL::Thread *m_value;
 
-protected:
+  protected:
     virtual void OnEventReceived(const DoneSignalEvent &event)
     {
         m_value = DPL::Thread::GetCurrentThread();
         event.GetArg0()->Signal();
     }
 
-public:
-    ThreadController()
-        : m_value(NULL)
-    {
-    }
+  public:
+    ThreadController() :
+        m_value(NULL)
+    {}
 
     DPL::Thread *Value() const
     {
@@ -92,23 +90,59 @@ struct StrangeStruct
     double c;
 };
 
-class StrangeController
-    : public DPL::Event::Controller<DPL::TypeListDecl<char, short, int, long,
-                                               unsigned char, unsigned short, unsigned int, unsigned long,
-                                               float, double, StrangeStruct>::Type>
+class StrangeController :
+    public DPL::Event::Controller<DPL::TypeListDecl<char, short, int, long,
+                                                    unsigned char,
+                                                    unsigned short,
+                                                    unsigned int, unsigned long,
+                                                    float, double,
+                                                    StrangeStruct>::Type>
 {
-protected:
-    virtual void OnEventReceived(const char &event) { (void)event; }
-    virtual void OnEventReceived(const short &event) { (void)event; }
-    virtual void OnEventReceived(const int &event) { (void)event; }
-    virtual void OnEventReceived(const long &event) { (void)event; }
-    virtual void OnEventReceived(const unsigned char &event) { (void)event; }
-    virtual void OnEventReceived(const unsigned short &event) { (void)event; }
-    virtual void OnEventReceived(const unsigned int &event) { (void)event; }
-    virtual void OnEventReceived(const unsigned long &event) { (void)event; }
-    virtual void OnEventReceived(const float &event) { (void)event; }
-    virtual void OnEventReceived(const double &event) { (void)event; }
-    virtual void OnEventReceived(const StrangeStruct &event) { (void)event; }
+  protected:
+    virtual void OnEventReceived(const char &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const short &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const int &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const long &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const unsigned char &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const unsigned short &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const unsigned int &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const unsigned long &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const float &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const double &event)
+    {
+        (void)event;
+    }
+    virtual void OnEventReceived(const StrangeStruct &event)
+    {
+        (void)event;
+    }
 };
 
 RUNNER_TEST(Controller_InitSimple)
@@ -166,16 +200,21 @@ RUNNER_TEST(Controller_PostTimedEventToThread)
     RUNNER_ASSERT(controller.Value() == &thread);
 }
 
-DECLARE_GENERIC_EVENT_2(TouchInThread, DPL::WaitableEvent *, DPL::Thread **)
-DECLARE_GENERIC_EVENT_2(TouchedControllerSignal, DPL::WaitableEvent *, DPL::Thread **)
+DECLARE_GENERIC_EVENT_2(TouchInThread, DPL::WaitableEvent *, DPL::Thread * *)
+DECLARE_GENERIC_EVENT_2(TouchedControllerSignal,
+                        DPL::WaitableEvent *,
+                        DPL::Thread * *)
 
-class TouchInThreadController
-    : public DPL::Event::Controller<DPL::TypeListDecl<TouchInThread>::Type>,
-      private DPL::Event::Controller<DPL::TypeListDecl<TouchedControllerSignal>::Type>
+class TouchInThreadController :
+    public DPL::Event::Controller<DPL::TypeListDecl<TouchInThread>::Type>,
+    private DPL::Event::Controller<DPL::TypeListDecl<TouchedControllerSignal>::
+                                       Type>
 {
-public:
-    typedef DPL::Event::Controller<DPL::TypeListDecl<TouchInThread>::Type> PublicController;
-    typedef DPL::Event::Controller<DPL::TypeListDecl<TouchedControllerSignal>::Type> PrivateController;
+  public:
+    typedef DPL::Event::Controller<DPL::TypeListDecl<TouchInThread>::Type>
+    PublicController;
+    typedef DPL::Event::Controller<DPL::TypeListDecl<TouchedControllerSignal>::
+                                       Type> PrivateController;
 
     virtual void OnEventReceived(const TouchInThread &event)
     {
@@ -183,7 +222,8 @@ public:
         PrivateController::Touch();
 
         // Post signal
-        PrivateController::PostEvent(TouchedControllerSignal(event.GetArg0(), event.GetArg1()));
+        PrivateController::PostEvent(TouchedControllerSignal(event.GetArg0(),
+                                                             event.GetArg1()));
     }
 
     virtual void OnEventReceived(const TouchedControllerSignal &event)
@@ -209,7 +249,8 @@ RUNNER_TEST(Controller_TouchInThread)
     DPL::WaitableEvent waitHandle;
     DPL::Thread *touchedThread = NULL;
 
-    controller.PublicController::PostEvent(TouchInThread(&waitHandle, &touchedThread));
+    controller.PublicController::PostEvent(TouchInThread(&waitHandle,
+                                                         &touchedThread));
 
     DPL::WaitForSingleHandle(waitHandle.GetHandle());
 
@@ -246,14 +287,21 @@ typedef std::vector<ControllerPtr> ControllerList;
 typedef std::list<ThreadPtr> ThreadList;
 
 DECLARE_GENERIC_EVENT_0(QuitEvent)
-class QuitController
-    : public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
-      public DPL::ApplicationExt
+class QuitController :
+    public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
+    public DPL::ApplicationExt
 {
-public:
-    explicit QuitController( ) : DPL::ApplicationExt(1, NULL, "test-app") { Touch(); }
-protected:
-    virtual void OnEventReceived(const QuitEvent &) { Quit(); }
+  public:
+    explicit QuitController() : DPL::ApplicationExt(1, NULL, "test-app")
+    {
+        Touch();
+    }
+
+  protected:
+    virtual void OnEventReceived(const QuitEvent &)
+    {
+        Quit();
+    }
 };
 
 struct TestContext
@@ -269,47 +317,49 @@ TestContextPtr testContextPtr;
 
 DECLARE_GENERIC_EVENT_0(StartSendEvent)
 DECLARE_GENERIC_EVENT_0(RandomEvent)
-class TestController
-    : public DPL::Event::Controller<DPL::TypeListDecl<RandomEvent, StartSendEvent>::Type>
+class TestController :
+    public DPL::Event::Controller<DPL::TypeListDecl<RandomEvent,
+                                                    StartSendEvent>::Type>
 {
-public:
-    explicit TestController() { Touch(); }
-protected:
+  public:
+    explicit TestController()
+    {
+        Touch();
+    }
+
+  protected:
     virtual void OnEventReceived(const RandomEvent &)
     {
         ++testContextPtr->g_ReceivedCounter;
-        if(testContextPtr->g_ReceivedCounter == MaxEvents)
-        {
-            testContextPtr->quitter.DPL::Event::ControllerEventHandler<QuitEvent>::PostEvent(QuitEvent());
+        if (testContextPtr->g_ReceivedCounter == MaxEvents) {
+            testContextPtr->quitter.DPL::Event::ControllerEventHandler<
+                QuitEvent>::PostEvent(QuitEvent());
             return;
         }
     }
     virtual void OnEventReceived(const StartSendEvent &)
     {
-        for (int i=0 ; i<MaxEventsPerController ;++i)
-        {
-            if(testContextPtr->g_SentCounter > MaxEvents)
-            {
+        for (int i = 0; i < MaxEventsPerController; ++i) {
+            if (testContextPtr->g_SentCounter > MaxEvents) {
                 return;
             }
             ++testContextPtr->g_SentCounter;
             int id = rand() % static_cast<int>(testContextPtr->controllers.size());
-            testContextPtr->controllers.at(id)->DPL::Event::ControllerEventHandler<RandomEvent>::PostEvent(RandomEvent());
+            testContextPtr->controllers.at(id)->DPL::Event::
+                ControllerEventHandler<RandomEvent>::PostEvent(RandomEvent());
         }
     }
 };
 
 RUNNER_TEST(Controllers_MultipleEvents)
 {
-    srand ( time(NULL) );
+    srand(time(NULL) );
 
     testContextPtr.reset(new TestContext());
     testContextPtr->controllers.reserve(ControllersNumber);
 
-    for (int i = 0; i < ControllersNumber ; ++i)
-    {
-        if(testContextPtr->controllers.size() % ControllersPerThread ==0)
-        {
+    for (int i = 0; i < ControllersNumber; ++i) {
+        if (testContextPtr->controllers.size() % ControllersPerThread == 0) {
             ThreadPtr thread = ThreadPtr(new DPL::Thread());
             testContextPtr->threads.push_back(thread);
             thread->Run();
@@ -317,15 +367,17 @@ RUNNER_TEST(Controllers_MultipleEvents)
 
         ControllerPtr controller = ControllerPtr(new TestController());
         testContextPtr->controllers.push_back(controller);
-        if(testContextPtr->controllers.size() % 2 == 0)
-        {
-            //This controller is being switched to thread (otherwise it is touched to main thread)
+        if (testContextPtr->controllers.size() % 2 == 0) {
+            //This controller is being switched to thread (otherwise it is
+            // touched to main thread)
             ThreadPtr thread = testContextPtr->threads.back();
             controller->SwitchToThread(thread.get());
         }
-        controller->DPL::Event::ControllerEventHandler<StartSendEvent>::PostEvent(StartSendEvent());
+        controller->DPL::Event::ControllerEventHandler<StartSendEvent>::
+            PostEvent(StartSendEvent());
     }
     testContextPtr->quitter.Exec();
-    RUNNER_ASSERT(testContextPtr->g_SentCounter == testContextPtr->g_ReceivedCounter);
+    RUNNER_ASSERT(
+        testContextPtr->g_SentCounter == testContextPtr->g_ReceivedCounter);
     testContextPtr.reset();
 }

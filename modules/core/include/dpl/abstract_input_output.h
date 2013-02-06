@@ -25,16 +25,14 @@
 #include <dpl/abstract_input.h>
 #include <dpl/abstract_output.h>
 
-namespace DPL
+namespace DPL {
+class AbstractInputOutput :
+    public AbstractInput,
+    public AbstractOutput
 {
-class AbstractInputOutput
-    : public AbstractInput,
-      public AbstractOutput
-{
-public:
+  public:
     virtual ~AbstractInputOutput() {}
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_INPUT_OUTPUT_H

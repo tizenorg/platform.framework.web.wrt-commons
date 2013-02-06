@@ -26,4 +26,4 @@
 #define DPL_MACRO_CONCAT_IMPL(x, y) x##y
 #define DPL_MACRO_CONCAT(x, y) DPL_MACRO_CONCAT_IMPL(x, y)
 
-#endif//DPL_PREPROCESSOR_H
+#endif //DPL_PREPROCESSOR_H

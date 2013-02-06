@@ -32,7 +32,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 bool GlobalDAOReadOnly::GetDeveloperMode()
 {
     LogDebug("Getting Developer mode");
@@ -59,12 +58,13 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
 bool GlobalDAOReadOnly::getComplianceMode()
 {
     LogDebug("Getting compliance mode");
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
         return select->GetSingleValue<GlobalProperties::compliance_mode>();
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get compliance mode");
     }
@@ -73,8 +73,9 @@ bool GlobalDAOReadOnly::getComplianceMode()
 std::string GlobalDAOReadOnly::getComplianceFakeImei()
 {
     LogDebug("Getting compliance fake IMEI");
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
         DPL::Optional<DPL::String> result =
             select->GetSingleValue<GlobalProperties::compliance_fake_imei>();
@@ -83,7 +84,7 @@ std::string GlobalDAOReadOnly::getComplianceFakeImei()
         }
         return DPL::ToUTF8String(*result);
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get compliance fake IMEI");
     }
@@ -92,8 +93,9 @@ std::string GlobalDAOReadOnly::getComplianceFakeImei()
 std::string GlobalDAOReadOnly::getComplianceFakeMeid()
 {
     LogDebug("Getting compliance fake MEID");
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
         DPL::Optional<DPL::String> result =
             select->GetSingleValue<GlobalProperties::compliance_fake_meid>();
@@ -102,7 +104,7 @@ std::string GlobalDAOReadOnly::getComplianceFakeMeid()
         }
         return DPL::ToUTF8String(*result);
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get compliance fake MEID");
     }
@@ -123,7 +125,7 @@ bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
 }
 
 GlobalDAOReadOnly::NetworkAccessMode
-        GlobalDAOReadOnly::GetHomeNetworkDataUsage()
+GlobalDAOReadOnly::GetHomeNetworkDataUsage()
 {
     LogDebug("Getting home network data usage");
     Try {
@@ -131,8 +133,8 @@ GlobalDAOReadOnly::NetworkAccessMode
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
         return static_cast<GlobalDAOReadOnly::NetworkAccessMode>(
-            select->GetSingleValue<
-            GlobalProperties::home_network_data_usage>());
+                   select->GetSingleValue<
+                       GlobalProperties::home_network_data_usage>());
     }
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
@@ -148,7 +150,7 @@ GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
         return static_cast<GlobalDAOReadOnly::NetworkAccessMode>(
-            select->GetSingleValue<GlobalProperties::roaming_data_usage>());
+                   select->GetSingleValue<GlobalProperties::roaming_data_usage>());
     }
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
@@ -181,12 +183,13 @@ DPL::String GlobalDAOReadOnly::GetUserAgentValue(const DPL::String &key)
 }
 
 DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
-        const DPL::String &apifeature)
+    const DPL::String &apifeature)
 {
     // This could be done with one simply sql query but support for join is
     // needed in orm.
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
 
         int featureUUID;
         FeatureDeviceCapProxy::Select::RowList rows;
@@ -199,22 +202,24 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
         }
 
         {
-            WRT_DB_SELECT(select, FeatureDeviceCapProxy, &WrtDatabase::interface())
+            WRT_DB_SELECT(select,
+                          FeatureDeviceCapProxy,
+                          &WrtDatabase::interface())
             select->Where(Equals<FeatureDeviceCapProxy::FeatureUUID>(
-                featureUUID));
+                              featureUUID));
             rows = select->GetRowList();
         }
 
         FOREACH(it, rows){
             WRT_DB_SELECT(select, DeviceCapabilities, &WrtDatabase::interface())
             select->Where(Equals<DeviceCapabilities::DeviceCapID>(
-                it->Get_DeviceCapID()));
+                              it->Get_DeviceCapID()));
             result.insert(select->
-                          GetSingleValue<DeviceCapabilities::DeviceCapName>());
+                              GetSingleValue<DeviceCapabilities::DeviceCapName>());
         }
 
         return result;
-    }Catch(DPL::DB::SqlConnection::Exception::Base){
+    } Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to update roaming network data usage");
     }
@@ -223,7 +228,7 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
 WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
 {
     LogDebug("Getting WhiteURIList.");
-    Try{
+    Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetWhiteURIList, &WrtDatabase::interface())
@@ -261,5 +266,4 @@ bool GlobalDAOReadOnly::GetCookieSharingMode()
                    "Failed to get Cookie Sharing mode");
     }
 }
-
 } // namespace WrtDB

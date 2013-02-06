@@ -17,7 +17,8 @@
  * @file        unused.h
  * @author      Lukasz Wrzosek (l.wrzosek@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of unused attribute from gcc
+ * @brief       This file is the implementation file of unused attribute from
+ * gcc
  */
 #ifndef DPL_UNUSED_H
 #define DPL_UNUSED_H

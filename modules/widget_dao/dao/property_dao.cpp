@@ -30,7 +30,6 @@
 
 namespace WrtDB {
 namespace PropertyDAO {
-
 void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
 {
@@ -40,7 +39,8 @@ void RemoveProperty(TizenAppId tzAppid,
 
     LogDebug("Removing Property. appid: " << tzAppid << ", key: " << key);
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
                 tzAppid,
@@ -76,7 +76,8 @@ void SetProperty(DbWidgetHandle widgetHandle,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly)
 {
-    SetProperty(WidgetDAOReadOnly::getTzAppId(widgetHandle),key,value,readOnly);
+    SetProperty(WidgetDAOReadOnly::getTzAppId(
+                    widgetHandle), key, value, readOnly);
 }
 
 void SetProperty(TizenAppId tzAppid,
@@ -89,7 +90,8 @@ void SetProperty(TizenAppId tzAppid,
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
                 tzAppid,
@@ -158,6 +160,5 @@ void RegisterProperties(TizenAppId tzAppid,
         }
     }
 }
-
 } // namespace PropertyDAO
 } // namespace WrtDB

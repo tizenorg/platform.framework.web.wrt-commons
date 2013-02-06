@@ -40,17 +40,19 @@ const std::string interfaceName = "org.tizen.DBusTestService";
 const std::string methodNameEcho = "echo";
 const std::string methodNameQuit = "quit";
 const std::string nodeInfo =
-        "<?xml version='1.0'?>"
-        "<node>"
-        "  <interface name='" + interfaceName + "'>"
-        "    <method name='" + methodNameEcho + "'>"
-        "      <arg type='s' name='challenge' direction='in'/>"
-        "      <arg type='s' name='response' direction='out'/>"
-        "    </method>"
-        "    <method name='" + methodNameQuit + "'>"
-        "    </method>"
-        "  </interface>"
-        "</node>";
+    "<?xml version='1.0'?>"
+    "<node>"
+    "  <interface name='" + interfaceName + "'>"
+                                            "    <method name='" +
+    methodNameEcho + "'>"
+                     "      <arg type='s' name='challenge' direction='in'/>"
+                     "      <arg type='s' name='response' direction='out'/>"
+                     "    </method>"
+                     "    <method name='"
+    + methodNameQuit + "'>"
+                       "    </method>"
+                       "  </interface>"
+                       "</node>";
 
 const std::string challenge = "Hello world!";
 
@@ -61,78 +63,64 @@ RUNNER_TEST_GROUP_INIT(DPL)
 
 RUNNER_TEST(AcquireSessionBus)
 {
-    try
-    {
+    try {
         DPL::DBus::Connection::sessionBus();
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }
 
 RUNNER_TEST(AcquireSystemBus)
 {
-    try
-    {
+    try {
         DPL::DBus::Connection::systemBus();
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }
 
 RUNNER_TEST(ParseNodeInfo)
 {
-    try
-    {
+    try {
         auto ifaces = DPL::DBus::Interface::fromXMLString(nodeInfo);
         RUNNER_ASSERT(!ifaces.empty());
 
         auto iface = ifaces.at(0);
         RUNNER_ASSERT(NULL != iface->getVTable());
         RUNNER_ASSERT(NULL != iface->getInfo());
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }
 
 RUNNER_TEST(InvokeRemoteMethod)
 {
-    try
-    {
+    try {
         auto connection = DPL::DBus::Connection::systemBus();
         auto freedesktop = connection->createObjectProxy(dbusServiceName,
-                                                   dbusObjectPath);
+                                                         dbusObjectPath);
         auto getId = freedesktop->createMethodProxy<std::string>
                 (dbusInterfaceName, dbusMethodGetId);
         RUNNER_ASSERT(!getId().empty());
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }
 
 class RegisterServiceListener :
-    public DPL::Event::EventListener<DPL::DBus::ConnectionEvents::ServiceNameAcquiredEvent>
+    public DPL::Event::EventListener<DPL::DBus::ConnectionEvents::
+                                         ServiceNameAcquiredEvent>
 {
-public:
+  public:
     void OnEventReceived(
-            const DPL::DBus::ConnectionEvents::ServiceNameAcquiredEvent& event)
+        const DPL::DBus::ConnectionEvents::ServiceNameAcquiredEvent& event)
     {
         DBusTest& test = DBusTestManager::getInstance().getCurrentTest();
 
         auto name = event.GetArg0();
-        if (serviceName == name)
-        {
+        if (serviceName == name) {
             test.success();
-        }
-        else
-        {
+        } else {
             test.fail("Acquired service name: " + name);
         }
         test.quit();
@@ -141,19 +129,17 @@ public:
 
 DBUS_TEST(RegisterService)
 {
-    try
-    {
+    try {
         RegisterServiceListener listener;
 
         auto connection = DPL::DBus::Connection::sessionBus();
         connection->DPL::Event::EventSupport<DPL::DBus::ConnectionEvents::
-                ServiceNameAcquiredEvent>::AddListener(&listener);
+                                                 ServiceNameAcquiredEvent>::
+            AddListener(&listener);
         connection->registerService(serviceName);
 
         DBusTestManager::getInstance().getCurrentTest().run(DEFAULT_TIMEOUT);
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }
@@ -168,8 +154,7 @@ DBUS_TEST(RegisterService)
  */
 DBUS_TEST(InvokeTestService)
 {
-    try
-    {
+    try {
         auto connection = DPL::DBus::Connection::sessionBus();
         auto testService = connection->createObjectProxy(serviceName,
                                                          objectPath);
@@ -177,14 +162,12 @@ DBUS_TEST(InvokeTestService)
                 (interfaceName, methodNameEcho);
         auto response = echo(challenge);
 
-        testService->createMethodProxy<void>(interfaceName, methodNameQuit)();
+        testService->createMethodProxy<void>(interfaceName, methodNameQuit) ();
 
         RUNNER_ASSERT_MSG(response == challenge,
                           "[challenge = " << challenge <<
                           ", response = " << response << "]");
-    }
-    catch (const DPL::DBus::Exception& ex)
-    {
+    } catch (const DPL::DBus::Exception& ex) {
         RUNNER_ASSERT_MSG(false, ex.DumpToString());
     }
 }

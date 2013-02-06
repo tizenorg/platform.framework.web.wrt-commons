@@ -26,15 +26,14 @@
 #include <string>
 #include <ostream>
 
-namespace DPL
-{
+namespace DPL {
 // @brief DPL string
 typedef std::basic_string<wchar_t, CharTraits> String;
 
 // @brief String exception class
 class StringException
 {
-public:
+  public:
     DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
 
     // @brief Invalid init for UTF8 to UTF32 converter
@@ -76,33 +75,36 @@ int StringCompare(const String &left,
 
 //@brief Splits the string into substrings.
 //@param[in] str Input string
-//@param[in] delimiters array or string containing a sequence of substring delimiters. Can be also a single delimiter character.
+//@param[in] delimiters array or string containing a sequence of substring
+// delimiters. Can be also a single delimiter character.
 //@param[in] it InserterIterator that is used to save the generated substrings.
 template<typename StringType, typename Delimiters, typename InserterIterator>
-void Tokenize(const StringType& str, const Delimiters& delimiters, InserterIterator it, bool ignoreEmpty = false)
+void Tokenize(const StringType& str,
+              const Delimiters& delimiters,
+              InserterIterator it,
+              bool ignoreEmpty = false)
 {
     typename StringType::size_type nextSearchStart = 0;
     typename StringType::size_type pos;
     typename StringType::size_type length;
 
-    while ( true )
-    {
+    while (true) {
         pos = str.find_first_of(delimiters, nextSearchStart);
-        length = ((pos == StringType::npos) ? str.length() : pos) - nextSearchStart;
+        length =
+            ((pos == StringType::npos) ? str.length() : pos) - nextSearchStart;
 
-        if ( !ignoreEmpty || length > 0 )
-        {
+        if (!ignoreEmpty || length > 0) {
             *it = str.substr(nextSearchStart, length);
             it++;
         }
 
-        if ( pos == StringType::npos )
+        if (pos == StringType::npos) {
             return;
+        }
 
         nextSearchStart = pos + 1;
     }
 }
-
 } //namespace DPL
 
 std::ostream& operator<<(std::ostream& aStream, const DPL::String& aString);

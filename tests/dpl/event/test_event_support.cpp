@@ -32,36 +32,54 @@
 
 DECLARE_GENERIC_EVENT_0(TestEvent)
 
-class TestListener: public DPL::Event::EventListener<TestEvent>
+class TestListener : public DPL::Event::EventListener<TestEvent>
 {
-public:
+  public:
     explicit TestListener() : m_dummyVar(0) { }
-    void OnEventReceived(const TestEvent &) { m_dummyVar = 1; }
-    int GetDummyVar() const { return m_dummyVar; }
-    void ZeroDummyVar() { m_dummyVar = 0; }
+    void OnEventReceived(const TestEvent &)
+    {
+        m_dummyVar = 1;
+    }
+    int GetDummyVar() const
+    {
+        return m_dummyVar;
+    }
+    void ZeroDummyVar()
+    {
+        m_dummyVar = 0;
+    }
 
-private:
+  private:
     int m_dummyVar;
 };
 
-class TestEventSupport
-    : public DPL::Event::EventSupport<TestEvent>
+class TestEventSupport :
+    public DPL::Event::EventSupport<TestEvent>
 {
-public:
-    void TestEmitEvent() { EmitEvent(TestEvent()); }
+  public:
+    void TestEmitEvent()
+    {
+        EmitEvent(TestEvent());
+    }
 };
 
 DECLARE_GENERIC_EVENT_0(QuitEvent)
 
-class QuitController
-    : public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
-      public DPL::ApplicationExt
+class QuitController :
+    public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
+    public DPL::ApplicationExt
 {
-public:
-    QuitController() : DPL::ApplicationExt(1, NULL, "test-app") { Touch(); }
+  public:
+    QuitController() : DPL::ApplicationExt(1, NULL, "test-app")
+    {
+        Touch();
+    }
 
-protected:
-    virtual void OnEventReceived(const QuitEvent &) { Quit(); }
+  protected:
+    virtual void OnEventReceived(const QuitEvent &)
+    {
+        Quit();
+    }
 };
 
 RUNNER_TEST(EventSupport_DestroyBeforeProcessing)
@@ -92,10 +110,10 @@ void OnDelegateTest(const int &k)
     g_delegateTest = k;
 }
 
-class DelegateTestSupport
-    : public DPL::Event::EventSupport<int>
+class DelegateTestSupport :
+    public DPL::Event::EventSupport<int>
 {
-public:
+  public:
     void Test()
     {
         EmitEvent(7);

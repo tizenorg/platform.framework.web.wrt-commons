@@ -17,18 +17,17 @@
  * @file        unix_socket_rpc_connection.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of unix socket RPC connection
+ * @brief       This file is the implementation file of unix socket RPC
+ * connection
  */
 #include <stddef.h>
 #include <dpl/rpc/unix_socket_rpc_connection.h>
 
-namespace DPL
-{
-namespace RPC
-{
-UnixSocketRPCConnection::UnixSocketRPCConnection(DPL::Socket::UnixSocket *socket)
-    : GenericSocketRPCConnection<DPL::Socket::UnixSocket>(socket)
-{
-}
+namespace DPL {
+namespace RPC {
+UnixSocketRPCConnection::UnixSocketRPCConnection(
+    DPL::Socket::UnixSocket *socket) :
+    GenericSocketRPCConnection<DPL::Socket::UnixSocket>(socket)
+{}
 }
 } // namespace DPL

@@ -24,13 +24,12 @@
 
 namespace DPL {
 namespace DBus {
-
 ObjectProxy::ObjectProxy(GDBusConnection* connection,
                          const std::string& serviceName,
-                         const std::string& objectPath)
-    : m_connection(connection),
-      m_serviceName(serviceName),
-      m_objectPath(objectPath)
+                         const std::string& objectPath) :
+    m_connection(connection),
+    m_serviceName(serviceName),
+    m_objectPath(objectPath)
 {
     g_object_ref(m_connection);
 }
@@ -39,6 +38,5 @@ ObjectProxy::~ObjectProxy()
 {
     g_object_unref(m_connection);
 }
-
 }
 }

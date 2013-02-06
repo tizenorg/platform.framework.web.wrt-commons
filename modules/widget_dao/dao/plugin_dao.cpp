@@ -29,24 +29,22 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 PluginDAO::PluginDAO(DbPluginHandle pluginHandle) :
     PluginDAOReadOnly(pluginHandle)
-{
-}
+{}
 
 PluginDAO::PluginDAO(const std::string &libraryName) :
     PluginDAOReadOnly(libraryName)
-{
-}
+{}
 
 DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
-                                       const std::string& pluginPath)
+                                         const std::string& pluginPath)
 {
     LogDebug("Registering plugin. Path: " << pluginPath);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
         DbPluginHandle handle;
 
         if (isPluginInstalled(metafile.m_libraryName)) {
@@ -84,12 +82,13 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
 }
 
 void PluginDAO::registerPluginImplementedObject(const std::string& objectName,
-        DbPluginHandle pluginHandle)
+                                                DbPluginHandle pluginHandle)
 {
     LogDebug("Registering plugin object: " << objectName);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         LogDebug("Register Object: " << objectName);
 
@@ -115,12 +114,13 @@ void PluginDAO::registerPluginImplementedObject(const std::string& objectName,
 }
 
 void PluginDAO::registerPluginRequiredObject(const std::string& objectName,
-        DbPluginHandle pluginHandle)
+                                             DbPluginHandle pluginHandle)
 {
     LogDebug("Registering plugin object: " << objectName);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         LogDebug("Register Object: " << objectName);
 
@@ -146,13 +146,14 @@ void PluginDAO::registerPluginRequiredObject(const std::string& objectName,
 }
 
 void PluginDAO::registerPluginLibrariesDependencies(
-        DbPluginHandle pluginHandle,
-        const PluginHandleSetPtr& dependencies)
+    DbPluginHandle pluginHandle,
+    const PluginHandleSetPtr& dependencies)
 {
     LogDebug("Registering plugin library dependencies: " << pluginHandle);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
@@ -215,12 +216,11 @@ void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
 
     Try {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(
-                &WrtDatabase::interface());
+            &WrtDatabase::interface());
 
         if (!isPluginInstalled(pluginHandle)) {
             LogInfo("PluginHandle is invalid. Handle: " << pluginHandle);
             return;
-
         } else {
             using namespace DPL::DB::ORM;
             using namespace DPL::DB::ORM::wrt;
@@ -240,5 +240,4 @@ void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
                    "Failed in UnregisterPlugin");
     }
 }
-
 } // namespace WrtDB

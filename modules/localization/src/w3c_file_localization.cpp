@@ -44,26 +44,37 @@ const DPL::String WIDGET_URI_BEGIN = L"widget://";
 const DPL::String LOCALE_PREFIX = L"locales/";
 
 DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
-        const std::string& basePath,
-        std::string filePath)
+    const std::string& basePath,
+    std::string filePath)
 {
     LogDebug("Looking for file: " << filePath << "  in: " << basePath);
 
-    const LanguageTags& ltags = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    const LanguageTags& ltags =
+        LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     //Check if string isn't empty
-    if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
+    if (filePath.size() == 0) {
+        return DPL::Optional<std::string>::Null;
+    }
     //Removing preceding '/'
-    if (filePath[0] == '/') { filePath.erase(0, 1); }
-    // In some cases (start file localization) url has unnecessary "/" at the end
-    if(filePath[filePath.size()-1] == '/') { filePath.erase(filePath.size()-1, 1); }
+    if (filePath[0] == '/') {
+        filePath.erase(0, 1);
+    }
+    // In some cases (start file localization) url has unnecessary "/" at the
+    // end
+    if (filePath[filePath.size() - 1] == '/') {
+        filePath.erase(filePath.size() - 1, 1);
+    }
     //Check if string isn't empty
-    if (filePath.size() == 0) { return DPL::Optional<std::string>::Null; }
+    if (filePath.size() == 0) {
+        return DPL::Optional<std::string>::Null;
+    }
 
     LogDebug("locales size = " << ltags.size());
     for (LanguageTags::const_iterator it = ltags.begin();
-            it != ltags.end();
-            ++it) {
+         it != ltags.end();
+         ++it)
+    {
         LogDebug("Trying locale: " << *it);
         std::string path = basePath;
         if (path[path.size() - 1] == '/') {
@@ -90,8 +101,8 @@ DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
 }
 
 DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
-        const DPL::String& basePath,
-        const DPL::String& filePath)
+    const DPL::String& basePath,
+    const DPL::String& filePath)
 {
     DPL::Optional<std::string> path =
         GetFilePathInWidgetPackageInternal(DPL::ToUTF8String(basePath),
@@ -105,28 +116,27 @@ DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
 }
 
 namespace W3CFileLocalization {
-
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-        DbWidgetHandle widgetHandle,
-        const DPL::String &url)
+    DbWidgetHandle widgetHandle,
+    const DPL::String &url)
 {
     return getFilePathInWidgetPackageFromUrl(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
-            url);
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
+               url);
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-        const WrtDB::WidgetPkgName &pkgname,
-        const DPL::String &url)
+    const WrtDB::WidgetPkgName &pkgname,
+    const DPL::String &url)
 {
     return getFilePathInWidgetPackageFromUrl(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
-            url);
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
+               url);
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-        WrtDB::WidgetDAOReadOnlyPtr dao,
-        const DPL::String &url)
+    WrtDB::WidgetDAOReadOnlyPtr dao,
+    const DPL::String &url)
 {
     DPL::String req = url;
 
@@ -143,7 +153,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
             // should always be >0 as correct locales path is
             // always locales/xx/ or locales/xx-XX/
             if (position != std::string::npos && position > 0) {
-                req.erase(0, position+1);
+                req.erase(0, position + 1);
             }
         }
     } else {
@@ -167,26 +177,26 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const DPL::String& file)
+    WrtDB::DbWidgetHandle widgetHandle,
+    const DPL::String& file)
 {
     return getFilePathInWidgetPackage(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
-            file);
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)),
+               file);
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-        const WrtDB::WidgetPkgName &pkgname,
-        const DPL::String& file)
+    const WrtDB::WidgetPkgName &pkgname,
+    const DPL::String& file)
 {
     return getFilePathInWidgetPackage(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
-            file);
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
+               file);
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-        WrtDB::WidgetDAOReadOnlyPtr dao,
-        const DPL::String& file)
+    WrtDB::WidgetDAOReadOnlyPtr dao,
+    const DPL::String& file)
 {
     return GetFilePathInWidgetPackageInternal(dao->getPath(), file);
 }
@@ -203,9 +213,11 @@ DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle handle)
 
 DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
 {
-    WidgetDAOReadOnly::LocalizedStartFileList locList = dao->getLocalizedStartFileList();
+    WidgetDAOReadOnly::LocalizedStartFileList locList =
+        dao->getLocalizedStartFileList();
     WidgetDAOReadOnly::WidgetStartFileList list = dao->getStartFileList();
-    LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    LanguageTags tagsList =
+        LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     DPL::OptionalString defaultLoc = dao->getDefaultlocale();
     if (!!defaultLoc) {
@@ -242,9 +254,11 @@ OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle)
 
 OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao)
 {
-    WidgetDAOReadOnly::WidgetLocalizedIconList locList = dao->getLocalizedIconList();
+    WidgetDAOReadOnly::WidgetLocalizedIconList locList =
+        dao->getLocalizedIconList();
     WidgetDAOReadOnly::WidgetIconList list = dao->getIconList();
-    LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    LanguageTags tagsList =
+        LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     DPL::OptionalString defaultLoc = dao->getDefaultlocale();
     if (!!defaultLoc) {
@@ -276,13 +290,13 @@ OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao)
 WidgetIconList getValidIconsList(WrtDB::DbWidgetHandle widgetHandle)
 {
     return getValidIconsList(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
 }
 
 WidgetIconList getValidIconsList(const WrtDB::WidgetPkgName &pkgname)
 {
     return getValidIconsList(
-            WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
 }
 
 WidgetIconList getValidIconsList(WrtDB::WidgetDAOReadOnlyPtr dao)
@@ -310,16 +324,15 @@ WidgetIconList getValidIconsList(WrtDB::WidgetDAOReadOnlyPtr dao)
 OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::DbWidgetHandle widgetHandle)
 {
     return getStartFileInfo(
-        WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
 }
 
-OptionalWidgetStartFileInfo getStartFileInfo(const WrtDB::WidgetPkgName &pkgname)
+OptionalWidgetStartFileInfo getStartFileInfo(
+    const WrtDB::WidgetPkgName &pkgname)
 {
     return getStartFileInfo(
-        WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
-
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
 }
-
 
 OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::WidgetDAOReadOnlyPtr dao)
 {
@@ -328,7 +341,8 @@ OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::WidgetDAOReadOnlyPtr dao)
     WidgetDAOReadOnly::LocalizedStartFileList locList =
         dao->getLocalizedStartFileList();
     WidgetDAOReadOnly::WidgetStartFileList list = dao->getStartFileList();
-    const LanguageTags tagsList = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    const LanguageTags tagsList =
+        LanguageTagsProviderSingleton::Instance().getLanguageTags();
 
     FOREACH(tag, tagsList)
     {
@@ -338,7 +352,8 @@ OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::WidgetDAOReadOnlyPtr dao)
                 FOREACH(it, list)
                 {
                     if (it->startFileId ==
-                        sFile->startFileId) {
+                        sFile->startFileId)
+                    {
                         info.file = it->src;
                         info.encoding = sFile->encoding;
                         info.type = sFile->type;
@@ -370,7 +385,8 @@ WidgetLocalizedInfo getLocalizedInfo(const WrtDB::WidgetPkgName & pkgname)
 
 WidgetLocalizedInfo getLocalizedInfo(WidgetDAOReadOnlyPtr dao)
 {
-    LanguageTags languages = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+    LanguageTags languages =
+        LanguageTagsProviderSingleton::Instance().getLanguageTags();
     DPL::OptionalString dl = dao->getDefaultlocale();
     if (!!dl) {
         languages.push_back(*dl);

@@ -25,26 +25,25 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
-class MySingleTask
-    : public DPL::TaskDecl<MySingleTask>
+class MySingleTask :
+    public DPL::TaskDecl<MySingleTask>
 {
-protected:
+  protected:
     void StepOne()
-    {
-    }
+    {}
 
-public:
-    MySingleTask()
-        : DPL::TaskDecl<MySingleTask>(this)
+  public:
+    MySingleTask() :
+        DPL::TaskDecl<MySingleTask>(this)
     {
         AddStep(&MySingleTask::StepOne);
     }
 };
 
-class MyMultiTask
-    : public DPL::MultiTaskDecl<MyMultiTask>
+class MyMultiTask :
+    public DPL::MultiTaskDecl<MyMultiTask>
 {
-protected:
+  protected:
     typedef DPL::MultiTaskDecl<MyMultiTask> BaseType;
 
     void StepOne()
@@ -62,9 +61,9 @@ protected:
         LogInfo("Step three");
     }
 
-public:
-    MyMultiTask()
-        : BaseType(this, 2)
+  public:
+    MyMultiTask() :
+        BaseType(this, 2)
     {
         BaseType::StepList depListStepThree;
         depListStepThree.push_back(&MyMultiTask::StepOne);
@@ -83,11 +82,11 @@ public:
 RUNNER_TEST(Task_SingleTask)
 {
     MySingleTask task;
-    while (task.NextStep());
+    while (task.NextStep()) {}
 }
 
 RUNNER_TEST(Task_MultiTask)
 {
     MyMultiTask task;
-    while (task.NextStep());
+    while (task.NextStep()) {}
 }

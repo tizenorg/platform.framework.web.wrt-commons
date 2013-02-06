@@ -24,27 +24,21 @@
 
 #include <dpl/noncopyable.h>
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 template<typename EventType>
-class EventListener
-    : private Noncopyable
+class EventListener :
+    private Noncopyable
 {
-public:
+  public:
     EventListener()
-    {
-    }
+    {}
 
     virtual ~EventListener()
-    {
-    }
+    {}
 
     virtual void OnEventReceived(const EventType &event) = 0;
 };
-
 }
 } // namespace DPL
 

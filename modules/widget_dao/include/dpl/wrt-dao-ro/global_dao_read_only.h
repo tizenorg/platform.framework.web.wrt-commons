@@ -33,7 +33,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef std::list<DPL::String> WidgetPackageList;
 typedef std::set<DPL::String> DeviceCapabilitySet;
 
@@ -99,14 +98,12 @@ class GlobalDAOReadOnly
      * This method returns set of device capabilities used by apifeature.
      */
     static DeviceCapabilitySet GetDeviceCapability(
-            const DPL::String &apifeature);
+        const DPL::String &apifeature);
 
   protected:
     GlobalDAOReadOnly()
-    {
-    }
+    {}
 };
-
 } // namespace WrtDB
 
 #endif // WRT_SRC_CONFIGURATION_GLOBAL_DAO_READ_ONLY_H_

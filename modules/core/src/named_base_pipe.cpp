@@ -27,29 +27,27 @@
 #include <fcntl.h>
 #include <errno.h>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 const mode_t FIFO_MODE = 0600;
 } // namespace anonymous
 
 NamedBasePipe::~NamedBasePipe()
-{
-}
+{}
 
 void NamedBasePipe::Create(const std::string &pipeName)
 {
     // Create new fifo
     int status = mkfifo(pipeName.c_str(), FIFO_MODE);
 
-    if (status == -1)
-    {
+    if (status == -1) {
         // Ignore error it it already exists
-        if (errno == EEXIST)
+        if (errno == EEXIST) {
             ThrowMsg(Exception::AlreadyExist, pipeName);
-        else
+        } else {
             ThrowMsg(Exception::CreateFailed, pipeName);
+        }
     }
 }
 

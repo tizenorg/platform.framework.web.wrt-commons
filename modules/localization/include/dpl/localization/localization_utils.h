@@ -39,8 +39,7 @@ struct WidgetIcon
     WidgetIcon() :
         width(DPL::Optional<int>::Null),
         height(DPL::Optional<int>::Null)
-    {
-    }
+    {}
 
     /*
      * a valid URI to an image file inside the widget package that represents an

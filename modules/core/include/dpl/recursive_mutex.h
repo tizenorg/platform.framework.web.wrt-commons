@@ -26,26 +26,25 @@
 #include <dpl/exception.h>
 #include <pthread.h>
 
-namespace DPL
+namespace DPL {
+class RecursiveMutex :
+    private Noncopyable
 {
-class RecursiveMutex
-    : private Noncopyable
-{
-public:
-    class ScopedLock
-        : private Noncopyable
+  public:
+    class ScopedLock :
+        private Noncopyable
     {
-    private:
+      private:
         RecursiveMutex *m_mutex;
 
-    public:
+      public:
         ScopedLock(RecursiveMutex *mutex);
         virtual ~ScopedLock();
     };
 
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, DestroyFailed)
@@ -53,17 +52,16 @@ public:
         DECLARE_EXCEPTION_TYPE(Base, UnlockFailed)
     };
 
-private:
+  private:
     mutable pthread_mutex_t m_mutex;
 
     void Lock() const;
     void Unlock() const;
 
-public:
+  public:
     explicit RecursiveMutex();
     virtual ~RecursiveMutex();
 };
-
 } // namespace DPL
 
 #endif // DPL_RECURSIVE_MUTEX_H

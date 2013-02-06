@@ -22,12 +22,9 @@
 #include <stddef.h>
 #include <dpl/event/model.h>
 
-namespace DPL
-{
-namespace Event
-{
+namespace DPL {
+namespace Event {
 Model::~Model()
-{
-}
+{}
 }
 } // namespace DPL

@@ -26,8 +26,7 @@
 #include <string>
 #include <cerrno>
 
-namespace DPL
-{
+namespace DPL {
 DECLARE_EXCEPTION_TYPE(DPL::Exception, InvalidErrnoValue)
 
 std::string GetErrnoString(int error = errno);

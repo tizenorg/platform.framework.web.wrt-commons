@@ -31,7 +31,8 @@
 RUNNER_TEST_GROUP_INIT(DPL)
 
 // test stream class
-class BinaryStream : public DPL::IStream {
+class BinaryStream : public DPL::IStream
+{
   public:
     virtual void Read(size_t num, void * bytes)
     {
@@ -50,7 +51,7 @@ class BinaryStream : public DPL::IStream {
     {
         readPosition = 0;
     }
-    virtual ~BinaryStream(){};
+    virtual ~BinaryStream(){}
 
   private:
     std::vector<unsigned char> data;
@@ -58,7 +59,8 @@ class BinaryStream : public DPL::IStream {
 };
 
 //test ISerializable class
-class TestClass : public DPL::ISerializable {
+class TestClass : public DPL::ISerializable
+{
   public:
     TestClass(int val, std::string str1, std::string str2)
     {
@@ -67,18 +69,18 @@ class TestClass : public DPL::ISerializable {
         c.push_back(str1);
         c.push_back(str2);
         c.push_back(str1 + str2);
-    };
+    }
     TestClass(DPL::IStream& stream)
     {
-        DPL::Deserialization::Deserialize(stream,a);
-        DPL::Deserialization::Deserialize(stream,b);
-        DPL::Deserialization::Deserialize(stream,c);
-    };
+        DPL::Deserialization::Deserialize(stream, a);
+        DPL::Deserialization::Deserialize(stream, b);
+        DPL::Deserialization::Deserialize(stream, c);
+    }
     virtual void Serialize(DPL::IStream& stream) const
     {
-        DPL::Serialization::Serialize(stream,a);
-        DPL::Serialization::Serialize(stream,b);
-        DPL::Serialization::Serialize(stream,c);
+        DPL::Serialization::Serialize(stream, a);
+        DPL::Serialization::Serialize(stream, b);
+        DPL::Serialization::Serialize(stream, c);
     }
     virtual ~TestClass(){}
     virtual bool operator==(const TestClass& other)
@@ -90,6 +92,7 @@ class TestClass : public DPL::ISerializable {
                 c[1] == other.c[1] &&
                 c[2] == other.c[2]);
     }
+
   private:
     int a;
     std::string b;
@@ -102,17 +105,17 @@ RUNNER_TEST(Serialize_primitives)
     bool b = true;
     unsigned c = 23;
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,a);
-    DPL::Serialization::Serialize(stream,b);
-    DPL::Serialization::Serialize(stream,c);
+    DPL::Serialization::Serialize(stream, a);
+    DPL::Serialization::Serialize(stream, b);
+    DPL::Serialization::Serialize(stream, c);
     int test_int;
-    DPL::Deserialization::Deserialize(stream,test_int);
+    DPL::Deserialization::Deserialize(stream, test_int);
     RUNNER_ASSERT(test_int == a);
     bool test_bool;
-    DPL::Deserialization::Deserialize(stream,test_bool);
+    DPL::Deserialization::Deserialize(stream, test_bool);
     RUNNER_ASSERT(test_bool == b);
     unsigned test_unsigned;
-    DPL::Deserialization::Deserialize(stream,test_unsigned);
+    DPL::Deserialization::Deserialize(stream, test_unsigned);
     RUNNER_ASSERT(test_unsigned == c);
 }
 
@@ -122,17 +125,17 @@ RUNNER_TEST(Serialize_primitive_pointers)
     bool b = true;
     unsigned c = 23;
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,&a);
-    DPL::Serialization::Serialize(stream,&b);
-    DPL::Serialization::Serialize(stream,&c);
+    DPL::Serialization::Serialize(stream, &a);
+    DPL::Serialization::Serialize(stream, &b);
+    DPL::Serialization::Serialize(stream, &c);
     int* test_int;
-    DPL::Deserialization::Deserialize(stream,test_int);
+    DPL::Deserialization::Deserialize(stream, test_int);
     RUNNER_ASSERT(test_int != NULL && *test_int == a);
     bool* test_bool;
-    DPL::Deserialization::Deserialize(stream,test_bool);
+    DPL::Deserialization::Deserialize(stream, test_bool);
     RUNNER_ASSERT(test_bool != NULL && *test_bool == b);
     unsigned* test_unsigned;
-    DPL::Deserialization::Deserialize(stream,test_unsigned);
+    DPL::Deserialization::Deserialize(stream, test_unsigned);
     RUNNER_ASSERT(test_unsigned != NULL && *test_unsigned == c);
     delete test_int;
     delete test_bool;
@@ -144,13 +147,13 @@ RUNNER_TEST(Serialize_strings)
     std::string str1 = "ALA MA KOTA";
     std::string str2 = "MULTILINE\nTEST";
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,str1);
-    DPL::Serialization::Serialize(stream,str2);
+    DPL::Serialization::Serialize(stream, str1);
+    DPL::Serialization::Serialize(stream, str2);
     std::string test_str1;
-    DPL::Deserialization::Deserialize(stream,test_str1);
+    DPL::Deserialization::Deserialize(stream, test_str1);
     RUNNER_ASSERT(test_str1 == str1);
     std::string test_str2;
-    DPL::Deserialization::Deserialize(stream,test_str2);
+    DPL::Deserialization::Deserialize(stream, test_str2);
     RUNNER_ASSERT(test_str2 == str2);
 }
 
@@ -159,13 +162,13 @@ RUNNER_TEST(Serialize_string_pointers)
     std::string str1 = "ALA MA KOTA";
     std::string str2 = "MULTILINE\nTEST";
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,&str1);
-    DPL::Serialization::Serialize(stream,&str2);
+    DPL::Serialization::Serialize(stream, &str1);
+    DPL::Serialization::Serialize(stream, &str2);
     std::string* test_str1;
-    DPL::Deserialization::Deserialize(stream,test_str1);
+    DPL::Deserialization::Deserialize(stream, test_str1);
     RUNNER_ASSERT(test_str1 != NULL && *test_str1 == str1);
     std::string* test_str2;
-    DPL::Deserialization::Deserialize(stream,test_str2);
+    DPL::Deserialization::Deserialize(stream, test_str2);
     RUNNER_ASSERT(test_str2 != NULL && *test_str2 == str2);
     delete test_str1;
     delete test_str2;
@@ -179,32 +182,32 @@ RUNNER_TEST(Serialize_containers)
     std::list<bool> list;
     list.push_back(true);
     list.push_back(false);
-    std::pair<int,unsigned> pair;
+    std::pair<int, unsigned> pair;
     pair.first = -23;
     pair.second = 1234;
-    std::map<int,std::string> map;
-    map.insert(std::pair<int,std::string>(45,  "ALA MA CZARNEGO KOTA"));
-    map.insert(std::pair<int,std::string>(-78, "...A MOZE\nMA\nWIELE LINIJEK"));
+    std::map<int, std::string> map;
+    map.insert(std::pair<int, std::string>(45, "ALA MA CZARNEGO KOTA"));
+    map.insert(std::pair<int, std::string>(-78, "...A MOZE\nMA\nWIELE LINIJEK"));
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,vec);
-    DPL::Serialization::Serialize(stream,list);
-    DPL::Serialization::Serialize(stream,pair);
-    DPL::Serialization::Serialize(stream,map);
+    DPL::Serialization::Serialize(stream, vec);
+    DPL::Serialization::Serialize(stream, list);
+    DPL::Serialization::Serialize(stream, pair);
+    DPL::Serialization::Serialize(stream, map);
     std::vector<int> test_vec;
-    DPL::Deserialization::Deserialize(stream,test_vec);
+    DPL::Deserialization::Deserialize(stream, test_vec);
     RUNNER_ASSERT(test_vec.size() == vec.size() &&
                   test_vec[0] == vec[0] && test_vec[1] == vec[1]);
     std::list<bool> test_list;
-    DPL::Deserialization::Deserialize(stream,test_list);
+    DPL::Deserialization::Deserialize(stream, test_list);
     RUNNER_ASSERT(test_list.size() == list.size() &&
                   test_list.front() == list.front() &&
                   test_list.back() == test_list.back());
-    std::pair<int,unsigned> test_pair;
-    DPL::Deserialization::Deserialize(stream,test_pair);
+    std::pair<int, unsigned> test_pair;
+    DPL::Deserialization::Deserialize(stream, test_pair);
     RUNNER_ASSERT(test_pair.first == pair.first &&
                   test_pair.second == pair.second);
-    std::map<int,std::string> test_map;
-    DPL::Deserialization::Deserialize(stream,test_map);
+    std::map<int, std::string> test_map;
+    DPL::Deserialization::Deserialize(stream, test_map);
     RUNNER_ASSERT(test_map.size() == map.size() &&
                   test_map.at(45) == map.at(45) &&
                   test_map.at(-78) == map.at(-78));
@@ -212,12 +215,12 @@ RUNNER_TEST(Serialize_containers)
 
 RUNNER_TEST(Serialize_objects)
 {
-    TestClass a(123,"ASDGHUADB\n\n5679b^^()*","TEST_STRING"),
-            b(679,"HUSPIDNSAHDPA","\nASDSADASD\naDSADASD8");
+    TestClass a(123, "ASDGHUADB\n\n5679b^^()*", "TEST_STRING"),
+    b(679, "HUSPIDNSAHDPA", "\nASDSADASD\naDSADASD8");
     BinaryStream stream;
-    DPL::Serialization::Serialize(stream,a);
-    DPL::Serialization::Serialize(stream,b);
-    TestClass test_a(0,"",""), test_b(0,"","");
+    DPL::Serialization::Serialize(stream, a);
+    DPL::Serialization::Serialize(stream, b);
+    TestClass test_a(0, "", ""), test_b(0, "", "");
     DPL::Deserialization::Deserialize(stream, test_a);
     RUNNER_ASSERT(test_a == a);
     DPL::Deserialization::Deserialize(stream, test_b);
@@ -228,31 +231,29 @@ RUNNER_TEST(Serialize_all)
 {
     std::map<std::string, std::vector<TestClass*> > map;
     std::vector<TestClass*> vec;
-    vec.push_back(new TestClass(123,"ASDGHUADB\n\n5679b^^()*","TEST_STRING"));
-    vec.push_back(new TestClass(679,"HUSPIDNSAHDPA","\nASDSADASD\naDSADASD8"));
-    map.insert(std::pair<std::string,std::vector<TestClass*> >("KEY1",vec));
-    map.insert(std::pair<std::string,std::vector<TestClass*> >("KEY2",vec));
+    vec.push_back(new TestClass(123, "ASDGHUADB\n\n5679b^^()*", "TEST_STRING"));
+    vec.push_back(new TestClass(679, "HUSPIDNSAHDPA", "\nASDSADASD\naDSADASD8"));
+    map.insert(std::pair<std::string, std::vector<TestClass*> >("KEY1", vec));
+    map.insert(std::pair<std::string, std::vector<TestClass*> >("KEY2", vec));
     BinaryStream stream;
 
     DPL::Serialization::Serialize(stream, map);
 
     std::map<std::string, std::vector<TestClass*> > test_map;
-    DPL::Deserialization::Deserialize(stream,test_map);
+    DPL::Deserialization::Deserialize(stream, test_map);
     RUNNER_ASSERT(map.size() == test_map.size());
-    std::vector<TestClass*> test_vec1,test_vec2;
+    std::vector<TestClass*> test_vec1, test_vec2;
     test_vec1 = map.at("KEY1");
     test_vec2 = test_map.at("KEY1");
     RUNNER_ASSERT(test_vec1.size() == test_vec2.size());
     unsigned i;
-    for (i = 0; i < test_vec1.size(); ++i)
-    {
+    for (i = 0; i < test_vec1.size(); ++i) {
         RUNNER_ASSERT((*test_vec1[i]) == (*test_vec2[i]));
     }
     test_vec1 = map.at("KEY2");
     test_vec2 = test_map.at("KEY2");
     RUNNER_ASSERT(test_vec1.size() == test_vec2.size());
-    for (i = 0; i < test_vec1.size(); ++i)
-    {
+    for (i = 0; i < test_vec1.size(); ++i) {
         RUNNER_ASSERT((*test_vec1[i]) == (*test_vec2[i]));
     }
 }

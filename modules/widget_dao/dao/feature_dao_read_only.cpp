@@ -30,7 +30,6 @@
 #include <dpl/wrt-dao-ro/plugin_dao_read_only.h>
 
 namespace WrtDB {
-
 FeatureDAOReadOnly::FeatureDAOReadOnly(FeatureHandle featureHandle) :
     m_featureHandle(featureHandle)
 {
@@ -63,17 +62,18 @@ FeatureDAOReadOnly::FeatureDAOReadOnly(const std::string &featureName)
 
 #define GET_PLUGIN_DATA(func)                                           \
     Try {                                                               \
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface()); \
-        LogDebug(# func << ". FeatureHandle: " << m_featureHandle);     \
+        DPL::DB::ORM::wrt::ScopedTransaction transaction( \
+            &WrtDatabase::interface()); \
+        LogDebug(#func << ". FeatureHandle: " << m_featureHandle);     \
         std::string ret = PluginDAOReadOnly(GetPluginHandle()).func();  \
         transaction.Commit();                                           \
         return ret;                                                     \
     }                                                                   \
     Catch(DPL::DB::SqlConnection::Exception::Base) {                        \
         std::ostringstream failure("Failure during ");                  \
-        failure << # func;                                              \
+        failure << #func;                                              \
         ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,        \
-                failure.str());                                         \
+                   failure.str());                                         \
     }
 
 std::string FeatureDAOReadOnly::GetLibraryPath() const
@@ -208,7 +208,7 @@ bool FeatureDAOReadOnly::isFeatureInstalled(FeatureHandle handle)
 }
 
 bool FeatureDAOReadOnly::isDeviceCapabilityInstalled(
-        const std::string &deviceCapName)
+    const std::string &deviceCapName)
 {
     LogDebug("Check if DeviceCap is installed. Name: " << deviceCapName);
     Try {
@@ -237,11 +237,14 @@ FeatureDAOReadOnly::GetDeviceCapabilities() const
 {
     Try {
         LogDebug("Get DeviceCap. FeatureHandle: " << m_featureHandle);
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(selectDevCP, FeatureDeviceCapProxy, &WrtDatabase::interface())
+        WRT_DB_SELECT(selectDevCP,
+                      FeatureDeviceCapProxy,
+                      &WrtDatabase::interface())
         selectDevCP->Where(Equals<FeatureDeviceCapProxy::FeatureUUID>(
                                m_featureHandle));
 
@@ -251,7 +254,9 @@ FeatureDAOReadOnly::GetDeviceCapabilities() const
             selectDevCP->GetValueList<FeatureDeviceCapProxy::DeviceCapID>();
         FOREACH(devCId, deviceIDs)
         {
-            WRT_DB_SELECT(selectDevC, DeviceCapabilities, &WrtDatabase::interface())
+            WRT_DB_SELECT(selectDevC,
+                          DeviceCapabilities,
+                          &WrtDatabase::interface())
             selectDevC->Where(Equals<DeviceCapabilities::DeviceCapID>(*devCId));
 
             DPL::String devNames =
@@ -270,7 +275,7 @@ FeatureDAOReadOnly::GetDeviceCapabilities() const
 }
 
 FeatureHandleListPtr FeatureDAOReadOnly::GetFeatureHandleListForPlugin(
-        DbPluginHandle pluginHandle)
+    DbPluginHandle pluginHandle)
 {
     LogDebug("Getting FeatureHandle list for pluginHandle: " << pluginHandle);
     Try {
@@ -294,8 +299,8 @@ FeatureHandleListPtr FeatureDAOReadOnly::GetFeatureHandleListForPlugin(
     }
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(
-                FeatureDAOReadOnly::Exception::DatabaseError,
-                "Failure during getting FeatureHandle Set for plugin handle");
+            FeatureDAOReadOnly::Exception::DatabaseError,
+            "Failure during getting FeatureHandle Set for plugin handle");
     }
 }
 
@@ -312,7 +317,10 @@ FeatureDAOReadOnly::GetNames()
         FeaturesList::Select::RowList rows = select->GetRowList();
         FOREACH(rowIt, rows)
         {
-            nameMap.insert(std::pair<FeatureHandle, std::string>(rowIt->Get_FeatureUUID(), DPL::ToUTF8String(rowIt->Get_FeatureName())));
+            nameMap.insert(std::pair<FeatureHandle,
+                                     std::string>(rowIt->Get_FeatureUUID(),
+                                                  DPL::ToUTF8String(rowIt->
+                                                                        Get_FeatureName())));
         }
 
         return nameMap;
@@ -336,16 +344,22 @@ FeatureDAOReadOnly::GetDevCapWithFeatureHandle()
         DECLARE_COLUMN_TYPE_LIST_END(DevCapNameList)
 
         WRT_DB_SELECT(select, FeatureDeviceCapProxy, &WrtDatabase::interface())
-        select->Join<DevCapNameList>(Equal<FeatureDeviceCapProxy::DeviceCapID, DeviceCapabilities::DeviceCapID>());
+        select->Join<DevCapNameList>(Equal<FeatureDeviceCapProxy::DeviceCapID,
+                                           DeviceCapabilities::DeviceCapID>());
 
         DeviceCapabilitiesMap devCap;
 
-        std::list< CustomRow<DevCapNameList> > rowList = select->GetCustomRowList< DevCapNameList, CustomRow<DevCapNameList> >();
+        std::list< CustomRow<DevCapNameList> > rowList =
+            select->GetCustomRowList< DevCapNameList, CustomRow<DevCapNameList> >();
         FOREACH(rowIt, rowList)
         {
-            FeatureHandle featureHandle = (*rowIt).GetColumnData<FeatureDeviceCapProxy::FeatureUUID>();
-            std::string devName = DPL::ToUTF8String((*rowIt).GetColumnData<DeviceCapabilities::DeviceCapName>());
-            devCap.insert(std::pair<FeatureHandle, std::string>(featureHandle, devName));
+            FeatureHandle featureHandle =
+                (*rowIt).GetColumnData<FeatureDeviceCapProxy::FeatureUUID>();
+            std::string devName =
+                DPL::ToUTF8String((*rowIt).GetColumnData<DeviceCapabilities::
+                                                             DeviceCapName>());
+            devCap.insert(std::pair<FeatureHandle, std::string>(featureHandle,
+                                                                devName));
         }
 
         return devCap;
@@ -379,7 +393,7 @@ FeatureDAOReadOnly::GetFeatures(const std::list<std::string>& featureNames)
                     rowIt->Get_FeatureName());
             featureData.pluginHandle = rowIt->Get_PluginPropertiesId();
             featureMap.insert(std::pair<FeatureHandle, FeatureData>(
-                    rowIt->Get_FeatureUUID(), featureData));
+                                  rowIt->Get_FeatureUUID(), featureData));
         }
 
         return featureMap;
@@ -389,5 +403,4 @@ FeatureDAOReadOnly::GetFeatures(const std::list<std::string>& featureNames)
                    "Failure during getting GetFeatures");
     }
 }
-
 } // namespace WrtDB

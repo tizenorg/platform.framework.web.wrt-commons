@@ -33,14 +33,12 @@
 
 namespace DPL {
 namespace DBus {
-
 struct Deserialization
 {
-
     static bool deserializePrimitive(
-            DBusMessageIter* responseIterator,
-            void* arg,
-            int type)
+        DBusMessageIter* responseIterator,
+        void* arg,
+        int type)
     {
         if (dbus_message_iter_get_arg_type(responseIterator) != type) {
             return false;
@@ -54,7 +52,8 @@ struct Deserialization
     static bool deserialize(DBusMessageIter* responseIterator, T* arg)
     {
         if (dbus_message_iter_get_arg_type(responseIterator)
-                != SimpleType<T>::value) {
+            != SimpleType<T>::value)
+        {
             return false;
         }
         dbus_message_iter_get_basic(responseIterator, arg);
@@ -65,7 +64,7 @@ struct Deserialization
     static bool deserialize(DBusMessageIter* responseIterator, float* arg)
     {
         double d;
-        if (!deserialize(responseIterator, &d)){
+        if (!deserialize(responseIterator, &d)) {
             return false;
         }
         *arg = static_cast<float>(d);
@@ -74,11 +73,11 @@ struct Deserialization
 
     // std::string
     static bool deserialize(
-            DBusMessageIter* responseIterator,
-            std::string* arg)
+        DBusMessageIter* responseIterator,
+        std::string* arg)
     {
         char* str = NULL;
-        if (!deserialize(responseIterator, &str)){
+        if (!deserialize(responseIterator, &str)) {
             return false;
         }
         *arg = std::string(str);
@@ -88,19 +87,21 @@ struct Deserialization
     // dbus array deserialization
     template<typename T>
     static bool deserializeContainer(
-            DBusMessageIter* responseIterator,
-            T* arg)
+        DBusMessageIter* responseIterator,
+        T* arg)
     {
         if (dbus_message_iter_get_arg_type(responseIterator)
-                != DBUS_TYPE_ARRAY) {
+            != DBUS_TYPE_ARRAY)
+        {
             return false;
         }
         DBusMessageIter subIterator;
         dbus_message_iter_recurse(responseIterator, &subIterator);
         while (dbus_message_iter_get_arg_type(&subIterator)
-                != DBUS_TYPE_INVALID) {
+               != DBUS_TYPE_INVALID)
+        {
             arg->push_back(typename T::value_type());
-            if (!deserialize(&subIterator, &arg->back())){
+            if (!deserialize(&subIterator, &arg->back())) {
                 return false;
             }
             dbus_message_iter_next(&subIterator);
@@ -111,8 +112,8 @@ struct Deserialization
     // std::vector
     template<typename T>
     static bool deserialize(
-            DBusMessageIter* responseIterator,
-            std::vector<T>* arg)
+        DBusMessageIter* responseIterator,
+        std::vector<T>* arg)
     {
         return deserializeContainer(responseIterator, arg);
     }
@@ -120,8 +121,8 @@ struct Deserialization
     // std::list
     template<typename T>
     static bool deserialize(
-            DBusMessageIter* responseIterator,
-            std::list<T>* arg)
+        DBusMessageIter* responseIterator,
+        std::list<T>* arg)
     {
         return deserializeContainer(responseIterator, arg);
     }
@@ -129,19 +130,21 @@ struct Deserialization
     // std::set
     template<typename T>
     static bool deserialize(
-            DBusMessageIter* responseIterator,
-            std::set<T>* arg)
+        DBusMessageIter* responseIterator,
+        std::set<T>* arg)
     {
         if (dbus_message_iter_get_arg_type(responseIterator)
-                != DBUS_TYPE_ARRAY) {
+            != DBUS_TYPE_ARRAY)
+        {
             return false;
         }
         DBusMessageIter subIterator;
         dbus_message_iter_recurse(responseIterator, &subIterator);
         while (dbus_message_iter_get_arg_type(&subIterator)
-                != DBUS_TYPE_INVALID) {
+               != DBUS_TYPE_INVALID)
+        {
             typename std::set<T>::value_type element;
-            if (!deserialize(&subIterator, &element)){
+            if (!deserialize(&subIterator, &element)) {
                 return false;
             }
             arg->insert(element);
@@ -153,20 +156,21 @@ struct Deserialization
     // std::pair
     template<typename A, typename B>
     static bool deserialize(
-            DBusMessageIter* argsIterator,
-            const std::pair<A, B>* arg)
+        DBusMessageIter* argsIterator,
+        const std::pair<A, B>* arg)
     {
         if (dbus_message_iter_get_arg_type(argsIterator)
-                != DBUS_TYPE_DICT_ENTRY) {
+            != DBUS_TYPE_DICT_ENTRY)
+        {
             return false;
         }
         DBusMessageIter dictEntryIterator;
         dbus_message_iter_recurse(argsIterator, &dictEntryIterator);
-        if (!deserialize(dictEntryIterator, &arg->first)){
+        if (!deserialize(dictEntryIterator, &arg->first)) {
             return false;
         }
         dbus_message_iter_next(&dictEntryIterator);
-        if (!deserialize(dictEntryIterator, &arg->second)){
+        if (!deserialize(dictEntryIterator, &arg->second)) {
             return false;
         }
         return true;
@@ -175,19 +179,21 @@ struct Deserialization
     // std::map
     template<typename K, typename V>
     static bool deserialize(
-            DBusMessageIter* responseIterator,
-            const std::map<K, V>* arg)
+        DBusMessageIter* responseIterator,
+        const std::map<K, V>* arg)
     {
         if (dbus_message_iter_get_arg_type(responseIterator)
-                != DBUS_TYPE_ARRAY) {
+            != DBUS_TYPE_ARRAY)
+        {
             return false;
         }
         DBusMessageIter subIterator;
         dbus_message_iter_recurse(responseIterator, &subIterator);
         while (dbus_message_iter_get_arg_type(&subIterator)
-                != DBUS_TYPE_INVALID) {
+               != DBUS_TYPE_INVALID)
+        {
             typename std::pair<K, V> element;
-            if (!deserialize(&subIterator, &element)){
+            if (!deserialize(&subIterator, &element)) {
                 return false;
             }
             arg->insert(element);
@@ -195,7 +201,6 @@ struct Deserialization
         }
         return true;
     }
-
 };
 
 template<>
@@ -205,14 +210,14 @@ inline bool Deserialization::deserialize<bool>(
 {
     unsigned int value;
     if (dbus_message_iter_get_arg_type(responseIterator)
-        != SimpleType<bool>::value) {
+        != SimpleType<bool>::value)
+    {
         return false;
     }
     dbus_message_iter_get_basic(responseIterator, &value);
     *arg = static_cast<bool>(value);
     return true;
 }
-
 } // namespace DBus
 } // namespace DPL
 

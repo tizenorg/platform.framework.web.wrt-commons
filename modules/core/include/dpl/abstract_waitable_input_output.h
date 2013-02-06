@@ -25,17 +25,14 @@
 #include <dpl/abstract_waitable_input.h>
 #include <dpl/abstract_waitable_output.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableInputOutput :
+    public AbstractWaitableInput,
+    public AbstractWaitableOutput
 {
-
-class AbstractWaitableInputOutput
-    : public AbstractWaitableInput,
-      public AbstractWaitableOutput
-{
-public:
+  public:
     virtual ~AbstractWaitableInputOutput() {}
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_INPUT_OUTPUT_H

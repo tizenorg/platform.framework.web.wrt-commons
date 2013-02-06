@@ -29,25 +29,27 @@
 #include <cstdlib>
 #include <sstream>
 
-namespace DPL
-{
+namespace DPL {
 void LogUnhandledException(const std::string &str);
-void LogUnhandledException(const std::string &str, const char *filename, int line, const char *function);
+void LogUnhandledException(const std::string &str,
+                           const char *filename,
+                           int line,
+                           const char *function);
 }
 
-namespace DPL
-{
+namespace DPL {
 class Exception
 {
-private:
+  private:
     static unsigned int m_exceptionCount;
     static Exception* m_lastException;
     static void (*m_terminateHandler)();
 
     static void AddRef(Exception* exception)
     {
-        if (!m_exceptionCount)
-            m_terminateHandler  = std::set_terminate(&TerminateHandler);
+        if (!m_exceptionCount) {
+            m_terminateHandler = std::set_terminate(&TerminateHandler);
+        }
 
         ++m_exceptionCount;
         m_lastException = exception;
@@ -55,13 +57,13 @@ private:
 
     static void UnRef(Exception* e)
     {
-        if (m_lastException == e)
+        if (m_lastException == e) {
             m_lastException = NULL;
+        }
 
         --m_exceptionCount;
 
-        if (!m_exceptionCount)
-        {
+        if (!m_exceptionCount) {
             std::set_terminate(m_terminateHandler);
             m_terminateHandler = NULL;
         }
@@ -69,13 +71,10 @@ private:
 
     static void TerminateHandler()
     {
-        if (m_lastException != NULL)
-        {
+        if (m_lastException != NULL) {
             DisplayKnownException(*m_lastException);
             abort();
-        }
-        else
-        {
+        } else {
             DisplayUnknownException();
             abort();
         }
@@ -86,15 +85,16 @@ private:
     std::string m_function;
     int m_line;
 
-protected:
+  protected:
     std::string m_message;
     std::string m_className;
 
-public:
+  public:
     static std::string KnownExceptionToString(const Exception &e)
     {
         std::ostringstream message;
-        message << "\033[1;5;31m\n=== Unhandled DPL exception occurred ===\033[m\n\n";
+        message <<
+        "\033[1;5;31m\n=== Unhandled DPL exception occurred ===\033[m\n\n";
         message << "\033[1;33mException trace:\033[m\n\n";
         message << e.DumpToString();
         message << "\033[1;31m\n=== Will now abort ===\033[m\n";
@@ -105,8 +105,9 @@ public:
     static std::string UnknownExceptionToString()
     {
         std::ostringstream message;
-        message << "\033[1;5;31m\n=== Unhandled non-DPL exception occurred ===\033[m\n\n";
-        message <<  "\033[1;31m\n=== Will now abort ===\033[m\n";
+        message <<
+        "\033[1;5;31m\n=== Unhandled non-DPL exception occurred ===\033[m\n\n";
+        message << "\033[1;31m\n=== Will now abort ===\033[m\n";
 
         return message.str();
     }
@@ -124,10 +125,11 @@ public:
     Exception(const Exception &other)
     {
         // Deep copy
-        if (other.m_reason != NULL)
+        if (other.m_reason != NULL) {
             m_reason = new Exception(*other.m_reason);
-        else
+        } else {
             m_reason = NULL;
+        }
 
         m_message = other.m_message;
         m_path = other.m_path;
@@ -141,14 +143,16 @@ public:
 
     const Exception &operator =(const Exception &other)
     {
-        if (this == &other)
+        if (this == &other) {
             return *this;
+        }
 
         // Deep copy
-        if (other.m_reason != NULL)
+        if (other.m_reason != NULL) {
             m_reason = new Exception(*other.m_reason);
-        else
+        } else {
             m_reason = NULL;
+        }
 
         m_message = other.m_message;
         m_path = other.m_path;
@@ -162,30 +166,36 @@ public:
         return *this;
     }
 
-    Exception(const char *path, const char *function, int line, const std::string &message)
-        : m_reason(NULL),
-          m_path(path),
-          m_function(function),
-          m_line(line),
-          m_message(message)
+    Exception(const char *path,
+              const char *function,
+              int line,
+              const std::string &message) :
+        m_reason(NULL),
+        m_path(path),
+        m_function(function),
+        m_line(line),
+        m_message(message)
     {
         AddRef(this);
     }
 
-    Exception(const char *path, const char *function, int line, const Exception &reason, const std::string &message)
-        : m_reason(new Exception(reason)),
-          m_path(path),
-          m_function(function),
-          m_line(line),
-          m_message(message)
+    Exception(const char *path,
+              const char *function,
+              int line,
+              const Exception &reason,
+              const std::string &message) :
+        m_reason(new Exception(reason)),
+        m_path(path),
+        m_function(function),
+        m_line(line),
+        m_message(message)
     {
         AddRef(this);
     }
 
     virtual ~Exception() throw()
     {
-        if (m_reason != NULL)
-        {
+        if (m_reason != NULL) {
             delete m_reason;
             m_reason = NULL;
         }
@@ -196,16 +206,18 @@ public:
     void Dump() const
     {
         // Show reason first
-        if (m_reason != NULL)
+        if (m_reason != NULL) {
             m_reason->Dump();
+        }
 
         // Afterward, dump exception
         const char *file = strchr(m_path.c_str(), '/');
 
-        if (file == NULL)
+        if (file == NULL) {
             file = m_path.c_str();
-        else
+        } else {
             ++file;
+        }
 
         printf("\033[0;36m[%s:%i]\033[m %s() \033[4;35m%s\033[m: %s\033[m\n",
                file, m_line,
@@ -217,24 +229,29 @@ public:
     std::string DumpToString() const
     {
         std::string ret;
-        if (m_reason != NULL)
+        if (m_reason != NULL) {
             ret = m_reason->DumpToString();
+        }
 
         const char *file = strchr(m_path.c_str(), '/');
 
-        if (file == NULL)
+        if (file == NULL) {
             file = m_path.c_str();
-        else
+        } else {
             ++file;
+        }
 
         char buf[1024];
-        snprintf(buf, sizeof(buf), "\033[0;36m[%s:%i]\033[m %s() \033[4;35m%s\033[m: %s\033[m\n",
-               file, m_line,
-               m_function.c_str(),
-               m_className.c_str(),
-               m_message.empty() ? "<EMPTY>" : m_message.c_str());
+        snprintf(buf,
+                 sizeof(buf),
+                 "\033[0;36m[%s:%i]\033[m %s() \033[4;35m%s\033[m: %s\033[m\n",
+                 file,
+                 m_line,
+                 m_function.c_str(),
+                 m_className.c_str(),
+                 m_message.empty() ? "<EMPTY>" : m_message.c_str());
 
-        buf[sizeof(buf)-1] = '\n';
+        buf[sizeof(buf) - 1] = '\n';
         ret += buf;
 
         return ret;
@@ -283,30 +300,41 @@ public:
         std::ostringstream dplLoggingStream;                                         \
         dplLoggingStream << Message;                                                 \
         throw ClassName(__FILE__, __FUNCTION__, __LINE__, dplLoggingStream.str());   \
-    }while(0)
+    } while (0)
 
 #define ReThrow(ClassName) \
     throw ClassName(__FILE__, __FUNCTION__, __LINE__, _rethrown_exception)
 
 #define ReThrowMsg(ClassName, Message) \
-    throw ClassName(__FILE__, __FUNCTION__, __LINE__, _rethrown_exception, Message)
+    throw ClassName(__FILE__, \
+                    __FUNCTION__, \
+                    __LINE__, \
+                    _rethrown_exception, \
+                    Message)
 
 #define Catch(ClassName) \
     catch (const ClassName &_rethrown_exception)
 
 #define DECLARE_EXCEPTION_TYPE(BaseClass, Class)                                                                                          \
-    class Class                                                                                                                           \
-        : public BaseClass                                                                                                                \
+    class Class :                                                                                                                                 \
+        public BaseClass                                                                                                                \
     {                                                                                                                                     \
-    public:                                                                                                                               \
-        Class(const char *path, const char *function, int line, const std::string &message = std::string())                               \
-            : BaseClass(path, function, line, message)                                                                                    \
+      public:                                                                                                                               \
+        Class(const char *path, \
+              const char *function, \
+              int line, \
+              const std::string & message = std::string()) :                                                                                                                             \
+            BaseClass(path, function, line, message)                                                                                    \
         {                                                                                                                                 \
             BaseClass::m_className = #Class;                                                                                              \
         }                                                                                                                                 \
                                                                                                                                           \
-        Class(const char *path, const char *function, int line, const DPL::Exception &reason, const std::string &message = std::string()) \
-            : BaseClass(path, function, line, reason, message)                                                                            \
+        Class(const char *path, \
+              const char *function, \
+              int line, \
+              const DPL::Exception & reason, \
+              const std::string & message = std::string()) :                                                                                                                             \
+            BaseClass(path, function, line, reason, message)                                                                            \
         {                                                                                                                                 \
             BaseClass::m_className = #Class;                                                                                              \
         }                                                                                                                                 \
@@ -339,10 +367,8 @@ public:
         abort();                                                                                          \
     }
 
-namespace DPL
-{
-namespace CommonException
-{
+namespace DPL {
+namespace CommonException {
 /**
  * Internal exception definitions
  *
@@ -350,7 +376,9 @@ namespace CommonException
  * Usually, exception trace with internal error includes
  * important messages.
  */
-DECLARE_EXCEPTION_TYPE(Exception, InternalError) ///< Unexpected error from underlying libraries or kernel
+DECLARE_EXCEPTION_TYPE(Exception, InternalError) ///< Unexpected error from
+                                                 // underlying libraries or
+                                                 // kernel
 }
 }
 

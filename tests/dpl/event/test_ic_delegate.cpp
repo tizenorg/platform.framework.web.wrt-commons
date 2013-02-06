@@ -44,10 +44,10 @@ DECLARE_GENERIC_EVENT_1(GetNothingEvent, GetNothingDlpType)
 DECLARE_GENERIC_EVENT_1(GetIntEvent, GetIntDlgType)
 DECLARE_GENERIC_EVENT_1(GetIntAndStringEvent, GetIntAndStringDlgType)
 
-class ICTestController
-: public DPL::Event::Controller<DPL::TypeListDecl<GetNothingEvent,
-                                                  GetIntEvent,
-                                                  GetIntAndStringEvent>::Type>
+class ICTestController :
+    public DPL::Event::Controller<DPL::TypeListDecl<GetNothingEvent,
+                                                    GetIntEvent,
+                                                    GetIntAndStringEvent>::Type>
 {
   public:
     ICTestController() { }
@@ -55,16 +55,16 @@ class ICTestController
   protected:
     virtual void OnEventReceived(const GetNothingEvent& event)
     {
-        event.GetArg0()(); //calling intercontext delegate
+        event.GetArg0() (); //calling intercontext delegate
     }
     virtual void OnEventReceived(const GetIntEvent& event)
     {
-        event.GetArg0()(IntVal); //calling intercontext delegate
+        event.GetArg0() (IntVal); //calling intercontext delegate
     }
 
     virtual void OnEventReceived(const GetIntAndStringEvent& event)
     {
-        event.GetArg0()(IntVal, StringVal); //calling intercontext delegate
+        event.GetArg0() (IntVal, StringVal); //calling intercontext delegate
     }
 };
 
@@ -77,8 +77,7 @@ struct TestResult
         m_int(-1),
         m_int2(-1),
         m_string("")
-    {
-    }
+    {}
 
     void TestEventsPassed()
     {
@@ -133,7 +132,6 @@ class TestContextFreeClass :
         Thread::Quit();
     }
 
-
     void Wait()
     {
         LogDebug("Waiting for thread");
@@ -168,19 +166,22 @@ class TestContextFreeClass :
         GetNothingEvent getNothingEvent(
             makeICDelegate(
                 &TestContextFreeClass::OnNothing));
-        m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::
+            PostEvent(
             getNothingEvent);
 
         GetIntEvent getIntEvent(
             makeICDelegate(
                 &TestContextFreeClass::OnIntReceive));
-        m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::
+            PostEvent(
             getIntEvent);
 
         GetIntAndStringEvent getIntAndStringEvent(
             makeICDelegate(
                 &TestContextFreeClass::OnIntAndStringReceive));
-        m_controller->DPL::Event::ControllerEventHandler<GetIntAndStringEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetIntAndStringEvent>
+            ::PostEvent(
             getIntAndStringEvent);
 
         return Thread::ThreadEntry();
@@ -244,8 +245,7 @@ RUNNER_TEST(ICDelegate_1)
 class TestContextFree;
 class TestRunnerInThread;
 
-namespace
-{
+namespace {
 const int ControllersPerThread = 40;
 const int ContextFreePerThread = 180;
 const int TestsPerController = 110;
@@ -263,7 +263,6 @@ std::list<TestContextFreePtr> frees;
 std::list<ICTestControllerPtr> ctrls;
 std::list<TestRunnerInThreadPtr> frees_threads;
 std::list<ThreadPtr> ctrls_threads;
-
 }
 
 class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
@@ -273,15 +272,13 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
                     int eventsCount) :
         m_controller(controller),
         m_eventsCount(eventsCount)
-    {
-    }
+    {}
 
     void Wait()
     {
         LogDebug("Waiting for thread");
         DPL::WaitForSingleHandle(m_waitable.GetHandle());
     }
-
 
     void OnNothing()
     {
@@ -293,7 +290,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
                 makeICDelegate(
                     &TestContextFree::OnIntAndStringReceive));
             LogDebug("posting next event ...");
-            m_controller->DPL::Event::ControllerEventHandler<GetIntAndStringEvent>::PostEvent(
+            m_controller->DPL::Event::ControllerEventHandler<
+                GetIntAndStringEvent>::PostEvent(
                 getIntAndStringEvent);
             LogDebug("posting next event done");
         } else {
@@ -312,7 +310,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
                 makeICDelegate(
                     &TestContextFree::OnNothing));
             LogDebug("posting next event ...");
-            m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::PostEvent(
+            m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::
+                PostEvent(
                 getNothingEvent);
             LogDebug("posting next event done");
         } else {
@@ -332,7 +331,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
                 makeICDelegate(
                     &TestContextFree::OnIntReceive));
             LogDebug("posting next event ...");
-            m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::PostEvent(
+            m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::
+                PostEvent(
                 getIntEvent);
             LogDebug("posting next event done");
         } else {
@@ -346,7 +346,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
         GetNothingEvent getNothingEvent(
             makeICDelegate(
                 &TestContextFree::OnNothing));
-        m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetNothingEvent>::
+            PostEvent(
             getNothingEvent);
     }
 
@@ -355,7 +356,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
         GetIntEvent getIntEvent(
             makeICDelegate(
                 &TestContextFree::OnIntReceive));
-        m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetIntEvent>::
+            PostEvent(
             getIntEvent);
     }
 
@@ -364,7 +366,8 @@ class TestContextFree : public DPL::Event::ICDelegateSupport<TestContextFree>
         GetIntAndStringEvent getIntAndStringEvent(
             makeICDelegate(
                 &TestContextFree::OnIntAndStringReceive));
-        m_controller->DPL::Event::ControllerEventHandler<GetIntAndStringEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<GetIntAndStringEvent>
+            ::PostEvent(
             getIntAndStringEvent);
     }
 
@@ -399,8 +402,7 @@ class TestRunnerInThread : public DPL::Thread
         LogDebug("Thread starts");
         {
             DPL::Mutex::ScopedLock lock(&mutex);
-            for (int i = 0; i < m_tests; ++i)
-            {
+            for (int i = 0; i < m_tests; ++i) {
                 if (i % TestsPerController == 0) {
                     if (ctrls.size() % ControllersPerThread == 0) {
                         ThreadPtr thread(new DPL::Thread());
@@ -434,8 +436,7 @@ class TestRunnerInThread : public DPL::Thread
 RUNNER_TEST(ICDelegate_2)
 {
     LogDebug("Creating test threads");
-    for (int i = 0; i < TestThreads; ++i)
-    {
+    for (int i = 0; i < TestThreads; ++i) {
         TestRunnerInThreadPtr ptr(
             new TestRunnerInThread(NumberOfEvents, TestsPerThread));
         frees_threads.push_back(ptr);
@@ -481,19 +482,23 @@ const int ReuseCount = 5;
 typedef DPL::Event::ICDelegate<> GetNothingDlpType;
 DECLARE_GENERIC_EVENT_1(ReuseCountEvent, GetNothingDlpType)
 
-class ICReuseTestController
-: public DPL::Event::Controller<DPL::TypeListDecl<ReuseCountEvent>::Type>
+class ICReuseTestController :
+    public DPL::Event::Controller<DPL::TypeListDecl<ReuseCountEvent>::Type>
 {
   public:
-    ICReuseTestController() { m_reuseCount = 0; }
+    ICReuseTestController()
+    {
+        m_reuseCount = 0;
+    }
 
   protected:
     virtual void OnEventReceived(const ReuseCountEvent& event)
     {
-        event.GetArg0()(); //calling intercontext delegate
-        if(++m_reuseCount < ReuseCount){
+        event.GetArg0() (); //calling intercontext delegate
+        if (++m_reuseCount < ReuseCount) {
             LogInfo("[Send] Reuse: " << m_reuseCount);
-            DPL::Event::ControllerEventHandler<ReuseCountEvent>::PostEvent(event);
+            DPL::Event::ControllerEventHandler<ReuseCountEvent>::PostEvent(
+                event);
         }
     }
 
@@ -511,16 +516,26 @@ class ReuseTestContextFreeClass :
         m_reuseCount(0)
     { }
 
-    void Run() { Thread::Run(); }
-    void Quit() { Thread::Quit(); }
-    void Wait() { DPL::WaitForSingleHandle(m_waitable.GetHandle()); }
+    void Run()
+    {
+        Thread::Run();
+    }
+    void Quit()
+    {
+        Thread::Quit();
+    }
+    void Wait()
+    {
+        DPL::WaitForSingleHandle(m_waitable.GetHandle());
+    }
 
   protected:
     void OnReuseReceive()
     {
         LogDebug("[Received] : " << ++m_reuseCount);
-        if(m_reuseCount == ReuseCount)
+        if (m_reuseCount == ReuseCount) {
             m_waitable.Signal();
+        }
     }
 
     virtual int ThreadEntry()
@@ -529,7 +544,8 @@ class ReuseTestContextFreeClass :
             makeICDelegate(
                 &ReuseTestContextFreeClass::OnReuseReceive,
                 DPL::Event::ICD::Reuse::Yes));
-        m_controller->DPL::Event::ControllerEventHandler<ReuseCountEvent>::PostEvent(
+        m_controller->DPL::Event::ControllerEventHandler<ReuseCountEvent>::
+            PostEvent(
             reuseEvent);
 
         return Thread::ThreadEntry();

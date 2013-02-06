@@ -35,7 +35,9 @@
  * Data stored in joined before the function call will be replaced with joined
  * paths.
  */
-void WrtUtilJoinPaths(std::string &joined, const std::string &parent, const std::string &child);
+void WrtUtilJoinPaths(std::string &joined,
+                      const std::string &parent,
+                      const std::string &child);
 
 /**
  * Creates directories specified by path
@@ -49,7 +51,7 @@ void WrtUtilJoinPaths(std::string &joined, const std::string &parent, const std:
  * several nested directories, you must make sure that the mode flag allows you
  * to write and search the direcotries you create.
  */
-bool WrtUtilMakeDir(const std::string &newpath, mode_t mode=0755);
+bool WrtUtilMakeDir(const std::string &newpath, mode_t mode = 0755);
 
 /**
  * This function removes the directory or file pointed to by path

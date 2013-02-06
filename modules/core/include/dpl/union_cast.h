@@ -24,8 +24,7 @@
 
 #include <cstring>
 
-namespace DPL
-{
+namespace DPL {
 template<typename TargetType, typename SourceType>
 TargetType union_cast(const SourceType &data)
 {

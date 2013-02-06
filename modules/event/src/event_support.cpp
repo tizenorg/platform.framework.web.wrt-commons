@@ -22,11 +22,8 @@
 #include <stddef.h>
 #include <dpl/event/event_support.h>
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 namespace // anonymous
 {
 int dummyInitializerProc()
@@ -36,9 +33,7 @@ int dummyInitializerProc()
 }
 
 int g_dummyInitializer = dummyInitializerProc();
-
 } // namespace anonymous
-
 }
 } // namespace DPL
 

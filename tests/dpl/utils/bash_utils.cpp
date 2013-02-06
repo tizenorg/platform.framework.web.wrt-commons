@@ -28,11 +28,20 @@ RUNNER_TEST_GROUP_INIT(DPL_BASH_UTILS)
 
 RUNNER_TEST(Bash_Utils_escape_arg)
 {
-    RUNNER_ASSERT_MSG(escape_arg(std::string("valid")) == "\"valid\"", "Valid argument failed");
+    RUNNER_ASSERT_MSG(escape_arg(std::string(
+                                     "valid")) == "\"valid\"",
+                      "Valid argument failed");
     LogDebug("\"val\\!d\"" << " " << escape_arg(std::string("val!d")));
-    RUNNER_ASSERT_MSG(escape_arg(std::string("val!d")) == "\"val\\!d\"", "Single escaped character in argument failed");
+    RUNNER_ASSERT_MSG(escape_arg(std::string(
+                                     "val!d")) == "\"val\\!d\"",
+                      "Single escaped character in argument failed");
     LogDebug("\"v\\$l\\$\\$\"" << " " << escape_arg(std::string("v$l$$")));
-    RUNNER_ASSERT_MSG(escape_arg(std::string("v$l$$")) == "\"v\\$l\\$\\$\"", "Multiple occurences of single special character in argument failed");
-    LogDebug("\"v\\`\\$\\\"\\!d\\`\"" << " " << escape_arg(std::string("v`$\"!d`")));
-    RUNNER_ASSERT_MSG(escape_arg(std::string("v`$\"!d`")) == "\"v\\`\\$\\\"\\!d\\`\"", "Multiple occurences of multiple special character in argument failed");
+    RUNNER_ASSERT_MSG(escape_arg(std::string(
+                                     "v$l$$")) == "\"v\\$l\\$\\$\"",
+                      "Multiple occurences of single special character in argument failed");
+    LogDebug("\"v\\`\\$\\\"\\!d\\`\"" << " " <<
+             escape_arg(std::string("v`$\"!d`")));
+    RUNNER_ASSERT_MSG(escape_arg(std::string(
+                                     "v`$\"!d`")) == "\"v\\`\\$\\\"\\!d\\`\"",
+                      "Multiple occurences of multiple special character in argument failed");
 }

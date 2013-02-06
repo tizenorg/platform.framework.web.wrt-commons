@@ -24,14 +24,20 @@
 
 #include <dpl/noreturn.h>
 
-namespace DPL
-{
+namespace DPL {
 // Assertion handler procedure
 // Do not call directly
 // Always use Assert macro
-DPL_NORETURN void AssertProc(const char *condition, const char *file, int line, const char *function);
+DPL_NORETURN void AssertProc(const char *condition,
+                             const char *file,
+                             int line,
+                             const char *function);
 } // namespace DPL
 
-#define Assert(Condition) do { if (!(Condition)) DPL::AssertProc(#Condition, __FILE__, __LINE__, __FUNCTION__); } while (0)
+#define Assert(Condition) do { if (!(Condition)) { DPL::AssertProc(#Condition, \
+                                                                   __FILE__, \
+                                                                   __LINE__, \
+                                                                   __FUNCTION__); \
+                               } } while (0)
 
 #endif // DPL_ASSERT_H

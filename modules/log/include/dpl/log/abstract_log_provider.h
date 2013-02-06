@@ -22,26 +22,37 @@
 #ifndef DPL_ABSTRACT_LOG_PROVIDER_H
 #define DPL_ABSTRACT_LOG_PROVIDER_H
 
-namespace DPL
-{
-namespace Log
-{
-
+namespace DPL {
+namespace Log {
 class AbstractLogProvider
 {
-public:
+  public:
     virtual ~AbstractLogProvider() {}
 
-    virtual void Debug(const char *message, const char *fileName, int line, const char *function) = 0;
-    virtual void Info(const char *message, const char *fileName, int line, const char *function) = 0;
-    virtual void Warning(const char *message, const char *fileName, int line, const char *function) = 0;
-    virtual void Error(const char *message, const char *fileName, int line, const char *function) = 0;
-    virtual void Pedantic(const char *message, const char *fileName, int line, const char *function) = 0;
+    virtual void Debug(const char *message,
+                       const char *fileName,
+                       int line,
+                       const char *function) = 0;
+    virtual void Info(const char *message,
+                      const char *fileName,
+                      int line,
+                      const char *function) = 0;
+    virtual void Warning(const char *message,
+                         const char *fileName,
+                         int line,
+                         const char *function) = 0;
+    virtual void Error(const char *message,
+                       const char *fileName,
+                       int line,
+                       const char *function) = 0;
+    virtual void Pedantic(const char *message,
+                          const char *fileName,
+                          int line,
+                          const char *function) = 0;
 
-protected:
+  protected:
     static const char *LocateSourceFileName(const char *filename);
 };
-
 }
 } // namespace DPL
 

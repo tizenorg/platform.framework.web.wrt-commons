@@ -28,18 +28,16 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
-namespace
-{
+namespace {
 FILE* MakeTmp()
 {
     FILE* result = NULL;
-    do
-    {
+    do {
         result = tmpfile();
     } while (NULL != result && EINTR == errno);
     return result;
 }
-}//anonymous namespace
+} //anonymous namespace
 
 RUNNER_TEST(ScopedFClose_Zero)
 {

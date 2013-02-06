@@ -31,9 +31,7 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 namespace {
-
 typedef DPL::DB::ORM::wrt::PluginProperties::Row PluginRow;
 
 PluginRow getPluginRow(DbPluginHandle pluginHandle)
@@ -101,7 +99,8 @@ PluginDAOReadOnly::PluginDAOReadOnly(const std::string &libraryName)
 void PluginDAOReadOnly::checkInstallationCompleted()
 {
     if (getInstallationStateForHandle(m_pluginHandle)
-        != PluginDAOReadOnly::INSTALLATION_COMPLETED) {
+        != PluginDAOReadOnly::INSTALLATION_COMPLETED)
+    {
         LogError("Plugin " << m_pluginHandle << " installation not completed");
         Throw(PluginDAOReadOnly::Exception::PluginInstallationNotCompleted);
     }
@@ -160,7 +159,6 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandle() const
     return m_pluginHandle;
 }
 
-
 //"value" cannot be null, as in registerPlugin it is always set
 #define RETURN_STD_STRING(in, what)                 \
     std::string ret = "";                           \
@@ -217,7 +215,7 @@ PluginHandleSetPtr PluginDAOReadOnly::getLibraryDependencies() const
 }
 
 DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
-        const std::string& objectName)
+    const std::string& objectName)
 {
     LogDebug("GetPluginHandle for object: " << objectName);
 
@@ -249,7 +247,7 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
 }
 
 ImplementedObjectsList PluginDAOReadOnly::getImplementedObjectsForPluginHandle(
-        DbPluginHandle handle)
+    DbPluginHandle handle)
 {
     LogDebug("getImplementedObjects for pluginHandle: " << handle);
 
@@ -281,8 +279,9 @@ ImplementedObjectsList PluginDAOReadOnly::getImplementedObjectsForPluginHandle(
     }
 }
 
-PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::getRequiredObjectsForPluginHandle(
-        DbPluginHandle handle)
+PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::
+    getRequiredObjectsForPluginHandle(
+    DbPluginHandle handle)
 {
     Try
     {
@@ -314,7 +313,7 @@ PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::getRequiredObjectsForPluginHandl
 }
 
 PluginHandleSetPtr PluginDAOReadOnly::getPluginHandleByStatus(
-        PluginInstallationState state)
+    PluginInstallationState state)
 {
     Try
     {
@@ -344,14 +343,16 @@ PluginHandleSetPtr PluginDAOReadOnly::getPluginHandleByStatus(
     }
 }
 
-PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::getInstallationStatus() const
+PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::
+    getInstallationStatus() const
 {
     PluginRow row = getPluginRow(m_pluginHandle);
     return ToState(row.Get_InstallationState());
 }
 
-PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::getInstallationStateForHandle(
-        DbPluginHandle handle)
+PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::
+    getInstallationStateForHandle(
+    DbPluginHandle handle)
 {
     Try
     {
@@ -396,5 +397,4 @@ bool PluginDAOReadOnly::isPluginInstalled(DbPluginHandle pluginHandle)
                    "Failed in isPluginInstalled");
     }
 }
-
 } // namespace WrtDB

@@ -19,7 +19,6 @@
  * @version 1.0
  */
 
-
 #include <sys/stat.h>
 #include <cerrno>
 #include <cstring>
@@ -35,7 +34,7 @@
 
 namespace {
 int try_mkdir(const char* path,
-        mode_t mode)
+              mode_t mode)
 {
     struct stat st;
     int err = 0;
@@ -53,7 +52,7 @@ int try_mkdir(const char* path,
 }
 
 int mkpath(const char* path,
-        mode_t mode)
+           mode_t mode)
 {
     char* copy = ::strdup(path);
     if (NULL == copy) {
@@ -95,7 +94,8 @@ int RmDir(const char* path)
         errno = 0;
         if (NULL != (entry = ::readdir(dir))) {
             if (!::strncmp(entry->d_name, ".", 1) ||
-                !::strncmp(entry->d_name, "..", 2)) {
+                !::strncmp(entry->d_name, "..", 2))
+            {
                 continue;
             }
             std::string fullPath = WrtDB::PathBuilder(path)
@@ -108,8 +108,7 @@ int RmDir(const char* path)
                 return -1;
             }
         }
-    }
-    while (NULL != entry);
+    } while (NULL != entry);
 
     int error = errno;
     if (TEMP_FAILURE_RETRY(::closedir(dir)) != 0) {
@@ -142,7 +141,7 @@ bool FileExists(const DPL::String& absolutePath)
 }
 
 void MakePath(const std::string& path,
-        mode_t mode)
+              mode_t mode)
 {
     if (mkpath(path.c_str(), mode) == -1) {
         ThrowMsg(CreateDirectoryException, "Cannot make path");

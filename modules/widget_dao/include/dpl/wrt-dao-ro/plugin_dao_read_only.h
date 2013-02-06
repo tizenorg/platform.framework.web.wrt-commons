@@ -20,7 +20,6 @@
  * @brief   This file contains the declaration of plugin dao read only
  */
 
-
 #ifndef WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_
 #define WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_
 
@@ -31,7 +30,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef std::list<DbPluginHandle> PluginHandleList;
 typedef std::set<DbPluginHandle> PluginHandleSet;
 typedef std::list<std::string> ImplementedObjectsList;
@@ -86,19 +84,19 @@ class PluginDAOReadOnly
     static bool isPluginInstalled(DbPluginHandle pluginHandle);
 
     static PluginHandleSetPtr getPluginHandleByStatus(
-            PluginInstallationState state);
+        PluginInstallationState state);
 
     static DbPluginHandle getPluginHandleForImplementedObject(
-            const std::string& objectName);
+        const std::string& objectName);
 
     static ImplementedObjectsList getImplementedObjectsForPluginHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     static PluginObjectsDAO::ObjectsPtr getRequiredObjectsForPluginHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     static PluginInstallationState getInstallationStateForHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     DbPluginHandle getPluginHandle() const;
     PluginInstallationState getInstallationStatus() const;
@@ -111,7 +109,6 @@ class PluginDAOReadOnly
 
     void checkInstallationCompleted();
 };
-
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_ */

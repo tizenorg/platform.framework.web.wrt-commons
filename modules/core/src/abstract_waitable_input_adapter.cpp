@@ -17,16 +17,16 @@
  * @file        abstract_waitable_input_adapter.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of abstract waitable input adapter
+ * @brief       This file is the implementation file of abstract waitable input
+ * adapter
  */
 #include <stddef.h>
 #include <dpl/abstract_waitable_input_adapter.h>
 
-namespace DPL
-{
-
+namespace DPL {
 AbstractWaitableInputAdapter::AbstractWaitableInputAdapter(AbstractInput *input)
-    : m_input(input)
+    :
+    m_input(input)
 {
     m_waitableEvent.Signal();
 }
@@ -40,5 +40,4 @@ WaitableHandle AbstractWaitableInputAdapter::WaitableReadHandle() const
 {
     return m_waitableEvent.GetHandle();
 }
-
 } // namespace DPL

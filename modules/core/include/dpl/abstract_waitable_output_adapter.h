@@ -26,24 +26,21 @@
 #include <dpl/waitable_event.h>
 #include <dpl/abstract_output.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableOutputAdapter :
+    public AbstractWaitableOutput
 {
-
-class AbstractWaitableOutputAdapter
-    : public AbstractWaitableOutput
-{
-private:
+  private:
     AbstractOutput *m_output;
     WaitableEvent m_waitableEvent;
 
-public:
+  public:
     explicit AbstractWaitableOutputAdapter(AbstractOutput *output);
 
     virtual size_t Write(const BinaryQueue &buffer, size_t bufferSize);
 
     virtual WaitableHandle WaitableWriteHandle() const;
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_OUTPUT_ADAPTER_H

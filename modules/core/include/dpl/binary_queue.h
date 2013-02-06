@@ -28,30 +28,32 @@
 #include <memory>
 #include <list>
 
-namespace DPL
-{
+namespace DPL {
 /**
  * Binary stream implemented as constant size bucket list
  *
  * @todo Add optimized implementation for FlattenConsume
  */
-class BinaryQueue
-    : public AbstractInputOutput
+class BinaryQueue :
+    public AbstractInputOutput
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OutOfData)
     };
 
-    typedef void (*BufferDeleter)(const void *buffer, size_t bufferSize, void *userParam);
-    static void BufferDeleterFree(const void *buffer, size_t bufferSize, void *userParam);
+    typedef void (*BufferDeleter)(const void *buffer, size_t bufferSize,
+                                  void *userParam);
+    static void BufferDeleterFree(const void *buffer,
+                                  size_t bufferSize,
+                                  void *userParam);
 
     class BucketVisitor
     {
-    public:
+      public:
         /**
          * Destructor
          */
@@ -67,9 +69,9 @@ public:
         virtual void OnVisitBucket(const void *buffer, size_t bufferSize) = 0;
     };
 
-private:
-    struct Bucket
-        : private Noncopyable
+  private:
+    struct Bucket :
+        private Noncopyable
     {
         const void *buffer;
         const void *ptr;
@@ -79,7 +81,10 @@ private:
         BufferDeleter deleter;
         void *param;
 
-        Bucket(const void *buffer, size_t bufferSize, BufferDeleter deleter, void *userParam);
+        Bucket(const void *buffer,
+               size_t bufferSize,
+               BufferDeleter deleter,
+               void *userParam);
         virtual ~Bucket();
     };
 
@@ -91,17 +96,17 @@ private:
 
     class BucketVisitorCall
     {
-    private:
+      private:
         BucketVisitor *m_visitor;
 
-    public:
+      public:
         BucketVisitorCall(BucketVisitor *visitor);
         virtual ~BucketVisitorCall();
 
         void operator()(Bucket *bucket) const;
     };
 
-public:
+  public:
     /**
      * Construct empty binary queue
      */
@@ -148,17 +153,24 @@ public:
      * @return none
      * @param[in] buffer Pointer to data buffer
      * @param[in] bufferSize Number of bytes available in buffer
-     * @param[in] deleter Pointer to deleter procedure used to free provided buffer
+     * @param[in] deleter Pointer to deleter procedure used to free provided
+     * buffer
      * @param[in] userParam User parameter passed to deleter routine
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      */
-    void AppendUnmanaged(const void *buffer, size_t bufferSize, BufferDeleter deleter = &BinaryQueue::BufferDeleterFree, void *userParam = NULL);
+    void AppendUnmanaged(
+        const void *buffer,
+        size_t bufferSize,
+        BufferDeleter deleter =
+            &BinaryQueue::BufferDeleterFree,
+        void *userParam = NULL);
 
     /**
      * Append copy of other binary queue to the end of this binary queue
      *
      * @return none
-     * @param[in] other Constant reference to other binary queue to copy data from
+     * @param[in] other Constant reference to other binary queue to copy data
+     * from
      * @exception std::bad_alloc Cannot allocate memory to hold additional data
      * @warning One cannot assume that bucket structure is preserved during copy
      */

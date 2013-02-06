@@ -34,27 +34,25 @@
 #include <set>
 #include <map>
 
-namespace DPL
-{
-namespace Test
-{
+namespace DPL {
+namespace Test {
 class TestRunner
 {
     typedef std::map<std::string, TestResultsCollectorBasePtr>
-            TestResultsCollectors;
+    TestResultsCollectors;
     TestResultsCollectors m_collectors;
 
     std::string m_startTestId;
     bool m_runIgnored;
 
-public:
-    TestRunner()
-      : m_terminate(false)
+  public:
+    TestRunner() :
+        m_terminate(false)
     {}
 
     typedef void (*TestCase)();
 
-private:
+  private:
     struct TestCaseStruct
     {
         std::string name;
@@ -70,11 +68,10 @@ private:
             return name == other.name;
         }
 
-        TestCaseStruct(const std::string &n, TestCase p)
-            : name(n),
-              proc(p)
-        {
-        }
+        TestCaseStruct(const std::string &n, TestCase p) :
+            name(n),
+            proc(p)
+        {}
     };
 
     typedef std::list<TestCaseStruct> TestCaseStructList;
@@ -109,16 +106,15 @@ private:
                            = TestResultsCollectorBase::FailStatus::NONE,
                        const std::string& reason = std::string());
 
-public:
+  public:
     class TestFailed
     {
-    private:
+      private:
         std::string m_message;
 
-    public:
+      public:
         TestFailed()
-        {
-        }
+        {}
 
         //! \brief Failed test message creator
         //!
@@ -126,7 +122,10 @@ public:
         //! \param[in] aFile source file name
         //! \param[in] aLine source file line
         //! \param[in] aMessage error message
-        TestFailed(const char* aTest, const char* aFile, int aLine, const std::string &aMessage);
+        TestFailed(const char* aTest,
+                   const char* aFile,
+                   int aLine,
+                   const std::string &aMessage);
 
         TestFailed(const std::string &message);
 
@@ -138,18 +137,16 @@ public:
 
     class Ignored
     {
-    private:
+      private:
         std::string m_message;
 
-    public:
+      public:
         Ignored()
-        {
-        }
+        {}
 
-        Ignored(const std::string &message)
-            : m_message(message)
-        {
-        }
+        Ignored(const std::string &message) :
+            m_message(message)
+        {}
 
         std::string GetMessage() const
         {
@@ -171,17 +168,16 @@ public:
 };
 
 typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
-
 }
 } // namespace DPL
 
 #define RUNNER_TEST_GROUP_INIT(GroupName)                                \
     static int Static##GroupName##Init()                                 \
     {                                                                    \
-        DPL::Test::TestRunnerSingleton::Instance().InitGroup(#GroupName);\
+        DPL::Test::TestRunnerSingleton::Instance().InitGroup(#GroupName); \
         return 0;                                                        \
     }                                                                    \
-    const int DPL_UNUSED  Static##GroupName##InitVar =                   \
+    const int DPL_UNUSED Static##GroupName##InitVar =                   \
         Static##GroupName##Init();
 
 #define RUNNER_TEST(Proc)                                                \
@@ -191,28 +187,35 @@ typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
         DPL::Test::TestRunnerSingleton::Instance().RegisterTest(#Proc, &Proc); \
         return 0;                                                        \
     }                                                                    \
-    const int DPL_UNUSED  Static##Proc##InitVar = Static##Proc##Init();  \
+    const int DPL_UNUSED Static##Proc##InitVar = Static##Proc##Init();  \
     void Proc()
 
 //! \brief Returns base name for path
 
 #define RUNNER_ASSERT_MSG(test, message)                                               \
-do                                                                                     \
-{                                                                                      \
-    DPL::Test::TestRunnerSingleton::Instance().MarkAssertion();                        \
+    do                                                                                     \
+    {                                                                                      \
+        DPL::Test::TestRunnerSingleton::Instance().MarkAssertion();                        \
                                                                                        \
-    if (!(test))                                                                       \
-    {                                                                                  \
-        std::ostringstream assertMsg;                                                  \
-        assertMsg << message;                                                          \
-        throw DPL::Test::TestRunner::TestFailed(#test, __FILE__, __LINE__, assertMsg.str()); \
-    }                                                                                  \
-} while (0)
+        if (!(test))                                                                       \
+        {                                                                                  \
+            std::ostringstream assertMsg;                                                  \
+            assertMsg << message;                                                          \
+            throw DPL::Test::TestRunner::TestFailed(#test, \
+                                                    __FILE__, \
+                                                    __LINE__, \
+                                                    assertMsg.str()); \
+        }                                                                                  \
+    } while (0)
 
 #define RUNNER_ASSERT(test) RUNNER_ASSERT_MSG(test, "")
 
 #define RUNNER_FAIL RUNNER_ASSERT(false)
 
-#define RUNNER_IGNORED_MSG(message) do { std::ostringstream assertMsg; assertMsg << message; throw DPL::Test::TestRunner::Ignored(assertMsg.str()); } while (0)
+#define RUNNER_IGNORED_MSG(message) do { std::ostringstream assertMsg; \
+                                         assertMsg << message; \
+                                         throw DPL::Test::TestRunner::Ignored( \
+                                                   assertMsg.str()); \
+} while (0)
 
 #endif // DPL_TEST_RUNNER_H

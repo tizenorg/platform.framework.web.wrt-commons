@@ -30,9 +30,10 @@ DECLARE_GENERIC_EVENT_0(QuitEvent)
 DECLARE_GENERIC_EVENT_0(TimeoutEvent)
 
 class DBusTest :
-    private DPL::Event::Controller<DPL::TypeListDecl<QuitEvent, TimeoutEvent>::Type>
+    private DPL::Event::Controller<DPL::TypeListDecl<QuitEvent,
+                                                     TimeoutEvent>::Type>
 {
-public:
+  public:
     enum class Status
     {
         NONE,
@@ -51,7 +52,7 @@ public:
     void success();
     void fail(const std::string& message = std::string());
 
-private:
+  private:
     void OnEventReceived(const TimeoutEvent& event);
     void OnEventReceived(const QuitEvent& event);
 
@@ -62,7 +63,7 @@ private:
 
 class DBusTestManager : private DPL::Noncopyable
 {
-public:
+  public:
     static DBusTestManager& getInstance();
 
     DBusTest& getCurrentTest() const;
@@ -70,7 +71,7 @@ public:
 
     void clear();
 
-private:
+  private:
     DBusTestManager();
 
     DBusTest* m_test;

@@ -31,9 +31,7 @@ using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::custom_handler;
 
 namespace CustomHandlerDB {
-
 namespace {
-
 template <typename T>
 CustomHandlerPtr getSingleHandler(std::list<T> row)
 {
@@ -56,29 +54,27 @@ CustomHandlerPtr getSingleHandler(std::list<T> row)
     }
     return handler;
 }
-
 } // namespace
 
-CustomHandlerDAOReadOnly::CustomHandlerDAOReadOnly(const DPL::String& pkgName) :
-        m_pkgName(pkgName)
-{
-}
+CustomHandlerDAOReadOnly::CustomHandlerDAOReadOnly(const DPL::String& pkgName)
+    :
+    m_pkgName(pkgName)
+{}
 
 CustomHandlerDAOReadOnly::~CustomHandlerDAOReadOnly()
-{
-}
+{}
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getProtocolHandler(
-        const DPL::String& protocol,
-        const DPL::String& url)
+    const DPL::String& protocol,
+    const DPL::String& url)
 {
     LogDebug("Getting protocol handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
 
         select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
-                      And(Equals<ProtocolHandlers::target>(protocol),
-                          Equals<ProtocolHandlers::url>(url))));
+                          And(Equals<ProtocolHandlers::target>(protocol),
+                              Equals<ProtocolHandlers::url>(url))));
 
         std::list<ProtocolHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -89,16 +85,16 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getProtocolHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
-        const DPL::String& content,
-        const DPL::String& url)
+    const DPL::String& content,
+    const DPL::String& url)
 {
     LogDebug("Getting content handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers);
 
         select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
-                      And(Equals<ContentHandlers::target>(content),
-                          Equals<ContentHandlers::url>(url))));
+                          And(Equals<ContentHandlers::target>(content),
+                              Equals<ContentHandlers::url>(url))));
 
         std::list<ContentHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -109,10 +105,10 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getActivProtocolHandler(
-        const DPL::String& protocol)
+    const DPL::String& protocol)
 {
     LogDebug("Getting active protocol handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
 
         select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
@@ -142,22 +138,22 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getActivProtocolHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getProtocolHandler(
-        const DPL::String& protocol,
-        const DPL::String& url,
-        const DPL::String& baseURL)
+    const DPL::String& protocol,
+    const DPL::String& url,
+    const DPL::String& baseURL)
 {
     LogDebug("Check if protocol is registered");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
 
         select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
                           And(Equals<ProtocolHandlers::target>(protocol),
                               And(Equals<ProtocolHandlers::url>(url),
                                   Equals<ProtocolHandlers::base_url>(baseURL)
+                                  )
                               )
-                           )
-                       )
-                 );
+                          )
+                      );
 
         std::list<ProtocolHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -167,12 +163,11 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getProtocolHandler(
     }
 }
 
-
 CustomHandlerPtr CustomHandlerDAOReadOnly::getActivContentHandler(
-        const DPL::String& content)
+    const DPL::String& content)
 {
     LogDebug("Getting active content handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers);
 
         select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
@@ -202,18 +197,18 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getActivContentHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
-        const DPL::String& content,
-        const DPL::String& url,
-        const DPL::String& baseURL)
+    const DPL::String& content,
+    const DPL::String& url,
+    const DPL::String& baseURL)
 {
     LogDebug("Check if content is registered");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers);
 
         select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
-                      And(Equals<ContentHandlers::target>(content),
-                      And(Equals<ContentHandlers::url>(url),
-                          Equals<ContentHandlers::base_url>(baseURL)))));
+                          And(Equals<ContentHandlers::target>(content),
+                              And(Equals<ContentHandlers::url>(url),
+                                  Equals<ContentHandlers::base_url>(baseURL)))));
 
         std::list<ContentHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -224,15 +219,15 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getContentHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getAllowedProtocolHandler(
-        const DPL::String& protocol)
+    const DPL::String& protocol)
 {
     LogDebug("Getting allowed protocol handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ProtocolHandlers);
 
         select->Where(And(Equals<ProtocolHandlers::app_id>(m_pkgName),
-                      And(Equals<ProtocolHandlers::target>(protocol),
-                          Equals<ProtocolHandlers::user_allowed>(true))));
+                          And(Equals<ProtocolHandlers::target>(protocol),
+                              Equals<ProtocolHandlers::user_allowed>(true))));
 
         std::list<ProtocolHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -243,15 +238,15 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getAllowedProtocolHandler(
 }
 
 CustomHandlerPtr CustomHandlerDAOReadOnly::getAllowedContentHandler(
-        const DPL::String& protocol)
+    const DPL::String& protocol)
 {
     LogDebug("Getting allowed content handler");
-    Try{
+    Try {
         CUSTOM_HANDLER_DB_SELECT(select, ContentHandlers)
 
         select->Where(And(Equals<ContentHandlers::app_id>(m_pkgName),
-                      And(Equals<ContentHandlers::target>(protocol),
-                          Equals<ContentHandlers::user_allowed>(true))));
+                          And(Equals<ContentHandlers::target>(protocol),
+                              Equals<ContentHandlers::user_allowed>(true))));
 
         std::list<ContentHandlers::Row> list = select->GetRowList();
         return getSingleHandler(list);
@@ -260,5 +255,4 @@ CustomHandlerPtr CustomHandlerDAOReadOnly::getAllowedContentHandler(
                    "Failed to get content handler");
     }
 }
-
 } // namespace CustomHandlerDB

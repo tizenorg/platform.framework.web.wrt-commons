@@ -32,7 +32,6 @@
 
 namespace DPL {
 namespace DBus {
-
 /*
  * DBus::Client class is intended to act as simple DBus client. To call a method
  * on remote service "Service", on remote object "Object", interface
@@ -58,7 +57,6 @@ namespace DBus {
 
 class Client
 {
-
   public:
     class Exception
     {
@@ -70,9 +68,9 @@ class Client
     Client(std::string serverPath,
            std::string serviceName,
            std::string interfaceName) :
-            m_serviceName(serviceName),
-            m_serverPath(serverPath),
-            m_interfaceName(interfaceName)
+        m_serviceName(serviceName),
+        m_serverPath(serverPath),
+        m_interfaceName(interfaceName)
     {
         DBusError error;
 
@@ -80,15 +78,15 @@ class Client
         m_connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
         if (NULL == m_connection) {
             LogPedantic("Couldn't get DBUS connection. Error: " <<
-                    error.message);
+                        error.message);
             dbus_error_free(&error);
             ThrowMsg(Exception::DBusClientException,
-                    "Couldn't get DBUS connection." );
+                     "Couldn't get DBUS connection.");
         }
     }
 
-    template<typename ...Args>
-    void call(const char* methodName, const Args&... args)
+    template<typename ... Args>
+    void call(const char* methodName, const Args& ... args)
     {
         DBusMessage* message = dbus_message_new_method_call(
                 m_serviceName.c_str(),
@@ -97,14 +95,14 @@ class Client
                 methodName);
         DBusMessageIter argsIterator;
         dbus_message_iter_init_append(message, &argsIterator);
-        call(message, &argsIterator, args...);
+        call(message, &argsIterator, args ...);
         dbus_message_unref(message);
     }
 
-    template<typename ...Args>
-    void call(std::string methodName, const Args&... args)
+    template<typename ... Args>
+    void call(std::string methodName, const Args& ... args)
     {
-        call(methodName.c_str(), args...);
+        call(methodName.c_str(), args ...);
     }
 
     ~Client()
@@ -115,7 +113,7 @@ class Client
   private:
 
     DBusMessage* makeCall(
-            DBusMessage* message)
+        DBusMessage* message)
     {
         DBusError error;
         dbus_error_init(&error);
@@ -126,10 +124,10 @@ class Client
                 &error);
         if (NULL == ret) {
             LogPedantic("Error sending DBUS message: " <<
-                    error.message);
+                        error.message);
             dbus_error_free(&error);
             ThrowMsg(Exception::DBusClientException,
-                    "Error sending DBUS message." );
+                     "Error sending DBUS message.");
         }
         return ret;
     }
@@ -142,98 +140,97 @@ class Client
         } else {
             LogPedantic("Error getting DBUS response.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error getting DBUS response." );
+                     "Error getting DBUS response.");
         }
     }
 
     template<typename T, typename ... Args>
     void call(
-            DBusMessage* message,
-            DBusMessageIter* argsIterator,
-            const T& invalue,
-            const Args&... args)
+        DBusMessage* message,
+        DBusMessageIter* argsIterator,
+        const T& invalue,
+        const Args& ... args)
     {
-        if (!Serialization::serialize(argsIterator, invalue)){
+        if (!Serialization::serialize(argsIterator, invalue)) {
             LogPedantic("Error in serialization.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error in serialization." );
+                     "Error in serialization.");
         }
-        call(message, argsIterator, args...);
+        call(message, argsIterator, args ...);
     }
 
     template<typename T, typename ... Args>
     void call(
-            DBusMessage* message,
-            DBusMessageIter* argsIterator,
-            const T* invalue,
-            const Args&... args)
+        DBusMessage* message,
+        DBusMessageIter* argsIterator,
+        const T* invalue,
+        const Args& ... args)
     {
-        if (!Serialization::serialize(argsIterator, invalue)){
+        if (!Serialization::serialize(argsIterator, invalue)) {
             LogPedantic("Error in serialization.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error in serialization." );
+                     "Error in serialization.");
         }
-        call(message, argsIterator, args...);
+        call(message, argsIterator, args ...);
     }
 
     template<typename T, typename ... Args>
     void call(
-            DBusMessage* message,
-            DBusMessageIter* argsIterator,
-            const T* invalue)
+        DBusMessage* message,
+        DBusMessageIter* argsIterator,
+        const T* invalue)
     {
-        if (!Serialization::serialize(argsIterator, invalue)){
+        if (!Serialization::serialize(argsIterator, invalue)) {
             LogPedantic("Error in serialization.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error in serialization." );
+                     "Error in serialization.");
         }
         call(message, argsIterator);
     }
 
     template<typename T, typename ... Args>
     void call(
-            DBusMessage* message,
-            DBusMessageIter* /*argsIterator*/,
-            T* out,
-            const Args&... args)
+        DBusMessage* message,
+        DBusMessageIter* /*argsIterator*/,
+        T* out,
+        const Args& ... args)
     {
         DBusMessage* ret = makeCall(message);
         if (ret != NULL) {
             DBusMessageIter responseIterator;
             dbus_message_iter_init(ret, &responseIterator);
-            returnFromCall(&responseIterator, out, args...);
+            returnFromCall(&responseIterator, out, args ...);
             dbus_message_unref(ret);
         }
     }
 
     template<typename T, typename ... Args>
     void returnFromCall(
-            DBusMessageIter* responseIterator,
-            T* out,
-            const Args&... args)
+        DBusMessageIter* responseIterator,
+        T* out,
+        const Args& ... args)
     {
-        if (!Deserialization::deserialize(responseIterator, out)){
+        if (!Deserialization::deserialize(responseIterator, out)) {
             LogPedantic("Error in deserialization.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error in deserialization." );
+                     "Error in deserialization.");
         }
-        returnFromCall(responseIterator, args...);
+        returnFromCall(responseIterator, args ...);
     }
 
     template<typename T>
     void returnFromCall(DBusMessageIter* responseIterator, T* out)
     {
-        if (!Deserialization::deserialize(responseIterator, out)){
+        if (!Deserialization::deserialize(responseIterator, out)) {
             LogPedantic("Error in deserialization.");
             ThrowMsg(Exception::DBusClientException,
-                    "Error in deserialization." );
+                     "Error in deserialization.");
         }
     }
 
     std::string m_serviceName, m_serverPath, m_interfaceName;
     DBusConnection* m_connection;
 };
-
 } // namespace DBus
 } // namespace DPL
 

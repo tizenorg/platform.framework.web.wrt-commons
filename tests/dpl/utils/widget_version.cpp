@@ -75,12 +75,15 @@ RUNNER_TEST(WidgetVersion_M2_O0_nonwac_4)
 
 RUNNER_TEST(WidgetVersion_M2_O0_long)
 {
-    DPL::String raw(L"123456789012345678901234567890.98765432109876543210987654321");
+    DPL::String raw(
+        L"123456789012345678901234567890.98765432109876543210987654321");
     WidgetVersion version(raw);
 
     RUNNER_ASSERT(version.IsWac() == true);
-    RUNNER_ASSERT(version.Major() == DPL::String(L"123456789012345678901234567890"));
-    RUNNER_ASSERT(version.Minor() == DPL::String(L"98765432109876543210987654321"));
+    RUNNER_ASSERT(version.Major() ==
+                  DPL::String(L"123456789012345678901234567890"));
+    RUNNER_ASSERT(version.Minor() ==
+                  DPL::String(L"98765432109876543210987654321"));
     RUNNER_ASSERT(version.Micro() == DPL::Optional<DPL::String>());
     RUNNER_ASSERT(version.Optional() == DPL::Optional<DPL::String>());
     RUNNER_ASSERT(version.Raw() == raw);
@@ -254,12 +257,15 @@ RUNNER_TEST(WidgetVersion_Compare_2)
 
 RUNNER_TEST(WidgetVersion_Compare_3)
 {
-    RUNNER_ASSERT(WidgetVersion(L"1.00000000000000") >= WidgetVersion(L"1.0 test"));
+    RUNNER_ASSERT(WidgetVersion(L"1.00000000000000") >=
+                  WidgetVersion(L"1.0 test"));
 }
 
 RUNNER_TEST(WidgetVersion_Compare_4)
 {
-    RUNNER_ASSERT(WidgetVersion(L"19647963733338932479072098437089778943732432.00000000000000004324324324324321") > WidgetVersion(L"4324324324324324324321.000432"));
+    RUNNER_ASSERT(WidgetVersion(
+                      L"19647963733338932479072098437089778943732432.00000000000000004324324324324321")
+                  > WidgetVersion(L"4324324324324324324321.000432"));
 }
 
 RUNNER_TEST(WidgetVersion_Compare_5)
@@ -274,5 +280,6 @@ RUNNER_TEST(WidgetVersion_Compare_6)
 
 RUNNER_TEST(WidgetVersion_Compare_7)
 {
-    RUNNER_ASSERT(WidgetVersion(L"000123000.0 notatest") == WidgetVersion(L"00123000.0 testtesttest"));
+    RUNNER_ASSERT(WidgetVersion(L"000123000.0 notatest") ==
+                  WidgetVersion(L"00123000.0 testtesttest"));
 }
