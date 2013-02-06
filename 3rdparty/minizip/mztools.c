@@ -41,7 +41,7 @@ uLong* bytesRecovered;
   if (fpZip != NULL &&  fpOut != NULL) {
     int entries = 0;
     uLong totalBytes = 0;
-    char header[30];
+    char header[30] = {0,};
     char filename[256];
     char extra[1024];
     int offset = 0;

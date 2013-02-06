@@ -80,6 +80,11 @@ TestRunner::TestFailed::TestFailed(const char* aTest,
     m_message = assertMsg.str();
 }
 
+TestRunner::TestFailed::TestFailed(const std::string &message)
+{
+    m_message = message;
+}
+
 void TestRunner::RegisterTest(const char *testName, TestCase proc)
 {
     m_testGroups[m_currentGroup].push_back(TestCaseStruct(testName, proc));
@@ -193,6 +198,10 @@ void TestRunner::RunTests()
 
                 if (m_startTestId.empty()) {
                     RunTestCase(test);
+                }
+                if (m_terminate == true) {
+                    // Terminate quietly without any logs
+                    return;
                 }
             }
         }
@@ -503,6 +512,11 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
 bool TestRunner::getRunIgnored() const
 {
     return m_runIgnored;
+}
+
+void TestRunner::terminate()
+{
+    m_terminate = true;
 }
 
 }

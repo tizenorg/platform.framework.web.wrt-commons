@@ -437,6 +437,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_author_name(widgetConfigurationInfo.authorName);
     row.Set_author_email(widgetConfigurationInfo.authorEmail);
     row.Set_author_href(widgetConfigurationInfo.authorHref);
+    row.Set_csp_policy(widgetConfigurationInfo.cspPolicy);
     row.Set_base_folder(DPL::FromUTF8String(regInfo.baseFolder));
     row.Set_webkit_plugins_required(widgetConfigurationInfo.flashNeeded);
     row.Set_recognized(wacSecurity.isRecognized());

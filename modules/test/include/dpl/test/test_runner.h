@@ -48,6 +48,10 @@ class TestRunner
     bool m_runIgnored;
 
 public:
+    TestRunner()
+      : m_terminate(false)
+    {}
+
     typedef void (*TestCase)();
 
 private:
@@ -85,6 +89,10 @@ private:
 
     DPL::Atomic m_totalAssertions;
 
+    // Terminate without any logs.
+    // Some test requires to call fork function.
+    // Child process must not produce any logs and should die quietly.
+    bool m_terminate;
     void Banner();
     void InvalidArgs(const std::string& message = "Invalid arguments!");
     void Usage();
@@ -119,6 +127,8 @@ public:
         //! \param[in] aLine source file line
         //! \param[in] aMessage error message
         TestFailed(const char* aTest, const char* aFile, int aLine, const std::string &aMessage);
+
+        TestFailed(const std::string &message);
 
         std::string GetMessage() const
         {
@@ -156,6 +166,8 @@ public:
     typedef std::vector<std::string> ArgsList;
     int ExecTestRunner(const ArgsList& args);
     bool getRunIgnored() const;
+    // The runner will terminate as soon as possible (after current test).
+    void terminate();
 };
 
 typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
