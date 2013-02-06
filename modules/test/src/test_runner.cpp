@@ -268,6 +268,9 @@ void TestRunner::Usage()
     fprintf(
         stderr,
         "  --listingroup=<group name>\t Show a list of Test IDS in one group\n");
+    fprintf(stderr, "  --allowchildlogs\t Allow to print logs from child process on screen.\n");
+    fprintf(stderr, "       When active child process will be able to print logs on stdout and stderr.\n");
+    fprintf(stderr, "       Both descriptors will be closed after test.\n");
     fprintf(stderr, "  --help\t This help\n\n");
     std::for_each(m_collectors.begin(),
                   m_collectors.end(),
@@ -328,6 +331,7 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         const std::string startCmd = "--start=";
         const std::string listGroupsCmd = "--listgroups";
         const std::string listInGroup = "--listingroup=";
+        const std::string allowChildLogs = "--allowchildlogs";
 
         if (currentCollector) {
             if (currentCollector->ParseCollectorSpecificArg(arg)) {
@@ -389,6 +393,9 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
                 printf("ID:%s\n", test->name.c_str());
             }
             return 0;
+        } else if (arg.find(allowChildLogs) == 0) {
+            arg.erase(0, allowChildLogs.length());
+            m_allowChildLogs = true;
         } else if (arg == "--help") {
             showHelp = true;
         } else if (arg.find(output) == 0) {
@@ -475,9 +482,15 @@ bool TestRunner::getRunIgnored() const
     return m_runIgnored;
 }
 
-void TestRunner::terminate()
+void TestRunner::Terminate()
 {
     m_terminate = true;
 }
+
+bool TestRunner::GetAllowChildLogs()
+{
+    return m_allowChildLogs;
+}
+
 }
 } // namespace DPL

@@ -255,7 +255,7 @@ void RunChildProc(TestRunner::TestCase procChild)
 
         if (pipeReturn != PipeWrapper::SUCCESS) { // Timeout or reading error
             pipe.closeAll();
-            kill(pid, SIGINT);
+            kill(pid, SIGKILL);
         }
 
         int status;
@@ -276,13 +276,18 @@ void RunChildProc(TestRunner::TestCase procChild)
         // child code
 
         // End Runner after current test
-        TestRunnerSingleton::Instance().terminate();
+        TestRunnerSingleton::Instance().Terminate();
+
         int code = 1;
         std::string msg;
 
-        //      close(0);        // stdin
-        close(1);        // stdout
-        close(2);        // stderr
+        bool allowLogs = TestRunnerSingleton::Instance().GetAllowChildLogs();
+
+        close(0);            // stdin
+        if (!allowLogs) {
+            close(1);        // stdout
+            close(2);        // stderr
+        }
 
         pipe.setUsage(PipeWrapper::WRITEONLY);
 
@@ -295,6 +300,12 @@ void RunChildProc(TestRunner::TestCase procChild)
             msg = "unhandled exeception";
             code = 0;
         }
+
+        if (allowLogs) {
+            close(1);   // stdout
+            close(2);   // stderr
+        }
+
         pipe.send(code, msg);
     }
 }

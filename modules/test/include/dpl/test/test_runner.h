@@ -48,6 +48,7 @@ class TestRunner
   public:
     TestRunner() :
         m_terminate(false)
+      , m_allowChildLogs(false)
     {}
 
     typedef void (*TestCase)();
@@ -90,6 +91,8 @@ class TestRunner
     // Some test requires to call fork function.
     // Child process must not produce any logs and should die quietly.
     bool m_terminate;
+    bool m_allowChildLogs;
+
     void Banner();
     void InvalidArgs(const std::string& message = "Invalid arguments!");
     void Usage();
@@ -164,7 +167,8 @@ class TestRunner
     int ExecTestRunner(const ArgsList& args);
     bool getRunIgnored() const;
     // The runner will terminate as soon as possible (after current test).
-    void terminate();
+    void Terminate();
+    bool GetAllowChildLogs();
 };
 
 typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
