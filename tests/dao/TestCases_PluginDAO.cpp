@@ -341,7 +341,7 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_1)
         RUNNER_ASSERT(dbHandle == handle);
         auto objects = dao.getImplementedObjectsForPluginHandle(dbHandle);
 
-        RUNNER_ASSERT(objects.size() == 0);
+        RUNNER_ASSERT(objects.empty());
     }
 }
 

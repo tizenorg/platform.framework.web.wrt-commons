@@ -117,7 +117,7 @@ bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
     WRT_DB_SELECT(select, iana_records, &WrtDatabase::interface())
     select->Where(Equals<iana_records::SUBTAG>(tag));
     auto row = select->GetRowList();
-    if (row.size() == 0 || row.front().Get_TYPE() != type) {
+    if (row.empty() || row.front().Get_TYPE() != type) {
         return false;
     } else {
         return true;

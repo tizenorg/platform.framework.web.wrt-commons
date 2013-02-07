@@ -363,9 +363,9 @@ RUNNER_TEST(ORM_Insert)
 
     TestTableInsert::Select select1(interface.get());
     std::list<int> resultList = select1.GetValueList<TestTableInsert::ColumnInt>();
-    RUNNER_ASSERT_MSG(
-        resultList.size() == 0, "Returned list has wrong size: " <<
-        resultList.size());
+    RUNNER_ASSERT_MSG(resultList.empty(),
+                      "Returned list has wrong size: " << resultList.size());
+
     std::list<TestTableInsert::Row> list;
 
     TestTableInsert::Insert insert(interface.get());
