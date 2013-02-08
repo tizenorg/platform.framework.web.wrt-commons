@@ -1,3 +1,16 @@
+wrt-commons (0.2.98) unstable; urgency=low
+
+  * wrt_commons_reset.sh fix
+  * User agent database update
+  * Compilation warnings. Deprecated code. Part 1
+  * Add function get appid from pkgid
+  * Source code formating unification
+  * Compilation warnings. Part 2
+  * Fix to test framework.
+  * DPL testcase description moved from wrt-extra
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 08 Feb 2013 18:18:31 +0900
+
 wrt-commons (0.2.97) unstable; urgency=low
 
   * Support for "process per testcase" framework.
