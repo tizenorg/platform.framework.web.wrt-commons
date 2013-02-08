@@ -134,6 +134,28 @@ TizenAppId getTizenAppIdByHandle(const DbWidgetHandle handle)
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
+
+TizenAppId getTizenAppIdByPkgId(const TizenPkgId tzPkgid)
+{
+    LogDebug("Getting TizenAppId by pkgid : " << tzPkgid);
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::tizen_pkgid>(tzPkgid));
+        WidgetInfo::Select::RowList rowList = select->GetRowList();
+
+        if (rowList.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                 "Failed to get widget by handle");
+        }
+        TizenAppId tzAppid = rowList.front().Get_tizen_appid();
+
+        return tzAppid;
+
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
+
+}
 } // namespace
 
 
@@ -232,6 +254,11 @@ TizenAppId WidgetDAOReadOnly::getTzAppId(const WidgetGUID GUID)
 TizenAppId WidgetDAOReadOnly::getTzAppId(const DbWidgetHandle handle)
 {
     return getTizenAppIdByHandle(handle);
+}
+
+TizenAppId WidgetDAOReadOnly::getTzAppId(const TizenPkgId tzPkgid)
+{
+    return getTizenAppIdByPkgId(tzPkgid);
 }
 
 PropertyDAOReadOnly::WidgetPropertyKeyList

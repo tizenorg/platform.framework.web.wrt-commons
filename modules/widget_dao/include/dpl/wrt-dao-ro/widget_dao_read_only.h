@@ -329,6 +329,7 @@ class WidgetDAOReadOnly
     TizenAppId getTzAppId() const;
     static TizenAppId getTzAppId(const WidgetGUID GUID);
     static TizenAppId getTzAppId(const DbWidgetHandle handle);
+    static TizenAppId getTzAppId(const TizenPkgId tzPkgid);
 
     /**
      * Returns WidgetPkgName for the specified widget
