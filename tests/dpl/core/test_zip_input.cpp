@@ -37,6 +37,11 @@ const char* ARCHIVED_FILE = "sample.txt";
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ZipInput_OpenFailed
+Description: tests opening non existing file
+Expected: exception throw
+*/
 RUNNER_TEST(ZipInput_OpenFailed)
 {
     bool opened = true;
@@ -54,6 +59,11 @@ RUNNER_TEST(ZipInput_OpenFailed)
     RUNNER_ASSERT(opened == false);
 }
 
+/*
+Name: ZipInput_OpenFile
+Description: tests opening existing file
+Expected: zip stats should mkatch expected
+*/
 RUNNER_TEST(ZipInput_OpenFile)
 {
     DPL::ZipInput zip(PATH_ARCHIVE);
@@ -71,6 +81,11 @@ RUNNER_TEST(ZipInput_OpenFile)
     }
 }
 
+/*
+Name: ZipInput_UnzipSingleFile
+Description: tests opening existing file and unzipping single file
+Expected: right content
+*/
 RUNNER_TEST(ZipInput_UnzipSingleFile)
 {
     DPL::ZipInput zip(PATH_ARCHIVE);

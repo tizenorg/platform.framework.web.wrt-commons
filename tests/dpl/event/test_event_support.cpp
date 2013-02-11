@@ -82,6 +82,12 @@ class QuitController :
     }
 };
 
+/*
+Name: EventSupport_DestroyBeforeProcessing
+Description: tests if remoign listener is full successfull
+Expected: dummy var should be affected by explicit call of ZeroDummyVar(),
+ but no by emitting event after removing listener
+*/
 RUNNER_TEST(EventSupport_DestroyBeforeProcessing)
 {
     QuitController quitter;
@@ -120,6 +126,12 @@ class DelegateTestSupport :
     }
 };
 
+/*
+Name: EventSupport_BindDelegate
+Description: tests if event support derived class successfully propagates
+ event to registered listener
+Expected: value of event should be passed to listener
+*/
 RUNNER_TEST(EventSupport_BindDelegate)
 {
     g_delegateTest = 0;

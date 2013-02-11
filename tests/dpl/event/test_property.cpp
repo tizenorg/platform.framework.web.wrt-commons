@@ -92,6 +92,11 @@ void OnNameChanged(const DPL::Event::PropertyEvent<std::string> &event)
     g_caption = event.value;
 }
 
+/*
+Name: Model_Test
+Description: tests accessing and changing models properties
+Expected: listener should get changed value
+*/
 RUNNER_TEST(Model_Test)
 {
     MyModel model;

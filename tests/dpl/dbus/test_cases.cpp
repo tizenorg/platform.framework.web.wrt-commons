@@ -61,6 +61,11 @@ const int DEFAULT_TIMEOUT = 2; // in seconds
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: AcquireSessionBus
+Description: tests acquiring session bus
+Expected: no exceptions
+*/
 RUNNER_TEST(AcquireSessionBus)
 {
     try {
@@ -70,6 +75,11 @@ RUNNER_TEST(AcquireSessionBus)
     }
 }
 
+/*
+Name: AcquireSystemBus
+Description: tests acquiring system bus
+Expected: no exceptions
+*/
 RUNNER_TEST(AcquireSystemBus)
 {
     try {
@@ -79,6 +89,11 @@ RUNNER_TEST(AcquireSystemBus)
     }
 }
 
+/*
+Name: ParseNodeInfo
+Description: creates dbus interface from xml string
+Expected: interface should be created correctly
+*/
 RUNNER_TEST(ParseNodeInfo)
 {
     try {
@@ -93,6 +108,11 @@ RUNNER_TEST(ParseNodeInfo)
     }
 }
 
+/*
+Name: InvokeRemoteMethod
+Description: performs procedure call via dbus
+Expected: call should return not empty id
+*/
 RUNNER_TEST(InvokeRemoteMethod)
 {
     try {
@@ -127,6 +147,11 @@ class RegisterServiceListener :
     }
 };
 
+/*
+Name: RegisterService
+Description: tests event listener for AcquiredEvent in context of dbus
+Expected: event should be received
+*/
 DBUS_TEST(RegisterService)
 {
     try {

@@ -78,6 +78,11 @@ class MyThread :
     DPL::Atomic *m_atom;
 };
 
+/*
+Name: Once_MultiThreadCall
+Description: tests once call wrapper for use by multiple threads
+Expected: function should be called just once from one of running threads
+*/
 RUNNER_TEST(Once_MultiThreadCall)
 {
     const size_t NUM_THREADS = 20;

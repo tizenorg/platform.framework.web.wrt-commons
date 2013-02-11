@@ -93,6 +93,11 @@ std::list<T> makeList(const T& a, const T& b)
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ORM_SelectSingleValue
+Description: tests quering single value of single row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectSingleValue)
 {
     SmartAttach interface;
@@ -181,6 +186,11 @@ RUNNER_TEST(ORM_SelectSingleValue)
     }
 }
 
+/*
+Name: ORM_SelectSingleRow
+Description: tests quering single row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectSingleRow)
 {
     SmartAttach interface;
@@ -213,6 +223,11 @@ RUNNER_TEST(ORM_SelectSingleRow)
     }
 }
 
+/*
+Name: ORM_SelectRowList
+Description: tests quering multiple row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectRowList)
 {
     SmartAttach interface;
@@ -270,6 +285,11 @@ RUNNER_TEST(ORM_SelectRowList)
     }
 }
 
+/*
+Name: ORM_SelectValueList
+Description: tests quering single column from multiple row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectValueList)
 {
     SmartAttach interface;
@@ -334,6 +354,11 @@ RUNNER_TEST(ORM_SelectValueList)
     }
 }
 
+/*
+Name: ORM_MultipleCalls
+Description: tests sequnece of different queries
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_MultipleCalls)
 {
     for (int j = 0; j < TEST_REPETITION; j++) {
@@ -355,6 +380,11 @@ RUNNER_TEST(ORM_MultipleCalls)
     }
 }
 
+/*
+Name: ORM_Insert
+Description: tests insering rows into database
+Expected: Values should be inserted
+*/
 RUNNER_TEST(ORM_Insert)
 {
     SmartAttach interface;
@@ -445,6 +475,11 @@ RUNNER_TEST(ORM_Insert)
     }
 }
 
+/*
+Name: ORM_MultipleBindInsert
+Description: repeats ORM_Insert test several times
+Expected: Values should be inserted
+*/
 RUNNER_TEST(ORM_MultipleBindInsert)
 {
     for (int i = 0; i < TEST_REPETITION; i++) {
@@ -452,6 +487,11 @@ RUNNER_TEST(ORM_MultipleBindInsert)
     }
 }
 
+/*
+Name: ORM_Delete
+Description: tests deleting rows from database
+Expected: deleted rows should not exist
+*/
 RUNNER_TEST(ORM_Delete)
 {
     SmartAttach interface;
@@ -565,6 +605,11 @@ RUNNER_TEST(ORM_Delete)
     }
 }
 
+/*
+Name: ORM_MultipleBindDelete
+Description: repeats ORM_Delete test several times
+Expected: Values should be deleted
+*/
 RUNNER_TEST(ORM_MultipleBindDelete)
 {
     for (int i = 0; i < TEST_REPETITION; i++) {
@@ -572,6 +617,11 @@ RUNNER_TEST(ORM_MultipleBindDelete)
     }
 }
 
+/*
+Name: ORM_MultipleBindWhere
+Description: tests if multiple bind of same query obejct works
+Expected: Each bind and execution of query should be correct
+*/
 RUNNER_TEST(ORM_MultipleBindWhere)
 {
     SmartAttach interface;
@@ -654,6 +704,11 @@ RUNNER_TEST(ORM_MultipleBindWhere)
     }
 }
 
+/*
+Name: ORM_Update
+Description: tests rows update in database
+Expected: Successful update
+*/
 RUNNER_TEST(ORM_Update)
 {
     SmartAttach interface;
@@ -775,6 +830,11 @@ RUNNER_TEST(ORM_Update)
     }
 }
 
+/*
+Name: ORM_MultipleBindUpdate
+Description: repeats ORM_Update severl times
+Expected: Successful update
+*/
 RUNNER_TEST(ORM_MultipleBindUpdate)
 {
     for (int i = 0; i < TEST_REPETITION; i++) {
@@ -782,12 +842,22 @@ RUNNER_TEST(ORM_MultipleBindUpdate)
     }
 }
 
+/*
+Name: ORM_transactions
+Description: checks creation of transation object
+Expected: Successful creation of transaction object
+*/
 RUNNER_TEST(ORM_transactions)
 {
     SmartAttach interface;
     DPL::DB::ORM::dpl_orm_test::ScopedTransaction transaction(interface.get());
 }
 
+/*
+Name: ORM_MultiAttach
+Description: checks correct behaviou in case of multiple tries to attach to database
+Expected: Methods attaching/dettaching should be prepared for multiple calling
+*/
 RUNNER_TEST(ORM_MultiAttach)
 {
     SmartAttach interface(false);
@@ -807,6 +877,11 @@ RUNNER_TEST(ORM_MultiAttach)
         !interface.get()->IsAttached(), "Is attached, but shouldn't be.");
 }
 
+/*
+Name: ORM_Join
+Description: tests ORM's join operation
+Expected: values should insist correct join operation
+*/
 RUNNER_TEST(ORM_Join)
 {
     SmartAttach interface;

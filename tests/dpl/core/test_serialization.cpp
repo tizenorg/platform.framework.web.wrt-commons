@@ -99,6 +99,12 @@ class TestClass : public DPL::ISerializable
     std::vector<std::string> c;
 };
 
+/*
+Name: Serialize_primitives
+Description: Tests serialization of primitives types
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_primitives)
 {
     int a = 1;
@@ -119,6 +125,12 @@ RUNNER_TEST(Serialize_primitives)
     RUNNER_ASSERT(test_unsigned == c);
 }
 
+/*
+Name: Serialize_primitive_pointers
+Description: Tests serialization of primitives pointer types
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_primitive_pointers)
 {
     int a = 1;
@@ -142,6 +154,12 @@ RUNNER_TEST(Serialize_primitive_pointers)
     delete test_unsigned;
 }
 
+/*
+Name: Serialize_strings
+Description: Tests serialization of strings
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_strings)
 {
     std::string str1 = "ALA MA KOTA";
@@ -157,6 +175,12 @@ RUNNER_TEST(Serialize_strings)
     RUNNER_ASSERT(test_str2 == str2);
 }
 
+/*
+Name: Serialize_string_pointers
+Description: Tests serialization of string pointers
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_string_pointers)
 {
     std::string str1 = "ALA MA KOTA";
@@ -174,6 +198,12 @@ RUNNER_TEST(Serialize_string_pointers)
     delete test_str2;
 }
 
+/*
+Name: Serialize_containers
+Description: Tests serialization of containers
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_containers)
 {
     std::vector<int> vec;
@@ -213,6 +243,12 @@ RUNNER_TEST(Serialize_containers)
                   test_map.at(-78) == map.at(-78));
 }
 
+/*
+Name: Serialize_objects
+Description: Tests serialization of DPL::ISerializable derived objects
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_objects)
 {
     TestClass a(123, "ASDGHUADB\n\n5679b^^()*", "TEST_STRING"),
@@ -227,6 +263,12 @@ RUNNER_TEST(Serialize_objects)
     RUNNER_ASSERT(test_b == b);
 }
 
+/*
+Name: Serialize_all
+Description: Tests serialization of compound objects
+Expected: serialized value after deserialization
+ should be equal to deserialied value
+*/
 RUNNER_TEST(Serialize_all)
 {
     std::map<std::string, std::vector<TestClass*> > map;

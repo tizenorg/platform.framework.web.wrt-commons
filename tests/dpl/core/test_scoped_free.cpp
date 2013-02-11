@@ -25,6 +25,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ScopedFree_Zero
+Description: Checks emptiness of not set scoped free
+Expected: resource should be freed
+*/
 RUNNER_TEST(ScopedFree_Zero)
 {
     DPL::ScopedFree<void> free;
@@ -33,6 +38,11 @@ RUNNER_TEST(ScopedFree_Zero)
     RUNNER_ASSERT(!!!free);
 }
 
+/*
+Name: ScopedFree_NonZero
+Description: Checks emptiness of set scoped free
+Expected: resource should not be reported as freed
+*/
 RUNNER_TEST(ScopedFree_NonZero)
 {
     DPL::ScopedFree<void> free(malloc(7));
@@ -41,6 +51,11 @@ RUNNER_TEST(ScopedFree_NonZero)
     RUNNER_ASSERT(!!free);
 }
 
+/*
+Name: ScopedFree_Reset
+Description: Checks reseting scoped free
+Expected: resource should be freed after reset
+*/
 RUNNER_TEST(ScopedFree_Reset)
 {
     DPL::ScopedFree<void> free(malloc(7));

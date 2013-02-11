@@ -39,6 +39,11 @@ FILE* MakeTmp()
 }
 } //anonymous namespace
 
+/*
+Name: ScopedFClose_Zero
+Description: tests if operator ! works correct for closed file
+Expected: file should be closed
+*/
 RUNNER_TEST(ScopedFClose_Zero)
 {
     DPL::ScopedFClose file;
@@ -47,6 +52,11 @@ RUNNER_TEST(ScopedFClose_Zero)
     RUNNER_ASSERT(!!!file);
 }
 
+/*
+Name: ScopedArray_NonZero
+Description: tests if operator ! works correct for open file
+Expected: file should be open
+*/
 RUNNER_TEST(ScopedFClose_NonZero)
 {
     DPL::ScopedFClose file(MakeTmp());
@@ -55,6 +65,11 @@ RUNNER_TEST(ScopedFClose_NonZero)
     RUNNER_ASSERT(!!file);
 }
 
+/*
+Name: ScopedFClose_Reset
+Description: tests reseting of scoped file
+Expected: file should be closed after reset
+*/
 RUNNER_TEST(ScopedFClose_Reset)
 {
     DPL::ScopedFClose file(MakeTmp());

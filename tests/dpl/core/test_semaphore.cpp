@@ -63,6 +63,11 @@ class SemaphoreThread :
     }
 };
 
+/*
+Name: Semaphore_NamedIncrementDecrement
+Description: Checks if semaphore are working
+Expected: value should not change after all
+*/
 RUNNER_TEST(Semaphore_NamedIncrementDecrement)
 {
     std::string semaphoreName =

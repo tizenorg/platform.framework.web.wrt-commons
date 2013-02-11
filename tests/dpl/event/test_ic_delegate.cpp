@@ -193,6 +193,11 @@ class TestContextFreeClass :
     ICTestController* m_controller;
 };
 
+/*
+Name: ICDelegate_0
+Description: checks if delegetes are correctly called
+Expected: delegates should be called from right context
+*/
 RUNNER_TEST(ICDelegate_0)
 {
     DPL::Thread thread;
@@ -219,6 +224,11 @@ RUNNER_TEST(ICDelegate_0)
     result.TestEventsPassed();
 }
 
+/*
+Name: ICDelegate_1
+Description: checks if delegetes are correctly called
+Expected: delegates should be called from right context
+*/
 RUNNER_TEST(ICDelegate_1)
 {
     DPL::Thread thread;
@@ -433,6 +443,11 @@ class TestRunnerInThread : public DPL::Thread
     int m_tests;
 };
 
+/*
+Name: ICDelegate_2
+Description: checks if delegetes are correctly called
+Expected: delegates should be called from right context
+*/
 RUNNER_TEST(ICDelegate_2)
 {
     LogDebug("Creating test threads");
@@ -557,6 +572,11 @@ class ReuseTestContextFreeClass :
     int m_reuseCount;
 };
 
+/*
+Name: ICDelegate_3
+Description: checks if delegetes are correctly called
+Expected: delegates should be called from right context
+*/
 RUNNER_TEST(ICDelegate_3)
 {
     DPL::Thread thread;

@@ -32,6 +32,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL_WRT_UTILITY)
 
+/*
+Name: wrt_utility_WrtUtilJoinPaths
+Description: join paths test
+Expected: correctly used separator
+*/
 RUNNER_TEST(wrt_utility_WrtUtilJoinPaths)
 {
     std::string result;
@@ -147,6 +152,11 @@ RUNNER_TEST(wrt_utility_WrtUtilRemoveDir_NoDirError)
                       "Removing non existing directory returned success");
 }
 
+/*
+Name: wrt_utility_WrtUtilFileExists
+Description: tests file existence
+Expected: existing file should be reported as existing
+*/
 RUNNER_TEST(wrt_utility_WrtUtilFileExists)
 {
     std::ofstream file;
@@ -158,6 +168,11 @@ RUNNER_TEST(wrt_utility_WrtUtilFileExists)
     RUNNER_ASSERT(WrtUtilFileExists("/tmp/test_file1") == false);
 }
 
+/*
+Name: wrt_utility_WrtUtilDirExists
+Description: tests directory existence
+Expected: existing directory should be reported as existing
+*/
 RUNNER_TEST(wrt_utility_WrtUtilDirExists)
 {
     RUNNER_ASSERT(WrtUtilDirExists("/tmp"));

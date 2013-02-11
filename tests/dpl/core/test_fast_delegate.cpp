@@ -145,6 +145,11 @@ class CDerivedClass :
     }
 };
 
+/*
+Name: FastDelegate_Test
+Description: tests several scenarios of using fast delegates
+Expected: function calls succeeded
+*/
 RUNNER_TEST(FastDelegate_Test)
 {
     // Delegates with up to 8 parameters are supported.

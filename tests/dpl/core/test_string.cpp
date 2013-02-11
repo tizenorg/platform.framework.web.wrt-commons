@@ -181,6 +181,11 @@ WgAAAFsAAABcAAAAXQAAAF4AAABfAAAAYAAAAGEAAABiAAAAYwAAAGQAAABlAAAAZgAAAGcAAABo\
 AAAAaQAAAGoAAABrAAAAbAAAAG0AAABuAAAAbwAAAHAAAABxAAAAcgAAAHMAAAB0AAAAdQAAAHYA\
 AAB3AAAAeAAAAHkAAAB6AAAAewAAAHwAAAB9AAAAfgAAAAAAAAA=";
 
+/*
+Name: String_ConverterFromASCII
+Description: tests construction of string from ascii data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromASCII)
 {
     char* inStr = NULL;
@@ -201,6 +206,11 @@ RUNNER_TEST(String_ConverterFromASCII)
     free(inStr);
 }
 
+/*
+Name: String_ConverterFromUTF8
+Description: tests construction of string from UTF-8 data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromUTF8)
 {
     char* inStr = NULL;
@@ -220,6 +230,11 @@ RUNNER_TEST(String_ConverterFromUTF8)
     free(inStr);
 }
 
+/*
+Name: String_ConverterFromUTF32
+Description: tests construction of string from UTF-32 data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromUTF32)
 {
     wchar_t* inStr = NULL;
@@ -273,6 +288,11 @@ void String_TokenizeReal(const DelimiterType& delimiter)
     RUNNER_ASSERT(expectedTokens == tokens);
 }
 
+/*
+Name: String_Tokenize
+Description: tests of string splitting
+Expected: returned substring should match expected values
+*/
 RUNNER_TEST(String_Tokenize)
 {
     String_TokenizeReal(L"#.");
@@ -354,6 +374,11 @@ void TestOutStreams(
     RUNNER_ASSERT(ostream.str() == argumentResultString);
 }
 
+/*
+Name: String_Streams
+Description: tests of input/output stream
+Expected: returned substrign should match expected values
+*/
 RUNNER_TEST(String_Streams)
 {
     TestInStreams<std::char_traits<char> >("1 1.1 1.1 test", "test");
@@ -364,6 +389,11 @@ RUNNER_TEST(String_Streams)
     TestOutStreams<DPL::CharTraits>(L"test", L"11.11.1test");
 }
 
+/*
+Name: String_CompareCaseSensitive
+Description: tests case sensitive comparision
+Expected: strings should be equal
+*/
 RUNNER_TEST(String_CompareCaseSensitive)
 {
     RUNNER_ASSERT(
@@ -372,6 +402,11 @@ RUNNER_TEST(String_CompareCaseSensitive)
             DPL::FromUTF32String(L"Ala Makota ma żołądkówkę")) == 0);
 }
 
+/*
+Name: String_CompareCaseInsensitive
+Description: tests case insensitive comparision
+Expected: strings should be equal
+*/
 RUNNER_TEST(String_CompareCaseInsensitive)
 {
     RUNNER_ASSERT(

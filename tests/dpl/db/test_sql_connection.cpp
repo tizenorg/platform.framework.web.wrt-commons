@@ -139,6 +139,11 @@ void MassiveReadWriteTest(AbstractSynchronizationObjectGenerator *generator)
     connection.ExecCommand("DROP TABLE test;");
 }
 
+/*
+Name: SqlConnection_MassiveReadWrite_NaiveSynchronization
+Description: tests massive multiple quiries from many threads
+Expected: no ORM/db failures
+*/
 RUNNER_TEST(SqlConnection_MassiveReadWrite_NaiveSynchronization)
 {
     srand(time(NULL));
@@ -147,6 +152,11 @@ RUNNER_TEST(SqlConnection_MassiveReadWrite_NaiveSynchronization)
     MassiveReadWriteTest(&m_generator);
 }
 
+/*
+Name: SqlConnection_Not_Connected_Lucene
+Description: tests connection to not existing database with Lucene option
+Expected: exception throw
+*/
 RUNNER_TEST(SqlConnection_Not_Connected_Lucene)
 {
     Try {
@@ -167,6 +177,11 @@ RUNNER_TEST(SqlConnection_Not_Connected_Lucene)
     }
 }
 
+/*
+Name: SqlConnection_Not_Connected
+Description: tests connection to not existing database without Lucene option
+Expected: exception throw
+*/
 RUNNER_TEST(SqlConnection_Not_Connected)
 {
     Try {
@@ -185,6 +200,11 @@ RUNNER_TEST(SqlConnection_Not_Connected)
     }
 }
 
+/*
+Name: SqlConnection_Null_Query
+Description: tests resistance to passing NULL as query in ExecCommand
+Expected: exception throw
+*/
 RUNNER_TEST(SqlConnection_Null_Query)
 {
     DPL::DB::SqlConnection connection(PATH_DB,
@@ -204,6 +224,11 @@ RUNNER_TEST(SqlConnection_Null_Query)
     }
 }
 
+/*
+Name: SqlConnection_Bad_Query
+Description: tests resistance to passing trash as query in ExecCommand
+Expected: exception throw
+*/
 RUNNER_TEST(SqlConnection_Bad_Query)
 {
     DPL::DB::SqlConnection connection(PATH_DB,

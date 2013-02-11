@@ -26,6 +26,11 @@ using namespace BashUtils;
 
 RUNNER_TEST_GROUP_INIT(DPL_BASH_UTILS)
 
+/*
+Name: Bash_Utils_escape_arg
+Description:tests ecaping bash special characters for command arguments
+Expected: matching string
+*/
 RUNNER_TEST(Bash_Utils_escape_arg)
 {
     RUNNER_ASSERT_MSG(escape_arg(std::string(

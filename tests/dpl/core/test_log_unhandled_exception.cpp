@@ -45,6 +45,13 @@ class MySTDException :
     }
 };
 
+/*
+Name: Log_Unknown_Exception
+Description: tests exceptions catching macros
+Expected: unknown exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_Unknown_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN
@@ -55,6 +62,13 @@ RUNNER_TEST(Log_Unknown_Exception)
     RUNNER_ASSERT(true);
 }
 
+/*
+Name: Log_DPL_Exception
+Description: tests exceptions catching macros
+Expected: DPL exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_DPL_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN
@@ -65,6 +79,13 @@ RUNNER_TEST(Log_DPL_Exception)
     RUNNER_ASSERT(true);
 }
 
+/*
+Name: Log_STD_Exception
+Description: tests exceptions catching macros
+Expected: STD exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_STD_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN

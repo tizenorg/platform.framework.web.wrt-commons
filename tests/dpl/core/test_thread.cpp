@@ -69,6 +69,11 @@ class FooThread :
     }
 };
 
+/*
+Name: Thread_ThreadLocalVariable_FooDeletion
+Description: tests local thread variable pattern
+Expected: local thread variables should not be affected by other threads
+*/
 RUNNER_TEST(Thread_ThreadLocalVariable_FooDeletion)
 {
     static TlsFoo staticFooForMain;

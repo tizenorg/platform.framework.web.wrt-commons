@@ -88,6 +88,11 @@ std::set<size_t> temporarySet()
     return set;
 }
 
+/*
+Name: Foreach_std_containers
+Description: tests iterating contianers set, list, vector using foreach
+Expected: value supplied by foreach matches sequence of integers
+*/
 RUNNER_TEST(Foreach_std_containers)
 {
     std::vector<size_t> vector;

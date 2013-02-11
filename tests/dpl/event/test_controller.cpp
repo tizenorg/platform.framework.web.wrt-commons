@@ -145,6 +145,11 @@ class StrangeController :
     }
 };
 
+/*
+Name: Controller_InitSimple
+Description: tests initialization of simple int controller
+Expected: no exceptions
+*/
 RUNNER_TEST(Controller_InitSimple)
 {
     IntController controller;
@@ -152,12 +157,22 @@ RUNNER_TEST(Controller_InitSimple)
     RUNNER_ASSERT(controller.Value() == -1);
 }
 
+/*
+Name: Controller_InitStrange
+Description: tests initialization of struct controller
+Expected: no exceptions
+*/
 RUNNER_TEST(Controller_InitStrange)
 {
     StrangeController controller;
     controller.Touch();
 }
 
+/*
+Name: Controller_PostEventToThread
+Description: tests post events to other thread
+Expected: thread id gathered in event handling method should match id of created thread
+*/
 RUNNER_TEST(Controller_PostEventToThread)
 {
     ThreadController controller;
@@ -179,6 +194,11 @@ RUNNER_TEST(Controller_PostEventToThread)
     RUNNER_ASSERT(controller.Value() == &thread);
 }
 
+/*
+Name: Controller_PostTimedEventToThread
+Description: tests post events to other thread with time delay
+Expected: thread id gathered in event handling method should match id of created thread
+*/
 RUNNER_TEST(Controller_PostTimedEventToThread)
 {
     ThreadController controller;
@@ -236,6 +256,12 @@ class TouchInThreadController :
     }
 };
 
+/*
+Name: Controller_TouchInThread
+Description: tests ability to touch (initizilize / set destination thread) in creatd thread
+ other than thread were controlelr object was created
+Expected: thread id gathered in event handling method should match id of created thread
+*/
 RUNNER_TEST(Controller_TouchInThread)
 {
     TouchInThreadController controller;
@@ -259,6 +285,11 @@ RUNNER_TEST(Controller_TouchInThread)
     RUNNER_ASSERT(touchedThread == &thread);
 }
 
+/*
+Name: Controller_SynchronizedEvent
+Description: tests ability to post synchronized events to ther thread
+Expected: correct value should be saved when event was handled
+*/
 RUNNER_TEST(Controller_SynchronizedEvent)
 {
     IntController controller;
@@ -351,6 +382,14 @@ class TestController :
     }
 };
 
+/*
+Name: Controllers_MultipleEvents
+Description: tests controller coooperation.
+ This runs many controllers in many threads. Each controller sends
+ to other randomly chosen controller events.
+Expected: Test is supposed to be ended when all limits of sent event will be reach
+ -> all scheduled event will be sent and received.
+*/
 RUNNER_TEST(Controllers_MultipleEvents)
 {
     srand(time(NULL) );
