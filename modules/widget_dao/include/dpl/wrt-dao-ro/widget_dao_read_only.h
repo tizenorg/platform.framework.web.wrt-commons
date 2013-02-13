@@ -163,6 +163,7 @@ struct WidgetRegisterInfo
     {}
 
     WidgetType webAppType;
+    WidgetType type; // TODO : This type will be removed.
     DPL::OptionalString guid;
     DPL::OptionalString version;
     DPL::OptionalString minVersion;
@@ -173,6 +174,8 @@ struct WidgetRegisterInfo
     ConfigParserData configInfo;
     LocalizationData localizationData;
 
+    DPL::OptionalString pkgname;
+    WidgetPkgName pkgName;
     TizenPkgId tzPkgid;
     TizenAppId tzAppid;
 
