@@ -29,9 +29,9 @@ bool g_wasFooDeleted;
 
 class Foo
 {
-public:
+  public:
     int id;
-    Foo(int i=0): id(i)
+    Foo(int i = 0) : id(i)
     {
         LogInfo("Foo: ctor: " << id);
     }
@@ -51,10 +51,10 @@ public:
 typedef DPL::ThreadLocalVariable<Foo> TlsFoo;
 TlsFoo g_foo;
 
-class FooThread
-    : public DPL::Thread
+class FooThread :
+    public DPL::Thread
 {
-protected:
+  protected:
     virtual int ThreadEntry()
     {
         LogInfo("In thread");
@@ -69,6 +69,11 @@ protected:
     }
 };
 
+/*
+Name: Thread_ThreadLocalVariable_FooDeletion
+Description: tests local thread variable pattern
+Expected: local thread variables should not be affected by other threads
+*/
 RUNNER_TEST(Thread_ThreadLocalVariable_FooDeletion)
 {
     static TlsFoo staticFooForMain;

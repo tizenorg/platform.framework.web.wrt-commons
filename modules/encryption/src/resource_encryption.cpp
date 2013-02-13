@@ -29,7 +29,7 @@ namespace {
 #define BITS_SIZE 128
 #define KEY_SIZE 16
 }
-namespace WRTEncryptor{
+namespace WRTEncryptor {
 ResourceEncryptor::ResourceEncryptor()
 {
     LogDebug("Started Encrytion");
@@ -43,7 +43,7 @@ ResourceEncryptor::~ResourceEncryptor()
 int ResourceEncryptor::GetBlockSize(int inSize)
 {
     if ((inSize % AES_BLOCK_SIZE) != 0) {
-       return (( inSize/ AES_BLOCK_SIZE) +1) * AES_BLOCK_SIZE;
+        return (( inSize / AES_BLOCK_SIZE) + 1) * AES_BLOCK_SIZE;
     }
     return inSize;
 }
@@ -54,12 +54,13 @@ void ResourceEncryptor::CreateEncryptionKey(std::string userKey)
         return;
     }
 
-    char **duk = calculate(const_cast<char*>(userKey.c_str()), userKey.size(), KEY_SIZE);
+    char **duk = calculate(const_cast<char*>(userKey.c_str()),
+                           userKey.size(), KEY_SIZE);
     unsigned char *key = reinterpret_cast<unsigned char*>(*duk);
 
-    if ( 0 > AES_set_encrypt_key(key, BITS_SIZE, &m_encKey)) {
+    if (0 > AES_set_encrypt_key(key, BITS_SIZE, &m_encKey)) {
         ThrowMsg(ResourceEncryptor::Exception::CreateEncKeyFailed,
-                "Failed to create encryption key");
+                 "Failed to create encryption key");
     }
     LogDebug("Success to create ecryption and decryption key");
 }
@@ -70,12 +71,14 @@ AES_KEY ResourceEncryptor::GetEncryptionkey()
 }
 
 void ResourceEncryptor::EncryptChunk(unsigned char*
-        inputBuf, unsigned char* encBuf, size_t chunkSize)
+                                     inputBuf,
+                                     unsigned char* encBuf,
+                                     size_t chunkSize)
 {
     Assert(inputBuf);
     Assert(encBuf);
 
-    unsigned char ivec[16] = {0, };
+    unsigned char ivec[16] = { 0, };
 
     AES_cbc_encrypt(inputBuf, encBuf, chunkSize, &m_encKey, ivec, AES_ENCRYPT);
 }

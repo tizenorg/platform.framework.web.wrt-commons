@@ -27,14 +27,19 @@
 #include <dpl/assert.h>
 #include <dpl/scoped_resource.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename Class>
 struct ScopedArrayPolicy
 {
     typedef Class* Type;
-    static Type NullValue() { return NULL; }
-    static void Destroy(Type ptr) { delete [] ptr; }
+    static Type NullValue()
+    {
+        return NULL;
+    }
+    static void Destroy(Type ptr)
+    {
+        delete[] ptr;
+    }
 };
 
 template<typename Class>

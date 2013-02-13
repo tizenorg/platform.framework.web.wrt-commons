@@ -23,11 +23,10 @@
 #include <dpl/rpc/unix_socket_rpc_client.h>
 #include <dpl/rpc/unix_socket_rpc_connection.h>
 
-namespace DPL
-{
-namespace RPC
-{
-AbstractRPCConnection *UnixSocketRPCClient::OpenSpecificConnection(DPL::Socket::UnixSocket *socket)
+namespace DPL {
+namespace RPC {
+AbstractRPCConnection *UnixSocketRPCClient::OpenSpecificConnection(
+    DPL::Socket::UnixSocket *socket)
 {
     // Allocate new UNIX/RPC connection object
     UnixSocketRPCConnection *connection = new UnixSocketRPCConnection(socket);
@@ -38,7 +37,8 @@ AbstractRPCConnection *UnixSocketRPCClient::OpenSpecificConnection(DPL::Socket::
 
 AbstractRPCConnectionID UnixSocketRPCClient::Open(const std::string &fileName)
 {
-    return GenericSocketRPCClient<DPL::Socket::UnixSocket>::Open(Address(fileName));
+    return GenericSocketRPCClient<DPL::Socket::UnixSocket>::Open(Address(
+                                                                     fileName));
 }
 }
 } // namespace DPL

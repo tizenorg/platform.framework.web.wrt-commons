@@ -24,6 +24,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: SharedPtr_Zero
+Description: Tests behaviour of null shared pointer
+Expected: pointer should imitate null pointer
+*/
 RUNNER_TEST(SharedPtr_Zero)
 {
     DPL::SharedPtr<char> ptr;
@@ -33,6 +38,11 @@ RUNNER_TEST(SharedPtr_Zero)
     RUNNER_ASSERT(ptr == DPL::SharedPtr<char>());
 }
 
+/*
+Name: SharedPtr_NonZero
+Description: Tests behaviour of not null shared pointer
+Expected: pointer should imitate null pointer
+*/
 RUNNER_TEST(SharedPtr_NonZero)
 {
     DPL::SharedPtr<char> ptr(new char(7));
@@ -42,6 +52,11 @@ RUNNER_TEST(SharedPtr_NonZero)
     RUNNER_ASSERT(ptr != DPL::SharedPtr<char>());
 }
 
+/*
+Name: SharedPtr_Copy
+Description: Tests equality of shared pointer pointing same resource
+Expected: pointers should imitate primitive pointer bahaviour
+*/
 RUNNER_TEST(SharedPtr_Copy)
 {
     DPL::SharedPtr<char> ptr1(new char(7));
@@ -54,6 +69,11 @@ RUNNER_TEST(SharedPtr_Copy)
     RUNNER_ASSERT(ptr1 == ptr2);
 }
 
+/*
+Name: SharedPtr_Reset
+Description: Tests reseting shared pointer
+Expected: pointers should imitate primitive pointer bahaviour after reset
+*/
 RUNNER_TEST(SharedPtr_Reset)
 {
     DPL::SharedPtr<char> ptr(new char(7));
@@ -65,6 +85,12 @@ RUNNER_TEST(SharedPtr_Reset)
     RUNNER_ASSERT(ptr);
 }
 
+/*
+Name: SharedPtr_RefCounting
+Description: Tests use count od shared pointer
+Expected: counters should be equal for equal pointers
+ Count number should match expected
+*/
 RUNNER_TEST(SharedPtr_RefCounting)
 {
     DPL::SharedPtr<char> ptr1(new char(7));
@@ -77,6 +103,11 @@ RUNNER_TEST(SharedPtr_RefCounting)
     RUNNER_ASSERT(ptr1.GetUseCount() == 2);
 }
 
+/*
+Name: SharedPtr_Operators
+Description: Tests use of operator*
+Expected: pointers should imitate primitive pointer bahaviour
+*/
 RUNNER_TEST(SharedPtr_Operators)
 {
     DPL::SharedPtr<char> ptr(new char(7));

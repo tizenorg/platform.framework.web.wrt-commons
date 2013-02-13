@@ -25,9 +25,11 @@
 #include <dpl/log/log.h>
 #include <cstdlib>
 
-namespace DPL
-{
-void AssertProc(const char *condition, const char *file, int line, const char *function)
+namespace DPL {
+void AssertProc(const char *condition,
+                const char *file,
+                int line,
+                const char *function)
 {
 #define INTERNAL_LOG(message)                                          \
     do                                                                 \
@@ -37,22 +39,25 @@ void AssertProc(const char *condition, const char *file, int line, const char *f
         DPL::Log::LogSystemSingleton::Instance().Pedantic(             \
             platformLog.str().c_str(),                                 \
             __FILE__, __LINE__, __FUNCTION__);                         \
-    } while (0)
+    } \
+    while (0)
 
     // Try to log failed assertion to log system
     Try
     {
-        INTERNAL_LOG("################################################################################");
-        INTERNAL_LOG("###                          DPL assertion failed!                           ###");
-        INTERNAL_LOG("################################################################################");
+        INTERNAL_LOG(
+            "################################################################################");
+        INTERNAL_LOG(
+            "###                          DPL assertion failed!                           ###");
+        INTERNAL_LOG(
+            "################################################################################");
         INTERNAL_LOG("### Condition: " << condition);
         INTERNAL_LOG("### File: " << file);
         INTERNAL_LOG("### Line: " << line);
         INTERNAL_LOG("### Function: " << function);
-        INTERNAL_LOG("################################################################################");
-    }
-    catch (Exception)
-    {
+        INTERNAL_LOG(
+            "################################################################################");
+    } catch (Exception) {
         // Just ignore possible double errors
     }
 

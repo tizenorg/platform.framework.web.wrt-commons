@@ -28,23 +28,31 @@
 extern DPL::Mutex g_wrtDbQueriesMutex;
 
 #define WRT_DB_INTERNAL(tlsCommand, InternalType, interface)                 \
-    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL; \
+    static DPL::ThreadLocalVariable<InternalType> *tlsCommand##Ptr = NULL; \
     {                                                                        \
         DPL::Mutex::ScopedLock lock(&g_wrtDbQueriesMutex);                   \
-        if (!tlsCommand ## Ptr) {                                            \
+        if (!tlsCommand##Ptr) {                                            \
             static DPL::ThreadLocalVariable<InternalType> tmp;               \
-            tlsCommand ## Ptr = &tmp;                                        \
+            tlsCommand##Ptr = &tmp;                                        \
         }                                                                    \
     }                                                                        \
-    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr; \
+    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand##Ptr; \
     if (tlsCommand.IsNull()) { tlsCommand = InternalType(interface); }
 
-#define WRT_DB_SELECT(name, type, interface) WRT_DB_INTERNAL(name, type::Select, interface)
+#define WRT_DB_SELECT(name, type, interface) WRT_DB_INTERNAL(name, \
+                                                             type::Select, \
+                                                             interface)
 
-#define WRT_DB_INSERT(name, type, interface) WRT_DB_INTERNAL(name, type::Insert, interface)
+#define WRT_DB_INSERT(name, type, interface) WRT_DB_INTERNAL(name, \
+                                                             type::Insert, \
+                                                             interface)
 
-#define WRT_DB_UPDATE(name, type, interface) WRT_DB_INTERNAL(name, type::Update, interface)
+#define WRT_DB_UPDATE(name, type, interface) WRT_DB_INTERNAL(name, \
+                                                             type::Update, \
+                                                             interface)
 
-#define WRT_DB_DELETE(name, type, interface) WRT_DB_INTERNAL(name, type::Delete, interface)
+#define WRT_DB_DELETE(name, type, interface) WRT_DB_INTERNAL(name, \
+                                                             type::Delete, \
+                                                             interface)
 
 #endif // WRT_ENGINE_SRC_CONFIGURATION_WEBRUNTIME_DATABASE_H

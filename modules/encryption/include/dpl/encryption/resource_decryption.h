@@ -30,30 +30,31 @@
 
 extern char** calculate(char*pappId, int idLen, int keyLen);
 
-namespace WRTDecryptor{
+namespace WRTDecryptor {
 class ResourceDecryptor
 {
   public:
-      class Exception
-      {
-        public:
-            DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
-            DECLARE_EXCEPTION_TYPE(Base, GetDecKeyFailed)
-            DECLARE_EXCEPTION_TYPE(Base, EncryptionFailed)
-      };
+    class Exception
+    {
+      public:
+        DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
+        DECLARE_EXCEPTION_TYPE(Base, GetDecKeyFailed)
+        DECLARE_EXCEPTION_TYPE(Base, EncryptionFailed)
+    };
 
-      ResourceDecryptor();
-      ResourceDecryptor(std::string userKey);
-      virtual ~ResourceDecryptor();
+    ResourceDecryptor();
+    ResourceDecryptor(std::string userKey);
+    virtual ~ResourceDecryptor();
 
-      void SetDecryptionKey(std::string userKey);
-      void GetDecryptedChunk(unsigned char* inBuf, unsigned char* decBuf, size_t chunkSize);
+    void SetDecryptionKey(std::string userKey);
+    void GetDecryptedChunk(unsigned char* inBuf,
+                           unsigned char* decBuf,
+                           size_t chunkSize);
 
   private:
-      AES_KEY* GetDecryptionKey();
-      AES_KEY m_decKey;
-
+    AES_KEY* GetDecryptionKey();
+    AES_KEY m_decKey;
 };
-} //namespace WRTDecryptor 
+} //namespace WRTDecryptor
 
 #endif /* RESOURCE_DECRYPTION_H */

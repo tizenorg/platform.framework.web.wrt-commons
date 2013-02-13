@@ -23,24 +23,23 @@
 #define DPL_SINGLETON_SAFE_IMPL_H
 
 #define IMPLEMENT_SAFE_SINGLETON(Class)                                        \
-namespace DPL {                                                                \
-template<>                                                                     \
-Singleton<Class>& Singleton<Class>::InternalInstance()                         \
-{                                                                              \
-    static Singleton<Class> instance;                                          \
-    return instance;                                                           \
-}                                                                              \
+    namespace DPL {                                                                \
+    template<>                                                                     \
+    Singleton<Class>&Singleton<Class>::InternalInstance()                         \
+    {                                                                              \
+        static Singleton<Class> instance;                                          \
+        return instance;                                                           \
+    }                                                                              \
                                                                                \
-template<>                                                                     \
-Class &Singleton<Class>::Instance()                                            \
-{                                                                              \
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();         \
-    return instance;                                                           \
-}                                                                              \
+    template<>                                                                     \
+    Class & Singleton<Class>::Instance()                                            \
+    {                                                                              \
+        Singleton<Class>& instance = Singleton<Class>::InternalInstance();         \
+        return instance;                                                           \
+    }                                                                              \
                                                                                \
-template Singleton<Class>& Singleton<Class>::InternalInstance();               \
-template Class& Singleton<Class>::Instance();                                  \
-} // namespace DPL
-
+    template Singleton<Class>&Singleton<Class>::InternalInstance();               \
+    template Class & Singleton<Class>::Instance();                                  \
+    } // namespace DPL
 
 #endif // DPL_SINGLETON_SAFE_IMPL_H

@@ -27,11 +27,10 @@
 
 namespace DPL {
 namespace DBus {
-
 class Dispatcher
 {
-public:
-    virtual ~Dispatcher() =0;
+  public:
+    virtual ~Dispatcher() = 0;
 
     /**
      * Called on method invocation.
@@ -52,7 +51,7 @@ public:
                               const gchar* interfaceName,
                               const gchar* methodName,
                               GVariant* parameters,
-                              GDBusMethodInvocation* invocation) =0;
+                              GDBusMethodInvocation* invocation) = 0;
 
     /**
      * Called on property get.
@@ -94,7 +93,6 @@ public:
                                    GVariant* value,
                                    GError** error);
 };
-
 }
 }
 

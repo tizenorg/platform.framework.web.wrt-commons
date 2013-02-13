@@ -91,7 +91,6 @@ inline std::string GetVconfKeyMemorySavingMode(DPL::String tzPkgId)
                .Concat(GlobalConfig::GetVconfKeyMemorySavingModePath())
                .GetFullPath();
 }
-
 } // namespace VconfConfig
 } // namespace WrtDB
 

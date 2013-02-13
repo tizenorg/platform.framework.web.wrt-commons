@@ -33,14 +33,13 @@ unsigned char GetBaseCode(int index);
 unsigned char GetBaseCode(int index)
 {
     /* aaaack but it's fast and const should make it shared text page. */
-    static const unsigned char pr2six[256] =
-    {
+    static const unsigned char pr2six[256] = {
         /* ASCII table */
         64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
         64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
         64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 64, 64, 63,
         52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 64, 64, 64, 64, 64, 64,
-        64,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        64, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
         15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 64, 64, 64, 64, 64,
         64, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
         41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64,
@@ -56,7 +55,6 @@ unsigned char GetBaseCode(int index)
     return pr2six[index];
 }
 
-
 /* Function adapted from APR library (http://apr.apache.org/) */
 int wbxml_base64_decode(const char *buffer, char **result);
 int wbxml_base64_decode(const char *buffer, char **result)
@@ -65,8 +63,9 @@ int wbxml_base64_decode(const char *buffer, char **result)
     const char *bufin = NULL;
     char *bufout = NULL;
 
-    if ((buffer == NULL) || (result == NULL))
+    if ((buffer == NULL) || (result == NULL)) {
         return 0;
+    }
 
     /* Initialize output buffer */
     *result = NULL;
@@ -78,33 +77,34 @@ int wbxml_base64_decode(const char *buffer, char **result)
     nbytesdecoded = ((nprbytes + 3) / 4) * 3;
 
     /* Malloc result buffer */
-    if ((*result = (char*) malloc(nbytesdecoded + 1)) == NULL)
+    if ((*result = (char*) malloc(nbytesdecoded + 1)) == NULL) {
         return 0;
-    memset(*result, nbytesdecoded + 1, 0);
+    }
+    memset(*result, 0, nbytesdecoded + 1);
 
     bufout = *result;
     bufin = buffer;
 
-    while (nprbytes > 4)
-    {
-        *(bufout++) = (char)(GetBaseCode(*bufin) << 2 | GetBaseCode(bufin[1]) >> 4);
-        *(bufout++) = (char)(GetBaseCode(bufin[1]) << 4 | GetBaseCode(bufin[2]) >> 2);
+    while (nprbytes > 4) {
+        *(bufout++) =
+            (char)(GetBaseCode(*bufin) << 2 | GetBaseCode(bufin[1]) >> 4);
+        *(bufout++) =
+            (char)(GetBaseCode(bufin[1]) << 4 | GetBaseCode(bufin[2]) >> 2);
         *(bufout++) = (char)(GetBaseCode(bufin[2]) << 6 | GetBaseCode(bufin[3]));
         bufin += 4;
         nprbytes -= 4;
     }
 
     /* Note: (nprbytes == 1) would be an error, so just ingore that case */
-    if (nprbytes > 1)
-    {
-        *(bufout++) = (char)(GetBaseCode(*bufin) << 2 | GetBaseCode(bufin[1]) >> 4);
+    if (nprbytes > 1) {
+        *(bufout++) =
+            (char)(GetBaseCode(*bufin) << 2 | GetBaseCode(bufin[1]) >> 4);
     }
-    if (nprbytes > 2)
-    {
-        *(bufout++) = (char)(GetBaseCode(bufin[1]) << 4 | GetBaseCode(bufin[2]) >> 2);
+    if (nprbytes > 2) {
+        *(bufout++) =
+            (char)(GetBaseCode(bufin[1]) << 4 | GetBaseCode(bufin[2]) >> 2);
     }
-    if (nprbytes > 3)
-    {
+    if (nprbytes > 3) {
         *(bufout++) = (char)(GetBaseCode(bufin[2]) << 6 | GetBaseCode(bufin[3]));
     }
 
@@ -116,7 +116,7 @@ int wbxml_base64_decode(const char *buffer, char **result)
 //#define TEST_CONVERSION(in_string, out_string, buffer_type, function
 
 const char utf32Encoded[] =
-"RDAAAI0wAABvMAAAazAAAHswAAB4MAAAaDAAAAAwAABhMAAAijAAAGwwAACLMAAAkjAAAAAwAACP\
+    "RDAAAI0wAABvMAAAazAAAHswAAB4MAAAaDAAAAAwAABhMAAAijAAAGwwAACLMAAAkjAAAAAwAACP\
 MAAASzAAAIgwAABfMAAAjDAAAF0wAAAAMAAAZDAAAG0wAABqMAAAiTAAAIAwAAAAMAAARjAAAJAw\
 AABuMAAASjAAAE8wAACEMAAAfjAAAAAwAABRMAAAdTAAAFMwAABIMAAAZjAAAAAwAABCMAAAVTAA\
 AE0wAACGMAAAgTAAAH8wAABXMAAAADAAAJEwAAByMAAAgjAAAFswAABZMAAACgAAANsFAADaBQAA\
@@ -152,7 +152,7 @@ YwAAAGgAAAAKAAAAlokAAM6RAAAhcQAAUJYAAONeAAAM/wAAl3oAABZZAAAJZwAAzYUAAClZAAAK\
 AAAACgAAAAAAAAA=";
 
 const char utf8Encoded[] =
-"44GE44KN44Gv44Gr44G744G444Go44CA44Gh44KK44Gs44KL44KS44CA44KP44GL44KI44Gf44KM\
+    "44GE44KN44Gv44Gr44G744G444Go44CA44Gh44KK44Gs44KL44KS44CA44KP44GL44KI44Gf44KM\
 44Gd44CA44Gk44Gt44Gq44KJ44KA44CA44GG44KQ44Gu44GK44GP44KE44G+44CA44GR44G144GT\
 44GI44Gm44CA44GC44GV44GN44KG44KB44G/44GX44CA44KR44Gy44KC44Gb44GZCteb15og15TX\
 qteo16HXpyDXoNek16Ug16LXnCDXkteV15bXnCDXp9eY158sINep15PXl9ejINeQ16og16bXkdeZ\
@@ -168,15 +168,12 @@ IM6zzrcsIM60z4HOsc+DzrrOtc67zq/Ots61zrkgz4XPgM6tz4Egzr3Pic64z4HOv8+NIM66z4XO\
 vc+Mz4IKVmljdG9yIGphZ3QgenfDtmxmIEJveGvDpG1wZmVyIHF1ZXIgw7xiZXIgZGVuIGdyb8Of\
 ZW4gU3lsdGVyIERlaWNoCuimlumHjueEoemZkOW7o++8jOeql+WkluacieiXjeWkqQoKAA==";
 
-
-
-
 const char asciiEncodedIso1[] =
-"ISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZ\
+    "ISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZ\
 WltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fgA=";
 
-const char asciiEncodedUtf32[] = 
-"IQAAACIAAAAjAAAAJAAAACUAAAAmAAAAJwAAACgAAAApAAAAKgAAACsAAAAsAAAALQAAAC4AAAAv\
+const char asciiEncodedUtf32[] =
+    "IQAAACIAAAAjAAAAJAAAACUAAAAmAAAAJwAAACgAAAApAAAAKgAAACsAAAAsAAAALQAAAC4AAAAv\
 AAAAMAAAADEAAAAyAAAAMwAAADQAAAA1AAAANgAAADcAAAA4AAAAOQAAADoAAAA7AAAAPAAAAD0A\
 AAA+AAAAPwAAAEAAAABBAAAAQgAAAEMAAABEAAAARQAAAEYAAABHAAAASAAAAEkAAABKAAAASwAA\
 AEwAAABNAAAATgAAAE8AAABQAAAAUQAAAFIAAABTAAAAVAAAAFUAAABWAAAAVwAAAFgAAABZAAAA\
@@ -184,7 +181,11 @@ WgAAAFsAAABcAAAAXQAAAF4AAABfAAAAYAAAAGEAAABiAAAAYwAAAGQAAABlAAAAZgAAAGcAAABo\
 AAAAaQAAAGoAAABrAAAAbAAAAG0AAABuAAAAbwAAAHAAAABxAAAAcgAAAHMAAAB0AAAAdQAAAHYA\
 AAB3AAAAeAAAAHkAAAB6AAAAewAAAHwAAAB9AAAAfgAAAAAAAAA=";
 
-
+/*
+Name: String_ConverterFromASCII
+Description: tests construction of string from ascii data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromASCII)
 {
     char* inStr = NULL;
@@ -205,6 +206,11 @@ RUNNER_TEST(String_ConverterFromASCII)
     free(inStr);
 }
 
+/*
+Name: String_ConverterFromUTF8
+Description: tests construction of string from UTF-8 data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromUTF8)
 {
     char* inStr = NULL;
@@ -224,10 +230,16 @@ RUNNER_TEST(String_ConverterFromUTF8)
     free(inStr);
 }
 
+/*
+Name: String_ConverterFromUTF32
+Description: tests construction of string from UTF-32 data
+Expected: data stored in buffer should match expected
+*/
 RUNNER_TEST(String_ConverterFromUTF32)
 {
     wchar_t* inStr = NULL;
-    int inSize = wbxml_base64_decode(utf32Encoded, reinterpret_cast<char**>(&inStr));
+    int inSize =
+        wbxml_base64_decode(utf32Encoded, reinterpret_cast<char**>(&inStr));
     RUNNER_ASSERT(inSize > 0);
     RUNNER_ASSERT(NULL != inStr);
     char* outStr = NULL;
@@ -242,10 +254,10 @@ RUNNER_TEST(String_ConverterFromUTF32)
         RUNNER_ASSERT(strlen(outStr) == result.size());
         RUNNER_ASSERT(0 == memcmp(outStr, result.c_str(), result.size()));
 
-
         RUNNER_ASSERT(inSize / sizeof(wchar_t) - 1 == utfString.size());
-        RUNNER_ASSERT(0 == memcmp(inStr, &(utfString[0]), utfString.size() * sizeof(wchar_t)));
-
+        RUNNER_ASSERT(0 ==
+                      memcmp(inStr, &(utfString[0]), utfString.size() *
+                             sizeof(wchar_t)));
     }
 
     free(inStr);
@@ -259,11 +271,13 @@ void String_TokenizeReal(const DelimiterType& delimiter)
     DPL::Tokenize(str, delimiter, std::back_inserter(tokens));
 
     std::vector<DPL::String> expectedTokens;
-    for ( int i = 0 ; i < 5 ; i++ )
+    for (int i = 0; i < 5; i++) {
         expectedTokens.push_back(L"");
+    }
     expectedTokens.push_back(L"abc");
-    for ( int i = 0 ; i < 3 ; i++ )
+    for (int i = 0; i < 3; i++) {
         expectedTokens.push_back(L"");
+    }
 
     RUNNER_ASSERT(expectedTokens == tokens);
     tokens.clear();
@@ -274,6 +288,11 @@ void String_TokenizeReal(const DelimiterType& delimiter)
     RUNNER_ASSERT(expectedTokens == tokens);
 }
 
+/*
+Name: String_Tokenize
+Description: tests of string splitting
+Expected: returned substring should match expected values
+*/
 RUNNER_TEST(String_Tokenize)
 {
     String_TokenizeReal(L"#.");
@@ -299,10 +318,10 @@ void TestInStreams(
 {
     typedef std::basic_string<typename TemplateArgumentCharTraits::char_type,
                               TemplateArgumentCharTraits>
-                                String;
+    String;
     std::basic_istringstream<typename TemplateArgumentCharTraits::char_type,
                              TemplateArgumentCharTraits>
-                                istream(argumentInString);
+    istream(argumentInString);
     int intValue = 0;
     double doubleValue = 0.0;
     float floatValue = 0.0;
@@ -332,11 +351,11 @@ void TestOutStreams(
 {
     typedef std::basic_string<typename TemplateArgumentCharTraits::char_type,
                               TemplateArgumentCharTraits>
-                                String;
+    String;
 
     std::basic_ostringstream<typename TemplateArgumentCharTraits::char_type,
                              TemplateArgumentCharTraits>
-                                ostream;
+    ostream;
 
     int intValue = 1;
     double doubleValue = 1.1;
@@ -355,16 +374,26 @@ void TestOutStreams(
     RUNNER_ASSERT(ostream.str() == argumentResultString);
 }
 
+/*
+Name: String_Streams
+Description: tests of input/output stream
+Expected: returned substrign should match expected values
+*/
 RUNNER_TEST(String_Streams)
 {
     TestInStreams<std::char_traits<char> >("1 1.1 1.1 test", "test");
     TestInStreams<std::char_traits<wchar_t> >(L"1 1.1 1.1 test", L"test");
     TestInStreams<DPL::CharTraits>(L"1 1.1 1.1 test", L"test");
-    TestOutStreams<std::char_traits<char> >("test",  "11.11.1test");
-    TestOutStreams<std::char_traits<wchar_t> >(L"test",  L"11.11.1test");
-    TestOutStreams<DPL::CharTraits>(L"test",  L"11.11.1test");
+    TestOutStreams<std::char_traits<char> >("test", "11.11.1test");
+    TestOutStreams<std::char_traits<wchar_t> >(L"test", L"11.11.1test");
+    TestOutStreams<DPL::CharTraits>(L"test", L"11.11.1test");
 }
 
+/*
+Name: String_CompareCaseSensitive
+Description: tests case sensitive comparision
+Expected: strings should be equal
+*/
 RUNNER_TEST(String_CompareCaseSensitive)
 {
     RUNNER_ASSERT(
@@ -373,6 +402,11 @@ RUNNER_TEST(String_CompareCaseSensitive)
             DPL::FromUTF32String(L"Ala Makota ma żołądkówkę")) == 0);
 }
 
+/*
+Name: String_CompareCaseInsensitive
+Description: tests case insensitive comparision
+Expected: strings should be equal
+*/
 RUNNER_TEST(String_CompareCaseInsensitive)
 {
     RUNNER_ASSERT(

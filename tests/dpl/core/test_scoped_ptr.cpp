@@ -24,6 +24,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ScopedPtr_Zero
+Description: Checks if operator! works
+Expected: resource should be not set
+*/
 RUNNER_TEST(ScopedPtr_Zero)
 {
     DPL::ScopedPtr<char> ptr;
@@ -32,6 +37,11 @@ RUNNER_TEST(ScopedPtr_Zero)
     RUNNER_ASSERT(!!!ptr);
 }
 
+/*
+Name: ScopedPtr_NonZero
+Description: Checks if operator! works
+Expected: resource should be set
+*/
 RUNNER_TEST(ScopedPtr_NonZero)
 {
     DPL::ScopedPtr<char> ptr(new char(7));
@@ -40,6 +50,11 @@ RUNNER_TEST(ScopedPtr_NonZero)
     RUNNER_ASSERT(!!ptr);
 }
 
+/*
+Name: ScopedPtr_Reset
+Description: Checks reseting scoped ptr
+Expected: resource should be not set after reset
+*/
 RUNNER_TEST(ScopedPtr_Reset)
 {
     DPL::ScopedPtr<char> ptr(new char(7));
@@ -51,6 +66,11 @@ RUNNER_TEST(ScopedPtr_Reset)
     RUNNER_ASSERT(ptr);
 }
 
+/*
+Name: ScopedPtr_Operators
+Description: Checks access operator
+Expected: address of resource should be same as this, received from Get() method
+*/
 RUNNER_TEST(ScopedPtr_Operators)
 {
     DPL::ScopedPtr<char> ptr(new char(7));

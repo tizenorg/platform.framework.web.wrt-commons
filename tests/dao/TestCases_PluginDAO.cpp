@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
-  * @file   TestCases_PluginDAO.cpp
+ * @file   TestCases_PluginDAO.cpp
  * @author  Pawel Sikorski (p.sikorski@samsung.com)
  * @version 1.0
  * @brief   This file contains tests for feature dao class.
@@ -32,16 +32,16 @@
 using namespace WrtDB;
 
 #define RUNNER_ASSERT_WHAT_EQUALS(in, test)                   \
-    {std::string tmp(in);                                     \
-    RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]");}
+    { std::string tmp(in);                                     \
+      RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]"); }
 
 RUNNER_TEST_GROUP_INIT(DAO)
 
 /*
-Name: plugin_dao_test_register_plugins
-Description: registers new plugin and check if it was correctly registered
-Expected: plugin should be correctly registered
-*/
+ * Name: plugin_dao_test_register_plugins
+ * Description: registers new plugin and check if it was correctly registered
+ * Expected: plugin should be correctly registered
+ */
 RUNNER_TEST(plugin_dao_test_register_plugins)
 {
     {
@@ -49,10 +49,13 @@ RUNNER_TEST(plugin_dao_test_register_plugins)
         std::string libraryName("np1");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         PluginHandle handle = PluginDAO::registerPlugin(pluginData, libraryPath);
-        PluginDAO::setPluginInstallationStatus(handle,PluginDAO::INSTALLATION_COMPLETED);
+        PluginDAO::setPluginInstallationStatus(
+            handle,
+            PluginDAO::
+                INSTALLATION_COMPLETED);
         RUNNER_ASSERT(PluginDAO::isPluginInstalled(libraryName) == true);
 
         PluginDAO dao(handle);
@@ -65,10 +68,13 @@ RUNNER_TEST(plugin_dao_test_register_plugins)
         std::string libraryName("np2");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         PluginHandle handle = PluginDAO::registerPlugin(pluginData, "");
-        PluginDAO::setPluginInstallationStatus(handle,PluginDAO::INSTALLATION_COMPLETED);
+        PluginDAO::setPluginInstallationStatus(
+            handle,
+            PluginDAO::
+                INSTALLATION_COMPLETED);
         RUNNER_ASSERT(PluginDAO::isPluginInstalled(libraryName) == true);
 
         PluginDAO dao(handle);
@@ -77,11 +83,11 @@ RUNNER_TEST(plugin_dao_test_register_plugins)
 }
 
 /*
-Name: plugin_dao_test_register_plugin_implemented_object
-Description: registers new PluginImplementedObject
- and check if it was correctly registered
-Expected: plugin dao shoudld be upodated with PluginImplementedObject
-*/
+ * Name: plugin_dao_test_register_plugin_implemented_object
+ * Description: registers new PluginImplementedObject
+ * and check if it was correctly registered
+ * Expected: plugin dao shoudld be upodated with PluginImplementedObject
+ */
 RUNNER_TEST(plugin_dao_test_register_plugin_implemented_object)
 {
     {
@@ -89,7 +95,7 @@ RUNNER_TEST(plugin_dao_test_register_plugin_implemented_object)
         std::string libraryName("np3");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         PluginHandle handle =
             PluginDAO::registerPlugin(pluginData, libraryPath);
@@ -110,10 +116,10 @@ RUNNER_TEST(plugin_dao_test_register_plugin_implemented_object)
 }
 
 /*
-Name: plugin_dao_test_register_plugin_implemented_object
-Description: registers dependecies for plugins and checks if they were saved
-Expected: registered dependecies should be returned from database
-*/
+ * Name: plugin_dao_test_register_plugin_implemented_object
+ * Description: registers dependecies for plugins and checks if they were saved
+ * Expected: registered dependecies should be returned from database
+ */
 RUNNER_TEST(plugin_dao_test_register_library_dependencies)
 {
     {
@@ -121,14 +127,17 @@ RUNNER_TEST(plugin_dao_test_register_library_dependencies)
         std::string libraryName("np4");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         PluginHandle handle =
             PluginDAO::registerPlugin(pluginData, libraryPath);
-        PluginDAO::setPluginInstallationStatus(handle,PluginDAO::INSTALLATION_COMPLETED);
+        PluginDAO::setPluginInstallationStatus(
+            handle,
+            PluginDAO::
+                INSTALLATION_COMPLETED);
         RUNNER_ASSERT(PluginDAO::isPluginInstalled(libraryName) == true);
 
-        PluginHandle depHandles[] = {117, 119};
+        PluginHandle depHandles[] = { 117, 119 };
 
         PluginHandleSetPtr dependencies(new PluginHandleSet);
         dependencies->insert(depHandles[1]);
@@ -141,7 +150,8 @@ RUNNER_TEST(plugin_dao_test_register_library_dependencies)
         retDependencies = dao.getLibraryDependencies();
 
         RUNNER_ASSERT(
-            retDependencies->size()==sizeof(depHandles)/sizeof(depHandles[0]));
+            retDependencies->size() == sizeof(depHandles) /
+            sizeof(depHandles[0]));
         RUNNER_ASSERT(
             retDependencies->find(depHandles[1]) != retDependencies->end());
         RUNNER_ASSERT(
@@ -150,10 +160,11 @@ RUNNER_TEST(plugin_dao_test_register_library_dependencies)
 }
 
 /*
-Name: plugin_dao_test_register_required_object
-Description: registers required plugin objects for plugins and checks if they were saved
-Expected: registered required plugin objects should be returned from database
-*/
+ * Name: plugin_dao_test_register_required_object
+ * Description: registers required plugin objects for plugins and checks if they
+ * were saved
+ * Expected: registered required plugin objects should be returned from database
+ */
 RUNNER_TEST(plugin_dao_test_register_required_object)
 {
     {
@@ -161,15 +172,18 @@ RUNNER_TEST(plugin_dao_test_register_required_object)
         std::string libraryName("np5");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         PluginHandle handle =
             PluginDAO::registerPlugin(pluginData, libraryPath);
-        PluginDAO::setPluginInstallationStatus(handle,PluginDAO::INSTALLATION_COMPLETED);
+        PluginDAO::setPluginInstallationStatus(
+            handle,
+            PluginDAO::
+                INSTALLATION_COMPLETED);
         RUNNER_ASSERT(PluginDAO::isPluginInstalled(libraryName) == true);
 
-        const size_t numObjects =2;
-        std::string objectReq [numObjects];
+        const size_t numObjects = 2;
+        std::string objectReq[numObjects];
         objectReq[0] = std::string("object1.req");
         objectReq[1] = std::string("object2.req");
         PluginDAO::registerPluginRequiredObject(objectReq[0], handle);
@@ -179,16 +193,16 @@ RUNNER_TEST(plugin_dao_test_register_required_object)
             PluginDAO::getRequiredObjectsForPluginHandle(handle);
 
         RUNNER_ASSERT(objects->size() == numObjects
-                    && objects->find(objectReq[0]) != objects->end()
-                    && objects->find(objectReq[1]) != objects->end());
+                      && objects->find(objectReq[0]) != objects->end()
+                      && objects->find(objectReq[1]) != objects->end());
     }
 }
 
 /*
-Name: plugin_dao_test_is_library_installed
-Description: tests if plugin isntallation/registrartion works
-Expected: only registered plugins should be reported as installed
-*/
+ * Name: plugin_dao_test_is_library_installed
+ * Description: tests if plugin isntallation/registrartion works
+ * Expected: only registered plugins should be reported as installed
+ */
 RUNNER_TEST(plugin_dao_test_is_library_installed)
 {
     {
@@ -201,15 +215,15 @@ RUNNER_TEST(plugin_dao_test_is_library_installed)
         preinstalled.push_back("p5");
 
         FOREACH(it, preinstalled)
-            RUNNER_ASSERT_MSG(PluginDAO::isPluginInstalled(*it),
-                              std::string("Not found: ") + *it);
+        RUNNER_ASSERT_MSG(PluginDAO::isPluginInstalled(*it),
+                          std::string("Not found: ") + *it);
     }
 
     {
         //does not exist
         RUNNER_ASSERT_MSG(
-                PluginDAO::isPluginInstalled("not_installed1") == false,
-                "Found not_installed1");
+            PluginDAO::isPluginInstalled("not_installed1") == false,
+            "Found not_installed1");
         RUNNER_ASSERT_MSG(PluginDAO::isPluginInstalled("p 4") == false,
                           "Found p 4");
         RUNNER_ASSERT_MSG(PluginDAO::isPluginInstalled("") == false,
@@ -222,10 +236,10 @@ RUNNER_TEST(plugin_dao_test_is_library_installed)
 }
 
 /*
-Name: plugin_dao_test_get_plugin_handle_list
-Description: test of returning plugin handle list
-Expected: returned list should be no less than number of registered plugins
-*/
+ * Name: plugin_dao_test_get_plugin_handle_list
+ * Description: test of returning plugin handle list
+ * Expected: returned list should be no less than number of registered plugins
+ */
 RUNNER_TEST(plugin_dao_test_get_plugin_handle_list)
 {
     PluginHandleList handles = PluginDAO::getPluginHandleList();
@@ -233,11 +247,11 @@ RUNNER_TEST(plugin_dao_test_get_plugin_handle_list)
 }
 
 /*
-Name: plugin_dao_test_constructor_name
-Description: tests construction of plugin dao based on plugin name
-Expected: Instance of dao should be constructed only
- if there is given plugin in database
-*/
+ * Name: plugin_dao_test_constructor_name
+ * Description: tests construction of plugin dao based on plugin name
+ * Expected: Instance of dao should be constructed only
+ * if there is given plugin in database
+ */
 RUNNER_TEST(plugin_dao_test_constructor_name)
 {
     {
@@ -270,19 +284,18 @@ RUNNER_TEST(plugin_dao_test_constructor_name)
                 PluginDAO dao(*it);
                 RUNNER_ASSERT_MSG(false, "should not be found");
             }
-            Catch (PluginDAO::Exception::PluginNotExist) {
+            Catch(PluginDAO::Exception::PluginNotExist) {
                 continue;
             }
         }
     }
-
 }
 
 /*
-Name: plugin_dao_test_get_plugin_properties
-Description: tests reading plugin properties from database
-Expected: Data, inserted into database, should be accessible via dao
-*/
+ * Name: plugin_dao_test_get_plugin_properties
+ * Description: tests reading plugin properties from database
+ * Expected: Data, inserted into database, should be accessible via dao
+ */
 RUNNER_TEST(plugin_dao_test_get_plugin_properties)
 {
     {
@@ -315,10 +328,10 @@ RUNNER_TEST(plugin_dao_test_get_plugin_properties)
 }
 
 /*
-Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_1
-Description: tests receiving from dao Implemented Objects
-Expected: returned object is size 0
-*/
+ * Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_1
+ * Description: tests receiving from dao Implemented Objects
+ * Expected: returned object is size 0
+ */
 RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_1)
 {
     {
@@ -328,20 +341,19 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_1)
         RUNNER_ASSERT(dbHandle == handle);
         auto objects = dao.getImplementedObjectsForPluginHandle(dbHandle);
 
-        RUNNER_ASSERT(objects.size() == 0);
+        RUNNER_ASSERT(objects.empty());
     }
 }
 
 /*
-Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_2
-Description: tests receiving from dao Implemented Objects
-Expected: returned object is size as it was inserted
-*/
+ * Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_2
+ * Description: tests receiving from dao Implemented Objects
+ * Expected: returned object is size as it was inserted
+ */
 RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_2)
 {
     {
-        std::set< std::string > preinstalled =
-        {
+        std::set< std::string > preinstalled = {
             ""
         };
 
@@ -349,7 +361,8 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_2)
         auto dbHandle = dao.getPluginHandle();
         auto objects = dao.getImplementedObjectsForPluginHandle(dbHandle);
 
-        //LogError("\n" << objects.size() << " " << preinstalled.size() << "\n");
+        //LogError("\n" << objects.size() << " " << preinstalled.size() <<
+        // "\n");
 
         RUNNER_ASSERT(objects.size() == preinstalled.size());
 
@@ -361,15 +374,14 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_2)
 }
 
 /*
-Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_3
-Description: tests receiving from dao Implemented Objects
-Expected: returned objects list has preinserted object
-*/
+ * Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_3
+ * Description: tests receiving from dao Implemented Objects
+ * Expected: returned objects list has preinserted object
+ */
 RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_3)
 {
     {
-        std::set< std::string > preinstalled =
-        {
+        std::set< std::string > preinstalled = {
             "Plugin_3_Object_A"
         };
 
@@ -386,15 +398,14 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_3)
 }
 
 /*
-Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_4
-Description: tests receiving from dao Implemented Objects
-Expected: returned objects list has all preinserted objects
-*/
+ * Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_4
+ * Description: tests receiving from dao Implemented Objects
+ * Expected: returned objects list has all preinserted objects
+ */
 RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_4)
 {
     {
-        std::set< std::string > preinstalled =
-        {
+        std::set< std::string > preinstalled = {
             "Plugin_4_Object_A",
             "Plugin_4_Object_B",
             "Plugin_4_Object_C",
@@ -413,15 +424,14 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_4)
 }
 
 /*
-Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_5
-Description: tests receiving from dao Implemented Objects
-Expected: returned objects list do not have object that was not inserted
-*/
+ * Name: plugin_dao_test_get_implemented_objects_for_plugin_handle_5
+ * Description: tests receiving from dao Implemented Objects
+ * Expected: returned objects list do not have object that was not inserted
+ */
 RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_5)
 {
     {
-        std::set< std::string > preinstalled =
-        {
+        std::set< std::string > preinstalled = {
             "Plugin_5_Object_B",
         };
 
@@ -436,6 +446,5 @@ RUNNER_TEST(plugin_dao_test_get_implemented_objects_for_plugin_handle_5)
         }
     }
 }
-
 
 #undef RUNNER_ASSERT_WHAT_EQUALS

@@ -41,48 +41,47 @@ std::string ReadSomething(DPL::Event::Model */*model*/)
     return PROPERTY_VALUE_STRING;
 }
 
-void WriteSomething(const std::string &/*value*/, DPL::Event::Model */*model*/);
-void WriteSomething(const std::string &/*value*/, DPL::Event::Model */*model*/)
-{
-}
+void WriteSomething(const std::string & /*value*/, DPL::Event::Model */*model*/);
+void WriteSomething(const std::string & /*value*/, DPL::Event::Model */*model*/)
+{}
 
-class MyModel
-    : public DPL::Event::Model
+class MyModel :
+    public DPL::Event::Model
 {
-public:
+  public:
     ~MyModel() {}
 
     DPL::Event::Property<std::string>
-        Caption;
+    Caption;
 
     DPL::Event::Property<std::string>
-        Testproperty0;
+    Testproperty0;
 
     DPL::Event::Property<std::string, DPL::Event::PropertyReadOnly>
-        Testproperty1;
+    Testproperty1;
 
     DPL::Event::Property<std::string, DPL::Event::PropertyReadWrite>
-        Testproperty2;
+    Testproperty2;
 
     DPL::Event::Property<std::string, DPL::Event::PropertyReadWrite,
-        DPL::Event::PropertyStorageCached> Testproperty3;
+                         DPL::Event::PropertyStorageCached> Testproperty3;
 
     DPL::Event::Property<std::string, DPL::Event::PropertyReadWrite,
-        DPL::Event::PropertyStorageDynamic> Testproperty4;
+                         DPL::Event::PropertyStorageDynamic> Testproperty4;
 
     DPL::Event::Property<int, DPL::Event::PropertyReadOnly,
-        DPL::Event::PropertyStorageDynamicCached> Testproperty5;
+                         DPL::Event::PropertyStorageDynamicCached>
+    Testproperty5;
 
-    MyModel()
-        : Caption(this, "Foo caption"),
-          Testproperty0(this, "", &ReadSomething),
-          Testproperty1(this),
-          Testproperty2(this),
-          Testproperty3(this),
-          Testproperty4(this, "test", &ReadSomething, &WriteSomething),
-          Testproperty5(this, &ReadSomething2)
-    {
-    }
+    MyModel() :
+        Caption(this, "Foo caption"),
+        Testproperty0(this, "", &ReadSomething),
+        Testproperty1(this),
+        Testproperty2(this),
+        Testproperty3(this),
+        Testproperty4(this, "test", &ReadSomething, &WriteSomething),
+        Testproperty5(this, &ReadSomething2)
+    {}
 };
 
 std::string g_caption;
@@ -93,6 +92,11 @@ void OnNameChanged(const DPL::Event::PropertyEvent<std::string> &event)
     g_caption = event.value;
 }
 
+/*
+Name: Model_Test
+Description: tests accessing and changing models properties
+Expected: listener should get changed value
+*/
 RUNNER_TEST(Model_Test)
 {
     MyModel model;

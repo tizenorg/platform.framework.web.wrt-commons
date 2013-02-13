@@ -23,11 +23,10 @@
 #include "loop_control.h"
 #include "dbus_test.h"
 
-DBusTest::DBusTest(const std::string& name)
-    : m_name(name),
-      m_status(Status::NONE)
-{
-}
+DBusTest::DBusTest(const std::string& name) :
+    m_name(name),
+    m_status(Status::NONE)
+{}
 
 void DBusTest::run(unsigned int timeout)
 {
@@ -39,14 +38,15 @@ void DBusTest::run(unsigned int timeout)
 
     LoopControl::wrt_start_loop();
 
-    switch (m_status)
-    {
+    switch (m_status) {
     case Status::FAILED:
         throw DPL::Test::TestRunner::TestFailed(m_name.c_str(),
                                                 __FILE__,
                                                 __LINE__,
                                                 m_message);
 
+    case Status::SUCCESS:
+    case Status::NONE:
     default:
         break;
     }

@@ -24,15 +24,9 @@
 #ifndef DPL_COLORS_H
 #define DPL_COLORS_H
 
-namespace DPL
-{
-
-namespace Colors
-{
-
-namespace Text
-{
-
+namespace DPL {
+namespace Colors {
+namespace Text {
 extern const char* BOLD_GREEN_BEGIN;
 extern const char* BOLD_GREEN_END;
 extern const char* PURPLE_BEGIN;
@@ -51,12 +45,9 @@ extern const char* BOLD_GOLD_BEGIN;
 extern const char* BOLD_GOLD_END;
 extern const char* BOLD_WHITE_BEGIN;
 extern const char* BOLD_WHITE_END;
-
 } //namespace Text
 
-namespace Html
-{
-
+namespace Html {
 extern const char* BOLD_GREEN_BEGIN;
 extern const char* BOLD_GREEN_END;
 extern const char* PURPLE_BEGIN;
@@ -75,11 +66,8 @@ extern const char* BOLD_GOLD_BEGIN;
 extern const char* BOLD_GOLD_END;
 extern const char* BOLD_WHITE_BEGIN;
 extern const char* BOLD_WHITE_END;
-
 } //namespace Html
-
 } //namespace Colors
-
 } //namespace DPL
 
 #endif /* DPL_COLORS_H */

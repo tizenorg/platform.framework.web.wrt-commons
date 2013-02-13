@@ -17,16 +17,15 @@
  * @file        orm.cpp
  * @author      Bartosz Janiak (b.janiak@samsung.com)
  * @version     1.0
- * @brief       Static definitions and function template specialziations of DPL-ORM.
+ * @brief       Static definitions and function template specialziations of
+ * DPL-ORM.
  */
 #include <stddef.h>
 #include <dpl/db/orm.h>
 
-
 namespace DPL {
 namespace DB {
 namespace ORM {
-
 namespace RelationTypes {
 const char Equal[] = "=";
 const char LessThan[] = "<";
@@ -38,67 +37,66 @@ const char In[] = "IN";
 
 template<>
 int GetColumnFromCommand<int>(ColumnIndex columnIndex,
-        DataCommand *command)
+                              DataCommand *command)
 {
     return command->GetColumnInteger(columnIndex);
 }
 
 template<>
 DPL::String GetColumnFromCommand<DPL::String>(ColumnIndex columnIndex,
-        DataCommand *command)
+                                              DataCommand *command)
 {
     return DPL::FromUTF8String(command->GetColumnString(columnIndex));
 }
 
 template<>
 OptionalInteger GetColumnFromCommand<OptionalInteger>(ColumnIndex columnIndex,
-        DataCommand *command)
+                                                      DataCommand *command)
 {
     return command->GetColumnOptionalInteger(columnIndex);
 }
 
 template<>
 OptionalString GetColumnFromCommand<OptionalString>(ColumnIndex columnIndex,
-        DataCommand *command)
+                                                    DataCommand *command)
 {
     return command->GetColumnOptionalString(columnIndex);
 }
 
 template<>
 double GetColumnFromCommand<double>(ColumnIndex columnIndex,
-        DataCommand *command)
+                                    DataCommand *command)
 {
     return command->GetColumnDouble(columnIndex);
 }
 
 void DataCommandUtils::BindArgument(DataCommand *command,
-        ArgumentIndex index,
-        int argument)
+                                    ArgumentIndex index,
+                                    int argument)
 {
     command->BindInteger(index, argument);
 }
 
 void DataCommandUtils::BindArgument(DataCommand *command,
-        ArgumentIndex index,
-        const OptionalInteger& argument)
+                                    ArgumentIndex index,
+                                    const OptionalInteger& argument)
 {
     command->BindInteger(index, argument);
 }
 
 void DataCommandUtils::BindArgument(DataCommand *command,
-        ArgumentIndex index,
-        const DPL::String& argument)
+                                    ArgumentIndex index,
+                                    const DPL::String& argument)
 {
     command->BindString(index, argument);
 }
 
 void DataCommandUtils::BindArgument(DataCommand *command,
-        ArgumentIndex index,
-        const OptionalString& argument)
+                                    ArgumentIndex index,
+                                    const OptionalString& argument)
 {
     command->BindString(index, argument);
 }
-
 }
 }
 }

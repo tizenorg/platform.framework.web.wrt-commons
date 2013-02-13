@@ -21,5 +21,4 @@
  * @brief   This file contains the implementation of common data types for wrtdb
  */
 #include <stddef.h>
-namespace WrtDB {
-} // namespace WrtDB
+namespace WrtDB {} // namespace WrtDB

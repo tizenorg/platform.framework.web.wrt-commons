@@ -30,8 +30,7 @@
 
 IMPLEMENT_SINGLETON(DPL::Main)
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 // Late EFL event handling
@@ -40,7 +39,7 @@ Main *g_lateMain = NULL;
 
 Main::Main()
 #ifdef DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
-    // GLIB loop intergration workaround
+// GLIB loop intergration workaround
     : m_oldEcoreSelect(NULL)
 #endif // DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
 {
@@ -69,11 +68,17 @@ Main::Main()
 #endif // DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
 
     // Register event invoker
-    m_invokerHandler = ecore_main_fd_handler_add(WaitableHandleWatchSupport::WaitableInvokerHandle(),
-                                                 ECORE_FD_READ, &StaticDispatchInvoker, this, NULL, NULL);
+    m_invokerHandler = ecore_main_fd_handler_add(
+            WaitableHandleWatchSupport::WaitableInvokerHandle(),
+            ECORE_FD_READ,
+            &StaticDispatchInvoker,
+            this,
+            NULL,
+            NULL);
 
-    if (m_invokerHandler == NULL)
+    if (m_invokerHandler == NULL) {
         ThrowMsg(Exception::CreateFailed, "Failed to register invoker handler!");
+    }
 
     // It is impossible that there exist watchers at this time
     // No need to add watchers
@@ -83,13 +88,21 @@ Main::Main()
 Main::~Main()
 {
     // Remove any watchers
-    for (EcoreFdHandlerList::iterator iterator = m_readWatchersList.begin(); iterator != m_readWatchersList.end(); ++iterator)
+    for (EcoreFdHandlerList::iterator iterator = m_readWatchersList.begin();
+         iterator != m_readWatchersList.end();
+         ++iterator)
+    {
         ecore_main_fd_handler_del(*iterator);
+    }
 
     m_readWatchersList.clear();
 
-    for (EcoreFdHandlerList::iterator iterator = m_writeWatchersList.begin(); iterator != m_writeWatchersList.end(); ++iterator)
+    for (EcoreFdHandlerList::iterator iterator = m_writeWatchersList.begin();
+         iterator != m_writeWatchersList.end();
+         ++iterator)
+    {
         ecore_main_fd_handler_del(*iterator);
+    }
 
     m_writeWatchersList.clear();
 
@@ -119,19 +132,17 @@ Eina_Bool Main::StaticDispatchInvoker(void *data, Ecore_Fd_Handler *fd_handler)
     Assert(This != NULL);
 
     // Late EFL event handling
-    if (g_lateMain == NULL)
-    {
+    if (g_lateMain == NULL) {
         LogPedantic("WARNING: Late EFL invoker dispatch!");
-    }
-    else
-    {
+    } else {
         This->DispatchInvoker();
     }
 
     return ECORE_CALLBACK_RENEW;
 }
 
-Eina_Bool Main::StaticDispatchReadWatcher(void* data, Ecore_Fd_Handler* fd_handler)
+Eina_Bool Main::StaticDispatchReadWatcher(void* data,
+                                          Ecore_Fd_Handler* fd_handler)
 {
     LogPedantic("Static ECORE dispatch read watcher");
 
@@ -140,19 +151,18 @@ Eina_Bool Main::StaticDispatchReadWatcher(void* data, Ecore_Fd_Handler* fd_handl
     Assert(This != NULL);
 
     // Late EFL event handling
-    if (g_lateMain == NULL)
-    {
+    if (g_lateMain == NULL) {
         LogPedantic("WARNING: Late EFL read watcher dispatch!");
-    }
-    else
-    {
-        This->DispatchReadWatcher(static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(fd_handler)));
+    } else {
+        This->DispatchReadWatcher(static_cast<WaitableHandle>(
+                                      ecore_main_fd_handler_fd_get(fd_handler)));
     }
 
     return ECORE_CALLBACK_RENEW;
 }
 
-Eina_Bool Main::StaticDispatchWriteWatcher(void* data, Ecore_Fd_Handler* fd_handler)
+Eina_Bool Main::StaticDispatchWriteWatcher(void* data,
+                                           Ecore_Fd_Handler* fd_handler)
 {
     LogPedantic("Static ECORE dispatch write watcher");
 
@@ -161,13 +171,11 @@ Eina_Bool Main::StaticDispatchWriteWatcher(void* data, Ecore_Fd_Handler* fd_hand
     Assert(This != NULL);
 
     // Late EFL event handling
-    if (g_lateMain == NULL)
-    {
+    if (g_lateMain == NULL) {
         LogPedantic("WARNING: Late EFL write watcher dispatch!");
-    }
-    else
-    {
-        This->DispatchWriteWatcher(static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(fd_handler)));
+    } else {
+        This->DispatchWriteWatcher(static_cast<WaitableHandle>(
+                                       ecore_main_fd_handler_fd_get(fd_handler)));
     }
 
     return ECORE_CALLBACK_RENEW;
@@ -188,31 +196,36 @@ void Main::DispatchInvoker()
 
 void Main::ReloadWatchList()
 {
-    LogPedantic("Reloading watch list... (" << m_readWatchersList.size() << " + " << m_writeWatchersList.size() << ")");
+    LogPedantic(
+        "Reloading watch list... (" << m_readWatchersList.size() << " + " <<
+        m_writeWatchersList.size() << ")");
 
     // Reload list of watchers
-    WaitableHandleListEx waitableWatcherHandles = WaitableHandleWatchSupport::WaitableWatcherHandles();
+    WaitableHandleListEx waitableWatcherHandles =
+        WaitableHandleWatchSupport::WaitableWatcherHandles();
 
     // Remove not existing read watchers
     EcoreFdHandlerList::iterator watchersIterator = m_readWatchersList.begin();
     WaitableHandleListEx::iterator handlesIterator;
 
-    while (watchersIterator != m_readWatchersList.end())
-    {
+    while (watchersIterator != m_readWatchersList.end()) {
         bool found = false;
 
-        for (handlesIterator = waitableWatcherHandles.begin(); handlesIterator != waitableWatcherHandles.end(); ++handlesIterator)
+        for (handlesIterator = waitableWatcherHandles.begin();
+             handlesIterator != waitableWatcherHandles.end();
+             ++handlesIterator)
         {
             if (handlesIterator->second == WaitMode::Read &&
-                handlesIterator->first == static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*watchersIterator)))
+                handlesIterator->first ==
+                static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*
+                                                                         watchersIterator)))
             {
                 found = true;
                 break;
             }
         }
 
-        if (!found)
-        {
+        if (!found) {
             // Unregister handler
             ecore_main_fd_handler_del(*watchersIterator);
 
@@ -222,9 +235,7 @@ void Main::ReloadWatchList()
 
             m_readWatchersList.erase(watchersIterator);
             watchersIterator = next;
-        }
-        else
-        {
+        } else {
             ++watchersIterator;
         }
     }
@@ -232,22 +243,24 @@ void Main::ReloadWatchList()
     // Remove not existing write watchers
     watchersIterator = m_writeWatchersList.begin();
 
-    while (watchersIterator != m_writeWatchersList.end())
-    {
+    while (watchersIterator != m_writeWatchersList.end()) {
         bool found = false;
 
-        for (handlesIterator = waitableWatcherHandles.begin(); handlesIterator != waitableWatcherHandles.end(); ++handlesIterator)
+        for (handlesIterator = waitableWatcherHandles.begin();
+             handlesIterator != waitableWatcherHandles.end();
+             ++handlesIterator)
         {
             if (handlesIterator->second == WaitMode::Write &&
-                handlesIterator->first == static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*watchersIterator)))
+                handlesIterator->first ==
+                static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*
+                                                                         watchersIterator)))
             {
                 found = true;
                 break;
             }
         }
 
-        if (!found)
-        {
+        if (!found) {
             // Unregister handler
             ecore_main_fd_handler_del(*watchersIterator);
 
@@ -257,71 +270,88 @@ void Main::ReloadWatchList()
 
             m_writeWatchersList.erase(watchersIterator);
             watchersIterator = next;
-        }
-        else
-        {
+        } else {
             ++watchersIterator;
         }
     }
 
     // Add new read/write watchers
-    for (handlesIterator = waitableWatcherHandles.begin(); handlesIterator != waitableWatcherHandles.end(); ++handlesIterator)
+    for (handlesIterator = waitableWatcherHandles.begin();
+         handlesIterator != waitableWatcherHandles.end();
+         ++handlesIterator)
     {
-        if (handlesIterator->second == WaitMode::Read)
-        {
+        if (handlesIterator->second == WaitMode::Read) {
             bool found = false;
 
-            for (watchersIterator = m_readWatchersList.begin(); watchersIterator != m_readWatchersList.end(); ++watchersIterator)
+            for (watchersIterator = m_readWatchersList.begin();
+                 watchersIterator != m_readWatchersList.end();
+                 ++watchersIterator)
             {
-                if (handlesIterator->first == static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*watchersIterator)))
+                if (handlesIterator->first ==
+                    static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*
+                                                                             watchersIterator)))
                 {
                     found = true;
                     break;
                 }
             }
 
-            if (!found)
-            {
-                Ecore_Fd_Handler *handler = ecore_main_fd_handler_add(handlesIterator->first,
-                                                                      ECORE_FD_READ, &StaticDispatchReadWatcher, this, NULL, NULL);
-                if (handler == NULL)
-                    ThrowMsg(Exception::CreateFailed, "Failed to register read watcher handler!");
+            if (!found) {
+                Ecore_Fd_Handler *handler = ecore_main_fd_handler_add(
+                        handlesIterator->first,
+                        ECORE_FD_READ,
+                        &StaticDispatchReadWatcher,
+                        this,
+                        NULL,
+                        NULL);
+                if (handler == NULL) {
+                    ThrowMsg(Exception::CreateFailed,
+                             "Failed to register read watcher handler!");
+                }
 
                 // Push new watcher to list
                 m_readWatchersList.push_back(handler);
             }
-        }
-        else if (handlesIterator->second == WaitMode::Write)
-        {
+        } else if (handlesIterator->second == WaitMode::Write) {
             bool found = false;
 
-            for (watchersIterator = m_writeWatchersList.begin(); watchersIterator != m_writeWatchersList.end(); ++watchersIterator)
+            for (watchersIterator = m_writeWatchersList.begin();
+                 watchersIterator != m_writeWatchersList.end();
+                 ++watchersIterator)
             {
-                if (handlesIterator->first == static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*watchersIterator)))
+                if (handlesIterator->first ==
+                    static_cast<WaitableHandle>(ecore_main_fd_handler_fd_get(*
+                                                                             watchersIterator)))
                 {
                     found = true;
                     break;
                 }
             }
 
-            if (!found)
-            {
-                Ecore_Fd_Handler *handler = ecore_main_fd_handler_add(handlesIterator->first,
-                                                                      ECORE_FD_WRITE, &StaticDispatchWriteWatcher, this, NULL, NULL);
-                if (handler == NULL)
-                    ThrowMsg(Exception::CreateFailed, "Failed to register write watcher handler!");
+            if (!found) {
+                Ecore_Fd_Handler *handler = ecore_main_fd_handler_add(
+                        handlesIterator->first,
+                        ECORE_FD_WRITE,
+                        &StaticDispatchWriteWatcher,
+                        this,
+                        NULL,
+                        NULL);
+                if (handler == NULL) {
+                    ThrowMsg(Exception::CreateFailed,
+                             "Failed to register write watcher handler!");
+                }
 
                 // Push new watcher to list
                 m_writeWatchersList.push_back(handler);
             }
-        }
-        else
-        {
+        } else {
             Assert(0);
         }
     }
 
-    LogPedantic("Watch list reloaded  (" << m_readWatchersList.size() << " + " << m_writeWatchersList.size() << ")");
+    LogPedantic(
+        "Watch list reloaded  (" << m_readWatchersList.size() << " + " <<
+        m_writeWatchersList.size() << ")");
 }
 
 void Main::DispatchReadWatcher(WaitableHandle waitableHandle)
@@ -357,51 +387,59 @@ void Main::HandleDirectInvoker()
 
 #ifdef DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
 // GLIB loop intergration workaround
-int Main::EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
+int Main::EcoreSelectInterceptor(int nfds,
+                                 fd_set *readfds,
+                                 fd_set *writefds,
+                                 fd_set *exceptfds,
+                                 struct timeval *timeout)
 {
-    // We have to check error code here and make another try because of some glib error's.
+    // We have to check error code here and make another try because of some
+    // glib error's.
     fd_set rfds, wfds, efds;
     memcpy(&rfds, readfds, sizeof(fd_set));
     memcpy(&wfds, writefds, sizeof(fd_set));
     memcpy(&efds, exceptfds, sizeof(fd_set));
 
-    int ret = MainSingleton::Instance().m_oldEcoreSelect(nfds, readfds, writefds, exceptfds, timeout);
+    int ret = MainSingleton::Instance().m_oldEcoreSelect(nfds,
+                                                         readfds,
+                                                         writefds,
+                                                         exceptfds,
+                                                         timeout);
 
-    if (ret == -1)
-    {
+    if (ret == -1) {
         // Check each descriptor to see if it is valid
-        for (int i = 0; i < nfds; i++)
-        {
-            if (FD_ISSET(i, readfds) || FD_ISSET(i, writefds) || FD_ISSET(i, exceptfds))
+        for (int i = 0; i < nfds; i++) {
+            if (FD_ISSET(i,
+                         readfds) ||
+                FD_ISSET(i, writefds) || FD_ISSET(i, exceptfds))
             {
                 // Try to get descriptor flags
                 int result = fcntl(i, F_GETFL);
 
-                if (result == -1)
-                {
-                    if (errno == EBADF)
-                    {
+                if (result == -1) {
+                    if (errno == EBADF) {
                         // This a bad descriptor. Remove all occurrences of it.
-                        if (FD_ISSET(i, readfds))
-                        {
-                            LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad read descriptor: " << i);
+                        if (FD_ISSET(i, readfds)) {
+                            LogPedantic(
+                                "GLIB_LOOP_INTEGRATION_WORKAROUND: Bad read descriptor: "
+                                << i);
                             FD_CLR(i, readfds);
                         }
 
-                        if (FD_ISSET(i, writefds))
-                        {
-                            LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad write descriptor: " << i);
+                        if (FD_ISSET(i, writefds)) {
+                            LogPedantic(
+                                "GLIB_LOOP_INTEGRATION_WORKAROUND: Bad write descriptor: "
+                                << i);
                             FD_CLR(i, writefds);
                         }
 
-                        if (FD_ISSET(i, exceptfds))
-                        {
-                            LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad exception descriptor: " << i);
+                        if (FD_ISSET(i, exceptfds)) {
+                            LogPedantic(
+                                "GLIB_LOOP_INTEGRATION_WORKAROUND: Bad exception descriptor: "
+                                << i);
                             FD_CLR(i, exceptfds);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // Unexpected error
                         Assert(0);
                     }
@@ -409,7 +447,8 @@ int Main::EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd
             }
         }
 
-        LogPedantic("GLIB_LOOP_INTEGRATION_WORKAROUND: Bad read descriptor. Retrying with default select.");
+        LogPedantic(
+            "GLIB_LOOP_INTEGRATION_WORKAROUND: Bad read descriptor. Retrying with default select.");
 
         //Retry with old values and return new error
         memcpy(readfds, &rfds, sizeof(fd_set));
@@ -421,10 +460,11 @@ int Main::EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd
         tm.tv_sec = 0;
         tm.tv_usec = 10;
 
-        if (timeout)
+        if (timeout) {
             ret = select(nfds, readfds, writefds, exceptfds, &tm);
-        else
+        } else {
             ret = select(nfds, readfds, writefds, exceptfds, NULL);
+        }
     }
 
     return ret;

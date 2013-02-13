@@ -29,9 +29,9 @@
 
 typedef std::list<DPL::String> LanguageTags;
 
-class LanguageTagsProvider {
-
-public:
+class LanguageTagsProvider
+{
+  public:
     /*
      * Get list of currently set language tags
      */
@@ -40,7 +40,7 @@ public:
     /*
      * Set new language tags (other than based on system locales)
      */
-    void setLanguageTags(const LanguageTags& taglist );
+    void setLanguageTags(const LanguageTags& taglist);
 
     /*
      * Set language tags from given locales.
@@ -70,11 +70,12 @@ public:
     static DPL::String BCP47LanguageTagToLocale(const DPL::String&);
 
     /*
-     * Function converts locales string (i.e. en_US.UTF-8) into language tag (i.e. en-US)
+     * Function converts locales string (i.e. en_US.UTF-8) into language tag
+     * (i.e. en-US)
      */
     static DPL::String LocaleToBCP47LanguageTag(const DPL::String&);
 
-private:
+  private:
     friend class DPL::Singleton<LanguageTagsProvider>;
 
     LanguageTags m_languageTagsList;

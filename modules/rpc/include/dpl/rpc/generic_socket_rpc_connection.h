@@ -24,23 +24,18 @@
 
 #include <dpl/rpc/generic_rpc_connection.h>
 
-namespace DPL
-{
-namespace RPC
-{
-
+namespace DPL {
+namespace RPC {
 template<class SocketType>
-class GenericSocketRPCConnection
-    : public GenericRPCConnection
+class GenericSocketRPCConnection :
+    public GenericRPCConnection
 {
-protected:
+  protected:
     // Private construction with socket acquisition
-    GenericSocketRPCConnection(SocketType *socket)
-        : GenericRPCConnection(socket)
-    {
-    }
+    GenericSocketRPCConnection(SocketType *socket) :
+        GenericRPCConnection(socket)
+    {}
 };
-
 }
 } // namespace DPL
 

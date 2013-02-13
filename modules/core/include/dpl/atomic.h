@@ -25,17 +25,16 @@
 #pragma GCC system_header
 #include <glib.h>
 
-namespace DPL
-{
+namespace DPL {
 class Atomic
 {
-public:
+  public:
     typedef gint ValueType;
 
-private:
+  private:
     volatile ValueType m_value;
 
-public:
+  public:
     Atomic(ValueType value = static_cast<ValueType>(0));
 
     ValueType ExchangeAndAdd(ValueType value);

@@ -51,10 +51,10 @@ RUNNER_TEST(Once_DoubleCall)
     RUNNER_ASSERT_MSG(g_counter == 1, "Counter value is: " << g_counter);
 }
 
-class MyThread
-    : public DPL::Thread
+class MyThread :
+    public DPL::Thread
 {
-protected:
+  protected:
     virtual int ThreadEntry()
     {
         DPL::WaitForSingleHandle(m_event->GetHandle());
@@ -67,18 +67,22 @@ protected:
         ++*m_atom;
     }
 
-public:
-    MyThread(DPL::WaitableEvent *event, DPL::Once *once, DPL::Atomic *atom)
-        : m_event(event),  m_once(once), m_atom(atom)
-    {
-    }
+  public:
+    MyThread(DPL::WaitableEvent *event, DPL::Once *once, DPL::Atomic *atom) :
+        m_event(event), m_once(once), m_atom(atom)
+    {}
 
-private:
+  private:
     DPL::WaitableEvent *m_event;
     DPL::Once *m_once;
     DPL::Atomic *m_atom;
 };
 
+/*
+Name: Once_MultiThreadCall
+Description: tests once call wrapper for use by multiple threads
+Expected: function should be called just once from one of running threads
+*/
 RUNNER_TEST(Once_MultiThreadCall)
 {
     const size_t NUM_THREADS = 20;
@@ -89,15 +93,15 @@ RUNNER_TEST(Once_MultiThreadCall)
     DPL::Once once;
     DPL::Atomic atom;
 
-    for (size_t i = 0; i< NUM_THREADS; ++i)
-    {
+    for (size_t i = 0; i < NUM_THREADS; ++i) {
         (threads[i] = ThreadPtr(new MyThread(&event, &once, &atom)))->Run();
     }
 
     event.Signal();
 
-    for (size_t i = 0; i< NUM_THREADS; ++i)
+    for (size_t i = 0; i < NUM_THREADS; ++i) {
         threads[i]->Quit();
+    }
 
     RUNNER_ASSERT_MSG(atom == 1, "Atom value is: " << atom);
 }

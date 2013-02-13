@@ -34,23 +34,20 @@
 #include <memory>
 #include <stdint.h>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 /**
  * SQL connection class
  */
 class SqlConnection
 {
-public:
+  public:
     /**
      * SQL Exception classes
      */
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, SyntaxError)
         DECLARE_EXCEPTION_TYPE(Base, ConnectionBroken)
@@ -64,10 +61,10 @@ public:
     /*
      * SQL processed data command
      */
-    class DataCommand
-        : private Noncopyable
+    class DataCommand :
+        private Noncopyable
     {
-    private:
+      private:
         SqlConnection *m_masterConnection;
         sqlite3_stmt *m_stmt;
 
@@ -78,7 +75,7 @@ public:
 
         friend class SqlConnection;
 
-    public:
+      public:
         virtual ~DataCommand();
 
         /**
@@ -371,21 +368,22 @@ public:
     // Open flags
     class Flag
     {
-    public:
+      public:
         enum Type
         {
-            None      = 1<<0,
-            UseLucene = 1<<1
+            None = 1 << 0,
+            UseLucene = 1 << 1
         };
 
         enum Option
         {
             RO = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READONLY,
             /**
-             *TODO: please remove CREATE option from RW flag when all places
+             * *TODO: please remove CREATE option from RW flag when all places
              *      that need that switched do CRW
              */
-            RW = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            RW = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE |
+                SQLITE_OPEN_CREATE,
             CRW = RW | SQLITE_OPEN_CREATE
         };
     };
@@ -399,7 +397,7 @@ public:
      */
     class SynchronizationObject
     {
-    public:
+      public:
         virtual ~SynchronizationObject() {}
 
         /**
@@ -413,7 +411,7 @@ public:
         virtual void NotifyAll() = 0;
     };
 
-protected:
+  protected:
     sqlite3 *m_connection;
 
     // Options
@@ -433,7 +431,7 @@ protected:
 
     static SynchronizationObject *AllocDefaultSynchronizationObject();
 
-public:
+  public:
     /**
      * Open SQL connection
      *
@@ -488,7 +486,6 @@ public:
      */
     RowID GetLastInsertRowID() const;
 };
-
 } // namespace DB
 } // namespace DPL
 

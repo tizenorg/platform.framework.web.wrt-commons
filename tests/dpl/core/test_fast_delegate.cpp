@@ -46,42 +46,42 @@ void SimpleVoidFunction()
 
 class CBaseClass
 {
-protected:
+  protected:
     const char *m_name;
 
-public:
-    CBaseClass(const char *name)
-        : m_name(name)
-    {
-    }
+  public:
+    CBaseClass(const char *name) :
+        m_name(name)
+    {}
 
     virtual ~CBaseClass()
-    {
-    }
+    {}
 
     void SimpleMemberFunction(int num, const char *str)
     {
         LogDebug("In SimpleMemberFunction in " << m_name << ". Num="
-                 << num << ", str = " << str);
+                                               << num << ", str = " << str);
     }
 
     int SimpleMemberFunctionReturnsInt(int num, const char *str)
     {
-        LogDebug("In SimpleMemberFunctionReturnsInt in " << m_name << ". Num="
-                 << num << ", str = " << str);
+        LogDebug(
+            "In SimpleMemberFunctionReturnsInt in " << m_name << ". Num="
+                                                    << num <<
+            ", str = " << str);
         return -1;
     }
 
     void ConstMemberFunction(int num, const char *str) const
     {
         LogDebug("In ConstMemberFunction in " << m_name << ". Num="
-                 << num << ", str = " << str);
+                                              << num << ", str = " << str);
     }
 
     virtual void SimpleVirtualFunction(int num, const char *str)
     {
         LogDebug("In SimpleVirtualFunction in " << m_name << ". Num="
-                 << num << ", str = " << str);
+                                                << num << ", str = " << str);
     }
 
     static void StaticMemberFunction(int num, const char *str)
@@ -95,14 +95,12 @@ class COtherClass
 {
     double rubbish; // to ensure this class has non-zero size.
 
-public:
+  public:
     virtual ~COtherClass()
-    {
-    }
+    {}
 
     virtual void UnusedVirtualFunction(void)
-    {
-    }
+    {}
     virtual void TrickyVirtualFunction(int num, const char *str) = 0;
 };
 
@@ -112,16 +110,16 @@ class VeryBigClass
 };
 
 // This declaration ensures that we get a convoluted class heirarchy.
-class CDerivedClass
-    : public VeryBigClass,
-      virtual public COtherClass,
-      virtual public CBaseClass
+class CDerivedClass :
+    public VeryBigClass,
+    virtual public COtherClass,
+    virtual public CBaseClass
 {
     double m_somemember[8];
 
-public:
-    CDerivedClass()
-        : CBaseClass("Base of Derived")
+  public:
+    CDerivedClass() :
+        CBaseClass("Base of Derived")
     {
         m_somemember[0] = 1.2345;
     }
@@ -134,17 +132,24 @@ public:
 
     virtual void AnotherUnusedVirtualFunction(int num, const char *str)
     {
-        LogDebug("In AnotherUnusedVirtualFunction in " << m_name << ". Num="
-                 << num << ", str = " << str);
+        LogDebug(
+            "In AnotherUnusedVirtualFunction in " << m_name << ". Num="
+                                                  << num << ", str = " <<
+            str);
     }
 
     virtual void TrickyVirtualFunction(int num, const char *str)
     {
         LogDebug("In TrickyVirtualFunction in " << m_name << ". Num="
-                 << num << ", str = " << str);
+                                                << num << ", str = " << str);
     }
 };
 
+/*
+Name: FastDelegate_Test
+Description: tests several scenarios of using fast delegates
+Expected: function calls succeeded
+*/
 RUNNER_TEST(FastDelegate_Test)
 {
     // Delegates with up to 8 parameters are supported.
@@ -162,7 +167,6 @@ RUNNER_TEST(FastDelegate_Test)
 
     // If you want to have a non-void return value, put it at the end.
     typedef DPL::FastDelegate2<int, const char *, int> IntMyDelegate;
-
 
     MyDelegate funclist[12]; // delegates are initialized to empty
     CBaseClass a("Base A");
@@ -185,7 +189,7 @@ RUNNER_TEST(FastDelegate_Test)
 
     // and const member functions (these only need a const class pointer).
     funclist[3].bind((const CBaseClass *) &a,
-                      &CBaseClass::ConstMemberFunction);
+                     &CBaseClass::ConstMemberFunction);
 
     funclist[4].bind(&a, &CBaseClass::ConstMemberFunction);
 
@@ -222,25 +226,20 @@ RUNNER_TEST(FastDelegate_Test)
 
     const char *msg = "Looking for equal delegate";
 
-    for (int i = 0; i < 12; i++)
-    {
+    for (int i = 0; i < 12; i++) {
         LogDebug(i << ":");
 
         // The == and != operators are provided
         // Note that they work even for inline functions.
-        if (funclist[i] == dg)
-        {
+        if (funclist[i] == dg) {
             msg = "Found equal delegate";
         }
 
         // operator ! can be used to test for an empty delegate
         // You can also use the .empty() member function.
-        if (!funclist[i])
-        {
+        if (!funclist[i]) {
             LogDebug("Delegate is empty");
-        }
-        else
-        {
+        } else {
             // Invocation generates optimal assembly code.
             funclist[i](i, msg);
         }

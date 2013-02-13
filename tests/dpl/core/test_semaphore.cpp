@@ -29,33 +29,31 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
-class SemaphoreThread
-    : public DPL::Thread
+class SemaphoreThread :
+    public DPL::Thread
 {
     int m_delta;
     int m_times;
     int *m_value;
     std::string m_semaphoreName;
 
-public:
+  public:
     SemaphoreThread(int delta,
                     int times,
                     int *value,
-                    const std::string &semaphoreName)
-        : m_delta(delta),
-          m_times(times),
-          m_value(value),
-          m_semaphoreName(semaphoreName)
-    {
-    }
+                    const std::string &semaphoreName) :
+        m_delta(delta),
+        m_times(times),
+        m_value(value),
+        m_semaphoreName(semaphoreName)
+    {}
 
-protected:
+  protected:
     virtual int ThreadEntry()
     {
         DPL::Semaphore semaphore(m_semaphoreName);
 
-        for (int i = 0; i < m_times; ++i)
-        {
+        for (int i = 0; i < m_times; ++i) {
             // Take scoped semaphore lock
             DPL::Semaphore::ScopedLock lock(&semaphore);
             *m_value += m_delta;
@@ -65,6 +63,11 @@ protected:
     }
 };
 
+/*
+Name: Semaphore_NamedIncrementDecrement
+Description: Checks if semaphore are working
+Expected: value should not change after all
+*/
 RUNNER_TEST(Semaphore_NamedIncrementDecrement)
 {
     std::string semaphoreName =

@@ -30,9 +30,7 @@
  * singleton_safe_impl.h if possible.
  */
 
-namespace DPL
-{
-
+namespace DPL {
 template<typename Class>
 Singleton<Class>& Singleton<Class>::InternalInstance()
 {
@@ -46,11 +44,10 @@ Class &Singleton<Class>::Instance()
     Singleton<Class>& instance = Singleton<Class>::InternalInstance();
     return instance;
 }
-
 } // namespace DPL
 
 #define IMPLEMENT_SINGLETON(Type)                                           \
-template DPL::Singleton<Type>& DPL::Singleton<Type>::InternalInstance();    \
-template Type& DPL::Singleton<Type>::Instance();                            \
+    template DPL::Singleton<Type>&DPL::Singleton<Type>::InternalInstance();    \
+    template Type & DPL::Singleton<Type>::Instance();                            \
 
 #endif // DPL_SINGLETON_IMPL_H

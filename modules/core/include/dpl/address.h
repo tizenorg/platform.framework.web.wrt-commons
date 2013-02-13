@@ -25,23 +25,22 @@
 #include <dpl/exception.h>
 #include <string>
 
-namespace DPL
-{
+namespace DPL {
 class Address
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, InvalidAddress)
     };
 
-private:
+  private:
     std::string m_address;
     unsigned short m_port;
 
-public:
+  public:
     Address();
     Address(const std::string &address);
     Address(const std::string &address, unsigned short port);
@@ -55,7 +54,6 @@ public:
 
     bool operator<(const Address &addr) const;
 };
-
 } // namespace DPL
 
 #endif // DPL_ADDRESS_H

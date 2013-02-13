@@ -26,43 +26,41 @@
 #include <dpl/exception.h>
 #include <pthread.h>
 
-namespace DPL
+namespace DPL {
+class Mutex :
+    private Noncopyable
 {
-class Mutex
-    : private Noncopyable
-{
-public:
-    class ScopedLock
-        : private Noncopyable
+  public:
+    class ScopedLock :
+        private Noncopyable
     {
-    private:
+      private:
         Mutex *m_mutex;
 
-    public:
+      public:
         explicit ScopedLock(Mutex *mutex);
         ~ScopedLock();
     };
 
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, LockFailed)
         DECLARE_EXCEPTION_TYPE(Base, UnlockFailed)
     };
 
-private:
+  private:
     mutable pthread_mutex_t m_mutex;
 
     void Lock() const;
     void Unlock() const;
 
-public:
+  public:
     Mutex();
     ~Mutex();
 };
-
 } // namespace DPL
 
 #endif // DPL_MUTEX_H

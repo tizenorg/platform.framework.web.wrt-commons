@@ -585,7 +585,9 @@ local unzFile unzOpenInternal (const void *path,
                                zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
                                int is64bitOpenFunction)
 {
-    unz64_s us = {0, };
+    unz64_s us;
+    memset(&us,0,sizeof(unz64_s));
+
     unz64_s *s = NULL;
     ZPOS64_T central_pos;
     uLong   uL;

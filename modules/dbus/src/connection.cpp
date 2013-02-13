@@ -25,11 +25,8 @@
 #include <dpl/dbus/exception.h>
 #include <dpl/dbus/object_proxy.h>
 
-namespace DPL
-{
-namespace DBus
-{
-
+namespace DPL {
+namespace DBus {
 ConnectionPtr Connection::sessionBus()
 {
     return connectTo(G_BUS_TYPE_SESSION);
@@ -47,11 +44,9 @@ ConnectionPtr Connection::connectTo(GBusType busType)
     GDBusConnection* connection = g_bus_get_sync(busType,
                                                  NULL,
                                                  &error);
-    if (NULL == connection)
-    {
+    if (NULL == connection) {
         std::string message;
-        if (NULL != error)
-        {
+        if (NULL != error) {
             message = error->message;
             g_error_free(error);
         }
@@ -69,16 +64,14 @@ ConnectionPtr Connection::connectTo(const std::string& address)
     GError* error = NULL;
 
     GDBusConnection* connection = g_dbus_connection_new_for_address_sync(
-                                          address.c_str(),
-                                          G_DBUS_CONNECTION_FLAGS_NONE,
-                                          NULL,
-                                          NULL,
-                                          &error);
-    if (NULL == connection)
-    {
+            address.c_str(),
+            G_DBUS_CONNECTION_FLAGS_NONE,
+            NULL,
+            NULL,
+            &error);
+    if (NULL == connection) {
         std::string message;
-        if (NULL != error)
-        {
+        if (NULL != error) {
             message = error->message;
             g_error_free(error);
         }
@@ -89,8 +82,8 @@ ConnectionPtr Connection::connectTo(const std::string& address)
     return ConnectionPtr(new Connection(connection));
 }
 
-Connection::Connection(GDBusConnection* connection)
-    : m_connection(connection)
+Connection::Connection(GDBusConnection* connection) :
+    m_connection(connection)
 {
     g_signal_connect(m_connection,
                      "closed",
@@ -102,28 +95,28 @@ Connection::~Connection()
 {
     std::for_each(m_registeredServices.begin(),
                   m_registeredServices.end(),
-                  [] (const RegisteredServices::value_type& value)
+                  [] (const RegisteredServices::value_type & value)
                   {
                       g_bus_unown_name(value.second);
                   });
 
     std::for_each(m_registeredObjects.begin(),
                   m_registeredObjects.end(),
-                  [this] (const RegisteredObjects::value_type& value)
+                  [this] (const RegisteredObjects::value_type & value)
                   {
                       g_dbus_connection_unregister_object(
-                              m_connection,
-                              value.second.registrationId);
+                          m_connection,
+                          value.second.registrationId);
                   });
 
-    if (!g_dbus_connection_is_closed(m_connection))
-    {
+    if (!g_dbus_connection_is_closed(m_connection)) {
         GError* error = NULL;
 
-        if (FALSE == g_dbus_connection_flush_sync(m_connection, NULL, &error))
+        if (FALSE ==
+            g_dbus_connection_flush_sync(m_connection, NULL, &error))
         {
             LogPedantic("Could not flush the connection"
-                     << " <" << error->message << ">");
+                        << " <" << error->message << ">");
             g_error_free(error);
         }
     }
@@ -140,8 +133,7 @@ void Connection::registerService(const std::string& serviceName)
                                                onServiceNameLost,
                                                this,
                                                NULL);
-    if (0 >= regId)
-    {
+    if (0 >= regId) {
         ThrowMsg(DBus::Exception, "Error while registering service.");
     }
 
@@ -152,8 +144,7 @@ void Connection::registerService(const std::string& serviceName)
 void Connection::unregisterService(const std::string& serviceName)
 {
     auto it = m_registeredServices.find(serviceName);
-    if (m_registeredServices.end() == it)
-    {
+    if (m_registeredServices.end() == it) {
         ThrowMsg(DBus::Exception, "Service not registered.");
     }
 
@@ -167,45 +158,41 @@ void Connection::registerObject(const ObjectPtr& object)
     GError* error = NULL;
 
     guint regId = g_dbus_connection_register_object(
-                          m_connection,
-                          object->getPath().c_str(),
-                          object->getInterface()->getInfo(),
-                          object->getInterface()->getVTable(),
-                          // TODO This is ugly, fix this!
-                          object->getInterface().get(),
-                          NULL,
-                          &error);
-    if (0 == regId)
-    {
+            m_connection,
+            object->getPath().c_str(),
+            object->getInterface()->getInfo(),
+            object->getInterface()->getVTable(),
+            // TODO This is ugly, fix this!
+            object->getInterface().get(),
+            NULL,
+            &error);
+    if (0 == regId) {
         std::string message;
-        if (NULL != error)
-        {
+        if (NULL != error) {
             message = error->message;
             LogPedantic(error->message << " " << error->code);
             g_error_free(error);
         }
         ThrowMsg(DBus::Exception, "Error while registering an object: "
-                                  << message);
+                 << message);
     }
 
     m_registeredObjects.insert(RegisteredObjects::value_type(
-                                       object->getPath(),
-                                       ObjectRegistration(regId, object)));
+                                   object->getPath(),
+                                   ObjectRegistration(regId, object)));
 }
 
 void Connection::unregisterObject(const std::string& objectPath)
 {
     auto it = m_registeredObjects.find(objectPath);
-    if (m_registeredObjects.end() == it)
-    {
+    if (m_registeredObjects.end() == it) {
         ThrowMsg(DBus::Exception, "Object not registered.");
     }
 
     gboolean result = g_dbus_connection_unregister_object(
-                              m_connection,
-                              it->second.registrationId);
-    if (FALSE == result)
-    {
+            m_connection,
+            it->second.registrationId);
+    if (FALSE == result) {
         ThrowMsg(DBus::Exception, "Unregistering object failed.");
     }
     m_registeredObjects.erase(it);
@@ -214,13 +201,12 @@ void Connection::unregisterObject(const std::string& objectPath)
 ObjectProxyPtr Connection::createObjectProxy(const std::string& serviceName,
                                              const std::string& objectPath)
 {
-    if (g_dbus_connection_is_closed(m_connection))
-    {
+    if (g_dbus_connection_is_closed(m_connection)) {
         ThrowMsg(DBus::ConnectionClosedException, "Connection closed.");
     }
 
     return ObjectProxyPtr(
-            new ObjectProxy(m_connection, serviceName, objectPath));
+               new ObjectProxy(m_connection, serviceName, objectPath));
 }
 
 void Connection::onServiceNameAcquired(GDBusConnection* /*connection*/,
@@ -234,8 +220,9 @@ void Connection::onServiceNameAcquired(GDBusConnection* /*connection*/,
     LogPedantic("Emitting service name acquired event: " << serviceName);
 
     ConnectionEvents::ServiceNameAcquiredEvent event(serviceName);
-    self->DPL::Event::EventSupport<ConnectionEvents::ServiceNameAcquiredEvent>::
-            EmitEvent(event, DPL::Event::EmitMode::Queued);
+    self->DPL::Event::EventSupport<ConnectionEvents::ServiceNameAcquiredEvent>
+        ::
+        EmitEvent(event, DPL::Event::EmitMode::Queued);
 }
 
 void Connection::onServiceNameLost(GDBusConnection* /*connection*/,
@@ -250,7 +237,7 @@ void Connection::onServiceNameLost(GDBusConnection* /*connection*/,
 
     ConnectionEvents::ServiceNameLostEvent event(serviceName);
     self->DPL::Event::EventSupport<ConnectionEvents::ServiceNameLostEvent>::
-            EmitEvent(event, DPL::Event::EmitMode::Queued);
+        EmitEvent(event, DPL::Event::EmitMode::Queued);
 }
 
 void Connection::onConnectionClosed(GDBusConnection* /*connection*/,
@@ -262,32 +249,27 @@ void Connection::onConnectionClosed(GDBusConnection* /*connection*/,
 
     Connection* self = static_cast<Connection*>(data);
 
-    if ((NULL == error) && (FALSE == peerVanished))
-    {
+    if ((NULL == error) && (FALSE == peerVanished)) {
         // Connection closed by this.
-    }
-    else if (NULL != error)
-    {
+    } else if (NULL != error) {
         std::string message = error->message;
 
         g_error_free(error);
 
-        if (TRUE == peerVanished)
-        {
+        if (TRUE == peerVanished) {
             // Connection closed by remote host.
             ConnectionEvents::ConnectionBrokenEvent event(message);
-            self->DPL::Event::EventSupport<ConnectionEvents::ConnectionBrokenEvent>::
-                    EmitEvent(event, DPL::Event::EmitMode::Queued);
-        }
-        else
-        {
+            self->DPL::Event::EventSupport<ConnectionEvents::
+                                               ConnectionBrokenEvent>::
+                EmitEvent(event, DPL::Event::EmitMode::Queued);
+        } else {
             // Invalid or malformed data on connection.
             ConnectionEvents::ConnectionInvalidEvent event(message);
-            self->DPL::Event::EventSupport<ConnectionEvents::ConnectionInvalidEvent>::
-                    EmitEvent(event, DPL::Event::EmitMode::Queued);
+            self->DPL::Event::EventSupport<ConnectionEvents::
+                                               ConnectionInvalidEvent>::
+                EmitEvent(event, DPL::Event::EmitMode::Queued);
         }
     }
 }
-
 }
 }

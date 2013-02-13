@@ -17,17 +17,15 @@
  * @file        naive_synchronization_object.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of SQL naive synchronization object
+ * @brief       This file is the implementation file of SQL naive
+ * synchronization object
  */
 #include <stddef.h>
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/thread.h>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 void NaiveSynchronizationObject::Synchronize()
 {
     // Sleep for about 10ms - 30ms
@@ -38,6 +36,5 @@ void NaiveSynchronizationObject::NotifyAll()
 {
     // No need to inform about anything
 }
-
 } // namespace DB
 } // namespace DPL

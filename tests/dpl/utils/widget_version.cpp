@@ -24,6 +24,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL_WIDGET_VERSION)
 
+/*
+Name: WidgetVersion_M2_O0
+Description: tests correct parsing of version widget in format: [major].[minor]
+Expected: major and minor parts matches expected values
+*/
 RUNNER_TEST(WidgetVersion_M2_O0)
 {
     DPL::String raw(L"1.2");
@@ -37,6 +42,11 @@ RUNNER_TEST(WidgetVersion_M2_O0)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O0_nonwac_1
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M2_O0_nonwac_1)
 {
     DPL::String raw(L"a1.2");
@@ -46,6 +56,11 @@ RUNNER_TEST(WidgetVersion_M2_O0_nonwac_1)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O0_nonwac_2
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M2_O0_nonwac_2)
 {
     DPL::String raw(L"1.2a");
@@ -55,6 +70,11 @@ RUNNER_TEST(WidgetVersion_M2_O0_nonwac_2)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O0_nonwac_3
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M2_O0_nonwac_3)
 {
     DPL::String raw(L"aaa1.2bbb");
@@ -64,6 +84,11 @@ RUNNER_TEST(WidgetVersion_M2_O0_nonwac_3)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O0_nonwac_4
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M2_O0_nonwac_4)
 {
     DPL::String raw(L"1a.a2");
@@ -73,19 +98,34 @@ RUNNER_TEST(WidgetVersion_M2_O0_nonwac_4)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O0_long
+Description: tests correct parsing of version widget in format: [major].[minor]
+ for huge number
+Expected: major and minor parts matches expected values
+*/
 RUNNER_TEST(WidgetVersion_M2_O0_long)
 {
-    DPL::String raw(L"123456789012345678901234567890.98765432109876543210987654321");
+    DPL::String raw(
+        L"123456789012345678901234567890.98765432109876543210987654321");
     WidgetVersion version(raw);
 
     RUNNER_ASSERT(version.IsWac() == true);
-    RUNNER_ASSERT(version.Major() == DPL::String(L"123456789012345678901234567890"));
-    RUNNER_ASSERT(version.Minor() == DPL::String(L"98765432109876543210987654321"));
+    RUNNER_ASSERT(version.Major() ==
+                  DPL::String(L"123456789012345678901234567890"));
+    RUNNER_ASSERT(version.Minor() ==
+                  DPL::String(L"98765432109876543210987654321"));
     RUNNER_ASSERT(version.Micro() == DPL::Optional<DPL::String>());
     RUNNER_ASSERT(version.Optional() == DPL::Optional<DPL::String>());
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O0
+Description: tests correct wac version number
+Expected: major and minor and micro parts matches expected values.
+ Version should be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O0)
 {
     DPL::String raw(L"1.2.3");
@@ -99,6 +139,11 @@ RUNNER_TEST(WidgetVersion_M3_O0)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O0_nonwac_1
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O0_nonwac_1)
 {
     DPL::String raw(L"a1a.2.3");
@@ -108,6 +153,11 @@ RUNNER_TEST(WidgetVersion_M3_O0_nonwac_1)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O0_nonwac_2
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O0_nonwac_2)
 {
     DPL::String raw(L"1.b2.3");
@@ -117,6 +167,11 @@ RUNNER_TEST(WidgetVersion_M3_O0_nonwac_2)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O0_nonwac_3
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O0_nonwac_3)
 {
     DPL::String raw(L"1.2.3c");
@@ -126,6 +181,11 @@ RUNNER_TEST(WidgetVersion_M3_O0_nonwac_3)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O0_nonwac_4
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O0_nonwac_4)
 {
     DPL::String raw(L"1.2.3a");
@@ -135,6 +195,12 @@ RUNNER_TEST(WidgetVersion_M3_O0_nonwac_4)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O1_1
+Description: tests correct wac version number with optional part
+Expected: major and minor and micro and optional parts matches expected values.
+ Version should be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O1_1)
 {
     DPL::String raw(L"1.2.3 test111");
@@ -148,6 +214,12 @@ RUNNER_TEST(WidgetVersion_M3_O1_1)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O1_1
+Description: tests correct wac version number with numeric optional part
+Expected: major and minor and micro and optional parts matches expected values.
+ Version should be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O1_2)
 {
     DPL::String raw(L"1.2.3 111");
@@ -161,6 +233,12 @@ RUNNER_TEST(WidgetVersion_M3_O1_2)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M3_O1_3
+Description: tests if version is recognized as wac version number
+ when trailer spaces exists
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M3_O1_3)
 {
     DPL::String raw(L"1.2.3 ");
@@ -170,6 +248,12 @@ RUNNER_TEST(WidgetVersion_M3_O1_3)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_M2_O1_1
+Description: tests if version is recognized as wac version number
+ when optional part
+Expected: version should be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_M2_O1_1)
 {
     DPL::String raw(L"1.2 t");
@@ -183,6 +267,11 @@ RUNNER_TEST(WidgetVersion_M2_O1_1)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_0
+Description: tests if version is recognized as wac version number
+Expected: version should be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_0)
 {
     DPL::String raw(L"1");
@@ -192,6 +281,11 @@ RUNNER_TEST(WidgetVersion_Strange_0)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_1
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_1)
 {
     DPL::String raw(L".1");
@@ -201,6 +295,11 @@ RUNNER_TEST(WidgetVersion_Strange_1)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_2
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_2)
 {
     DPL::String raw(L"..1");
@@ -210,6 +309,11 @@ RUNNER_TEST(WidgetVersion_Strange_2)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_3
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_3)
 {
     DPL::String raw(L"...1");
@@ -219,6 +323,11 @@ RUNNER_TEST(WidgetVersion_Strange_3)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_4
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_4)
 {
     DPL::String raw(L"qwerty");
@@ -228,6 +337,11 @@ RUNNER_TEST(WidgetVersion_Strange_4)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Strange_5
+Description: tests if version is recognized as wac version number
+Expected: version should not be recognized as wac compatible
+*/
 RUNNER_TEST(WidgetVersion_Strange_5)
 {
     DPL::String raw(L"!@#$%^&*()_+   ^&%^*&%$^*&%*()&   JHKJLHKJLH   685685687");
@@ -237,42 +351,86 @@ RUNNER_TEST(WidgetVersion_Strange_5)
     RUNNER_ASSERT(version.Raw() == raw);
 }
 
+/*
+Name: WidgetVersion_Compare_0
+Description: tests version comparision in format [major].[minor]
+Expected: compare should work as expected
+*/
 RUNNER_TEST(WidgetVersion_Compare_0)
 {
     RUNNER_ASSERT(WidgetVersion(L"1.1") < WidgetVersion(L"1.2"));
 }
 
+/*
+Name: WidgetVersion_Compare_1
+Description: tests version comparision in format [major].[minor]
+Expected: compare should work as expected
+*/
 RUNNER_TEST(WidgetVersion_Compare_1)
 {
     RUNNER_ASSERT(WidgetVersion(L"01.001") < WidgetVersion(L"0001.002"));
 }
 
+/*
+Name: WidgetVersion_Compare_2
+Description: tests version equality in format [major].[minor]
+Expected: versions should be equal
+*/
 RUNNER_TEST(WidgetVersion_Compare_2)
 {
     RUNNER_ASSERT(WidgetVersion(L"0.1") == WidgetVersion(L"00.1"));
 }
 
+/*
+Name: WidgetVersion_Compare_3
+Description: tests version comparision in format [major].[minor] [optional]
+Expected: compare should work as expected
+*/
 RUNNER_TEST(WidgetVersion_Compare_3)
 {
-    RUNNER_ASSERT(WidgetVersion(L"1.00000000000000") >= WidgetVersion(L"1.0 test"));
+    RUNNER_ASSERT(WidgetVersion(L"1.00000000000000") >=
+                  WidgetVersion(L"1.0 test"));
 }
 
+/*
+Name: WidgetVersion_Compare_4
+Description: tests version comparision for huge numbers
+Expected: compare should work as expected
+*/
 RUNNER_TEST(WidgetVersion_Compare_4)
 {
-    RUNNER_ASSERT(WidgetVersion(L"19647963733338932479072098437089778943732432.00000000000000004324324324324321") > WidgetVersion(L"4324324324324324324321.000432"));
+    RUNNER_ASSERT(WidgetVersion(
+                      L"19647963733338932479072098437089778943732432.00000000000000004324324324324321")
+                  > WidgetVersion(L"4324324324324324324321.000432"));
 }
 
+/*
+Name: WidgetVersion_Compare_5
+Description: tests equality in format [major].[minor]
+Expected: versions should be equal
+*/
 RUNNER_TEST(WidgetVersion_Compare_5)
 {
     RUNNER_ASSERT(WidgetVersion(L"12345.1") == WidgetVersion(L"12345.1"));
 }
 
+/*
+Name: WidgetVersion_Compare_6
+Description: tests version equality in format [major].[minor]
+Expected: versions should not be equal
+*/
 RUNNER_TEST(WidgetVersion_Compare_6)
 {
     RUNNER_ASSERT(WidgetVersion(L"1.1") != WidgetVersion(L"1.11"));
 }
 
+/*
+Name: WidgetVersion_Compare_7
+Description: tests version equality in format [major].[minor] [optional]
+Expected: versions should be equal, optional part should not be taken into account
+*/
 RUNNER_TEST(WidgetVersion_Compare_7)
 {
-    RUNNER_ASSERT(WidgetVersion(L"000123000.0 notatest") == WidgetVersion(L"00123000.0 testtesttest"));
+    RUNNER_ASSERT(WidgetVersion(L"000123000.0 notatest") ==
+                  WidgetVersion(L"00123000.0 testtesttest"));
 }

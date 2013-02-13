@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
-  * @file   TestCases_FeatureDAO.cpp
+ * @file   TestCases_FeatureDAO.cpp
  * @author  Pawel Sikorski (p.sikorski@samsung.com)
  * @version 1.0
  * @brief   This file contains tests for feature dao class.
@@ -29,16 +29,16 @@
 using namespace WrtDB;
 
 #define RUNNER_ASSERT_WHAT_EQUALS(in, test)                   \
-    {std::string tmp(in);                                     \
-    RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]");}
+    { std::string tmp(in);                                     \
+      RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]"); }
 
 RUNNER_TEST_GROUP_INIT(DAO)
 
 /*
-Name: feature_dao_test_register_features
-Description: Checks if plugin registeration performs features registration
-Expected: registrartion should succeed
-*/
+ * Name: feature_dao_test_register_features
+ * Description: Checks if plugin registeration performs features registration
+ * Expected: registrartion should succeed
+ */
 RUNNER_TEST(feature_dao_test_register_features)
 {
     PluginHandle plHandle;
@@ -47,7 +47,7 @@ RUNNER_TEST(feature_dao_test_register_features)
         std::string libraryName("nfp1");
 
         PluginMetafileData pluginData;
-        pluginData.m_libraryName          = libraryName;
+        pluginData.m_libraryName = libraryName;
 
         plHandle = PluginDAO::registerPlugin(pluginData, libraryPath);
         RUNNER_ASSERT(PluginDAO::isPluginInstalled(libraryName) == true);
@@ -56,14 +56,14 @@ RUNNER_TEST(feature_dao_test_register_features)
         PluginMetafileData::Feature f;
         f.m_name = std::string("new_f1");
 
-        FeatureHandle handle = FeatureDAO::RegisterFeature(f,plHandle);
+        FeatureHandle handle = FeatureDAO::RegisterFeature(f, plHandle);
         RUNNER_ASSERT_MSG(handle != -1, "Already registered");
         RUNNER_ASSERT_MSG(old.size() < FeatureDAOReadOnly::GetHandleList().size(),
                           "New feature should be saved");
 
         FeatureDAOReadOnly dao(handle);
 
-        RUNNER_ASSERT_WHAT_EQUALS(dao.GetName(),"new_f1");
+        RUNNER_ASSERT_WHAT_EQUALS(dao.GetName(), "new_f1");
         plHandle = dao.GetPluginHandle();
     }
 
@@ -73,7 +73,7 @@ RUNNER_TEST(feature_dao_test_register_features)
         PluginMetafileData::Feature f;
         f.m_name = std::string("new_f2");
 
-        FeatureHandle handle = FeatureDAO::RegisterFeature(f,plHandle);
+        FeatureHandle handle = FeatureDAO::RegisterFeature(f, plHandle);
         RUNNER_ASSERT_MSG(handle != -1, "Already registered");
         RUNNER_ASSERT_MSG(old.size() < FeatureDAOReadOnly::GetHandleList().size(),
                           "New feature should be saved");
@@ -86,10 +86,11 @@ RUNNER_TEST(feature_dao_test_register_features)
 }
 
 /*
-Name: feature_dao_test_get_feature_properties
-Description: Checks properties of inserted features
-Expected: properties of features should match values inserted to database directly
-*/
+ * Name: feature_dao_test_get_feature_properties
+ * Description: Checks properties of inserted features
+ * Expected: properties of features should match values inserted to database
+ * directly
+ */
 RUNNER_TEST(feature_dao_test_get_feature_properties)
 {
     {
@@ -115,12 +116,12 @@ RUNNER_TEST(feature_dao_test_get_feature_properties)
 }
 
 /*
-Name: feature_dao_test_feature_constructor_name
-Description: -
-Expected: -
-
-TODO: test
-*/
+ * Name: feature_dao_test_feature_constructor_name
+ * Description: -
+ * Expected: -
+ *
+ * TODO: test
+ */
 RUNNER_TEST(feature_dao_test_feature_constructor_name)
 {
     std::list<const char *> preinstalled;
@@ -139,10 +140,10 @@ RUNNER_TEST(feature_dao_test_feature_constructor_name)
 }
 
 /*
-Name: feature_dao_test_feature_handle_list
-Description: Checks if list of installed features is returend correctly
-Expected: list size should be at last equal number of preinserted features
-*/
+ * Name: feature_dao_test_feature_handle_list
+ * Description: Checks if list of installed features is returend correctly
+ * Expected: list size should be at last equal number of preinserted features
+ */
 RUNNER_TEST(feature_dao_test_feature_handle_list)
 {
     FeatureHandleList handles = FeatureDAOReadOnly::GetHandleList();
@@ -150,10 +151,10 @@ RUNNER_TEST(feature_dao_test_feature_handle_list)
 }
 
 /*
-Name: feature_dao_test_is_feature_installed
-Description: Checks if installed features are showed correctly.
-Expected: correct installed features should be present
-*/
+ * Name: feature_dao_test_is_feature_installed
+ * Description: Checks if installed features are showed correctly.
+ * Expected: correct installed features should be present
+ */
 RUNNER_TEST(feature_dao_test_is_feature_installed)
 {
     //installed
@@ -165,31 +166,33 @@ RUNNER_TEST(feature_dao_test_is_feature_installed)
         preinstalled.push_back("feature4");
 
         FOREACH(it, preinstalled)
-            RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled(*it));
+        RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled(*it));
     }
 
     //not installed
     {
-        RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled("not_installed1")==false);
-        RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled("plugin1") == false);
+        RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled(
+                          "not_installed1") == false);
+        RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled(
+                          "plugin1") == false);
         RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled("") == false);
         RUNNER_ASSERT(FeatureDAOReadOnly::isFeatureInstalled("ff") == false);
     }
 }
 
 /*
-Name: feature_dao_test_get_device_capab
-Description: -
-Expected: -
-
-TODO: fix test
-*/
+ * Name: feature_dao_test_get_device_capab
+ * Description: -
+ * Expected: -
+ *
+ * TODO: fix test
+ */
 RUNNER_TEST(feature_dao_test_get_device_capab)
 {
 #if 0
     //TODO do more tests
 
-    {//check deviceCaps
+    { //check deviceCaps
         Feature f;
         f.setName("new_dev_f4");
         f.setLibraryName("new_dev_f4 lib_name");
@@ -199,14 +202,14 @@ RUNNER_TEST(feature_dao_test_get_device_capab)
         devList.insert("new_dev_f4 devcap2");
 
         FOREACH(it, devList)
-            f.addDeviceCapability(*it);
+        f.addDeviceCapability(*it);
 
-        FeatureHandle handle = FeatureDAO::RegisterFeature(f,"new_dev_f4 path");
+        FeatureHandle handle = FeatureDAO::RegisterFeature(f, "new_dev_f4 path");
 
         FeatureDAOReadOnly dao(handle);
 
         FeatureDAOReadOnly::DeviceCapabilitiesList gotList =
-                dao.GetDeviceCapabilities();
+            dao.GetDeviceCapabilities();
         RUNNER_ASSERT_MSG(gotList.size() == devList.size(),
                           "deviceCaps wrong");
     }
@@ -214,10 +217,11 @@ RUNNER_TEST(feature_dao_test_get_device_capab)
 }
 
 /*
-Name: feature_dao_test_is_device_capab_installed
-Description: Checks if FeatureDAOReadOnly::isDeviceCapabilityInstalled works correctly.
-Expected: correct capabilities should be present
-*/
+ * Name: feature_dao_test_is_device_capab_installed
+ * Description: Checks if FeatureDAOReadOnly::isDeviceCapabilityInstalled works
+ * correctly.
+ * Expected: correct capabilities should be present
+ */
 RUNNER_TEST(feature_dao_test_is_device_capab_installed)
 {
     //installed
@@ -228,7 +232,7 @@ RUNNER_TEST(feature_dao_test_is_device_capab_installed)
     preinstalled.push_back("devicecap4");
 
     FOREACH(it, preinstalled)
-        RUNNER_ASSERT(FeatureDAOReadOnly::isDeviceCapabilityInstalled(*it));
+    RUNNER_ASSERT(FeatureDAOReadOnly::isDeviceCapabilityInstalled(*it));
 
     //not installed
     std::list<const char *> notinstalled;
@@ -238,7 +242,7 @@ RUNNER_TEST(feature_dao_test_is_device_capab_installed)
     notinstalled.push_back("ff");
 
     FOREACH(it, notinstalled)
-        RUNNER_ASSERT(!FeatureDAOReadOnly::isDeviceCapabilityInstalled(*it));
+    RUNNER_ASSERT(!FeatureDAOReadOnly::isDeviceCapabilityInstalled(*it));
 }
 
 #undef RUNNER_ASSERT_WHAT_EQUALS

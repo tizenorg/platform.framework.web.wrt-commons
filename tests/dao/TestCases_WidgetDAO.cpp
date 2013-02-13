@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
-  * @file   TestCases_WidgetDAO.cpp
+ * @file   TestCases_WidgetDAO.cpp
  * @author  Pawel Sikorski (p.sikorski@samsung.com)
  * @version 1.0
  * @brief   This file contains tests for widget dao class.
@@ -36,42 +36,55 @@
 using namespace WrtDB;
 
 namespace {
-
 class WacSecurityMock : public WrtDB::IWacSecurity
 {
-public:
+  public:
     WacSecurityMock() :
         mRecognized(false),
         mDistributorSigned(false),
         mWacSigned(false)
-    {
-    }
+    {}
 
     virtual const WidgetCertificateDataList& getCertificateList() const
     {
         return mList;
     }
 
-    virtual bool isRecognized() const { return mRecognized; }
-    virtual bool isDistributorSigned() const { return mDistributorSigned; }
-    virtual bool isWacSigned() const { return mWacSigned; }
+    virtual bool isRecognized() const
+    {
+        return mRecognized;
+    }
+    virtual bool isDistributorSigned() const
+    {
+        return mDistributorSigned;
+    }
+    virtual bool isWacSigned() const
+    {
+        return mWacSigned;
+    }
     virtual void getCertificateChainList(CertificateChainList& /*lst*/) const {}
     virtual void getCertificateChainList(CertificateChainList& /*lst*/,
-        CertificateSource source) const {}
+                                         CertificateSource /*source*/) const {}
 
     WrtDB::WidgetCertificateDataList& getCertificateListRef()
     {
         return mList;
     }
 
-    void setRecognized(bool recognized) { mRecognized = recognized; }
+    void setRecognized(bool recognized)
+    {
+        mRecognized = recognized;
+    }
     void setDistributorSigned(bool distributorSigned)
     {
         mDistributorSigned = distributorSigned;
     }
-    void setWacSigned(bool wacSigned) { mWacSigned = wacSigned; }
+    void setWacSigned(bool wacSigned)
+    {
+        mWacSigned = wacSigned;
+    }
 
-private:
+  private:
     WrtDB::WidgetCertificateDataList mList;
     // author signature verified
     bool mRecognized;
@@ -79,12 +92,11 @@ private:
     bool mDistributorSigned;
     // distributor is wac
     bool mWacSigned;
-
 };
 
 TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
-                             const IWacSecurity& sec,
-                             int line)
+                           const IWacSecurity& sec,
+                           int line)
 {
     TizenAppId tizenAppId;
     Try {
@@ -97,50 +109,53 @@ TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
                           "(called from line " << line << ")");
 
         auto current = WidgetDAO::getTizenAppidList();
-        RUNNER_ASSERT_MSG(previous.size()+1 == current.size(),
+        RUNNER_ASSERT_MSG(previous.size() + 1 == current.size(),
                           "(called from line " << line << ")");
 
-        RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId),
-                          "(called from line " << line << " tizenAppId: " << tizenAppId << ")");
+        RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(
+                              tizenAppId),
+                          "(called from line " << line << " tizenAppId: " <<
+                          tizenAppId << ")");
     }
-    Catch (WidgetDAO::Exception::AlreadyRegistered) {
+    Catch(WidgetDAO::Exception::AlreadyRegistered) {
         RUNNER_ASSERT_MSG(
-                false,
-                "Unexpected exception (called from line " << line << ")");
+            false,
+            "Unexpected exception (called from line " << line << ")");
     }
     return tizenAppId;
 }
 
-#define REGISTER_WIDGET(regInfo, sec) _registerWidget((regInfo),(sec), __LINE__)
-
+#define REGISTER_WIDGET(regInfo, sec) _registerWidget((regInfo), \
+                                                      (sec), \
+                                                      __LINE__)
 } // namespace
 
 // Widgets used <2300,2500), 2000, 2001, 2002, 2003
 
 #define RUNNER_ASSERT_WHAT_EQUALS(in, test)                   \
-    {std::string tmp(in);                                     \
-    RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]");}
+    { std::string tmp(in);                                     \
+      RUNNER_ASSERT_MSG(tmp == test, "Equals: [" + tmp + "]"); }
 
 #define RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(in, test)          \
-        {                                                     \
-            if(in.IsNull()) RUNNER_ASSERT_MSG(false, "NULL"); \
-            else RUNNER_ASSERT_WHAT_EQUALS(DPL::ToUTF8String(*in),test);\
-        }
+    {                                                     \
+        if (in.IsNull()) { RUNNER_ASSERT_MSG(false, "NULL"); } \
+        else { RUNNER_ASSERT_WHAT_EQUALS(DPL::ToUTF8String(*in), test); } \
+    }
 
 #define RUNNER_ASSERT_WHAT_EQUALS_OPTIONALINT(in, test)                   \
-        {                                                                 \
-            if(in.IsNull()) RUNNER_ASSERT_MSG(false, "NULL");             \
-            else RUNNER_ASSERT_MSG(*in == test, "Equals: [" + *in + "]"); \
-        }
+    {                                                                 \
+        if (in.IsNull()) { RUNNER_ASSERT_MSG(false, "NULL"); }             \
+        else { RUNNER_ASSERT_MSG(*in == test, "Equals: [" + *in + "]"); } \
+    }
 
 RUNNER_TEST_GROUP_INIT(DAO)
 
 //2300
 /*
-Name: widget_dao_test_register_widget_empty_strings
-Description: Tests registeration of new widget with empty values
-Expected: widget should be registered in database
-*/
+ * Name: widget_dao_test_register_widget_empty_strings
+ * Description: Tests registeration of new widget with empty values
+ * Expected: widget should be registered in database
+ */
 RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
 {
     WidgetRegisterInfo regInfo;
@@ -171,7 +186,7 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     locData.licenseFile = DPL::FromUTF8String("");
     locData.licenseHref = DPL::FromUTF8String("");
     regInfo.configInfo.localizedDataSet.insert(
-            std::make_pair(DPL::FromUTF8String("en"),locData));
+        std::make_pair(DPL::FromUTF8String("en"), locData));
 
     //userAgentLoc
 
@@ -181,7 +196,7 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     icon.height = 10;
     LocaleSet locs;
     locs.insert(DPL::FromUTF8String("en"));
-    WidgetRegisterInfo::LocalizedIcon locIcon(icon,locs);
+    WidgetRegisterInfo::LocalizedIcon locIcon(icon, locs);
     regInfo.localizationData.icons.push_back(locIcon);
 
     //start file
@@ -191,16 +206,16 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     WidgetRegisterInfo::LocalizedStartFile file;
     file.path = DPL::FromUTF8String("");
     file.propertiesForLocales.insert(
-            std::make_pair(DPL::FromUTF8String("en"), prop));
+        std::make_pair(DPL::FromUTF8String("en"), prop));
     regInfo.localizationData.startFiles.push_back(file);
 
     //widget pref
-    ConfigParserData::Preference pref(DPL::FromUTF8String(""),false);
+    ConfigParserData::Preference pref(DPL::FromUTF8String(""), false);
     pref.value = DPL::FromUTF8String("");
     regInfo.configInfo.preferencesList.insert(pref);
 
     //widget feature
-    ConfigParserData::Feature feat(DPL::FromUTF8String(""),false);
+    ConfigParserData::Feature feat(DPL::FromUTF8String(""), false);
     ConfigParserData::Param par(DPL::FromUTF8String(("")));
     par.value = DPL::FromUTF8String("");
     feat.paramsList.insert(par);
@@ -210,7 +225,7 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     regInfo.configInfo.windowModes.insert(DPL::FromUTF8String(""));
 
     //WARP info
-    ConfigParserData::AccessInfo access(DPL::FromUTF8String(""),true);
+    ConfigParserData::AccessInfo access(DPL::FromUTF8String(""), true);
     regInfo.configInfo.accessInfoSet.insert(access);
 
     //certificates
@@ -225,14 +240,15 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     WacSecurityMock security;
     security.getCertificateListRef().push_back(cert);
 
-    REGISTER_WIDGET(regInfo,security);
+    REGISTER_WIDGET(regInfo, security);
 }
 
 /*
-Name: widget_dao_test_register_widget_empty_strings
-Description: Tests possiblity of registering twice same content (different tizenId)
-Expected: it should be possible
-*/
+ * Name: widget_dao_test_register_widget_empty_strings
+ * Description: Tests possiblity of registering twice same content (different
+ * tizenId)
+ * Expected: it should be possible
+ */
 RUNNER_TEST(widget_dao_test_twice_install_same_widget)
 {
     WacSecurityMock sec;
@@ -244,14 +260,13 @@ RUNNER_TEST(widget_dao_test_twice_install_same_widget)
         WidgetRegisterInfo regInfo;
         REGISTER_WIDGET(regInfo, sec);
     }
-
 }
 
 /*
-Name: widget_dao_test_register_widget_minimum_info
-Description: Tests simplest registeration of new widget
-Expected: widget should be registered in database
-*/
+ * Name: widget_dao_test_register_widget_minimum_info
+ * Description: Tests simplest registeration of new widget
+ * Expected: widget should be registered in database
+ */
 RUNNER_TEST(widget_dao_test_register_widget_minimum_info)
 {
     WacSecurityMock sec;
@@ -259,8 +274,7 @@ RUNNER_TEST(widget_dao_test_register_widget_minimum_info)
 
     TizenAppId lastTizenAppId;
 
-    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
-    {
+    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number) {
         WidgetRegisterInfo regInfo;
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
@@ -272,17 +286,16 @@ RUNNER_TEST(widget_dao_test_register_widget_minimum_info)
 }
 
 /*
-Name: widget_dao_test_register_widget_info
-Description: Tests registeration of many widgets
-Expected: all widgets should be registered in database
-*/
+ * Name: widget_dao_test_register_widget_info
+ * Description: Tests registeration of many widgets
+ * Expected: all widgets should be registered in database
+ */
 RUNNER_TEST(widget_dao_test_register_widget_info)
 {
     WacSecurityMock sec;
     const std::size_t NUMBER_OF_WIDGETS = 5;
 
-    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
-    {
+    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number) {
         std::ostringstream str;
         str << "register_info_test_" << number;
 
@@ -312,62 +325,59 @@ RUNNER_TEST(widget_dao_test_register_widget_info)
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getAuthorHref(), str.str());
         RUNNER_ASSERT_WHAT_EQUALS(dao.getBaseFolder(), str.str() + "/");
         RUNNER_ASSERT(dao.getWebkitPluginsRequired() == false);
-//        RUNNER_ASSERT(
-//            dao.GetWidgetSecurityDomain() == WacSecurity::Trusted);
+        //        RUNNER_ASSERT(
+        //            dao.GetWidgetSecurityDomain() == WacSecurity::Trusted);
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getMinimumWacVersion(), "1.0");
     }
-
 }
 
 /*
-Name: widget_dao_test_register_widget_extended_info
-Description: Tests registeration of widget_extended_info
-Expected: registeration of extended inforamtion is checked
- via existence of backgroudn page value
-*/
+ * Name: widget_dao_test_register_widget_extended_info
+ * Description: Tests registeration of widget_extended_info
+ * Expected: registeration of extended inforamtion is checked
+ * via existence of backgroudn page value
+ */
 RUNNER_TEST(widget_dao_test_register_widget_extended_info)
 {
     WacSecurityMock sec;
     const std::size_t NUMBER_OF_WIDGETS = 5;
 
-    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
-    {
+    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number) {
         std::ostringstream str;
         str << "register_ext_info_test_" << number;
 
         WidgetRegisterInfo regInfo;
 
-//        regInfo.shareHref = str.str();
+        //        regInfo.shareHref = str.str();
         regInfo.configInfo.backgroundPage = L"background.html";
 
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
         WidgetDAO dao(tizenAppId);
-//        RUNNER_ASSERT_WHAT_EQUALS(dao.GetShareHref(), str.str());
+        //        RUNNER_ASSERT_WHAT_EQUALS(dao.GetShareHref(), str.str());
 
         RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getBackgroundPage(),
-                "background.html");
+                                           "background.html");
     }
 }
 
 /*
-Name: widget_dao_test_register_widget_localized_info
-Description: Tests registeration of localized widgets information
-Expected: values received by dao should match those which were registered
-*/
+ * Name: widget_dao_test_register_widget_localized_info
+ * Description: Tests registeration of localized widgets information
+ * Expected: values received by dao should match those which were registered
+ */
 RUNNER_TEST(widget_dao_test_register_widget_localized_info)
 {
     WacSecurityMock sec;
     const std::size_t NUMBER_OF_WIDGETS = 5;
 
-    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number)
-    {
+    for (std::size_t number = 0; number < NUMBER_OF_WIDGETS; ++number) {
         WidgetRegisterInfo regInfo;
         std::ostringstream str_en;
         std::ostringstream str_pl;
         str_en << "register_loc_info_test_en_" << number;
-        str_pl<< "register_loc_info_test_pl_"  << number;
-        {//EN
+        str_pl << "register_loc_info_test_pl_" << number;
+        { //EN
             ConfigParserData::LocalizedData locDataEn;
             locDataEn.name = DPL::FromUTF8String(str_en.str());
             locDataEn.shortName = DPL::FromUTF8String(str_en.str());
@@ -376,10 +386,10 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
             locDataEn.licenseFile = DPL::FromUTF8String(str_en.str());
             locDataEn.licenseHref = DPL::FromUTF8String(str_en.str());
             regInfo.configInfo.localizedDataSet.insert(
-                    std::make_pair(DPL::FromUTF8String("en"),locDataEn));
+                std::make_pair(DPL::FromUTF8String("en"), locDataEn));
         }
 
-        {//PL
+        { //PL
             ConfigParserData::LocalizedData locDataPl;
             locDataPl.name = DPL::FromUTF8String(str_pl.str());
             locDataPl.shortName = DPL::FromUTF8String(str_pl.str());
@@ -388,7 +398,7 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
             locDataPl.licenseFile = DPL::FromUTF8String(str_pl.str());
             locDataPl.licenseHref = DPL::FromUTF8String(str_pl.str());
             regInfo.configInfo.localizedDataSet.insert(
-                    std::make_pair(DPL::FromUTF8String("pl"),locDataPl));
+                std::make_pair(DPL::FromUTF8String("pl"), locDataPl));
         }
 
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
@@ -397,9 +407,9 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
         RUNNER_ASSERT_MSG(dao.getLanguageTags().size() == 2,
                           "language tags list invalid");
 
-        {//EN
+        { //EN
             WidgetLocalizedInfo locInfo =
-                    dao.getLocalizedInfo(DPL::FromUTF8String("en"));
+                dao.getLocalizedInfo(DPL::FromUTF8String("en"));
 
             RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(locInfo.name,
                                                str_en.str());
@@ -413,9 +423,9 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
                                                str_en.str());
         }
 
-        {//PL
+        { //PL
             WidgetLocalizedInfo locInfo =
-                    dao.getLocalizedInfo(DPL::FromUTF8String("pl"));
+                dao.getLocalizedInfo(DPL::FromUTF8String("pl"));
 
             RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(locInfo.name,
                                                str_pl.str());
@@ -432,11 +442,11 @@ RUNNER_TEST(widget_dao_test_register_widget_localized_info)
 }
 
 /*
-Name: widget_dao_test_register_widget_icons
-Description: Tests registeration of localized icons information
-Expected: values received by dao should match those which were registered
- for icon
-*/
+ * Name: widget_dao_test_register_widget_icons
+ * Description: Tests registeration of localized icons information
+ * Expected: values received by dao should match those which were registered
+ * for icon
+ */
 RUNNER_TEST(widget_dao_test_register_widget_icons)
 {
     WacSecurityMock sec;
@@ -447,7 +457,7 @@ RUNNER_TEST(widget_dao_test_register_widget_icons)
     icon.height = 10;
     LocaleSet locs;
     locs.insert(DPL::FromUTF8String("en"));
-    WidgetRegisterInfo::LocalizedIcon locIcon(icon,locs);
+    WidgetRegisterInfo::LocalizedIcon locIcon(icon, locs);
     regInfo.localizationData.icons.push_back(locIcon);
 
     TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
@@ -458,9 +468,9 @@ RUNNER_TEST(widget_dao_test_register_widget_icons)
     RUNNER_ASSERT(list.size() == regInfo.localizationData.icons.size());
     WidgetDAOReadOnly::WidgetIconList::const_iterator it1 = list.begin();
     WidgetRegisterInfo::LocalizedIconList::const_iterator it2 =
-            regInfo.localizationData.icons.begin();
-    for(;it1!=list.end() && it2!=regInfo.localizationData.icons.end();
-        ++it1,++it2)
+        regInfo.localizationData.icons.begin();
+    for (; it1 != list.end() && it2 != regInfo.localizationData.icons.end();
+         ++it1, ++it2)
     {
         RUNNER_ASSERT(it2->height == it1->iconHeight);
         RUNNER_ASSERT(it2->width == it1->iconWidth);
@@ -470,10 +480,10 @@ RUNNER_TEST(widget_dao_test_register_widget_icons)
 }
 
 /*
-Name: widget_dao_test_register_widget_start_files
-Description: Tests registeration of localized start files
-Expected: no expectations as it should be removed
-*/
+ * Name: widget_dao_test_register_widget_start_files
+ * Description: Tests registeration of localized start files
+ * Expected: no expectations as it should be removed
+ */
 RUNNER_TEST(widget_dao_test_register_widget_start_files)
 {
     WacSecurityMock sec;
@@ -484,8 +494,8 @@ RUNNER_TEST(widget_dao_test_register_widget_start_files)
     prop1.encoding = DPL::FromUTF8String("enc1");
     prop1.type = DPL::FromUTF8String("type1");
 
-    map1.insert(std::make_pair(DPL::FromUTF8String("en"),prop1));
-    map1.insert(std::make_pair(DPL::FromUTF8String("pl"),prop1));
+    map1.insert(std::make_pair(DPL::FromUTF8String("en"), prop1));
+    map1.insert(std::make_pair(DPL::FromUTF8String("pl"), prop1));
 
     WidgetRegisterInfo::LocalizedStartFile file1;
     WidgetRegisterInfo::LocalizedStartFile file2;
@@ -507,22 +517,22 @@ RUNNER_TEST(widget_dao_test_register_widget_start_files)
 }
 
 /*
-Name: widget_dao_test_register_widget_features
-Description: Tests registeration of features of widget
-Expected: number of features should match (for given widget reginfo)
-*/
+ * Name: widget_dao_test_register_widget_features
+ * Description: Tests registeration of features of widget
+ * Expected: number of features should match (for given widget reginfo)
+ */
 RUNNER_TEST(widget_dao_test_register_widget_features)
 {
     WacSecurityMock sec;
     ConfigParserData::FeaturesList features;
-    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f1"),true));
+    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f1"), true));
     features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f2")));
     features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f3"),
                                               false));
 
     WidgetRegisterInfo regInfo;
     FOREACH(it, features)
-        regInfo.configInfo.featuresList.insert(*it);
+    regInfo.configInfo.featuresList.insert(*it);
 
     TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
@@ -530,16 +540,16 @@ RUNNER_TEST(widget_dao_test_register_widget_features)
     WidgetFeatureSet out = dao.getFeaturesList();
     RUNNER_ASSERT_MSG(out.size() == features.size(),
                       "wrong number of features");
-//    FOREACH(it, out)
-//        RUNNER_ASSERT(features.find(*it) != features.end());
+    //    FOREACH(it, out)
+    //        RUNNER_ASSERT(features.find(*it) != features.end());
 }
 
 /*
-Name: widget_dao_test_register_widget_security_settings
-Description: Tests registeration of dafault values of security settings
-Expected: widget should be registered in database.
- Returned values should match dafault.
-*/
+ * Name: widget_dao_test_register_widget_security_settings
+ * Description: Tests registeration of dafault values of security settings
+ * Expected: widget should be registered in database.
+ * Returned values should match dafault.
+ */
 RUNNER_TEST(widget_dao_test_register_widget_security_settings)
 {
     WacSecurityMock sec;
@@ -547,60 +557,130 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
     WidgetDAO dao(tizenAppId);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_ON, "SecurityPopupUsage is not deafult on");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON, "GeolocationUsage is not deafult on");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage is not deafult on");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage is not deafult on");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage is not deafult on");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "SecurityPopupUsage is not deafult on");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "GeolocationUsage is not deafult on");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebNotificationUsage is not deafult on");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebDatabaseUsage is not deafult on");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage is not deafult on");
 
     dao.setSecurityPopupUsage(WrtDB::SETTINGS_TYPE_OFF);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage - wrong value");
 
     dao.setGeolocationUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage - wrong value");
 
     dao.setWebNotificationUsage(WrtDB::SETTINGS_TYPE_OFF);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage - wrong value");
 
     dao.setWebDatabaseUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage - wrong value");
 
     dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_OFF);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_OFF, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "FileSystemUsage - wrong value");
 
     dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_ON);
-    RUNNER_ASSERT_MSG(dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF, "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF, "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK, "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON, "FileSystemUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "SecurityPopupUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "GeolocationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
+        "WebNotificationUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
+        "WebDatabaseUsage - wrong value");
+    RUNNER_ASSERT_MSG(
+        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
+        "FileSystemUsage - wrong value");
 }
 
 /*
-Name: widget_dao_test_register_widget_win_modes
-Description: Tests registeration of window modes
-Expected: all modes should be returned from dao
-*/
+ * Name: widget_dao_test_register_widget_win_modes
+ * Description: Tests registeration of window modes
+ * Expected: all modes should be returned from dao
+ */
 RUNNER_TEST(widget_dao_test_register_widget_win_modes)
 {
     WacSecurityMock sec;
@@ -611,7 +691,7 @@ RUNNER_TEST(widget_dao_test_register_widget_win_modes)
     WidgetRegisterInfo regInfo;
 
     FOREACH(it, modes)
-        regInfo.configInfo.windowModes.insert(*it);
+    regInfo.configInfo.windowModes.insert(*it);
 
     TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
@@ -620,14 +700,14 @@ RUNNER_TEST(widget_dao_test_register_widget_win_modes)
     RUNNER_ASSERT_MSG(modes.size() == wins.size(),
                       "wrong number of window modes");
     FOREACH(it, wins)
-        RUNNER_ASSERT(modes.find(*it) != modes.end());
+    RUNNER_ASSERT(modes.find(*it) != modes.end());
 }
 
 /*
-Name: widget_dao_test_register_widget_warp_info
-Description: Tests registeration of access info iris
-Expected: all access info iris should be returned from dao
-*/
+ * Name: widget_dao_test_register_widget_warp_info
+ * Description: Tests registeration of access info iris
+ * Expected: all access info iris should be returned from dao
+ */
 RUNNER_TEST(widget_dao_test_register_widget_warp_info)
 {
     WacSecurityMock sec;
@@ -641,7 +721,7 @@ RUNNER_TEST(widget_dao_test_register_widget_warp_info)
 
     WidgetRegisterInfo regInfo;
     FOREACH(it, orig)
-        regInfo.configInfo.accessInfoSet.insert(*it);
+    regInfo.configInfo.accessInfoSet.insert(*it);
 
     TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
 
@@ -652,17 +732,17 @@ RUNNER_TEST(widget_dao_test_register_widget_warp_info)
     RUNNER_ASSERT_MSG(out.size() == orig.size(),
                       "wrong number of access info elem");
     FOREACH(it, out){
-        ConfigParserData::AccessInfo tmp(it->strIRI,it->bSubDomains);
+        ConfigParserData::AccessInfo tmp(it->strIRI, it->bSubDomains);
         RUNNER_ASSERT(orig.find(tmp) != orig.end());
     }
 }
 
 /*
-Name: widget_dao_test_register_widget_certificates
-Description: Tests registeration of widget certificates
-Expected: all certificates should be returned from dao
- and should contain inserted data
-*/
+ * Name: widget_dao_test_register_widget_certificates
+ * Description: Tests registeration of widget certificates
+ * Expected: all certificates should be returned from dao
+ * and should contain inserted data
+ */
 RUNNER_TEST(widget_dao_test_register_widget_certificates)
 {
     WacSecurityMock sec;
@@ -690,32 +770,34 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
 
     auto recListIt = recList.begin();
     auto certListIt = certListRef.begin();
-    for(;recListIt != recList.end() && certListIt != certListRef.end();
-        ++recListIt,++certListIt)
+    for (; recListIt != recList.end() && certListIt != certListRef.end();
+         ++recListIt, ++certListIt)
     {
         RUNNER_ASSERT(recListIt->chainId == certListIt->chainId);
         RUNNER_ASSERT(recListIt->owner == certListIt->owner);
         RUNNER_ASSERT(recListIt->strCommonName == certListIt->strCommonName);
         RUNNER_ASSERT(recListIt->strMD5Fingerprint ==
-                certListIt->strMD5Fingerprint);
+                      certListIt->strMD5Fingerprint);
         RUNNER_ASSERT(recListIt->strSHA1Fingerprint ==
-                certListIt->strSHA1Fingerprint);
+                      certListIt->strSHA1Fingerprint);
         RUNNER_ASSERT(recListIt->type == certListIt->type);
     }
 
     // fingerprints
     RUNNER_ASSERT(dao.getKeyFingerprints(WidgetCertificateData::DISTRIBUTOR,
-            WidgetCertificateData::ENDENTITY).empty());
+                                         WidgetCertificateData::ENDENTITY).
+                      empty());
     RUNNER_ASSERT(dao.getKeyFingerprints(WidgetCertificateData::AUTHOR,
-            WidgetCertificateData::ENDENTITY).empty());
+                                         WidgetCertificateData::ENDENTITY).
+                      empty());
     RUNNER_ASSERT(dao.getKeyFingerprints(WidgetCertificateData::DISTRIBUTOR,
-            WidgetCertificateData::ROOT).empty());
+                                         WidgetCertificateData::ROOT).empty());
 
     FingerPrintList fingerprints = dao.getKeyFingerprints(
             WidgetCertificateData::AUTHOR,
             WidgetCertificateData::ROOT);
 
-    RUNNER_ASSERT(fingerprints.size() == certListRef.size()*2);
+    RUNNER_ASSERT(fingerprints.size() == certListRef.size() * 2);
     FOREACH(it, certListRef)
     {
         auto md5 = std::find(fingerprints.begin(),
@@ -731,11 +813,13 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
 
     // common names
     RUNNER_ASSERT(dao.getKeyCommonNameList(WidgetCertificateData::DISTRIBUTOR,
-            WidgetCertificateData::ENDENTITY).empty());
+                                           WidgetCertificateData::ENDENTITY).
+                      empty());
     RUNNER_ASSERT(dao.getKeyCommonNameList(WidgetCertificateData::AUTHOR,
-            WidgetCertificateData::ENDENTITY).empty());
+                                           WidgetCertificateData::ENDENTITY).
+                      empty());
     RUNNER_ASSERT(dao.getKeyCommonNameList(WidgetCertificateData::DISTRIBUTOR,
-            WidgetCertificateData::ROOT).empty());
+                                           WidgetCertificateData::ROOT).empty());
 
     FingerPrintList commonNames = dao.getKeyCommonNameList(
             WidgetCertificateData::AUTHOR,
@@ -752,10 +836,10 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
 }
 
 /*
-Name: widget_dao_test_is_widget_installed
-Description: Tests checking if widgets are installed
-Expected: installed widgets should be stated as installed
-*/
+ * Name: widget_dao_test_is_widget_installed
+ * Description: Tests checking if widgets are installed
+ * Expected: installed widgets should be stated as installed
+ */
 RUNNER_TEST(widget_dao_test_is_widget_installed)
 {
     RUNNER_ASSERT(WidgetDAO::isWidgetInstalled(L"tizenid201"));
@@ -769,10 +853,10 @@ RUNNER_TEST(widget_dao_test_is_widget_installed)
 }
 
 /*
-Name: widget_dao_test_unregister_widget
-Description: Tests unregistering widgets
-Expected: widget register informations should be successfully removed
-*/
+ * Name: widget_dao_test_unregister_widget
+ * Description: Tests unregistering widgets
+ * Expected: widget register informations should be successfully removed
+ */
 RUNNER_TEST(widget_dao_test_unregister_widget)
 {
     WacSecurityMock sec;
@@ -789,10 +873,10 @@ RUNNER_TEST(widget_dao_test_unregister_widget)
 }
 
 /*
-Name: widget_dao_test_register_or_update_widget
-Description: Tests reregistering widgets
-Expected: widget should be successfully replaced
-*/
+ * Name: widget_dao_test_register_or_update_widget
+ * Description: Tests reregistering widgets
+ * Expected: widget should be successfully replaced
+ */
 RUNNER_TEST(widget_dao_test_register_or_update_widget)
 {
     WacSecurityMock sec;
@@ -809,23 +893,27 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
 
     //first installation
     WidgetDAO::registerWidget(tizenAppId, regInfo, sec);
-    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId), "Widget is not registered");
+    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(
+                          tizenAppId), "Widget is not registered");
 
     //success full update
     WidgetDAO::registerOrUpdateWidget(tizenAppId, regInfo2, sec);
-    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(tizenAppId), "Widget is not reregistered");
+    RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(
+                          tizenAppId), "Widget is not reregistered");
     WidgetDAO dao(tizenAppId);
-    RUNNER_ASSERT_MSG(*dao.getVersion() == L"1.1", "Data widget was not updated");
-    RUNNER_ASSERT_MSG(*dao.getAuthorName() == L"BBB", "Data widget was not updated");
+    RUNNER_ASSERT_MSG(
+        *dao.getVersion() == L"1.1", "Data widget was not updated");
+    RUNNER_ASSERT_MSG(
+        *dao.getAuthorName() == L"BBB", "Data widget was not updated");
 
     WidgetDAO::unregisterWidget(tizenAppId);
 }
 
 /*
-Name: widget_dao_test_get_widget_tizenAppId_list
-Description: Tests getTizenAppidList API for backendlib
-Expected: For all position in database should be returned one item in list
-*/
+ * Name: widget_dao_test_get_widget_tizenAppId_list
+ * Description: Tests getTizenAppidList API for backendlib
+ * Expected: For all position in database should be returned one item in list
+ */
 RUNNER_TEST(widget_dao_test_get_widget_tizenAppId_list)
 {
     TizenAppIdList tizenAppIds = WidgetDAO::getTizenAppidList();
@@ -833,11 +921,11 @@ RUNNER_TEST(widget_dao_test_get_widget_tizenAppId_list)
 }
 
 /*
-Name: widget_dao_test_get_widget_list
-Description: Tests getTizenAppidList API for backendlib
-Expected: For all position in database should be returned one item in list
- Those item should contain valid tizenAppId
-*/
+ * Name: widget_dao_test_get_widget_list
+ * Description: Tests getTizenAppidList API for backendlib
+ * Expected: For all position in database should be returned one item in list
+ * Those item should contain valid tizenAppId
+ */
 RUNNER_TEST(widget_dao_test_get_widget_list)
 {
     WidgetDAOReadOnlyList list = WidgetDAOReadOnly::getWidgetList();
@@ -847,10 +935,10 @@ RUNNER_TEST(widget_dao_test_get_widget_list)
 }
 
 /*
-Name: widget_dao_test_get_widget_attributes
-Description: Tests returning basic widget attributes by dao
-Expected: Attributes should match values inserted into database
-*/
+ * Name: widget_dao_test_get_widget_attributes
+ * Description: Tests returning basic widget attributes by dao
+ * Expected: Attributes should match values inserted into database
+ */
 RUNNER_TEST(widget_dao_test_get_widget_attributes)
 {
     {
@@ -870,10 +958,11 @@ RUNNER_TEST(widget_dao_test_get_widget_attributes)
 }
 
 /*
-Name: widget_dao_test_localization
-Description: Tests inserting and returning localization info
-Expected: Values inserted into database should match values received from database
-*/
+ * Name: widget_dao_test_localization
+ * Description: Tests inserting and returning localization info
+ * Expected: Values inserted into database should match values received from
+ * database
+ */
 RUNNER_TEST(widget_dao_test_localization)
 {
     WacSecurityMock sec;
@@ -886,7 +975,7 @@ RUNNER_TEST(widget_dao_test_localization)
     LocaleSet locs;
     locs.insert(DPL::FromUTF8String("en"));
     locs.insert(DPL::FromUTF8String("pl"));
-    WidgetRegisterInfo::LocalizedIcon locIcon(icon,locs);
+    WidgetRegisterInfo::LocalizedIcon locIcon(icon, locs);
     regInfo.localizationData.icons.push_back(locIcon);
 
     //start file
@@ -901,9 +990,9 @@ RUNNER_TEST(widget_dao_test_localization)
     WidgetRegisterInfo::LocalizedStartFile file;
     file.path = DPL::FromUTF8String("path");
     file.propertiesForLocales.insert(
-            std::make_pair(DPL::FromUTF8String("en"), prop_en));
+        std::make_pair(DPL::FromUTF8String("en"), prop_en));
     file.propertiesForLocales.insert(
-            std::make_pair(DPL::FromUTF8String("pl"), prop_pl));
+        std::make_pair(DPL::FromUTF8String("pl"), prop_pl));
     regInfo.localizationData.startFiles.push_back(file);
 
     // register widget
@@ -922,7 +1011,9 @@ RUNNER_TEST(widget_dao_test_localization)
     // compare every icon with the origin
     auto locsIt = locs.begin();
     auto iconIt = locList.begin();
-    for(;locsIt!=locs.end() && iconIt!=locList.end();++locsIt,++iconIt) {
+    for (; locsIt != locs.end() && iconIt != locList.end(); ++locsIt,
+         ++iconIt)
+    {
         RUNNER_ASSERT(iconIt->appId == dao.getHandle());
         RUNNER_ASSERT(iconIt->iconId == iconId);
         RUNNER_ASSERT(iconIt->widgetLocale == *locsIt);
@@ -934,7 +1025,7 @@ RUNNER_TEST(widget_dao_test_localization)
 
     int startFileId = dao.getStartFileList().front().startFileId;
 
-    FOREACH(it,fList)
+    FOREACH(it, fList)
     {
         RUNNER_ASSERT(it->appId == dao.getHandle());
         auto propIt = file.propertiesForLocales.find(it->widgetLocale);
@@ -946,10 +1037,11 @@ RUNNER_TEST(widget_dao_test_localization)
 }
 
 /*
-Name: widget_dao_test_wac_security
-Description: Tests inserting and returning wac security information
-Expected: Values inserted into database should match values received from database
-*/
+ * Name: widget_dao_test_wac_security
+ * Description: Tests inserting and returning wac security information
+ * Expected: Values inserted into database should match values received from
+ * database
+ */
 RUNNER_TEST(widget_dao_test_wac_security)
 {
     WacSecurityMock sec;
@@ -978,10 +1070,11 @@ RUNNER_TEST(widget_dao_test_wac_security)
 }
 
 /*
-Name: widget_dao_test_register_scp
-Description: Tests inserting and returning scp policy information
-Expected: Value inserted into database should match values received from database
-*/
+ * Name: widget_dao_test_register_scp
+ * Description: Tests inserting and returning scp policy information
+ * Expected: Value inserted into database should match values received from
+ * database
+ */
 RUNNER_TEST(widget_dao_test_register_scp)
 {
     WacSecurityMock sec;
@@ -993,15 +1086,17 @@ RUNNER_TEST(widget_dao_test_register_scp)
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
         WidgetDAO dao(tizenAppId);
 
-        RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(dao.getCspPolicy(), DPL::ToUTF8String(*policy));
+        RUNNER_ASSERT_WHAT_EQUALS_OPTIONAL(
+            dao.getCspPolicy(), DPL::ToUTF8String(*policy));
     }
 }
 
 /*
-Name: widget_dao_test_register_csp_empty
-Description: Tests inserting and returning empty csp policy
-Expected: Value inserted into database should match values received from database
-*/
+ * Name: widget_dao_test_register_csp_empty
+ * Description: Tests inserting and returning empty csp policy
+ * Expected: Value inserted into database should match values received from
+ * database
+ */
 RUNNER_TEST(widget_dao_test_register_csp_empty)
 {
     WacSecurityMock sec;

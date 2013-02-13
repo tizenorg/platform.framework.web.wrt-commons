@@ -26,48 +26,71 @@
 RUNNER_TEST_GROUP_INIT(DPL)
 
 class MyException
-{
-};
+{};
 
 class MyDPLException
 {
-public:
+  public:
     DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
     DECLARE_EXCEPTION_TYPE(Base, MyException)
 };
 
-class MySTDException
-    : public std::exception
+class MySTDException :
+    public std::exception
 {
-public:
-    virtual const char* what()const throw() { return "my std exception occurred";}
+  public:
+    virtual const char* what() const throw()
+    {
+        return "my std exception occurred";
+    }
 };
 
+/*
+Name: Log_Unknown_Exception
+Description: tests exceptions catching macros
+Expected: unknown exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_Unknown_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN
     {
-//        throw MyException();
+        //        throw MyException();
     }
     UNHANDLED_EXCEPTION_HANDLER_END
     RUNNER_ASSERT(true);
 }
 
+/*
+Name: Log_DPL_Exception
+Description: tests exceptions catching macros
+Expected: DPL exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_DPL_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN
     {
-//        Throw(MyDPLException::MyException);
+        //        Throw(MyDPLException::MyException);
     }
     UNHANDLED_EXCEPTION_HANDLER_END
     RUNNER_ASSERT(true);
 }
 
+/*
+Name: Log_STD_Exception
+Description: tests exceptions catching macros
+Expected: STD exception should be catched
+
+TODO: workaround abort call
+*/
 RUNNER_TEST(Log_STD_Exception)
 {
     UNHANDLED_EXCEPTION_HANDLER_BEGIN
     {
-//        throw MySTDException();
+        //        throw MySTDException();
     }
     UNHANDLED_EXCEPTION_HANDLER_END
     RUNNER_ASSERT(true);

@@ -33,10 +33,11 @@
 #include <dpl/sstream.h>
 
 namespace WrtDB {
-
-std::map<DbWidgetHandle,WidgetDAO::WidgetStartFileList> WidgetDAO::s_startFileMap;
-std::map<DbWidgetHandle,WidgetDAO::LocalizedStartFileList> WidgetDAO::s_localizedStartFileMap;
-std::map<DbWidgetHandle,DPL::String> WidgetDAO::s_pathMap;
+std::map<DbWidgetHandle,
+         WidgetDAO::WidgetStartFileList> WidgetDAO::s_startFileMap;
+std::map<DbWidgetHandle,
+         WidgetDAO::LocalizedStartFileList> WidgetDAO::s_localizedStartFileMap;
+std::map<DbWidgetHandle, DPL::String> WidgetDAO::s_pathMap;
 
 DbWidgetHandle WidgetDAO::getHandle(const WidgetGUID /* GUID */) const
 {
@@ -61,8 +62,8 @@ void WidgetDAO::setPath(const DPL::String &path) const
 }
 
 WidgetLocalizedInfo
-        WidgetDAO::getLocalizedInfo(const DPL::String& /* languageTag */)
-        const
+WidgetDAO::getLocalizedInfo(const DPL::String& /* languageTag */)
+const
 {
     LogError("Not implemented!");
     return WidgetLocalizedInfo();
@@ -91,7 +92,9 @@ WidgetDAO::LocalizedStartFileList WidgetDAO::getLocalizedStartFileList() const
     return s_localizedStartFileMap[m_widgetHandle];
 }
 
-void WidgetDAO::setLocalizedStartFileList(const LocalizedStartFileList &list) const {
+void WidgetDAO::setLocalizedStartFileList(const LocalizedStartFileList &list)
+const
+{
     s_localizedStartFileMap[m_widgetHandle] = list;
 }
 
@@ -104,5 +107,4 @@ void WidgetDAO::setStartFileList(const WidgetStartFileList &list) const
 {
     s_startFileMap[m_widgetHandle] = list;
 }
-
 } // namespace WrtDB

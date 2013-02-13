@@ -24,15 +24,15 @@
 extern DPL::Mutex g_autoSaveDbQueriesMutex;
 
 #define AUTOSAVE_DB_INTERNAL(tlsCommand, InternalType, interface)            \
-    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL; \
+    static DPL::ThreadLocalVariable<InternalType> *tlsCommand##Ptr = NULL; \
     {                                                                        \
         DPL::Mutex::ScopedLock lock(&g_autoSaveDbQueriesMutex);              \
-        if (!tlsCommand ## Ptr) {                                            \
+        if (!tlsCommand##Ptr) {                                            \
             static DPL::ThreadLocalVariable<InternalType> tmp;               \
-            tlsCommand ## Ptr = &tmp;                                        \
+            tlsCommand##Ptr = &tmp;                                        \
         }                                                                    \
     }                                                                        \
-    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr; \
+    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand##Ptr; \
     if (tlsCommand.IsNull()) { tlsCommand = InternalType(interface); }
 
 #define AUTOSAVE_DB_SELECT(name, type, interface) \
@@ -49,9 +49,7 @@ extern DPL::Mutex g_autoSaveDbQueriesMutex;
 
 namespace AutoSaveDB {
 namespace Interface {
-
 extern DPL::DB::ThreadDatabaseSupport m_autoSavedbInterface;
-
 } // namespace Interface
 } // namespace AutoSaveDB
 

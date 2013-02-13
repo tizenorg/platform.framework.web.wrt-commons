@@ -107,7 +107,6 @@ typedef struct ace_request_2_s
 #define PLUGIN_API_ACCESS_DENIED 0
 #define PLUGIN_API_ACCESS_ERROR -1
 
-
 typedef const void* java_script_context_t;
 
 typedef struct js_object_properties_s
@@ -120,10 +119,11 @@ typedef const void* js_class_template_t;
 typedef void* js_object_ref_t;
 typedef const void* js_value_ref_t;
 
-typedef js_class_template_t (*js_class_template_getter) (void);
+typedef js_class_template_t (*js_class_template_getter)(void);
 typedef void* (*js_class_constructor_cb_t)(js_class_template_t,
-        js_object_ref_t, size_t, js_value_ref_t[],
-        js_value_ref_t*);
+                                           js_object_ref_t, size_t,
+                                           js_value_ref_t[],
+                                           js_value_ref_t*);
 
 typedef enum class_definition_type_e
 {
@@ -140,7 +140,7 @@ typedef enum class_definition_iframe_behaviour_e
     //object should be copied as reference to each iframe
     REFERENCE,
     //object should be created for each iframe and NOT inform plugin
-    CREATE_INSTANCE,
+    CREATE_INSTANCE
 } class_definition_iframe_behaviour_t;
 
 typedef enum class_definition_iframe_notice_e
@@ -159,9 +159,9 @@ typedef enum class_definition_iframe_overlay_e
 
 typedef void* js_object_instance_t;
 //global_context - id
-typedef void(*iframe_loaded_cb)(java_script_context_t global_context,
-                                js_object_instance_t iframe,
-                                js_object_instance_t object);
+typedef void (*iframe_loaded_cb)(java_script_context_t global_context,
+                                 js_object_instance_t iframe,
+                                 js_object_instance_t object);
 
 typedef void* (*js_function_impl)(void*);
 
@@ -175,7 +175,6 @@ typedef struct class_definition_options_s
     void * private_data;
     js_function_impl function;
 } class_definition_options_t;
-
 
 /*
  * list of device caps
@@ -204,7 +203,6 @@ typedef struct feature_mapping_s
     size_t featuresCount;
 } feature_mapping_t;
 
-
 typedef feature_mapping_t* pfeature_mapping_t;
 
 typedef pfeature_mapping_t (*features_getter)(void);
@@ -226,7 +224,6 @@ typedef struct feature_mapping_interface_s
                                   * the release function ptr on features
                                   */
 } feature_mapping_interface_t;
-
 
 /*
  * This is a structure describing a JS entity template (a class, an interface

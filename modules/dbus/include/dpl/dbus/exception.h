@@ -27,7 +27,6 @@
 
 namespace DPL {
 namespace DBus {
-
 /**
  * Thrown when none of the following, more specific exception fit.
  */
@@ -42,7 +41,6 @@ DECLARE_EXCEPTION_TYPE(DBus::Exception, ConnectionClosedException)
  * Thrown when passing invalid argument(s).
  */
 DECLARE_EXCEPTION_TYPE(DBus::Exception, InvalidArgumentException)
-
 }
 }
 

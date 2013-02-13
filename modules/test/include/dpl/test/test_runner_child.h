@@ -26,9 +26,7 @@
 
 namespace DPL {
 namespace Test {
-
 void RunChildProc(TestRunner::TestCase procChild);
-
 } // namespace Test
 } // namespace DPL
 

@@ -25,5 +25,4 @@
 #include <wrt-commons/auto-save-dao/common_dao_types.h>
 #include <dpl/log/log.h>
 
-namespace AutoSaveDB {
-} // namespace AutoSaveDB
+namespace AutoSaveDB {} // namespace AutoSaveDB

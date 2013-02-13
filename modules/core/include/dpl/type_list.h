@@ -24,11 +24,10 @@
 
 #include <cstddef>
 
-namespace DPL
-{
+namespace DPL {
 class TypeListGuard
 {
-public:
+  public:
     template<size_t Index>
     struct Element
     {
@@ -42,15 +41,13 @@ public:
 template<typename HeadType, typename TailType>
 class TypeList
 {
-private:
+  private:
     class DummyClass
-    {
-    };
+    {};
 
     template<typename List, size_t Enum>
-    struct TypeCounter : public TypeCounter<typename List::Tail, Enum+1>
-    {
-    };
+    struct TypeCounter : public TypeCounter<typename List::Tail, Enum + 1>
+    {};
 
     template<size_t Enum>
     struct TypeCounter<TypeListGuard, Enum>
@@ -58,7 +55,7 @@ private:
         static const size_t Size = Enum;
     };
 
-public:
+  public:
     typedef TailType Tail;
     typedef HeadType Head;
     typedef TypeList<HeadType, TailType> ThisType;
@@ -90,11 +87,11 @@ public:
     static const size_t Size = TypeCounter<ThisType, 0>::Size;
 };
 
-template<typename T1  = TypeListGuard, typename T2  = TypeListGuard,
-         typename T3  = TypeListGuard, typename T4  = TypeListGuard,
-         typename T5  = TypeListGuard, typename T6  = TypeListGuard,
-         typename T7  = TypeListGuard, typename T8  = TypeListGuard,
-         typename T9  = TypeListGuard, typename T10 = TypeListGuard,
+template<typename T1 = TypeListGuard, typename T2 = TypeListGuard,
+         typename T3 = TypeListGuard, typename T4 = TypeListGuard,
+         typename T5 = TypeListGuard, typename T6 = TypeListGuard,
+         typename T7 = TypeListGuard, typename T8 = TypeListGuard,
+         typename T9 = TypeListGuard, typename T10 = TypeListGuard,
          typename T11 = TypeListGuard, typename T12 = TypeListGuard,
          typename T13 = TypeListGuard, typename T14 = TypeListGuard,
          typename T15 = TypeListGuard, typename T16 = TypeListGuard,
@@ -126,8 +123,8 @@ struct TypeListDecl
 {
     typedef TypeList<T1,
                      typename TypeListDecl<
-                         T2,  T3,  T4,  T5,  T6,  T7,  T8,
-                         T9,  T10, T11, T12, T13, T14, T15,
+                         T2, T3, T4, T5, T6, T7, T8,
+                         T9, T10, T11, T12, T13, T14, T15,
                          T16, T17, T18, T19, T20, T21, T22,
                          T23, T24, T25, T26, T27, T28, T29,
                          T30, T31, T32, T33, T34, T35, T36,

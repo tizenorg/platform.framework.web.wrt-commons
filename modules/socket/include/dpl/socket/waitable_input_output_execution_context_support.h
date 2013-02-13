@@ -17,7 +17,8 @@
  * @file        waitable_input_output_execution_context_support.h
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the header file for waitable input-output execution context support
+ * @brief       This file is the header file for waitable input-output execution
+ * context support
  */
 #ifndef DPL_WAITABLE_INPUT_OUTPUT_EXECUTION_CONTEXT_SUPPORT_H
 #define DPL_WAITABLE_INPUT_OUTPUT_EXECUTION_CONTEXT_SUPPORT_H
@@ -26,18 +27,15 @@
 #include <dpl/waitable_handle_watch_support.h>
 #include <dpl/binary_queue.h>
 
-namespace DPL
+namespace DPL {
+namespace Socket {
+class WaitableInputOutputExecutionContextSupport :
+    private WaitableHandleWatchSupport::WaitableHandleListener
 {
-namespace Socket
-{
-
-class WaitableInputOutputExecutionContextSupport
-    : private WaitableHandleWatchSupport::WaitableHandleListener
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, AlreadyOpened)
         DECLARE_EXCEPTION_TYPE(Base, NotOpened)
@@ -45,7 +43,7 @@ public:
         DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
     };
 
-private:
+  private:
     bool m_opened;
     AbstractWaitableInputOutput *m_waitableInputOutput;
 
@@ -65,9 +63,10 @@ private:
 
     void CheckedRemoveReadWriteWatch();
 
-    virtual void OnWaitableHandleEvent(WaitableHandle waitableHandle, WaitMode::Type mode);
+    virtual void OnWaitableHandleEvent(WaitableHandle waitableHandle,
+                                       WaitMode::Type mode);
 
-protected:
+  protected:
     // Incoming/Outgoing streams
     BinaryQueue m_inputStream;
     BinaryQueue m_outputStream;
@@ -84,7 +83,7 @@ protected:
     void Open(AbstractWaitableInputOutput *waitableInputOutput);
     void Close();
 
-public:
+  public:
     /**
      * Constructor
      */
@@ -95,7 +94,6 @@ public:
      */
     virtual ~WaitableInputOutputExecutionContextSupport();
 };
-
 }
 } // namespace DPL
 

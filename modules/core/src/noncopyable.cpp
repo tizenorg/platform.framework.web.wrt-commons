@@ -22,13 +22,10 @@
 #include <stddef.h>
 #include <dpl/noncopyable.h>
 
-namespace DPL
-{
+namespace DPL {
 Noncopyable::Noncopyable()
-{
-}
+{}
 
 Noncopyable::~Noncopyable()
-{
-}
+{}
 } // namespace DPL

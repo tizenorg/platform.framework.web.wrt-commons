@@ -44,12 +44,10 @@
 typedef DPL::OptionalString WidgetGUID;
 
 namespace ConfigParserData {
-
 struct Icon
 {
     Icon(const DPL::String& src) : src(src)
-    {
-    }
+    {}
     DPL::String src;
     DPL::OptionalInt width;
     DPL::OptionalInt height;
@@ -62,7 +60,6 @@ struct Icon
 };
 } // namespace ConfigParserData
 namespace WrtDB {
-
 typedef std::list<DPL::String> StringList;
 
 struct WidgetLocalizedInfo
@@ -96,7 +93,7 @@ class WidgetDAO
 
   protected:
     DbWidgetHandle m_widgetHandle;
- 
+
   public:
     struct WidgetLocalizedIconRow
     {
@@ -134,14 +131,13 @@ class WidgetDAO
     };
     typedef std::list<WidgetLocalizedStartFileRow> LocalizedStartFileList;
 
-
     /**
      * This is a constructor.
      *
      * @param[in] widgetHandle application id of widget.
      */
-    WidgetDAO(DbWidgetHandle widgetHandle)
-      : m_widgetHandle(widgetHandle)
+    WidgetDAO(DbWidgetHandle widgetHandle) :
+        m_widgetHandle(widgetHandle)
     {}
 
     /**
@@ -154,9 +150,13 @@ class WidgetDAO
      *
      * @return widget handle(m_widgetHandle).
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
+     * DB table.
      */
-    DbWidgetHandle getHandle() const { return m_widgetHandle; }
+    DbWidgetHandle getHandle() const
+    {
+        return m_widgetHandle;
+    }
     DbWidgetHandle getHandle(const WidgetGUID GUID) const;
     static DbWidgetHandle getHandle(const DPL::String tizenAppId);
 
@@ -219,12 +219,13 @@ class WidgetDAO
     void setStartFileList(const WidgetStartFileList &list) const;
 
     WidgetLocalizedInfo getLocalizedInfo(const DPL::String& languageTag) const;
-  protected:
-    static std::map<DbWidgetHandle,WidgetStartFileList> s_startFileMap;
-    static std::map<DbWidgetHandle,LocalizedStartFileList> s_localizedStartFileMap;
-    static std::map<DbWidgetHandle,DPL::String> s_pathMap;
-};
 
+  protected:
+    static std::map<DbWidgetHandle, WidgetStartFileList> s_startFileMap;
+    static std::map<DbWidgetHandle,
+                    LocalizedStartFileList> s_localizedStartFileMap;
+    static std::map<DbWidgetHandle, DPL::String> s_pathMap;
+};
 } // namespace WrtDB
 
 #endif // _WRT_SRC_CONFIGURATION_WIDGET_DAO_READ_ONLY_H_

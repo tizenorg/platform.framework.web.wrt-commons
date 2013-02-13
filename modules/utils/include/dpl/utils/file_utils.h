@@ -50,7 +50,6 @@ void MakePath(const std::string& path, mode_t mode);
  * @throw FileUtils::DirectoryRemoveException If an error occured.
  */
 void RemoveDir(const std::string& path);
-
 } // namespace FileUtils
 
 #endif

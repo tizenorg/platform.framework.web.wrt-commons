@@ -28,10 +28,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-namespace DPL
-{
-namespace Log
-{
+namespace DPL {
+namespace Log {
 namespace // anonymous
 {
 using namespace DPL::Colors::Text;
@@ -46,7 +44,6 @@ const char *WARNING_END = BOLD_GOLD_END;
 const char *PEDANTIC_BEGIN = PURPLE_BEGIN;
 const char *PEDANTIC_END = PURPLE_END;
 
-
 std::string GetFormattedTime()
 {
     timeval tv;
@@ -56,62 +53,103 @@ std::string GetFormattedTime()
     localtime_r(&tv.tv_sec, &localNowTime);
 
     char format[64];
-    snprintf(format, sizeof(format), "%02i:%02i:%02i.%03i", localNowTime.tm_hour, localNowTime.tm_min, localNowTime.tm_sec, static_cast<int>(tv.tv_usec / 1000));
+    snprintf(format,
+             sizeof(format),
+             "%02i:%02i:%02i.%03i",
+             localNowTime.tm_hour,
+             localNowTime.tm_min,
+             localNowTime.tm_sec,
+             static_cast<int>(tv.tv_usec / 1000));
     return format;
 }
-
 } // namespace anonymous
 
-std::string OldStyleLogProvider::FormatMessage(const char *message, const char *filename, int line, const char *function)
+std::string OldStyleLogProvider::FormatMessage(const char *message,
+                                               const char *filename,
+                                               int line,
+                                               const char *function)
 {
     std::ostringstream val;
 
     val << std::string("[") << GetFormattedTime() << std::string("] [") <<
-           static_cast<unsigned long>(pthread_self()) << "/" << static_cast<int>(getpid()) << std::string("] [") <<
-           LocateSourceFileName(filename) << std::string(":") << line <<
-           std::string("] ") << function << std::string("(): ") << message;
+    static_cast<unsigned long>(pthread_self()) << "/" <<
+    static_cast<int>(getpid()) << std::string("] [") <<
+    LocateSourceFileName(filename) << std::string(":") << line <<
+    std::string("] ") << function << std::string("(): ") << message;
 
     return val.str();
 }
 
-OldStyleLogProvider::OldStyleLogProvider(bool showDebug, bool showInfo, bool showWarning, bool showError, bool showPedantic)
-    : m_showDebug(showDebug),
-      m_showInfo(showInfo),
-      m_showWarning(showWarning),
-      m_showError(showError),
-      m_showPedantic(showPedantic)
+OldStyleLogProvider::OldStyleLogProvider(bool showDebug,
+                                         bool showInfo,
+                                         bool showWarning,
+                                         bool showError,
+                                         bool showPedantic) :
+    m_showDebug(showDebug),
+    m_showInfo(showInfo),
+    m_showWarning(showWarning),
+    m_showError(showError),
+    m_showPedantic(showPedantic)
+{}
+
+void OldStyleLogProvider::Debug(const char *message,
+                                const char *filename,
+                                int line,
+                                const char *function)
 {
+    if (m_showDebug) {
+        fprintf(stdout, "%s%s%s\n", DEBUG_BEGIN,
+                FormatMessage(message, filename, line,
+                              function).c_str(), DEBUG_END);
+    }
 }
 
-void OldStyleLogProvider::Debug(const char *message, const char *filename, int line, const char *function)
+void OldStyleLogProvider::Info(const char *message,
+                               const char *filename,
+                               int line,
+                               const char *function)
 {
-    if (m_showDebug)
-        fprintf(stdout, "%s%s%s\n", DEBUG_BEGIN, FormatMessage(message, filename, line, function).c_str(), DEBUG_END);
+    if (m_showInfo) {
+        fprintf(stdout, "%s%s%s\n", INFO_BEGIN,
+                FormatMessage(message, filename, line,
+                              function).c_str(), INFO_END);
+    }
 }
 
-void OldStyleLogProvider::Info(const char *message, const char *filename, int line, const char *function)
+void OldStyleLogProvider::Warning(const char *message,
+                                  const char *filename,
+                                  int line,
+                                  const char *function)
 {
-    if (m_showInfo)
-        fprintf(stdout, "%s%s%s\n", INFO_BEGIN, FormatMessage(message, filename, line, function).c_str(), INFO_END);
+    if (m_showWarning) {
+        fprintf(stdout, "%s%s%s\n", WARNING_BEGIN,
+                FormatMessage(message, filename, line,
+                              function).c_str(), WARNING_END);
+    }
 }
 
-void OldStyleLogProvider::Warning(const char *message, const char *filename, int line, const char *function)
+void OldStyleLogProvider::Error(const char *message,
+                                const char *filename,
+                                int line,
+                                const char *function)
 {
-    if (m_showWarning)
-        fprintf(stdout, "%s%s%s\n", WARNING_BEGIN, FormatMessage(message, filename, line, function).c_str(), WARNING_END);
+    if (m_showError) {
+        fprintf(stdout, "%s%s%s\n", ERROR_BEGIN,
+                FormatMessage(message, filename, line,
+                              function).c_str(), ERROR_END);
+    }
 }
 
-void OldStyleLogProvider::Error(const char *message, const char *filename, int line, const char *function)
+void OldStyleLogProvider::Pedantic(const char *message,
+                                   const char *filename,
+                                   int line,
+                                   const char *function)
 {
-    if (m_showError)
-        fprintf(stdout, "%s%s%s\n", ERROR_BEGIN, FormatMessage(message, filename, line, function).c_str(), ERROR_END);
+    if (m_showPedantic) {
+        fprintf(stdout, "%s%s%s\n", PEDANTIC_BEGIN,
+                FormatMessage(message, filename, line,
+                              function).c_str(), PEDANTIC_END);
+    }
 }
-
-void OldStyleLogProvider::Pedantic(const char *message, const char *filename, int line, const char *function)
-{
-    if (m_showPedantic)
-        fprintf(stdout, "%s%s%s\n", PEDANTIC_BEGIN, FormatMessage(message, filename, line, function).c_str(), PEDANTIC_END);
-}
-
 }
 } // namespace DPL

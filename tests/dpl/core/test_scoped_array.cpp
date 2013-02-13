@@ -24,6 +24,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ScopedArray_Zero
+Description: tests emptiness of empty scoped array
+Expected: array should be empty
+*/
 RUNNER_TEST(ScopedArray_Zero)
 {
     DPL::ScopedArray<char> array;
@@ -32,6 +37,11 @@ RUNNER_TEST(ScopedArray_Zero)
     RUNNER_ASSERT(!!!array);
 }
 
+/*
+Name: ScopedArray_NonZero
+Description: tests emptiness of not empty scoped array
+Expected: array should be not empty
+*/
 RUNNER_TEST(ScopedArray_NonZero)
 {
     DPL::ScopedArray<char> array(new char[7]);
@@ -40,6 +50,11 @@ RUNNER_TEST(ScopedArray_NonZero)
     RUNNER_ASSERT(!!array);
 }
 
+/*
+Name: ScopedArray_Reset
+Description: tests reseting content of array
+Expected: array should be empty after reset
+*/
 RUNNER_TEST(ScopedArray_Reset)
 {
     DPL::ScopedArray<char> array(new char[7]);
@@ -51,6 +66,11 @@ RUNNER_TEST(ScopedArray_Reset)
     RUNNER_ASSERT(array);
 }
 
+/*
+Name: ScopedArray_ArrayOperator
+Description: tests accessing elements of array
+Expected: returned values should be equal to those which were set
+*/
 RUNNER_TEST(ScopedArray_ArrayOperator)
 {
     DPL::ScopedArray<char> array(new char[7]);

@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
     LoopControl::init_loop(argc, argv);
 
     LogInfo("Running tests");
-    int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
+    int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc,
+                                                                           argv);
 
     return status;
 }

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
-  * @file   TestCases_CustomHandlerDAO.cpp
+ * @file   TestCases_CustomHandlerDAO.cpp
  * @author  Krzysztof Jackiewicz (k.jackiewicz@samsung.com)
  * @version 1.0
  * @brief   This file contains tests for custom handler dao class.
@@ -29,8 +29,7 @@ using namespace CustomHandlerDB;
 
 RUNNER_TEST_GROUP_INIT(DAO)
 
-namespace
-{
+namespace {
 const DPL::String P_TARGET(L"p_target");
 const DPL::String P_BASE_URL(L"p_base_url");
 const DPL::String P_URL(L"p_url");
@@ -41,7 +40,9 @@ const DPL::String C_BASE_URL(L"c_base_url");
 const DPL::String C_URL(L"c_url");
 const DPL::String C_TITLE(L"c_title");
 
-void checkHandlersExistence(CustomHandlerDAOReadOnly& dao, bool protocol, bool content)
+void checkHandlersExistence(CustomHandlerDAOReadOnly& dao,
+                            bool protocol,
+                            bool content)
 {
     CustomHandlerDB::CustomHandlerPtr handler;
     handler = dao.getProtocolHandler(P_TARGET, P_URL);
@@ -49,14 +50,12 @@ void checkHandlersExistence(CustomHandlerDAOReadOnly& dao, bool protocol, bool c
     handler = dao.getContentHandler(C_TARGET, C_URL);
     RUNNER_ASSERT_MSG((!!handler) == content, "Content handler check");
 }
-
 } // namespace
 
 RUNNER_TEST(custom_handler_empty_db_read)
 {
     CustomHandlerDAOReadOnly dao(DPL::String(L"test"));
 }
-
 
 RUNNER_TEST(custom_handlers)
 {
@@ -72,11 +71,11 @@ RUNNER_TEST(custom_handlers)
     p_handler.user_decision = Agreed;
 
     // initial check
-    checkHandlersExistence(dao_ro,false,false);
+    checkHandlersExistence(dao_ro, false, false);
 
     // Protocol handler registration
     dao_rw.registerProtocolHandler(p_handler);
-    checkHandlersExistence(dao_ro,true,false);
+    checkHandlersExistence(dao_ro, true, false);
 
     handler = dao_ro.getProtocolHandler(P_TARGET, P_URL);
     RUNNER_ASSERT(handler);
@@ -85,7 +84,6 @@ RUNNER_TEST(custom_handlers)
     RUNNER_ASSERT(handler->url == P_URL);
     RUNNER_ASSERT(handler->title == P_TITLE);
     RUNNER_ASSERT(handler->user_decision == Agreed);
-
 
     // Content handler registration
     CustomHandlerDB::CustomHandler c_handler;
@@ -96,7 +94,7 @@ RUNNER_TEST(custom_handlers)
     c_handler.user_decision = DeclinedPermanently;
 
     dao_rw.registerContentHandler(c_handler);
-    checkHandlersExistence(dao_ro,true,true);
+    checkHandlersExistence(dao_ro, true, true);
     handler = dao_ro.getContentHandler(C_TARGET, C_URL);
 
     RUNNER_ASSERT(handler);
@@ -108,13 +106,13 @@ RUNNER_TEST(custom_handlers)
 
     // Handler unregistration
     dao_rw.unregisterProtocolHandler(P_TARGET, P_URL);
-    checkHandlersExistence(dao_ro,false,true);
+    checkHandlersExistence(dao_ro, false, true);
 
     // Nonexistent unregistration
     dao_rw.unregisterContentHandler(L"blah", L"blah");
-    checkHandlersExistence(dao_ro,false,true);
+    checkHandlersExistence(dao_ro, false, true);
 
     // Cleanup
     dao_rw.unregisterContentHandler(C_TARGET, C_URL);
-    checkHandlersExistence(dao_ro,false,false);
+    checkHandlersExistence(dao_ro, false, false);
 }

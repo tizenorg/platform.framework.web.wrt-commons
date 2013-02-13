@@ -20,12 +20,12 @@
  * @brief       This file is the implementation file of sql connection tests
  */
 
-
 /*
-
-This test has been saved from original test_sql_connection.cpp in wrt-commons project.
-
-*/
+ *
+ * This test has been saved from original test_sql_connection.cpp in wrt-commons
+ * project.
+ *
+ */
 
 #include <dpl/naive_synchronization_object.h>
 

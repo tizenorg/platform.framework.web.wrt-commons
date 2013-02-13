@@ -46,13 +46,11 @@ namespace {
 const int PIPE_CLOSED = -1;
 }
 
-namespace DPL
+namespace DPL {
+namespace Test {
+class PipeWrapper : DPL::Noncopyable
 {
-namespace Test
-{
-
-class PipeWrapper : DPL::Noncopyable {
-public:
+  public:
     enum Usage {
         READONLY,
         WRITEONLY
@@ -64,18 +62,21 @@ public:
         ERROR
     };
 
-    PipeWrapper(){
+    PipeWrapper()
+    {
         if (-1 == pipe(m_pipefd)) {
             m_pipefd[0] = PIPE_CLOSED;
             m_pipefd[1] = PIPE_CLOSED;
         }
     }
 
-    bool isReady(){
+    bool isReady()
+    {
         return m_pipefd[0] != PIPE_CLOSED || m_pipefd[1] != PIPE_CLOSED;
     }
 
-    void setUsage(Usage usage) {
+    void setUsage(Usage usage)
+    {
         if (usage == READONLY) {
             closeHelp(1);
         }
@@ -83,14 +84,17 @@ public:
             closeHelp(0);
         }
     }
-    ~PipeWrapper(){
+    ~PipeWrapper()
+    {
         closeHelp(0);
         closeHelp(1);
     }
 
-    Status send(int code, std::string &message) {
-        if (m_pipefd[1] == PIPE_CLOSED)
+    Status send(int code, std::string &message)
+    {
+        if (m_pipefd[1] == PIPE_CLOSED) {
             return ERROR;
+        }
 
         std::ostringstream output;
         output << toBinaryString(code);
@@ -100,27 +104,34 @@ public:
         std::string binary = output.str();
         int size = binary.size();
 
-        if ((writeHelp(&size, sizeof(int)) == ERROR) || (writeHelp(binary.c_str(), size) == ERROR)) {
+        if ((writeHelp(&size,
+                       sizeof(int)) == ERROR) ||
+            (writeHelp(binary.c_str(), size) == ERROR))
+        {
             return ERROR;
         }
         return SUCCESS;
     }
 
-    Status receive(int &code, std::string &data, time_t deadline) {
-        if (m_pipefd[0] == PIPE_CLOSED)
+    Status receive(int &code, std::string &data, time_t deadline)
+    {
+        if (m_pipefd[0] == PIPE_CLOSED) {
             return ERROR;
+        }
 
         int size;
         Status ret;
 
-        if ((ret = readHelp(&size, sizeof(int), deadline)) != SUCCESS)
+        if ((ret = readHelp(&size, sizeof(int), deadline)) != SUCCESS) {
             return ret;
+        }
 
         std::vector<char> buffer;
         buffer.resize(size);
 
-        if ((ret = readHelp(&buffer[0], size, deadline)) != SUCCESS)
+        if ((ret = readHelp(&buffer[0], size, deadline)) != SUCCESS) {
             return ret;
+        }
 
         try {
             DPL::BinaryQueue queue;
@@ -139,33 +150,38 @@ public:
         return SUCCESS;
     }
 
-    void closeAll() {
+    void closeAll()
+    {
         closeHelp(0);
         closeHelp(1);
     }
-private:
-    std::string toBinaryString(int data) {
+
+  private:
+    std::string toBinaryString(int data)
+    {
         char buffer[sizeof(int)];
         memcpy(buffer, &data, sizeof(int));
-        return std::string(buffer, buffer+sizeof(int));
+        return std::string(buffer, buffer + sizeof(int));
     }
 
-
-    void closeHelp(int desc) {
+    void closeHelp(int desc)
+    {
         if (m_pipefd[desc] != PIPE_CLOSED) {
             TEMP_FAILURE_RETRY(close(m_pipefd[desc]));
             m_pipefd[desc] = PIPE_CLOSED;
         }
     }
 
-    Status writeHelp(const void *buffer, int size) {
+    Status writeHelp(const void *buffer, int size)
+    {
         int ready = 0;
         const char *p = static_cast<const char *>(buffer);
         while (ready != size) {
-            int ret = write(m_pipefd[1], &p[ready], size-ready);
+            int ret = write(m_pipefd[1], &p[ready], size - ready);
 
-            if (ret == -1 && (errno == EAGAIN || errno == EINTR))
+            if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
                 continue;
+            }
 
             if (ret == -1) {
                 closeHelp(1);
@@ -177,15 +193,16 @@ private:
         return SUCCESS;
     }
 
-    Status readHelp(void *buf, int size, time_t deadline) {
+    Status readHelp(void *buf, int size, time_t deadline)
+    {
         int ready = 0;
         char *buffer = static_cast<char*>(buf);
         while (ready != size) {
             time_t wait = deadline - time(0);
             wait = wait < 1 ? 1 : wait;
-            pollfd fds = { m_pipefd[0], POLLIN, 0};
+            pollfd fds = { m_pipefd[0], POLLIN, 0 };
 
-            int pollReturn = poll(&fds, 1,  wait * 1000);
+            int pollReturn = poll(&fds, 1, wait * 1000);
 
             if (pollReturn == 0) {
                 return TIMEOUT; // Timeout
@@ -195,10 +212,11 @@ private:
                 return ERROR;
             }
 
-            int ret = read(m_pipefd[0], &buffer[ready], size-ready);
+            int ret = read(m_pipefd[0], &buffer[ready], size - ready);
 
-            if (ret == -1 && (errno == EAGAIN || errno == EINTR))
+            if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
                 continue;
+            }
 
             if (ret == -1 || ret == 0) {
                 closeHelp(0);
@@ -213,7 +231,8 @@ private:
     int m_pipefd[2];
 };
 
-void RunChildProc(TestRunner::TestCase procChild){
+void RunChildProc(TestRunner::TestCase procChild)
+{
     PipeWrapper pipe;
     if (!pipe.isReady()) {
         throw TestRunner::TestFailed("Pipe creation failed");
@@ -221,8 +240,9 @@ void RunChildProc(TestRunner::TestCase procChild){
 
     pid_t pid = fork();
 
-    if (pid == -1)
+    if (pid == -1) {
         throw TestRunner::TestFailed("Child creation failed");
+    }
 
     if (pid != 0) {
         // parent code
@@ -231,11 +251,11 @@ void RunChildProc(TestRunner::TestCase procChild){
         int code;
         std::string message;
 
-        int pipeReturn = pipe.receive(code, message, time(0)+10);
+        int pipeReturn = pipe.receive(code, message, time(0) + 10);
 
         if (pipeReturn != PipeWrapper::SUCCESS) { // Timeout or reading error
             pipe.closeAll();
-            kill(pid, SIGINT);
+            kill(pid, SIGKILL);
         }
 
         int status;
@@ -256,13 +276,18 @@ void RunChildProc(TestRunner::TestCase procChild){
         // child code
 
         // End Runner after current test
-        TestRunnerSingleton::Instance().terminate();
+        TestRunnerSingleton::Instance().Terminate();
+
         int code = 1;
         std::string msg;
 
-//      close(0);        // stdin
-        close(1);        // stdout
-        close(2);        // stderr
+        bool allowLogs = TestRunnerSingleton::Instance().GetAllowChildLogs();
+
+        close(0);            // stdin
+        if (!allowLogs) {
+            close(1);        // stdout
+            close(2);        // stderr
+        }
 
         pipe.setUsage(PipeWrapper::WRITEONLY);
 
@@ -275,9 +300,14 @@ void RunChildProc(TestRunner::TestCase procChild){
             msg = "unhandled exeception";
             code = 0;
         }
+
+        if (allowLogs) {
+            close(1);   // stdout
+            close(2);   // stderr
+        }
+
         pipe.send(code, msg);
     }
 }
-
 } // namespace Test
 } // namespace DPL

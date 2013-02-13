@@ -24,24 +24,44 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: Address_InitialEmpty
+Description: tests empty constructor of DPL::Address
+Expected: string version of empy address equals ":0"
+*/
 RUNNER_TEST(Address_InitialEmpty)
 {
     DPL::Address address;
     RUNNER_ASSERT(address.ToString() == ":0");
 }
 
+/*
+Name: Address_InitialAddress
+Description: tests constructor of DPL::Address with name only
+Expected: string version of address equals given name and appended ":0"
+*/
 RUNNER_TEST(Address_InitialAddress)
 {
     DPL::Address address("www.sample.com");
     RUNNER_ASSERT(address.ToString() == "www.sample.com:0");
 }
 
+/*
+Name: Address_InitialAddress
+Description: tests constructor of DPL::Address with name  and port
+Expected: string version of address should look lik "adress name:port"
+*/
 RUNNER_TEST(Address_InitialAddressPort)
 {
     DPL::Address address("www.somewhere.com", 8080);
     RUNNER_ASSERT(address.ToString() == "www.somewhere.com:8080");
 }
 
+/*
+Name: Address_InitialAddress
+Description: tests getter of address
+Expected: address name and port should matches those passed in constructor
+*/
 RUNNER_TEST(Address_Getters)
 {
     DPL::Address address("www.somewhere.com", 8080);

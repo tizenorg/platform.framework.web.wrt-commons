@@ -31,21 +31,20 @@ namespace {
 #define BITS_SIZE 128
 #define KEY_SIZE 16
 }
-namespace WRTDecryptor{
+namespace WRTDecryptor {
 ResourceDecryptor::ResourceDecryptor()
 {
     LogDebug("Started Decryption");
 }
 
-ResourceDecryptor::ResourceDecryptor(std::string userKey) 
+ResourceDecryptor::ResourceDecryptor(std::string userKey)
 {
     LogDebug("Finished Decryption");
     SetDecryptionKey(userKey);
 }
 
 ResourceDecryptor::~ResourceDecryptor()
-{
-}
+{}
 
 void ResourceDecryptor::SetDecryptionKey(std::string userKey)
 {
@@ -53,12 +52,13 @@ void ResourceDecryptor::SetDecryptionKey(std::string userKey)
         return;
     }
 
-    char **duk = calculate(const_cast<char*>(userKey.c_str()), userKey.size(), KEY_SIZE);
+    char **duk = calculate(const_cast<char*>(userKey.c_str()),
+                           userKey.size(), KEY_SIZE);
     unsigned char *key = reinterpret_cast<unsigned char*>(*duk);
 
-    if ( 0 > AES_set_decrypt_key(key, BITS_SIZE, &m_decKey)) {
+    if (0 > AES_set_decrypt_key(key, BITS_SIZE, &m_decKey)) {
         ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,
-                "Failed to create decryption key");
+                 "Failed to create decryption key");
     }
 }
 
@@ -68,17 +68,18 @@ AES_KEY* ResourceDecryptor::GetDecryptionKey()
 }
 
 void ResourceDecryptor::GetDecryptedChunk(unsigned char*
-        inBuf, unsigned char* decBuf, size_t inBufSize)
+                                          inBuf,
+                                          unsigned char* decBuf,
+                                          size_t inBufSize)
 {
     Assert(decBuf);
     if (decBuf == NULL) {
         ThrowMsg(ResourceDecryptor::Exception::EncryptionFailed,
-                "Failed to Get Decryption Chunk");
+                 "Failed to Get Decryption Chunk");
     }
-    unsigned char ivec[16] = {0, };
+    unsigned char ivec[16] = { 0, };
 
     AES_cbc_encrypt(inBuf, decBuf, inBufSize, &m_decKey, ivec, AES_DECRYPT);
     LogDebug("Success decryption");
 }
-
 } //namespace WRTDecryptor

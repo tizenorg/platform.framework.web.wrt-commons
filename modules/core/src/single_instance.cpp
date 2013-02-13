@@ -27,17 +27,15 @@
 #include <errno.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonumous
 {
 const char *LOCK_PREFIX_PATH = "/tmp/dpl_single_instance_";
 }
-SingleInstance::SingleInstance()
-    : m_locked(false),
-      m_fdLock(-1)
-{
-}
+SingleInstance::SingleInstance() :
+    m_locked(false),
+    m_fdLock(-1)
+{}
 
 SingleInstance::~SingleInstance()
 {
@@ -56,17 +54,20 @@ bool SingleInstance::TryLock(const std::string &lockName)
     lock.l_len = 1;
 
     // Open lock file
-    m_fdLock = TEMP_FAILURE_RETRY(open((std::string(LOCK_PREFIX_PATH) + lockName).c_str(), O_WRONLY | O_CREAT, 0666));
+    m_fdLock =
+        TEMP_FAILURE_RETRY(open((std::string(LOCK_PREFIX_PATH) +
+                                 lockName).c_str(),
+                                O_WRONLY | O_CREAT, 0666));
 
-    if (m_fdLock == -1)
+    if (m_fdLock == -1) {
         ThrowMsg(Exception::LockError, "Cannot open single instance lock file!");
+    }
 
     // Lock file
     int result = TEMP_FAILURE_RETRY(fcntl(m_fdLock, F_SETLK, &lock));
 
     // Was the instance successfuly locked ?
-    if (result == 0)
-    {
+    if (result == 0) {
         LogPedantic("Instance locked: " << lockName);
 
         // It is locked now
@@ -76,8 +77,7 @@ bool SingleInstance::TryLock(const std::string &lockName)
         return true;
     }
 
-    if (errno == EACCES || errno == EAGAIN)
-    {
+    if (errno == EACCES || errno == EAGAIN) {
         LogPedantic("Instance is already running: " << lockName);
         return false;
     }
@@ -88,8 +88,9 @@ bool SingleInstance::TryLock(const std::string &lockName)
 
 void SingleInstance::Release()
 {
-    if (!m_locked)
+    if (!m_locked) {
         return;
+    }
 
     LogPedantic("Unlocking single instance");
 
@@ -104,12 +105,16 @@ void SingleInstance::Release()
     int result = TEMP_FAILURE_RETRY(fcntl(m_fdLock, F_SETLK, &lock));
 
     // Was the instance successfuly unlocked ?
-    if (result == -1)
-        ThrowMsg(Exception::LockError, "Cannot unlock single instance lock file!");
+    if (result == -1) {
+        ThrowMsg(Exception::LockError,
+                 "Cannot unlock single instance lock file!");
+    }
 
     // Close lock file
-    if (TEMP_FAILURE_RETRY(close(m_fdLock)) == -1)
-        ThrowMsg(Exception::LockError, "Cannot close single instance lock file!");
+    if (TEMP_FAILURE_RETRY(close(m_fdLock)) == -1) {
+        ThrowMsg(Exception::LockError,
+                 "Cannot close single instance lock file!");
+    }
 
     m_fdLock = -1;
 

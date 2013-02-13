@@ -29,12 +29,9 @@
 #include <memory>
 #include <string>
 
-namespace DPL
-{
-namespace RPC
-{
-namespace AbstractRPCConnectionEvents
-{
+namespace DPL {
+namespace RPC {
+namespace AbstractRPCConnectionEvents {
 /**
  * Asynchronous call event
  */
@@ -51,21 +48,23 @@ DECLARE_GENERIC_EVENT_0(ConnectionClosedEvent)
 DECLARE_GENERIC_EVENT_0(ConnectionBrokenEvent)
 } // namespace AbstractRPCConnectionEvents
 
-class AbstractRPCConnection
-    : public DPL::Event::EventSupport<AbstractRPCConnectionEvents::AsyncCallEvent>,
-      public DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionClosedEvent>,
-      public DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionBrokenEvent>
+class AbstractRPCConnection :
+    public DPL::Event::EventSupport<AbstractRPCConnectionEvents::AsyncCallEvent>,
+    public DPL::Event::EventSupport<AbstractRPCConnectionEvents::
+                                        ConnectionClosedEvent>,
+    public DPL::Event::EventSupport<AbstractRPCConnectionEvents::
+                                        ConnectionBrokenEvent>
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, AsyncCallFailed)
         DECLARE_EXCEPTION_TYPE(Base, PingFailed)
     };
 
-public:
+  public:
     virtual ~AbstractRPCConnection() {}
 
     /**
@@ -91,7 +90,6 @@ public:
  * or RPC server accepting connection
  */
 typedef void *AbstractRPCConnectionID;
-
 }
 } // namespace DPL
 

@@ -31,8 +31,8 @@ static DPL::ReadWriteMutex m_readWriteMutex;
 
 template<typename StringType>
 void FindAndReplace(StringType& source,
-        const StringType& find,
-        const StringType& replace)
+                    const StringType& find,
+                    const StringType& replace)
 {
     size_t pos = 0;
     while ((pos = source.find(find, pos)) != StringType::npos) {
@@ -68,7 +68,9 @@ void UpdateUserAgentLanguageTags()
     FOREACH(i, m_systemLanguageTags) {
         DPL::String tag = LocaleToBCP47LanguageTag(*i);
         while (true) { //W3C Packaging 9. Step 5. 2. D
-            if (tag.empty()) { continue; }
+            if (tag.empty()) {
+                continue;
+            }
 
             LogDebug("Adding user locale '" << tag << "'");
             m_languageTags.push_back(tag);

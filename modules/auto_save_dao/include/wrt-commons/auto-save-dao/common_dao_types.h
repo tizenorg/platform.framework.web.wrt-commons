@@ -28,28 +28,25 @@
 #include <dpl/string.h>
 
 namespace AutoSaveDB {
-
 struct SubmitFormElement
 {
     DPL::String key;
     DPL::String value;
 
     SubmitFormElement()
-    {
-    }
+    {}
 
     SubmitFormElement(
         const DPL::String& keyData,
         const DPL::String& valueData) :
         key(keyData),
         value(valueData)
-    {
-    }
+    {}
 
     bool operator== (const SubmitFormElement& other) const
     {
         return (!DPL::StringCompare(key, other.key) &&
-               !DPL::StringCompare(value, other.value));
+                !DPL::StringCompare(value, other.value));
     }
 
     bool operator!= (const SubmitFormElement& other) const
@@ -58,7 +55,6 @@ struct SubmitFormElement
     }
 };
 typedef std::list<SubmitFormElement> SubmitFormData;
-
 } // namespace AutoSaveDB
 
 #endif /* SHARE_COMMON_DAO_TYPES_H_ */

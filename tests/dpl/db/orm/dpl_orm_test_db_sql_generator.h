@@ -17,7 +17,8 @@
  * @file        dpl_orm_test_db_sql_generator.h
  * @author      Lukasz Marek (l.marek@samsung.com)
  * @version     1.0
- * @brief       Macro definitions for generating the SQL input file from database definition.
+ * @brief       Macro definitions for generating the SQL input file from
+ * database definition.
  */
 
 //Do not include this file directly! It is used only for SQL code generation.

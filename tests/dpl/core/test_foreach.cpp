@@ -58,8 +58,7 @@ std::list<size_t> temporaryList()
 {
     ++numberOfCallsToTemporaryList;
     std::list<size_t> list;
-    for (size_t i = 0 ; i < testContainerSize ; i++)
-    {
+    for (size_t i = 0; i < testContainerSize; i++) {
         list.push_back(i);
     }
     return list;
@@ -71,8 +70,7 @@ std::vector<size_t> temporaryVector()
 {
     ++numberOfCallsToTemporaryVector;
     std::vector<size_t> vector;
-    for (size_t i = 0 ; i < testContainerSize ; i++)
-    {
+    for (size_t i = 0; i < testContainerSize; i++) {
         vector.push_back(i);
     }
     return vector;
@@ -84,21 +82,24 @@ std::set<size_t> temporarySet()
 {
     ++numberOfCallsToTemporarySet;
     std::set<size_t> set;
-    for (size_t i = 0 ; i < testContainerSize ; i++)
-    {
+    for (size_t i = 0; i < testContainerSize; i++) {
         set.insert(i);
     }
     return set;
 }
 
+/*
+Name: Foreach_std_containers
+Description: tests iterating contianers set, list, vector using foreach
+Expected: value supplied by foreach matches sequence of integers
+*/
 RUNNER_TEST(Foreach_std_containers)
 {
     std::vector<size_t> vector;
     std::list<size_t> list;
     std::set<size_t> set;
 
-    for (size_t i = 0 ; i < testContainerSize ; i++)
-    {
+    for (size_t i = 0; i < testContainerSize; i++) {
         vector.push_back(i);
         list.push_back(i);
         set.insert(i);

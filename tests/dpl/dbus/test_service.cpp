@@ -33,22 +33,24 @@ const std::string interfaceName = "org.tizen.DBusTestService";
 const std::string methodNameEcho = "echo";
 const std::string methodNameQuit = "quit";
 const std::string nodeInfo =
-        "<?xml version='1.0'?>"
-        "<node>"
-        "  <interface name='" + interfaceName + "'>"
-        "    <method name='" + methodNameEcho + "'>"
-        "      <arg type='s' name='challenge' direction='in'/>"
-        "      <arg type='s' name='response' direction='out'/>"
-        "    </method>"
-        "    <method name='" + methodNameQuit + "'>"
-        "    </method>"
-        "  </interface>"
-        "</node>";
+    "<?xml version='1.0'?>"
+    "<node>"
+    "  <interface name='" + interfaceName + "'>"
+                                            "    <method name='" +
+    methodNameEcho + "'>"
+                     "      <arg type='s' name='challenge' direction='in'/>"
+                     "      <arg type='s' name='response' direction='out'/>"
+                     "    </method>"
+                     "    <method name='"
+    + methodNameQuit + "'>"
+                       "    </method>"
+                       "  </interface>"
+                       "</node>";
 }
 
 class TestServiceDispatcher : public DPL::DBus::Dispatcher
 {
-private:
+  private:
     void onMethodCall(GDBusConnection* /*connection*/,
                       const gchar* /*sender*/,
                       const gchar* /*objectPath*/,
@@ -57,14 +59,11 @@ private:
                       GVariant* parameters,
                       GDBusMethodInvocation* invocation)
     {
-        if (methodNameEcho == methodName)
-        {
+        if (methodNameEcho == methodName) {
             LogDebug("Echo");
             g_dbus_method_invocation_return_value(invocation,
                                                   parameters);
-        }
-        else if (methodNameQuit == methodName)
-        {
+        } else if (methodNameQuit == methodName) {
             LogDebug("Quit");
             g_dbus_method_invocation_return_value(invocation, NULL);
             LoopControl::wrt_end_loop();

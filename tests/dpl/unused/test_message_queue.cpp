@@ -32,41 +32,47 @@
 
 DECLARE_GENERIC_EVENT_0(QuitEvent)
 
-class QuitController
-    : public DPL::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
-      public DPL::ApplicationExt
+class QuitController :
+    public DPL::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
+    public DPL::ApplicationExt
 {
-public:
-    QuitController() : DPL::ApplicationExt(1, NULL, "test-app") { Touch(); }
+  public:
+    QuitController() : DPL::ApplicationExt(1, NULL, "test-app")
+    {
+        Touch();
+    }
 
-protected:
-    virtual void OnEventReceived(const QuitEvent &) { Quit(); }
+  protected:
+    virtual void OnEventReceived(const QuitEvent &)
+    {
+        Quit();
+    }
 };
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
-class CopyThread
-    : public DPL::Thread
+class CopyThread :
+    public DPL::Thread
 {
-private:
+  private:
     bool m_success;
     DPL::AbstractWaitableInput *m_input;
     DPL::AbstractWaitableOutput *m_output;
     std::size_t m_dataSize;
 
-public:
+  public:
     CopyThread(DPL::AbstractWaitableInput *input,
                DPL::AbstractWaitableOutput *output,
-               std::size_t dataSize)
-        : m_success(true),
-          m_input(input),
-          m_output(output),
-          m_dataSize(dataSize)
+               std::size_t dataSize) :
+        m_success(true),
+        m_input(input),
+        m_output(output),
+        m_dataSize(dataSize)
     {
         LogInfo("Thread created");
     }
 
-protected:
+  protected:
     virtual int ThreadEntry()
     {
         LogInfo("Entering copy thread");
@@ -75,7 +81,7 @@ protected:
         {
             DPL::Copy(m_input, m_output, m_dataSize);
         }
-        Catch (DPL::CopyFailed)
+        Catch(DPL::CopyFailed)
         {
             m_success = false;
 
@@ -93,7 +99,7 @@ inline std::string BinaryQueueToString(const DPL::BinaryQueue &queue)
     char *buffer = new char[queue.Size()];
     queue.Flatten(buffer, queue.Size());
     std::string result = std::string(buffer, buffer + queue.Size());
-    delete [] buffer;
+    delete[] buffer;
     return result;
 }
 
@@ -108,31 +114,31 @@ RUNNER_TEST(MessageQueue_DoubleCopy)
     DPL::AbstractWaitableOutputAdapter dataAdapterD(&dataD);
 
     const std::string testData =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    "Cras elementum venenatis velit, sit amet vehicula odio gravida a."
-    "Curabitur id nibh id ante adipiscing sollicitudin."
-    "Maecenas in tellus vel augue vehicula pharetra hendrerit cursus est."
-    ""
-    "Ut malesuada quam porttitor dui euismod lacinia."
-    "Phasellus quis lectus sed lectus dictum tincidunt et vitae leo."
-    "Fusce id est massa, condimentum bibendum urna."
-    "Donec venenatis quam eget sapien vulputate egestas."
-    "Maecenas scelerisque lorem a neque molestie a varius erat condimentum."
-    "Maecenas varius hendrerit ligula, sed iaculis justo pretium id."
-    "Nunc sit amet nisl vitae justo tristique suscipit id eget tortor."
-    ""
-    "Pellentesque sollicitudin nulla at metus dapibus tincidunt."
-    "Integer consequat justo eget dui imperdiet iaculis."
-    "Sed vestibulum ipsum vitae libero accumsan non molestie metus adipiscing."
-    ""
-    "Vivamus quis dui enim, in blandit urna."
-    "In imperdiet lacus at orci elementum a scelerisque dui blandit."
-    "Donec vulputate enim metus, eget convallis ante."
-    "Etiam mollis enim eget eros pulvinar nec sagittis justo fermentum."
-    ""
-    "Vestibulum sed nunc eu leo lobortis ultrices."
-    "Nullam placerat nulla et est blandit nec interdum nunc pulvinar."
-    "Vivamus a lectus eget dui fermentum hendrerit.";
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        "Cras elementum venenatis velit, sit amet vehicula odio gravida a."
+        "Curabitur id nibh id ante adipiscing sollicitudin."
+        "Maecenas in tellus vel augue vehicula pharetra hendrerit cursus est."
+        ""
+        "Ut malesuada quam porttitor dui euismod lacinia."
+        "Phasellus quis lectus sed lectus dictum tincidunt et vitae leo."
+        "Fusce id est massa, condimentum bibendum urna."
+        "Donec venenatis quam eget sapien vulputate egestas."
+        "Maecenas scelerisque lorem a neque molestie a varius erat condimentum."
+        "Maecenas varius hendrerit ligula, sed iaculis justo pretium id."
+        "Nunc sit amet nisl vitae justo tristique suscipit id eget tortor."
+        ""
+        "Pellentesque sollicitudin nulla at metus dapibus tincidunt."
+        "Integer consequat justo eget dui imperdiet iaculis."
+        "Sed vestibulum ipsum vitae libero accumsan non molestie metus adipiscing."
+        ""
+        "Vivamus quis dui enim, in blandit urna."
+        "In imperdiet lacus at orci elementum a scelerisque dui blandit."
+        "Donec vulputate enim metus, eget convallis ante."
+        "Etiam mollis enim eget eros pulvinar nec sagittis justo fermentum."
+        ""
+        "Vestibulum sed nunc eu leo lobortis ultrices."
+        "Nullam placerat nulla et est blandit nec interdum nunc pulvinar."
+        "Vivamus a lectus eget dui fermentum hendrerit.";
 
     QuitController quitter;
     quitter.PostTimedEvent(QuitEvent(), 1.0);

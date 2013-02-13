@@ -32,38 +32,62 @@
 
 DECLARE_GENERIC_EVENT_0(TestEvent)
 
-class TestListener: public DPL::Event::EventListener<TestEvent>
+class TestListener : public DPL::Event::EventListener<TestEvent>
 {
-public:
+  public:
     explicit TestListener() : m_dummyVar(0) { }
-    void OnEventReceived(const TestEvent &) { m_dummyVar = 1; }
-    int GetDummyVar() const { return m_dummyVar; }
-    void ZeroDummyVar() { m_dummyVar = 0; }
+    void OnEventReceived(const TestEvent &)
+    {
+        m_dummyVar = 1;
+    }
+    int GetDummyVar() const
+    {
+        return m_dummyVar;
+    }
+    void ZeroDummyVar()
+    {
+        m_dummyVar = 0;
+    }
 
-private:
+  private:
     int m_dummyVar;
 };
 
-class TestEventSupport
-    : public DPL::Event::EventSupport<TestEvent>
+class TestEventSupport :
+    public DPL::Event::EventSupport<TestEvent>
 {
-public:
-    void TestEmitEvent() { EmitEvent(TestEvent()); }
+  public:
+    void TestEmitEvent()
+    {
+        EmitEvent(TestEvent());
+    }
 };
 
 DECLARE_GENERIC_EVENT_0(QuitEvent)
 
-class QuitController
-    : public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
-      public DPL::ApplicationExt
+class QuitController :
+    public DPL::Event::Controller<DPL::TypeListDecl<QuitEvent>::Type>,
+    public DPL::ApplicationExt
 {
-public:
-    QuitController() : DPL::ApplicationExt(1, NULL, "test-app") { Touch(); }
+  public:
+    QuitController() : DPL::ApplicationExt(1, NULL, "test-app")
+    {
+        Touch();
+    }
 
-protected:
-    virtual void OnEventReceived(const QuitEvent &) { Quit(); }
+  protected:
+    virtual void OnEventReceived(const QuitEvent &)
+    {
+        Quit();
+    }
 };
 
+/*
+Name: EventSupport_DestroyBeforeProcessing
+Description: tests if remoign listener is full successfull
+Expected: dummy var should be affected by explicit call of ZeroDummyVar(),
+ but no by emitting event after removing listener
+*/
 RUNNER_TEST(EventSupport_DestroyBeforeProcessing)
 {
     QuitController quitter;
@@ -92,16 +116,22 @@ void OnDelegateTest(const int &k)
     g_delegateTest = k;
 }
 
-class DelegateTestSupport
-    : public DPL::Event::EventSupport<int>
+class DelegateTestSupport :
+    public DPL::Event::EventSupport<int>
 {
-public:
+  public:
     void Test()
     {
         EmitEvent(7);
     }
 };
 
+/*
+Name: EventSupport_BindDelegate
+Description: tests if event support derived class successfully propagates
+ event to registered listener
+Expected: value of event should be passed to listener
+*/
 RUNNER_TEST(EventSupport_BindDelegate)
 {
     g_delegateTest = 0;

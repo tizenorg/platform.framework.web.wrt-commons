@@ -41,7 +41,7 @@ namespace {
 // hard drive. What's why we cannot check any iri with file schema.
 
 const char *IRI_IGNORED_SCHEME[] = { "file://", "widget://", "tel:", "sms:",
-                                    "mmsto:", "mailto:", "data:", "blob:", 0 };
+                                     "mmsto:", "mailto:", "data:", "blob:", 0 };
 
 const DPL::String SCHEMA_HTTP = DPL::FromUTF8String("http");
 const DPL::String SCHEMA_HTTPS = DPL::FromUTF8String("https");
@@ -51,7 +51,7 @@ const DPL::String SCHEMA_FTP = DPL::FromUTF8String("ftp");
 // This will create AutoPtr deleter for iri_struct.
 // Deleter must be in the same namespace as definition of AutoPtr.
 
-namespace DPL{
+namespace DPL {
 DECLARE_DELETER(iri_struct, iri_destroy)
 } // namespace DPL
 
@@ -60,11 +60,10 @@ WarpIRI::WarpIRI() :
     m_port(UNKNOWN_PORT),
     m_isAccessDefinition(false),
     m_isIRIValid(false)
-{
-}
+{}
 
 void WarpIRI::set(const char *p_iri,
-        bool domain)
+                  bool domain)
 {
     if (!p_iri) {
         m_isAccessDefinition = m_isIRIValid = false;
@@ -147,7 +146,7 @@ void WarpIRI::set(const char *p_iri,
 }
 
 void WarpIRI::set(const DPL::String &iristring,
-        bool domain)
+                  bool domain)
 {
     set(DPL::ToUTF8String(iristring).c_str(), domain);
 }
@@ -167,9 +166,15 @@ unsigned int WarpIRI::getPort(const DPL::String &schema) const
 
 bool WarpIRI::isSubDomain(const WarpIRI &second) const
 {
-    if (!m_isAccessDefinition || !second.m_isIRIValid) { return false; }
-    if (m_schema != second.m_schema) { return false; }
-    if (m_port != second.m_port) { return false; }
+    if (!m_isAccessDefinition || !second.m_isIRIValid) {
+        return false;
+    }
+    if (m_schema != second.m_schema) {
+        return false;
+    }
+    if (m_port != second.m_port) {
+        return false;
+    }
 
     size_t size = m_host.size() < second.m_host.size() ?
         m_host.size() : second.m_host.size();
@@ -205,7 +210,8 @@ bool WarpIRI::isIRISchemaIgnored(const char *iri)
     for (int i = 0; IRI_IGNORED_SCHEME[i]; ++i) {
         if (0 ==
             strncmp(iri, IRI_IGNORED_SCHEME[i],
-                    strlen(IRI_IGNORED_SCHEME[i]))) {
+                    strlen(IRI_IGNORED_SCHEME[i])))
+        {
             return true;
         }
     }

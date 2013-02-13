@@ -24,16 +24,12 @@
 
 #include <dpl/noncopyable.h>
 
-namespace DPL
+namespace DPL {
+namespace Event {
+class AbstractEventCall :
+    private Noncopyable
 {
-namespace Event
-{
-
-
-class AbstractEventCall
-    : private Noncopyable
-{
-public:
+  public:
     /**
      * Constructor
      */
@@ -49,7 +45,6 @@ public:
      */
     virtual void Call() = 0;
 };
-
 }
 } // namespace DPL
 

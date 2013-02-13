@@ -31,7 +31,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef int FeatureHandle;
 typedef std::list<FeatureHandle> FeatureHandleList;
 typedef std::shared_ptr<FeatureHandleList> FeatureHandleListPtr;
@@ -40,8 +39,8 @@ typedef int FeatureSetHandle;
 typedef std::list<FeatureSetHandle> FeatureSetHandleList;
 
 typedef struct {
-    std::string     featureName;
-    DbPluginHandle  pluginHandle;
+    std::string featureName;
+    DbPluginHandle pluginHandle;
 } FeatureData;
 
 class FeatureModel : public DPL::Event::Model
@@ -58,10 +57,11 @@ class FeatureModel : public DPL::Event::Model
         Name(this),
         DeviceCapabilities(this),
         PHandle(this, -1)
-    {
-    }
+    {}
 
-    void SetData(const std::string& name, const std::set<std::string>& deviceCapabilities, const DbPluginHandle& pluginHandle)
+    void SetData(const std::string& name,
+                 const std::set<std::string>& deviceCapabilities,
+                 const DbPluginHandle& pluginHandle)
     {
         Name.SetWithoutLock(name);
         DeviceCapabilities.SetWithoutLock(deviceCapabilities);
@@ -70,7 +70,6 @@ class FeatureModel : public DPL::Event::Model
 };
 
 typedef std::shared_ptr<FeatureModel> FeatureModelPtr;
-
 } // namespace WrtDB
 
 #endif // FEATURE_MODEL_H

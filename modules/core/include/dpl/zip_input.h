@@ -29,15 +29,14 @@
 #include <vector>
 #include <string>
 
-namespace DPL
+namespace DPL {
+class ZipInput :
+    private Noncopyable
 {
-class ZipInput
-    : private Noncopyable
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
         DECLARE_EXCEPTION_TYPE(Base, ReadGlobalInfoFailed)
@@ -60,49 +59,47 @@ public:
         std::string comment;
 
         // File information
-        off64_t       compressedSize;         //< compressed size
-        off64_t       uncompressedSize;       //< uncompressed size
+        off64_t compressedSize;               //< compressed size
+        off64_t uncompressedSize;             //< uncompressed size
 
-        FileInfo()
-            : handle(),
-              name(),
-              comment(),
-              compressedSize(0),
-              uncompressedSize(0)
-        {
-        }
+        FileInfo() :
+            handle(),
+            name(),
+            comment(),
+            compressedSize(0),
+            uncompressedSize(0)
+        {}
 
         FileInfo(const FileHandle &handleArg,
                  const std::string &nameArg,
                  const std::string &commentArg,
                  const off64_t &compressedSizeArg,
-                 const off64_t &uncompressedSizeArg)
-            : handle(handleArg),
-              name(nameArg),
-              comment(commentArg),
-              compressedSize(compressedSizeArg),
-              uncompressedSize(uncompressedSizeArg)
-        {
-        }
+                 const off64_t &uncompressedSizeArg) :
+            handle(handleArg),
+            name(nameArg),
+            comment(commentArg),
+            compressedSize(compressedSizeArg),
+            uncompressedSize(uncompressedSizeArg)
+        {}
     };
 
-    class File
-        : public DPL::AbstractInput
+    class File :
+        public DPL::AbstractInput
     {
-    private:
+      private:
         void *m_file;
 
         friend class ZipInput;
         File(class Device *device, FileHandle handle);
 
-    public:
+      public:
         ~File();
 
         virtual DPL::BinaryQueueAutoPtr Read(size_t size);
     };
 
-private:
-    class Device *m_device;
+  private:
+    class Device * m_device;
     void *m_masterFile;
 
     size_t m_numberOfFiles;
@@ -117,12 +114,12 @@ private:
     void ReadGlobalComment(void *masterFile);
     void ReadInfos(void *masterFile);
 
-public:
+  public:
     typedef FileInfoList::const_iterator const_iterator;
     typedef FileInfoList::const_reverse_iterator const_reverse_iterator;
     typedef FileInfoList::size_type size_type;
 
-public:
+  public:
     /**
      * Open zip file from file
      */

@@ -38,27 +38,27 @@ SQL(
 )
 
 CREATE_TABLE(TestTableJoin1)
-    COLUMN_NOT_NULL(TestID, INT)
-    COLUMN_NOT_NULL(TestText, TEXT)
-    COLUMN(TestNumber,      INT)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN_NOT_NULL(TestText, TEXT,)
+    COLUMN(TestNumber,      INT,)
     TABLE_CONSTRAINTS(
         PRIMARY KEY(TestID)
     )
 CREATE_TABLE_END()
 
 CREATE_TABLE(TestTableJoin2)
-    COLUMN_NOT_NULL(TestID, INT)
-    COLUMN_NOT_NULL(TestText1,       TEXT)
-    COLUMN_NOT_NULL(TestText2,       TEXT)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN_NOT_NULL(TestText1,       TEXT,)
+    COLUMN_NOT_NULL(TestText2,       TEXT,)
     TABLE_CONSTRAINTS(
         PRIMARY KEY(TestID)
     )
 CREATE_TABLE_END()
 
 CREATE_TABLE(TestTableJoin3)
-    COLUMN_NOT_NULL(TestID, INT)
-    COLUMN(Value3,          INT)
-    COLUMN(TestText33,      TEXT)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN(Value3,          INT,)
+    COLUMN(TestText33,      TEXT,)
     TABLE_CONSTRAINTS(
         PRIMARY KEY(TestID)
     )

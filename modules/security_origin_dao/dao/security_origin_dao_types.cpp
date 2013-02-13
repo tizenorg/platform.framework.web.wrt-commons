@@ -25,5 +25,4 @@
 #include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
 #include <dpl/log/log.h>
 
-namespace SecurityOriginDB {
-} // namespace SecurityOriginDB
+namespace SecurityOriginDB {} // namespace SecurityOriginDB

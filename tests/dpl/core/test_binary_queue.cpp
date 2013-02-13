@@ -28,22 +28,37 @@ inline std::string BinaryQueueToString(const DPL::BinaryQueue &queue)
     char *buffer = new char[queue.Size()];
     queue.Flatten(buffer, queue.Size());
     std::string result = std::string(buffer, buffer + queue.Size());
-    delete [] buffer;
+    delete[] buffer;
     return result;
 }
 
+/*
+Name: BinaryQueue_InitialEmpty
+Description: tests emptiness of new constructed queue
+Expected: new queue should be empty
+*/
 RUNNER_TEST(BinaryQueue_InitialEmpty)
 {
     DPL::BinaryQueue queue;
     RUNNER_ASSERT(queue.Empty() == true);
 }
 
+/*
+Name: BinaryQueue_InitialSize
+Description: tests emptiness of new constructed queue
+Expected: new queue size should be equal 0
+*/
 RUNNER_TEST(BinaryQueue_InitialSize)
 {
     DPL::BinaryQueue queue;
     RUNNER_ASSERT(queue.Size() == 0);
 }
 
+/*
+Name: BinaryQueue_InitialCopy
+Description: tests emptiness of new copy-constructed empty queue
+Expected: queue constructed on base on empty queue should be empty
+*/
 RUNNER_TEST(BinaryQueue_InitialCopy)
 {
     DPL::BinaryQueue queue;
@@ -52,24 +67,44 @@ RUNNER_TEST(BinaryQueue_InitialCopy)
     RUNNER_ASSERT(copy.Size() == 0);
 }
 
+/*
+Name: BinaryQueue_InitialConsumeZero
+Description: tests consume method accepts 0 bytes
+Expected: it should be avaliable to discard 0 bytes from empty queue
+*/
 RUNNER_TEST(BinaryQueue_InitialConsumeZero)
 {
     DPL::BinaryQueue queue;
     queue.Consume(0);
 }
 
+/*
+Name: BinaryQueue_InitialFlattenConsumeZero
+Description: tests returning data from queue and discarding
+Expected: it should be able to call flattenconsume with empty buffer if 0 bytes are read
+*/
 RUNNER_TEST(BinaryQueue_InitialFlattenConsumeZero)
 {
     DPL::BinaryQueue queue;
     queue.FlattenConsume(NULL, 0);
 }
 
+/*
+Name: BinaryQueue_InitialFlattenZero
+Description: tests returning data from queue
+Expected: it should be able to call flatten with empty buffer if 0 bytes are read
+*/
 RUNNER_TEST(BinaryQueue_InitialFlattenZero)
 {
     DPL::BinaryQueue queue;
     queue.Flatten(NULL, 0);
 }
 
+/*
+Name: BinaryQueue_InitialConsumeOne
+Description: tests discarding more bytes than it is avaliable
+Expected: exception throw
+*/
 RUNNER_TEST(BinaryQueue_InitialConsumeOne)
 {
     DPL::BinaryQueue queue;
@@ -78,7 +113,7 @@ RUNNER_TEST(BinaryQueue_InitialConsumeOne)
     {
         queue.Consume(1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -86,6 +121,11 @@ RUNNER_TEST(BinaryQueue_InitialConsumeOne)
     RUNNER_FAIL;
 }
 
+/*
+Name: BinaryQueue_InitialFlattenConsumeOne
+Description: tests reading and discarding more bytes than it is avaliable
+Expected: exception throw
+*/
 RUNNER_TEST(BinaryQueue_InitialFlattenConsumeOne)
 {
     DPL::BinaryQueue queue;
@@ -95,7 +135,7 @@ RUNNER_TEST(BinaryQueue_InitialFlattenConsumeOne)
         char data;
         queue.FlattenConsume(&data, 1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -103,6 +143,11 @@ RUNNER_TEST(BinaryQueue_InitialFlattenConsumeOne)
     RUNNER_FAIL;
 }
 
+/*
+Name: BinaryQueue_InitialFlattenOne
+Description: tests reading more bytes than it is avaliable
+Expected: exception throw
+*/
 RUNNER_TEST(BinaryQueue_InitialFlattenOne)
 {
     DPL::BinaryQueue queue;
@@ -112,7 +157,7 @@ RUNNER_TEST(BinaryQueue_InitialFlattenOne)
         char data;
         queue.Flatten(&data, 1);
     }
-    Catch (DPL::BinaryQueue::Exception::OutOfData)
+    Catch(DPL::BinaryQueue::Exception::OutOfData)
     {
         return;
     }
@@ -120,6 +165,11 @@ RUNNER_TEST(BinaryQueue_InitialFlattenOne)
     RUNNER_FAIL;
 }
 
+/*
+Name: BinaryQueue_ZeroCopyFrom
+Description: tests coping content of empty queue to another (AppendCopyFrom)
+Expected: source queue should be empty
+*/
 RUNNER_TEST(BinaryQueue_ZeroCopyFrom)
 {
     DPL::BinaryQueue queue;
@@ -129,6 +179,11 @@ RUNNER_TEST(BinaryQueue_ZeroCopyFrom)
     RUNNER_ASSERT(queue.Empty());
 }
 
+/*
+Name: BinaryQueue_ZeroMoveFrom
+Description: tests moving content of empty queue to another
+Expected: source queue should be empty
+*/
 RUNNER_TEST(BinaryQueue_ZeroMoveFrom)
 {
     DPL::BinaryQueue queue;
@@ -138,6 +193,11 @@ RUNNER_TEST(BinaryQueue_ZeroMoveFrom)
     RUNNER_ASSERT(queue.Empty());
 }
 
+/*
+Name: BinaryQueue_ZeroCopyTo
+Description: tests moving content of empty queue to another (AppendCopyTo)
+Expected: source queue should be empty
+*/
 RUNNER_TEST(BinaryQueue_ZeroCopyTo)
 {
     DPL::BinaryQueue queue;
@@ -147,6 +207,11 @@ RUNNER_TEST(BinaryQueue_ZeroCopyTo)
     RUNNER_ASSERT(queue.Empty());
 }
 
+/*
+Name: BinaryQueue_InsertSingleCharacters
+Description: tests inserting single bytes to queue
+Expected: stringified content and size shoudl match expected
+*/
 RUNNER_TEST(BinaryQueue_InsertSingleCharacters)
 {
     DPL::BinaryQueue queue;
@@ -160,6 +225,12 @@ RUNNER_TEST(BinaryQueue_InsertSingleCharacters)
     RUNNER_ASSERT(BinaryQueueToString(queue) == "abcd");
 }
 
+/*
+Name: BinaryQueue_Consume
+Description: tests comsuming portions of 1 or 2 bytes
+Expected: stringified content and size should match expected
+ Bytes should be pope from begin.
+*/
 RUNNER_TEST(BinaryQueue_Consume)
 {
     DPL::BinaryQueue queue;
@@ -186,6 +257,11 @@ RUNNER_TEST(BinaryQueue_Consume)
     RUNNER_ASSERT(BinaryQueueToString(queue) == "");
 }
 
+/*
+Name: BinaryQueue_Flatten
+Description: tests comsuming portions of 1 and more bytes
+Expected: stringified content and size should match expected
+*/
 RUNNER_TEST(BinaryQueue_Flatten)
 {
     DPL::BinaryQueue queue;
@@ -199,6 +275,12 @@ RUNNER_TEST(BinaryQueue_Flatten)
     RUNNER_ASSERT(BinaryQueueToString(queue) == "abcdefg");
 }
 
+/*
+Name: BinaryQueue_FlattenConsume
+Description: tests comsuming portions of 1 and more bytes
+Expected: stringified content and size should match expected
+ reading and discarding bytes should affect queue's size and content
+*/
 RUNNER_TEST(BinaryQueue_FlattenConsume)
 {
     DPL::BinaryQueue queue;
@@ -215,6 +297,12 @@ RUNNER_TEST(BinaryQueue_FlattenConsume)
     RUNNER_ASSERT(BinaryQueueToString(queue) == "def");
 }
 
+/*
+Name: BinaryQueue_AppendCopyFrom
+Description: tests creating copy of not empty queue (use of: AppendCopyFrom)
+Expected: stringified content and size should match expected
+ from original queue and it's copy
+*/
 RUNNER_TEST(BinaryQueue_AppendCopyFrom)
 {
     DPL::BinaryQueue queue;
@@ -231,6 +319,12 @@ RUNNER_TEST(BinaryQueue_AppendCopyFrom)
     RUNNER_ASSERT(BinaryQueueToString(copy) == "abcdef");
 }
 
+/*
+Name: BinaryQueue_AppendCopyTo
+Description: tests creating copy of not empty queue (use of: AppendCopyTo)
+Expected: stringified content and size should match expected
+ from original queue and it's copy
+*/
 RUNNER_TEST(BinaryQueue_AppendCopyTo)
 {
     DPL::BinaryQueue queue;
@@ -247,6 +341,12 @@ RUNNER_TEST(BinaryQueue_AppendCopyTo)
     RUNNER_ASSERT(BinaryQueueToString(copy) == "abcdef");
 }
 
+/*
+Name: BinaryQueue_AppendMoveFrom
+Description: tests moving content of not empty queue (use of: AppendMoveFrom)
+Expected: stringified content and size should match expected
+ for new queue. Old queue should be empty after operation
+*/
 RUNNER_TEST(BinaryQueue_AppendMoveFrom)
 {
     DPL::BinaryQueue queue;
@@ -263,6 +363,12 @@ RUNNER_TEST(BinaryQueue_AppendMoveFrom)
     RUNNER_ASSERT(BinaryQueueToString(copy) == "abcdef");
 }
 
+/*
+Name: BinaryQueue_AppendMoveFrom
+Description: tests moving content of not empty queue (use of: AppendMoveTo)
+Expected: stringified content and size should match expected
+ for new queue. Old queue should be empty after operation
+*/
 RUNNER_TEST(BinaryQueue_AppendMoveTo)
 {
     DPL::BinaryQueue queue;
@@ -279,45 +385,45 @@ RUNNER_TEST(BinaryQueue_AppendMoveTo)
     RUNNER_ASSERT(BinaryQueueToString(copy) == "abcdef");
 }
 
-class Visitor
-    : public DPL::BinaryQueue::BucketVisitor
+class Visitor :
+    public DPL::BinaryQueue::BucketVisitor
 {
-private:
+  private:
     int m_index;
 
-public:
-    Visitor()
-        : m_index(0)
-    {        
-    }
+  public:
+    Visitor() :
+        m_index(0)
+    {}
 
     virtual void OnVisitBucket(const void *buffer, size_t bufferSize)
     {
         const char *str = static_cast<const char *>(buffer);
-        
-        if (m_index == 0)
-        {
+
+        if (m_index == 0) {
             RUNNER_ASSERT(bufferSize == 4);
             RUNNER_ASSERT(str[0] == 'a');
             RUNNER_ASSERT(str[1] == 'b');
             RUNNER_ASSERT(str[2] == 'c');
             RUNNER_ASSERT(str[3] == 'd');
-        }
-        else if (m_index == 1)
-        {
+        } else if (m_index == 1) {
             RUNNER_ASSERT(bufferSize == 2);
             RUNNER_ASSERT(str[0] == 'e');
             RUNNER_ASSERT(str[1] == 'f');
-        }
-        else
-        {
+        } else {
             RUNNER_FAIL;
         }
-        
+
         ++m_index;
     }
 };
 
+/*
+Name: BinaryQueue_Visitor
+Description: tests byte by byte content of queue by use of visitor
+Expected: stringified content and size should match expected
+ Each byte should be at right position
+*/
 RUNNER_TEST(BinaryQueue_Visitor)
 {
     DPL::BinaryQueue queue;
@@ -344,6 +450,11 @@ RUNNER_TEST(BinaryQueue_AbstracInputRead)
     RUNNER_ASSERT(queue.Size() == 0);
 }
 
+/*
+Name: BinaryQueue_AbstracOutputWrite
+Description: tests appending one queue to another
+Expected: written bytes shoudl affect content and size of queue
+*/
 RUNNER_TEST(BinaryQueue_AbstracOutputWrite)
 {
     DPL::BinaryQueue queue;

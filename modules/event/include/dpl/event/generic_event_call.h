@@ -29,26 +29,23 @@
 #include <dpl/log/log.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 template<typename EventType, typename SupportDataType>
-class GenericEventCall
-    : public AbstractEventCall
+class GenericEventCall :
+    public AbstractEventCall
 {
-public:
+  public:
     typedef EventListener<EventType> EventListenerType;
     typedef FastDelegate1<const EventType &> DelegateType;
 
-protected:
+  protected:
     SupportDataType m_supportData;
     EventListenerType *m_eventListener;
     DelegateType m_delegate;
     EventType m_event;
 
-public:
+  public:
     template<typename OtherEventType, typename OtherSupportType>
     struct Rebind
     {
@@ -58,13 +55,12 @@ public:
     GenericEventCall(SupportDataType supportData,
                      EventListenerType *eventListener,
                      DelegateType delegate,
-                     const EventType &event)
-        : m_supportData(supportData),
-          m_eventListener(eventListener),
-          m_delegate(delegate),
-          m_event(event)
-    {
-    }
+                     const EventType &event) :
+        m_supportData(supportData),
+        m_eventListener(eventListener),
+        m_delegate(delegate),
+        m_event(event)
+    {}
 
     virtual ~GenericEventCall()
     {
@@ -94,7 +90,6 @@ public:
         // from the event queue (not just marked "disabled")
     }
 };
-
 }
 } // namespace DPL
 

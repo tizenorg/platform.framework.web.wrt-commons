@@ -27,7 +27,7 @@ const char* PATH_DB = "/opt/share/wrt/wrt-commons/tests/db/dpl_orm_test.db";
 
 class SmartAttach
 {
-public:
+  public:
 
     SmartAttach(bool autoattach = true) :
         m_interface(PATH_DB,
@@ -50,13 +50,15 @@ public:
     {
         return &m_interface;
     }
-private:
+
+  private:
     DPL::DB::ThreadDatabaseSupport m_interface;
     bool m_autoattach;
 };
 
 template<typename ContainerType1, typename ContainerType2>
-bool ContainerContentsEqual(const ContainerType1& container1, const ContainerType2& container2)
+bool ContainerContentsEqual(const ContainerType1& container1,
+                            const ContainerType2& container2)
 {
     using namespace DPL::DB::ORM::dpl_orm_test::TestTableInsert;
     typedef std::set<typename ContainerType1::value_type> Set1;
@@ -65,14 +67,13 @@ bool ContainerContentsEqual(const ContainerType1& container1, const ContainerTyp
     Set2 set2(container2.begin(), container2.end());
 
     for (typename Set1::iterator it = set1.begin();
-            it != set1.end();
-            it++)
+         it != set1.end();
+         it++)
     {
         LogDebug("Set1 element: " << *it);
     }
 
-    for (typename Set2::iterator it = set2.begin(); it != set2.end(); it++)
-    {
+    for (typename Set2::iterator it = set2.begin(); it != set2.end(); it++) {
         LogDebug("Set2 element: " << *it);
     }
 
@@ -92,6 +93,11 @@ std::list<T> makeList(const T& a, const T& b)
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: ORM_SelectSingleValue
+Description: tests quering single value of single row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectSingleValue)
 {
     SmartAttach interface;
@@ -102,31 +108,40 @@ RUNNER_TEST(ORM_SelectSingleValue)
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         int result;
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 6, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 6, "Got " <<
+                          result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         DPL::String result;
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptText>()) == L"seven", "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptText>(
+                                   )) == L"seven",
+                          "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         int result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt>()) == 8, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt>(
+                                   )) == 8, "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         int result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 9, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 9, "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         DPL::String result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnText>()) == L"ten", "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnText>(
+                                   )) == L"ten", "Got " << result);
     }
 
     //Where on each column
@@ -134,34 +149,48 @@ RUNNER_TEST(ORM_SelectSingleValue)
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnOptInt>(6));
         int result;
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 6, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 6, "Got " <<
+                          result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnOptText>(DPL::String(L"seven")));
         DPL::String result;
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptText>()) == L"seven", "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptText>(
+                                   )) == L"seven",
+                          "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt>(8));
         int result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt>()) == 8, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt>(
+                                   )) == 8, "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnInt2>(9));
         int result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 9, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 9, "Got " << result);
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Equals<TestTable::ColumnText>(L"ten"));
         DPL::String result;
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnText>()) == L"ten", "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnText>(
+                                   )) == L"ten", "Got " << result);
     }
 }
 
+/*
+Name: ORM_SelectSingleRow
+Description: tests quering single row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectSingleRow)
 {
     SmartAttach interface;
@@ -194,6 +223,11 @@ RUNNER_TEST(ORM_SelectSingleRow)
     }
 }
 
+/*
+Name: ORM_SelectRowList
+Description: tests quering multiple row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectRowList)
 {
     SmartAttach interface;
@@ -211,7 +245,8 @@ RUNNER_TEST(ORM_SelectRowList)
         expected.Set_ColumnInt(3);
         expected.Set_ColumnInt2(4);
         expected.Set_ColumnText(L"five");
-        RUNNER_ASSERT_MSG(*(result.begin()) == expected, "Got " << *(result.begin()) );
+        RUNNER_ASSERT_MSG(*(result.begin()) == expected, "Got " <<
+                          *(result.begin()) );
     }
 
     {
@@ -226,7 +261,8 @@ RUNNER_TEST(ORM_SelectRowList)
         expected.Set_ColumnInt(8);
         expected.Set_ColumnInt2(9);
         expected.Set_ColumnText(L"ten");
-        RUNNER_ASSERT_MSG(*(result.begin()) == expected, "Got " << *(result.begin()) );
+        RUNNER_ASSERT_MSG(*(result.begin()) == expected, "Got " <<
+                          *(result.begin()) );
     }
 
     {
@@ -244,10 +280,16 @@ RUNNER_TEST(ORM_SelectRowList)
         expected2.Set_ColumnInt2(13);
         expected2.Set_ColumnText(L"fourteen");
 
-        RUNNER_ASSERT(ContainerContentsEqual(makeList(expected1, expected2), result));
+        RUNNER_ASSERT(ContainerContentsEqual(makeList(expected1,
+                                                      expected2), result));
     }
 }
 
+/*
+Name: ORM_SelectValueList
+Description: tests quering single column from multiple row from database
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_SelectValueList)
 {
     SmartAttach interface;
@@ -257,67 +299,92 @@ RUNNER_TEST(ORM_SelectValueList)
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnOptInt>(DPL::Optional<int>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnInt>(),
-                      makeList(99, 99)));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnInt>(),
+                                             makeList(99, 99)));
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnOptInt>(DPL::Optional<int>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnInt2>(),
-                      makeList(11, 13)));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnInt2>(),
+                                             makeList(11, 13)));
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnOptInt>(DPL::Optional<int>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnText>(),
-                      makeList(DPL::String(L"twelve"), DPL::String(L"fourteen"))));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnText>(),
+                                             makeList(DPL::String(L"twelve"),
+                                                      DPL::String(L"fourteen"))));
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnOptInt>(DPL::Optional<int>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnOptText>(),
-                      makeList(DPL::Optional<DPL::String>::Null,DPL::Optional<DPL::String>::Null)));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnOptText>(),
+                                             makeList(DPL::Optional<DPL::String>
+                                                          ::Null,
+                                                      DPL::Optional<DPL::String>
+                                                          ::Null)));
     }
 
     //Where on each column
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnOptInt>(DPL::Optional<int>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnInt2>(),
-                      makeList(11, 13)));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnInt2>(),
+                                             makeList(11, 13)));
     }
     {
         TestTable::Select select(interface.get());
-        select.Where(Is<TestTable::ColumnOptText>(DPL::Optional<DPL::String>::Null));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnInt2>(),
-                      makeList(11, 13)));
+        select.Where(Is<TestTable::ColumnOptText>(DPL::Optional<DPL::String>::
+                                                      Null));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnInt2>(),
+                                             makeList(11, 13)));
     }
     {
         TestTable::Select select(interface.get());
         select.Where(Is<TestTable::ColumnInt>(99));
-        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::ColumnInt2>(),
-                      makeList(11, 13)));
+        RUNNER_ASSERT(ContainerContentsEqual(select.GetValueList<TestTable::
+                                                                     ColumnInt2>(),
+                                             makeList(11, 13)));
     }
 }
 
+/*
+Name: ORM_MultipleCalls
+Description: tests sequnece of different queries
+Expected: Values should match those which were prepared
+*/
 RUNNER_TEST(ORM_MultipleCalls)
 {
-    for (int j = 0 ; j < TEST_REPETITION ; j++ )
-    {
-        for (int i = 0 ; i < TEST_REPETITION ; i++ )
+    for (int j = 0; j < TEST_REPETITION; j++) {
+        for (int i = 0; i < TEST_REPETITION; i++) {
             ORM_SelectSingleValue();
+        }
 
-        for (int i = 0 ; i < TEST_REPETITION ; i++ )
+        for (int i = 0; i < TEST_REPETITION; i++) {
             ORM_SelectSingleRow();
+        }
 
-        for (int i = 0 ; i < TEST_REPETITION ; i++ )
+        for (int i = 0; i < TEST_REPETITION; i++) {
             ORM_SelectRowList();
+        }
 
-        for (int i = 0 ; i < TEST_REPETITION ; i++ )
+        for (int i = 0; i < TEST_REPETITION; i++) {
             ORM_SelectValueList();
+        }
     }
 }
 
+/*
+Name: ORM_Insert
+Description: tests insering rows into database
+Expected: Values should be inserted
+*/
 RUNNER_TEST(ORM_Insert)
 {
     SmartAttach interface;
@@ -326,7 +393,9 @@ RUNNER_TEST(ORM_Insert)
 
     TestTableInsert::Select select1(interface.get());
     std::list<int> resultList = select1.GetValueList<TestTableInsert::ColumnInt>();
-    RUNNER_ASSERT_MSG(resultList.size() == 0, "Returned list has wrong size: " << resultList.size());
+    RUNNER_ASSERT_MSG(resultList.empty(),
+                      "Returned list has wrong size: " << resultList.size());
+
     std::list<TestTableInsert::Row> list;
 
     TestTableInsert::Insert insert(interface.get());
@@ -341,7 +410,9 @@ RUNNER_TEST(ORM_Insert)
     list.push_back(row);
     {
         TestTableInsert::Select select2(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select2.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select2.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     TestTableInsert::Insert insert2(interface.get());
@@ -355,7 +426,9 @@ RUNNER_TEST(ORM_Insert)
     list.push_back(row2);
     {
         TestTableInsert::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     TestTableInsert::Insert insert3(interface.get());
@@ -370,7 +443,9 @@ RUNNER_TEST(ORM_Insert)
     list.push_back(row3);
     {
         TestTableInsert::Select select3(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select3.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select3.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     TestTableInsert::Insert insert4(interface.get());
@@ -385,7 +460,9 @@ RUNNER_TEST(ORM_Insert)
     list.push_back(row4);
     {
         TestTableInsert::Select select4(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select4.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select4.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     // restore original table state
@@ -398,46 +475,63 @@ RUNNER_TEST(ORM_Insert)
     }
 }
 
+/*
+Name: ORM_MultipleBindInsert
+Description: repeats ORM_Insert test several times
+Expected: Values should be inserted
+*/
 RUNNER_TEST(ORM_MultipleBindInsert)
 {
-    for ( int i = 0 ; i < TEST_REPETITION ; i++ )
-    {
+    for (int i = 0; i < TEST_REPETITION; i++) {
         ORM_Insert();
     }
 }
 
+/*
+Name: ORM_Delete
+Description: tests deleting rows from database
+Expected: deleted rows should not exist
+*/
 RUNNER_TEST(ORM_Delete)
 {
     SmartAttach interface;
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::dpl_orm_test;
     TestTableDelete::Select selectStart(interface.get());
-    selectStart.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableDelete::ColumnInt2> >());
+    selectStart.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableDelete::
+                                                                ColumnInt2> >());
     std::list<TestTableDelete::Row> list = selectStart.GetRowList();
     std::list<TestTableDelete::Row> originalList = list;
 
     std::vector<TestTableDelete::Row> vector(list.begin(), list.end());
-    RUNNER_ASSERT_MSG(list.size() == 4, "Returned list has wrong size: " << list.size());
+    RUNNER_ASSERT_MSG(
+        list.size() == 4, "Returned list has wrong size: " << list.size());
 
     typedef DPL::String S;
 
     //no-act deletes
     {
         TestTableDelete::Delete del(interface.get());
-        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(1), Equals<TestTableDelete::ColumnOptText>(S(L"seven"))));
+        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(1),
+                      Equals<TestTableDelete::ColumnOptText>(S(L"seven"))));
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     {
         TestTableDelete::Delete del(interface.get());
-        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(6), Equals<TestTableDelete::ColumnOptText>(S(L"two"))));
+        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(6),
+                      Equals<TestTableDelete::ColumnOptText>(S(L"two"))));
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     {
@@ -446,7 +540,9 @@ RUNNER_TEST(ORM_Delete)
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     //act deletes
@@ -454,11 +550,14 @@ RUNNER_TEST(ORM_Delete)
         list.remove(vector[1]);
 
         TestTableDelete::Delete del(interface.get());
-        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(6), Equals<TestTableDelete::ColumnText>(L"ten")));
+        del.Where(And(Equals<TestTableDelete::ColumnOptInt>(6),
+                      Equals<TestTableDelete::ColumnText>(L"ten")));
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     {
@@ -466,11 +565,14 @@ RUNNER_TEST(ORM_Delete)
         list.remove(vector[3]);
 
         TestTableDelete::Delete del(interface.get());
-        del.Where(Is<TestTableDelete::ColumnOptText>(DPL::Optional<DPL::String>::Null));
+        del.Where(Is<TestTableDelete::ColumnOptText>(DPL::Optional<DPL::String>
+                                                         ::Null));
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     {
@@ -478,12 +580,16 @@ RUNNER_TEST(ORM_Delete)
         del.Execute();
 
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(select.GetRowList().size() == 0, "Returned list is not empty");
+        RUNNER_ASSERT_MSG(
+            select.GetRowList().size() == 0, "Returned list is not empty");
     }
 
     // Restore original table state
-    // This also tests if multiple different binds for Insert are working properly
-    for (std::list<TestTableDelete::Row>::iterator i = originalList.begin(); i != originalList.end(); i++)
+    // This also tests if multiple different binds for Insert are working
+    // properly
+    for (std::list<TestTableDelete::Row>::iterator i = originalList.begin();
+         i != originalList.end();
+         i++)
     {
         TestTableDelete::Insert insert(interface.get());
         insert.Values(*i);
@@ -492,19 +598,30 @@ RUNNER_TEST(ORM_Delete)
 
     {
         TestTableDelete::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), originalList), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              originalList),
+                          "Returned list doesn't match.");
     }
-
 }
 
+/*
+Name: ORM_MultipleBindDelete
+Description: repeats ORM_Delete test several times
+Expected: Values should be deleted
+*/
 RUNNER_TEST(ORM_MultipleBindDelete)
 {
-    for ( int i = 0 ; i < TEST_REPETITION ; i++ )
-    {
+    for (int i = 0; i < TEST_REPETITION; i++) {
         ORM_Delete();
     }
 }
 
+/*
+Name: ORM_MultipleBindWhere
+Description: tests if multiple bind of same query obejct works
+Expected: Each bind and execution of query should be correct
+*/
 RUNNER_TEST(ORM_MultipleBindWhere)
 {
     SmartAttach interface;
@@ -514,16 +631,28 @@ RUNNER_TEST(ORM_MultipleBindWhere)
         TestTable::Select select(interface.get());
         int result;
         select.Where(Equals<TestTable::ColumnInt>(8));
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 6, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 6, "Got " <<
+                          result);
 
         select.Where(Equals<TestTable::ColumnInt>(3));
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 1, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 1, "Got " <<
+                          result);
 
         select.Where(Equals<TestTable::ColumnInt>(8));
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 6, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 6, "Got " <<
+                          result);
 
         select.Where(Equals<TestTable::ColumnInt>(3));
-        RUNNER_ASSERT_MSG((result = *select.GetSingleValue<TestTable::ColumnOptInt>()) == 1, "Got " << result);
+        RUNNER_ASSERT_MSG((result =
+                               *select.GetSingleValue<TestTable::ColumnOptInt>())
+                          == 1, "Got " <<
+                          result);
     }
 
     {
@@ -531,19 +660,23 @@ RUNNER_TEST(ORM_MultipleBindWhere)
         int result;
         select.Where(And(Equals<TestTable::ColumnInt>(99),
                          Equals<TestTable::ColumnText>(L"fourteen")));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 13, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 13, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnInt>(99),
                          Equals<TestTable::ColumnText>(L"twelve")));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 11, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 11, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnInt>(99),
                          Equals<TestTable::ColumnText>(L"fourteen")));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 13, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 13, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnInt>(99),
                          Equals<TestTable::ColumnText>(L"twelve")));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 11, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 11, "Got " << result);
     }
 
     {
@@ -551,24 +684,31 @@ RUNNER_TEST(ORM_MultipleBindWhere)
         int result;
         select.Where(And(Equals<TestTable::ColumnText>(L"fourteen"),
                          Equals<TestTable::ColumnInt>(99)));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 13, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 13, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnText>(L"twelve"),
                          Equals<TestTable::ColumnInt>(99)));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 11, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 11, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnText>(L"fourteen"),
                          Equals<TestTable::ColumnInt>(99)));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 13, "Got " << result);
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 13, "Got " << result);
 
         select.Where(And(Equals<TestTable::ColumnText>(L"twelve"),
                          Equals<TestTable::ColumnInt>(99)));
-        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>()) == 11, "Got " << result);
-
+        RUNNER_ASSERT_MSG((result = select.GetSingleValue<TestTable::ColumnInt2>(
+                                   )) == 11, "Got " << result);
     }
-
 }
 
+/*
+Name: ORM_Update
+Description: tests rows update in database
+Expected: Successful update
+*/
 RUNNER_TEST(ORM_Update)
 {
     SmartAttach interface;
@@ -619,7 +759,9 @@ RUNNER_TEST(ORM_Update)
 
         // CHECK
         TestTableInsert::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
     {
         // UPDATE - no rows
@@ -633,7 +775,9 @@ RUNNER_TEST(ORM_Update)
 
         // CHECK
         TestTableInsert::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
     {
         // UPDATE - one row
@@ -650,7 +794,9 @@ RUNNER_TEST(ORM_Update)
 
         // CHECK
         TestTableInsert::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     {
@@ -669,7 +815,9 @@ RUNNER_TEST(ORM_Update)
 
         // CHECK
         TestTableInsert::Select select(interface.get());
-        RUNNER_ASSERT_MSG(ContainerContentsEqual(select.GetRowList(), list), "Returned list doesn't match.");
+        RUNNER_ASSERT_MSG(ContainerContentsEqual(
+                              select.GetRowList(),
+                              list), "Returned list doesn't match.");
     }
 
     // restore original table state
@@ -682,52 +830,79 @@ RUNNER_TEST(ORM_Update)
     }
 }
 
+/*
+Name: ORM_MultipleBindUpdate
+Description: repeats ORM_Update severl times
+Expected: Successful update
+*/
 RUNNER_TEST(ORM_MultipleBindUpdate)
 {
-    for ( int i = 0 ; i < TEST_REPETITION ; i++ )
-    {
+    for (int i = 0; i < TEST_REPETITION; i++) {
         ORM_Update();
     }
 }
 
+/*
+Name: ORM_transactions
+Description: checks creation of transation object
+Expected: Successful creation of transaction object
+*/
 RUNNER_TEST(ORM_transactions)
 {
     SmartAttach interface;
     DPL::DB::ORM::dpl_orm_test::ScopedTransaction transaction(interface.get());
 }
 
+/*
+Name: ORM_MultiAttach
+Description: checks correct behaviou in case of multiple tries to attach to database
+Expected: Methods attaching/dettaching should be prepared for multiple calling
+*/
 RUNNER_TEST(ORM_MultiAttach)
 {
     SmartAttach interface(false);
-    RUNNER_ASSERT_MSG(!interface.get()->IsAttached(), "Is attached, but shouldn't be.");
+    RUNNER_ASSERT_MSG(
+        !interface.get()->IsAttached(), "Is attached, but shouldn't be.");
     interface.get()->AttachToThread();
-    RUNNER_ASSERT_MSG(interface.get()->IsAttached(), "Isn't attached, but should be.");
+    RUNNER_ASSERT_MSG(
+        interface.get()->IsAttached(), "Isn't attached, but should be.");
     interface.get()->AttachToThread();
-    RUNNER_ASSERT_MSG(interface.get()->IsAttached(), "Isn't attached, but should be.");
+    RUNNER_ASSERT_MSG(
+        interface.get()->IsAttached(), "Isn't attached, but should be.");
     interface.get()->DetachFromThread();
-    RUNNER_ASSERT_MSG(interface.get()->IsAttached(), "Isn't attached, but should be.");
+    RUNNER_ASSERT_MSG(
+        interface.get()->IsAttached(), "Isn't attached, but should be.");
     interface.get()->DetachFromThread();
-    RUNNER_ASSERT_MSG(!interface.get()->IsAttached(), "Is attached, but shouldn't be.");
+    RUNNER_ASSERT_MSG(
+        !interface.get()->IsAttached(), "Is attached, but shouldn't be.");
 }
 
+/*
+Name: ORM_Join
+Description: tests ORM's join operation
+Expected: values should insist correct join operation
+*/
 RUNNER_TEST(ORM_Join)
 {
     SmartAttach interface;
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::dpl_orm_test;
 
-    typedef DPL::TypeListDecl<TestTableJoin1::TestText, TestTableJoin2::TestText2,
-            DPL::TypeListGuard>::Type JoinColumns;
+    typedef DPL::TypeListDecl<TestTableJoin1::TestText,
+                              TestTableJoin2::TestText2,
+                              DPL::TypeListGuard>::Type JoinColumns;
 
     /* Test for correct join:
      * 5 ids from first table matches 5 ids from second table thus join result
      * contains 5 rows */
     TestTableJoin1::Select select(interface.get());
-    select.Join<JoinColumns>(Equal<TestTableJoin1::TestID, TestTableJoin2::TestID>());
-    std::list<CustomRow<JoinColumns>> rowlist =
-            select.GetCustomRowList<JoinColumns, CustomRow<JoinColumns>>();
+    select.Join<JoinColumns>(Equal<TestTableJoin1::TestID,
+                                   TestTableJoin2::TestID>());
+    std::list<CustomRow<JoinColumns> > rowlist =
+        select.GetCustomRowList<JoinColumns, CustomRow<JoinColumns> >();
 
-    RUNNER_ASSERT_MSG(rowlist.size() == 5, "Invalid number of rows fetched: " << rowlist.size());
+    RUNNER_ASSERT_MSG(
+        rowlist.size() == 5, "Invalid number of rows fetched: " << rowlist.size());
 
     std::string text;
     std::ostringstream oss;
@@ -736,24 +911,31 @@ RUNNER_TEST(ORM_Join)
     {
         cnt++;
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
         oss << "text val " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from first column: "
-                << text << " expected: " << oss.str());
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from first column: "
+                          << text << " expected: " << oss.str());
         oss.str(std::string());
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
         oss << "text2 " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from second column: "
-                << text << " expected: " << oss.str());
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from second column: "
+                          << text << " expected: " << oss.str());
         oss.str(std::string());
     }
     /* Test for empty join:
      * None of number values from first table matches ids from second table
      * - join result should be empty */
     TestTableJoin1::Select select2(interface.get());
-    select2.Join<JoinColumns>(Equal<TestTableJoin1::TestNumber, TestTableJoin2::TestID>());
-    rowlist = select2.GetCustomRowList<JoinColumns, CustomRow<JoinColumns>>();
+    select2.Join<JoinColumns>(Equal<TestTableJoin1::TestNumber,
+                                    TestTableJoin2::TestID>());
+    rowlist = select2.GetCustomRowList<JoinColumns, CustomRow<JoinColumns> >();
 
     RUNNER_ASSERT_MSG(rowlist.empty(), "Result should be empty but it is not!");
 
@@ -761,91 +943,131 @@ RUNNER_TEST(ORM_Join)
      * - join made with int column and text column as keys
      * - expected 5 matching rows (one row of 6 should not be matched)*/
     TestTableJoin1::Select select3(interface.get());
-    select3.Join<JoinColumns>(Equal<TestTableJoin1::TestID, TestTableJoin2::TestText1>());
-    rowlist = select3.GetCustomRowList<JoinColumns, CustomRow<JoinColumns>>();
-    RUNNER_ASSERT_MSG(rowlist.size() == 5, "Expected 5 rows while received: " << rowlist.size());
+    select3.Join<JoinColumns>(Equal<TestTableJoin1::TestID,
+                                    TestTableJoin2::TestText1>());
+    rowlist = select3.GetCustomRowList<JoinColumns, CustomRow<JoinColumns> >();
+    RUNNER_ASSERT_MSG(
+        rowlist.size() == 5, "Expected 5 rows while received: " << rowlist.size());
     cnt = 0;
     FOREACH(rowit, rowlist)
     {
         cnt++;
         // look at last two insertions into TestTableJoin2
         // for this skip understanding
-        if(cnt == 5) {
+        if (cnt == 5) {
             cnt = 6;
         }
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
         oss << "text val " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from first column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from first column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
         oss << "text2 " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from second column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from second column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
     }
 
     /* Test for join with non-unique nullable columns given as keys*/
-    typedef DPL::TypeListDecl<TestTableJoin1::TestText, TestTableJoin3::TestText33,
-            DPL::TypeListGuard>::Type JoinTables2;
+    typedef DPL::TypeListDecl<TestTableJoin1::TestText,
+                              TestTableJoin3::TestText33,
+                              DPL::TypeListGuard>::Type JoinTables2;
     TestTableJoin1::Select select4(interface.get());
-    select4.Join<JoinTables2>(Equal<TestTableJoin1::TestNumber, TestTableJoin3::Value3>());
-    std::list<CustomRow<JoinTables2>> rowlist2 = select4.GetCustomRowList<JoinTables2, CustomRow<JoinTables2>>();
-    RUNNER_ASSERT_MSG(rowlist2.size() == 4, "Expected 4 rows while received: " << rowlist.size());
+    select4.Join<JoinTables2>(Equal<TestTableJoin1::TestNumber,
+                                    TestTableJoin3::Value3>());
+    std::list<CustomRow<JoinTables2> > rowlist2 =
+        select4.GetCustomRowList<JoinTables2, CustomRow<JoinTables2> >();
+    RUNNER_ASSERT_MSG(
+        rowlist2.size() == 4, "Expected 4 rows while received: " <<
+        rowlist.size());
     cnt = 0;
     DPL::Optional<DPL::String> optext;
     FOREACH(rowit, rowlist2)
     {
         cnt++;
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
         // values expected in subsequent (1,2,3,4) iterations: 1 1 2 2
-        oss << "text val " << (1+(int)(cnt/3));
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from first column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        oss << "text val " << (1 + (int)(cnt / 3));
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from first column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
 
         optext = (*rowit).GetColumnData<TestTableJoin3::TestText33>();
         text = DPL::ToUTF8String(*optext);
         oss << "test " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from second column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from second column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
     }
 
     /* Test for join made on three tables:
      * - 3 text columns selected for join
      * - Equal made for TestID of (table1 and table2) and (table1 and table3) */
-    typedef DPL::TypeListDecl<TestTableJoin1::TestText, TestTableJoin2::TestText2,
-            TestTableJoin3::TestText33, DPL::TypeListGuard>::Type Join3Tables;
+    typedef DPL::TypeListDecl<TestTableJoin1::TestText,
+                              TestTableJoin2::TestText2,
+                              TestTableJoin3::TestText33,
+                              DPL::TypeListGuard>::Type Join3Tables;
     TestTableJoin1::Select select5(interface.get());
-    select5.Join<Join3Tables>(Equal<TestTableJoin1::TestID, TestTableJoin2::TestID>());
-    select5.Join<Join3Tables>(Equal<TestTableJoin1::TestID, TestTableJoin3::TestID>());
-    std::list<CustomRow<Join3Tables>> rowlist3tab = select5.GetCustomRowList<Join3Tables, CustomRow<Join3Tables>>();
-    RUNNER_ASSERT_MSG(rowlist3tab.size() == 3, "Expected 3 rows while received: " << rowlist3tab.size());
+    select5.Join<Join3Tables>(Equal<TestTableJoin1::TestID,
+                                    TestTableJoin2::TestID>());
+    select5.Join<Join3Tables>(Equal<TestTableJoin1::TestID,
+                                    TestTableJoin3::TestID>());
+    std::list<CustomRow<Join3Tables> > rowlist3tab =
+        select5.GetCustomRowList<Join3Tables, CustomRow<Join3Tables> >();
+    RUNNER_ASSERT_MSG(
+        rowlist3tab.size() == 3, "Expected 3 rows while received: " <<
+        rowlist3tab.size());
     cnt = 0;
     FOREACH(rowit, rowlist3tab)
     {
         cnt++;
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin1::TestText>());
         oss << "text val " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from first column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from first column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
 
-        text = DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
+        text =
+            DPL::ToUTF8String((*rowit).GetColumnData<TestTableJoin2::TestText2>());
         oss << "text2 " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from first column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from first column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
 
         optext = (*rowit).GetColumnData<TestTableJoin3::TestText33>();
         text = DPL::ToUTF8String(*optext);
         oss << "test " << cnt;
-        RUNNER_ASSERT_MSG(text.compare(oss.str()) == 0, "Invalid value from second column: "
-                << text << " expected: " << oss.str() << " iteration: " <<cnt);
+        RUNNER_ASSERT_MSG(text.compare(
+                              oss.str()) == 0,
+                          "Invalid value from second column: "
+                          << text << " expected: " << oss.str() <<
+                          " iteration: " << cnt);
         oss.str(std::string());
     }
 }
@@ -859,43 +1081,58 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
         TestTableJoin3::Select select(interface.get());
 
         // testing: " ORDER BY Value3 ASC, TestID DESC, TestID ASC"
-        select.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableJoin3::Value3>,
-                                OrderingDescending<TestTableJoin3::TestText33>,
-                                OrderingAscending<TestTableJoin3::TestID> >());
+        select.OrderBy(DPL::TypeListDecl<OrderingAscending<TestTableJoin3::
+                                                               Value3>,
+                                         OrderingDescending<TestTableJoin3::
+                                                                TestText33>,
+                                         OrderingAscending<TestTableJoin3::
+                                                               TestID> >());
 
         std::list<TestTableJoin3::Row> result = select.GetRowList();
         std::list<TestTableJoin3::Row>::const_iterator iter = result.begin();
         { //1 row
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 6"), "Wrong row 1 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 6"), "Wrong row 1 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 10, "Wrong row 1 order");
             iter++;
         }
         { //2 row
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 5"), "Wrong row 2 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 5"), "Wrong row 2 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 7, "Wrong row 2 order");
             iter++;
         }
         { //3 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 3 order");
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 2"), "Wrong row 3 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 2"), "Wrong row 3 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 2, "Wrong row 3 order");
             iter++;
         }
         { //4 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 4 order");
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 1"), "Wrong row 4 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 1"), "Wrong row 4 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 1, "Wrong row 4 order");
             iter++;
         }
         { //5 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 5 order");
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 4"), "Wrong row 5 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 4"), "Wrong row 5 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 6, "Wrong row 5 order");
             iter++;
         }
         { //6 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 6 order");
-            RUNNER_ASSERT_MSG(*iter->Get_TestText33() == DPL::FromASCIIString("test 3"), "Wrong row 6 order");
+            RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
+                              DPL::FromASCIIString(
+                                  "test 3"), "Wrong row 6 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 3, "Wrong row 6 order");
             iter++;
         }

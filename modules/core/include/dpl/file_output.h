@@ -26,25 +26,24 @@
 #include <dpl/exception.h>
 #include <dpl/abstract_waitable_output.h>
 
-namespace DPL
+namespace DPL {
+class FileOutput :
+    private Noncopyable,
+    public AbstractWaitableOutput
 {
-class FileOutput
-    : private Noncopyable,
-      public AbstractWaitableOutput
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
         DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
     };
 
-protected:
+  protected:
     int m_fd;
 
-public:
+  public:
     FileOutput();
     FileOutput(const std::string &fileName);
     virtual ~FileOutput();

@@ -30,8 +30,8 @@
 #include <dpl/localization/w3c_file_localization.h>
 
 namespace {
-
-WrtDB::LanguageTagList generateLanguageTags(){
+WrtDB::LanguageTagList generateLanguageTags()
+{
     WrtDB::LanguageTagList tags;
     tags.push_back(L"pl-pl");
     tags.push_back(L"en-en");
@@ -40,9 +40,10 @@ WrtDB::LanguageTagList generateLanguageTags(){
 }
 
 static const WrtDB::LanguageTagList languageTags = generateLanguageTags();
-static const DPL::String widget1Path = L"/opt/share/widget/tests/localization/widget1/";
-static const DPL::String widget2Path = L"/opt/share/widget/tests/localization/widget2/";
-
+static const DPL::String widget1Path =
+    L"/opt/share/widget/tests/localization/widget1/";
+static const DPL::String widget2Path =
+    L"/opt/share/widget/tests/localization/widget2/";
 } // anonymous namespace
 
 RUNNER_TEST(test01_getFilePathInWidgetPackageFromUrl){
@@ -51,11 +52,13 @@ RUNNER_TEST(test01_getFilePathInWidgetPackageFromUrl){
     //dao.setPath(widget1Path);
 
     auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-        widgetHandle,
-        languageTags,
-        L"widget://one");
+            widgetHandle,
+            languageTags,
+            L"widget://one");
 
-    RUNNER_ASSERT(*result == L"/opt/share/widget/tests/localization/widget1/locales/pl-en/one");
+    RUNNER_ASSERT(
+        *result ==
+        L"/opt/share/widget/tests/localization/widget1/locales/pl-en/one");
 }
 
 RUNNER_TEST(test02_getFilePathInWidgetPackageFromUrl){
@@ -64,11 +67,13 @@ RUNNER_TEST(test02_getFilePathInWidgetPackageFromUrl){
     //dao.setPath(widget2Path);
 
     auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-        widgetHandle,
-        languageTags,
-        L"widget://one");
+            widgetHandle,
+            languageTags,
+            L"widget://one");
 
-    RUNNER_ASSERT(*result == L"/opt/share/widget/tests/localization/widget2/locales/pl-en/one");
+    RUNNER_ASSERT(
+        *result ==
+        L"/opt/share/widget/tests/localization/widget2/locales/pl-en/one");
 }
 
 RUNNER_TEST(test03_getFilePathInWidgetPackageFromUrl){
@@ -77,11 +82,13 @@ RUNNER_TEST(test03_getFilePathInWidgetPackageFromUrl){
     //dao.setPath(widget2Path);
 
     auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-        widgetHandle,
-        languageTags,
-        L"widget://two");
+            widgetHandle,
+            languageTags,
+            L"widget://two");
 
-    RUNNER_ASSERT(*result == L"/opt/share/widget/tests/localization/widget2/locales/en-en/two");
+    RUNNER_ASSERT(
+        *result ==
+        L"/opt/share/widget/tests/localization/widget2/locales/en-en/two");
 }
 
 RUNNER_TEST(test04_getFilePathInWidgetPackage){
@@ -90,9 +97,9 @@ RUNNER_TEST(test04_getFilePathInWidgetPackage){
     //dao.setPath(widget1Path);
 
     auto result = W3CFileLocalization::getFilePathInWidgetPackage(
-        widgetHandle,
-        languageTags,
-        L"one");
+            widgetHandle,
+            languageTags,
+            L"one");
 
     RUNNER_ASSERT(*result == L"locales/pl-en/one");
 }
@@ -103,9 +110,9 @@ RUNNER_TEST(test05_getFilePathInWidgetPackage){
     //dao.setPath(widget2Path);
 
     auto result = W3CFileLocalization::getFilePathInWidgetPackage(
-        widgetHandle,
-        languageTags,
-        L"two");
+            widgetHandle,
+            languageTags,
+            L"two");
 
     RUNNER_ASSERT(*result == L"locales/en-en/two");
 }

@@ -24,19 +24,14 @@
 #include <dpl/log/log.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-namespace Event
-{
-
-ThreadEventDispatcher::ThreadEventDispatcher()
-    : m_thread(NULL)
-{
-}
+namespace DPL {
+namespace Event {
+ThreadEventDispatcher::ThreadEventDispatcher() :
+    m_thread(NULL)
+{}
 
 ThreadEventDispatcher::~ThreadEventDispatcher()
-{
-}
+{}
 
 void ThreadEventDispatcher::SetThread(Thread *thread)
 {
@@ -45,8 +40,10 @@ void ThreadEventDispatcher::SetThread(Thread *thread)
 
 void ThreadEventDispatcher::StaticEventDelete(void *event, void *userParam)
 {
-    AbstractEventCall *abstractEventCall = static_cast<AbstractEventCall *>(event);
-    ThreadEventDispatcher *This = static_cast<ThreadEventDispatcher *>(userParam);
+    AbstractEventCall *abstractEventCall =
+        static_cast<AbstractEventCall *>(event);
+    ThreadEventDispatcher *This =
+        static_cast<ThreadEventDispatcher *>(userParam);
 
     LogPedantic("Received static event delete from thread");
 
@@ -58,8 +55,10 @@ void ThreadEventDispatcher::StaticEventDelete(void *event, void *userParam)
 
 void ThreadEventDispatcher::StaticEventDispatch(void *event, void *userParam)
 {
-    AbstractEventCall *abstractEventCall = static_cast<AbstractEventCall *>(event);
-    ThreadEventDispatcher *This = static_cast<ThreadEventDispatcher *>(userParam);
+    AbstractEventCall *abstractEventCall =
+        static_cast<AbstractEventCall *>(event);
+    ThreadEventDispatcher *This =
+        static_cast<ThreadEventDispatcher *>(userParam);
 
     LogPedantic("Received static event dispatch from thread");
 
@@ -89,10 +88,15 @@ void ThreadEventDispatcher::AddEventCall(AbstractEventCall *abstractEventCall)
     LogPedantic("Adding event to thread event loop");
 
     // Call abstract event call in dedicated thread
-    m_thread->PushEvent(abstractEventCall, &StaticEventDispatch, &StaticEventDelete, this);
+    m_thread->PushEvent(abstractEventCall,
+                        &StaticEventDispatch,
+                        &StaticEventDelete,
+                        this);
 }
 
-void ThreadEventDispatcher::AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime)
+void ThreadEventDispatcher::AddTimedEventCall(
+    AbstractEventCall *abstractEventCall,
+    double dueTime)
 {
     // Thread must be set prior to call
     Assert(m_thread != NULL);
@@ -100,8 +104,11 @@ void ThreadEventDispatcher::AddTimedEventCall(AbstractEventCall *abstractEventCa
     LogPedantic("Adding timed event to thread event loop");
 
     // Call abstract event call in dedicated thread
-    m_thread->PushTimedEvent(abstractEventCall, dueTime, &StaticEventDispatch, &StaticEventDelete, this);
+    m_thread->PushTimedEvent(abstractEventCall,
+                             dueTime,
+                             &StaticEventDispatch,
+                             &StaticEventDelete,
+                             this);
 }
-
 }
 } // namespace DPL

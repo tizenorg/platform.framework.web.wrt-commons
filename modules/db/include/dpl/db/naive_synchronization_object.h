@@ -17,31 +17,28 @@
  * @file        naive_synchronization_object.h
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of SQL naive synchronization object
+ * @brief       This file is the implementation file of SQL naive
+ * synchronization object
  */
 #ifndef DPL_NAIVE_SYNCHRONIZATION_OBJECT_H
 #define DPL_NAIVE_SYNCHRONIZATION_OBJECT_H
 
 #include <dpl/db/sql_connection.h>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 /**
  * Naive synchronization object used to synchronize SQL connection
  * to the same database across different threads and processes
  */
-class NaiveSynchronizationObject
-    : public SqlConnection::SynchronizationObject
+class NaiveSynchronizationObject :
+    public SqlConnection::SynchronizationObject
 {
-public:
+  public:
     // [SqlConnection::SynchronizationObject]
     virtual void Synchronize();
     virtual void NotifyAll();
 };
-
 } // namespace DB
 } // namespace DPL
 

@@ -26,7 +26,6 @@
 #include <dpl/wrt-dao-ro/global_dao_read_only.h>
 
 namespace WrtDB {
-
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
@@ -60,10 +59,8 @@ class GlobalDAO : public GlobalDAOReadOnly
 
   private:
     GlobalDAO()
-    {
-    }
+    {}
 };
-
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_GLOBAL_DAO_H_ */

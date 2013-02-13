@@ -69,8 +69,9 @@ void GlobalDAO::SetSecureByDefault(bool secure)
 void GlobalDAO::setComplianceMode(bool mode)
 {
     LogDebug("Updating compliance mode to:" << mode);
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         GlobalProperties::Row row;
         row.Set_compliance_mode(mode);
 
@@ -78,7 +79,7 @@ void GlobalDAO::setComplianceMode(bool mode)
         update->Values(row);
         update->Execute();
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
                    "Failed to update compliance mode");
     }
@@ -87,8 +88,9 @@ void GlobalDAO::setComplianceMode(bool mode)
 void GlobalDAO::setComplianceFakeImei(const std::string &imei)
 {
     LogDebug("Setting compliance fake IMEI: " << imei);
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         GlobalProperties::Row row;
         row.Set_compliance_fake_imei(DPL::FromASCIIString(imei));
 
@@ -96,7 +98,7 @@ void GlobalDAO::setComplianceFakeImei(const std::string &imei)
         update->Values(row);
         update->Execute();
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
                    "Failed to update compliance fake IMEI");
     }
@@ -105,8 +107,9 @@ void GlobalDAO::setComplianceFakeImei(const std::string &imei)
 void GlobalDAO::setComplianceFakeMeid(const std::string &meid)
 {
     LogDebug("Setting compliance fake MEID: " << meid);
-    Try{
-        using namespace DPL::DB::ORM; using namespace DPL::DB::ORM::wrt;
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
         GlobalProperties::Row row;
         row.Set_compliance_fake_meid(DPL::FromASCIIString(meid));
 
@@ -114,7 +117,7 @@ void GlobalDAO::setComplianceFakeMeid(const std::string &meid)
         update->Values(row);
         update->Execute();
     }
-    Catch (DPL::DB::SqlConnection::Exception::Base){
+    Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
                    "Failed to update compliance fake MEID");
     }
@@ -189,7 +192,8 @@ void GlobalDAO::RemoveWhiteURI(const std::string &uri)
         using namespace DPL::DB::ORM::wrt;
 
         WRT_DB_DELETE(deleteFrom, WidgetWhiteURIList, &WrtDatabase::interface())
-        deleteFrom->Where(Equals<WidgetWhiteURIList::uri>(DPL::FromASCIIString(uri)));
+        deleteFrom->Where(Equals<WidgetWhiteURIList::uri>(DPL::FromASCIIString(
+                                                              uri)));
         deleteFrom->Execute();
     } Catch(DPL::DB::SqlConnection::Exception::Base) {
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
@@ -215,5 +219,4 @@ void GlobalDAO::SetCookieSharingMode(bool mode)
                    "Failed to update Cookie Sharing Mode");
     }
 }
-
 } // namespace WrtDB

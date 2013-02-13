@@ -319,7 +319,6 @@ inline const char* GetVconfKeyMemorySavingModePath()
 {
     return "/memory_saving_mode";
 }
-
 } // namespace GlobalConfig
 } // namespace WrtDB
 

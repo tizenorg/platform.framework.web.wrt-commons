@@ -28,22 +28,19 @@
 #include <dpl/thread.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 template<typename EventType>
-class ControllerEventHandler
-    : public EventListener<EventType>,
-      private EventSupport<EventType>
+class ControllerEventHandler :
+    public EventListener<EventType>,
+    private EventSupport<EventType>
 {
-private:
+  private:
     bool m_touched;
 
-public:
-    ControllerEventHandler()
-        : m_touched(false)
+  public:
+    ControllerEventHandler() :
+        m_touched(false)
     {
         EventSupport<EventType>::AddListener(this);
     }
@@ -55,19 +52,25 @@ public:
 
     void PostEvent(const EventType &event)
     {
-        Assert(m_touched && "Default context not inherited. Call Touch() to inherit one.");
+        Assert(
+            m_touched &&
+            "Default context not inherited. Call Touch() to inherit one.");
         EventSupport<EventType>::EmitEvent(event, EmitMode::Queued);
     }
 
     void PostTimedEvent(const EventType &event, double dueTime)
     {
-        Assert(m_touched && "Default context not inherited. Call Touch() to inherit one.");
+        Assert(
+            m_touched &&
+            "Default context not inherited. Call Touch() to inherit one.");
         EventSupport<EventType>::EmitEvent(event, EmitMode::Deffered, dueTime);
     }
 
     void PostSyncEvent(const EventType &event)
     {
-        Assert(m_touched && "Default context not inherited. Call Touch() to inherit one.");
+        Assert(
+            m_touched &&
+            "Default context not inherited. Call Touch() to inherit one.");
 
         // Check calling context
         EventSupport<EventType>::EmitEvent(event, EmitMode::Blocking);
@@ -75,33 +78,36 @@ public:
 
     void SwitchToThread(Thread *thread)
     {
-        Assert(m_touched && "Default context not inherited. Call Touch() to inherit one.");
+        Assert(
+            m_touched &&
+            "Default context not inherited. Call Touch() to inherit one.");
         EventSupport<EventType>::SwitchListenerToThread(this, thread);
     }
 
     void Touch()
     {
         m_touched = true;
-        EventSupport<EventType>::SwitchListenerToThread(this, Thread::GetCurrentThread());
+        EventSupport<EventType>::SwitchListenerToThread(
+            this,
+            Thread::
+                GetCurrentThread());
     }
 };
 
 template<typename EventTypeList>
-class Controller
-    : public Controller<typename EventTypeList::Tail>,
-      public ControllerEventHandler<typename EventTypeList::Head>
+class Controller :
+    public Controller<typename EventTypeList::Tail>,
+    public ControllerEventHandler<typename EventTypeList::Head>
 {
-public:
+  public:
     typedef typename EventTypeList::Head EventType;
 
-public:
+  public:
     Controller()
-    {
-    }
+    {}
 
     virtual ~Controller()
-    {
-    }
+    {}
 
     virtual void SwitchToThread(Thread *thread)
     {
@@ -119,14 +125,12 @@ public:
 template<>
 class Controller<TypeListDecl<>::Type>
 {
-public:
+  public:
     Controller()
-    {
-    }
+    {}
 
     virtual ~Controller()
-    {
-    }
+    {}
 
     virtual void SwitchToThread(Thread *thread)
     {
@@ -134,16 +138,23 @@ public:
     }
 
     virtual void Touch()
-    {
-    }
+    {}
 };
-
 }
 } // namespace DPL
 
 // Utilities
-#define CONTROLLER_POST_EVENT(Name, EventArg) Name##Singleton::Instance().DPL::Event::ControllerEventHandler<__typeof__ EventArg>::PostEvent(EventArg)
-#define CONTROLLER_POST_TIMED_EVENT(Name, EventArg, DueTime) Name##Singleton::Instance().DPL::Event::ControllerEventHandler<__typeof__ EventArg>::PostTimedEvent(EventArg, DueTime)
-#define CONTROLLER_POST_SYNC_EVENT(Name, EventArg) Name##Singleton::Instance().DPL::Event::ControllerEventHandler<__typeof__ EventArg>::PostSyncEvent(EventArg)
+#define CONTROLLER_POST_EVENT(Name, \
+                              EventArg) Name##Singleton::Instance().DPL::Event \
+        ::ControllerEventHandler< \
+        __typeof__ EventArg>::PostEvent(EventArg)
+#define CONTROLLER_POST_TIMED_EVENT(Name, EventArg, \
+                                    DueTime) Name##Singleton::Instance().DPL:: \
+        Event::ControllerEventHandler< \
+        __typeof__ EventArg>::PostTimedEvent(EventArg, DueTime)
+#define CONTROLLER_POST_SYNC_EVENT(Name, \
+                                   EventArg) Name##Singleton::Instance().DPL:: \
+        Event::ControllerEventHandler< \
+        __typeof__ EventArg>::PostSyncEvent(EventArg)
 
 #endif // DPL_CONTROLLER_H

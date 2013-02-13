@@ -25,6 +25,11 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+/*
+Name: TypeList_TypeCount
+Description: tests size of typelist idiom
+Expected: size should match
+*/
 RUNNER_TEST(TypeList_TypeCount)
 {
     typedef DPL::TypeListDecl<int, char, int[64]>::Type TestTypeList1;

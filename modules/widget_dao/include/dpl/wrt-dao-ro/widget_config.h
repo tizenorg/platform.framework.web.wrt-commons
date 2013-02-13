@@ -31,7 +31,6 @@
 
 namespace WrtDB {
 namespace WidgetConfig {
-
 inline std::string GetWidgetBasePath(DPL::String tzPkgId)
 {
     return PathBuilder()

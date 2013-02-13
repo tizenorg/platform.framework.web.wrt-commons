@@ -22,21 +22,21 @@
 #include <stddef.h>
 #include <dpl/atomic.h>
 
-namespace DPL
-{
-Atomic::Atomic(ValueType value)
-    : m_value(value)
-{
-}
+namespace DPL {
+Atomic::Atomic(ValueType value) :
+    m_value(value)
+{}
 
 Atomic::ValueType Atomic::ExchangeAndAdd(ValueType value)
 {
-    return g_atomic_int_exchange_and_add(const_cast<gint* >(&m_value), value);
+    return g_atomic_int_add(const_cast<gint* >(&m_value), value);
 }
 
 bool Atomic::CompareAndExchange(ValueType oldValue, ValueType newValue)
 {
-    return g_atomic_int_compare_and_exchange(const_cast<gint* >(&m_value), oldValue, newValue);
+    return g_atomic_int_compare_and_exchange(const_cast<gint* >(&m_value),
+                                             oldValue,
+                                             newValue);
 }
 
 bool Atomic::operator--()

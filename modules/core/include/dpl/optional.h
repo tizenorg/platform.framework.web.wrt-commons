@@ -24,31 +24,27 @@
 
 #include <dpl/exception.h>
 
-namespace DPL
-{
-
+namespace DPL {
 template <typename Type>
 class Optional
 {
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, NullReference)
     };
 
-public:
+  public:
     Optional() :
         m_null(true),
         m_value()
-    {
-    }
+    {}
 
     Optional(const Type& t) :
         m_null(false),
         m_value(t)
-    {
-    }
+    {}
 
     bool IsNull() const
     {
@@ -57,25 +53,33 @@ public:
 
     Type& operator*()
     {
-        if (m_null) Throw(typename Exception::NullReference);
+        if (m_null) {
+            Throw(typename Exception::NullReference);
+        }
         return m_value;
     }
 
     const Type& operator*() const
     {
-        if (m_null) Throw(typename Exception::NullReference);
+        if (m_null) {
+            Throw(typename Exception::NullReference);
+        }
         return m_value;
     }
 
     const Type* operator->() const
     {
-        if (m_null) Throw(typename Exception::NullReference);
+        if (m_null) {
+            Throw(typename Exception::NullReference);
+        }
         return &m_value;
     }
 
     Type* operator->()
     {
-        if (m_null) Throw(typename Exception::NullReference);
+        if (m_null) {
+            Throw(typename Exception::NullReference);
+        }
         return &m_value;
     }
 
@@ -93,7 +97,8 @@ public:
 
     bool operator==(const Optional<Type>& aSecond) const
     {
-        return LogicalOperator<true>(*this, aSecond, std::equal_to<Type>(), std::equal_to<bool>());
+        return LogicalOperator<true>(*this, aSecond,
+                                     std::equal_to<Type>(), std::equal_to<bool>());
     }
 
     bool operator==(const Type& aSecond) const
@@ -108,12 +113,14 @@ public:
 
     bool operator<(const Optional<Type>& aSecond) const
     {
-        return LogicalOperator<false>(*this, aSecond, std::less<Type>(), std::less<bool>());
+        return LogicalOperator<false>(*this, aSecond,
+                                      std::less<Type>(), std::less<bool>());
     }
 
     bool operator>(const Optional<Type>& aSecond) const
     {
-        return LogicalOperator<false>(*this, aSecond, std::greater<Type>(), std::greater<bool>());
+        return LogicalOperator<false>(*this, aSecond,
+                                      std::greater<Type>(), std::greater<bool>());
     }
 
     bool operator<=(const Optional<Type>& aSecond) const
@@ -128,27 +135,23 @@ public:
 
     static Optional<Type> Null;
 
-private:
+  private:
     bool m_null;
     Type m_value;
 
     template <bool taEquality, typename taComparator, typename taNullComparator>
-    static bool LogicalOperator(const Optional<Type>& aFirst, const Optional<Type>& aSecond,
-                                taComparator aComparator, taNullComparator aNullComparator)
+    static bool LogicalOperator(const Optional<Type>& aFirst,
+                                const Optional<Type>& aSecond,
+                                taComparator aComparator,
+                                taNullComparator aNullComparator)
     {
-        if (aFirst.m_null == aSecond.m_null)
-        {
-            if (aFirst.m_null)
-            {
+        if (aFirst.m_null == aSecond.m_null) {
+            if (aFirst.m_null) {
                 return taEquality;
+            } else {
+                return aComparator(aFirst.m_value, aSecond.m_value);
             }
-            else
-            {
-                return  aComparator(aFirst.m_value, aSecond.m_value);
-            }
-        }
-        else
-        {
+        } else {
             return aNullComparator(aFirst.m_null, aSecond.m_null);
         }
     }
@@ -156,18 +159,15 @@ private:
 
 template<typename Type>
 Optional<Type> Optional<Type>::Null = Optional<Type>();
-
 } //namespace DPL
 
 template<typename Type>
-std::ostream& operator<<(std::ostream& aStream, const DPL::Optional<Type>& aOptional)
+std::ostream& operator<<(std::ostream& aStream,
+                         const DPL::Optional<Type>& aOptional)
 {
-    if (aOptional.IsNull())
-    {
+    if (aOptional.IsNull()) {
         return aStream << "null optional";
-    }
-    else
-    {
+    } else {
         return aStream << *aOptional;
     }
 }

@@ -23,8 +23,7 @@
 #include <dpl/recursive_mutex.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 RecursiveMutex::RecursiveMutex()
 {
     pthread_mutexattr_t attr;
@@ -32,30 +31,34 @@ RecursiveMutex::RecursiveMutex()
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 
-    if (pthread_mutex_init(&m_mutex, &attr) != 0)
+    if (pthread_mutex_init(&m_mutex, &attr) != 0) {
         Throw(Exception::CreateFailed);
+    }
 }
 
 RecursiveMutex::~RecursiveMutex()
 {
-    if (pthread_mutex_destroy(&m_mutex) != 0)
+    if (pthread_mutex_destroy(&m_mutex) != 0) {
         Throw(Exception::DestroyFailed);
+    }
 }
 
 void RecursiveMutex::Lock() const
 {
-    if (pthread_mutex_lock(&m_mutex) != 0)
+    if (pthread_mutex_lock(&m_mutex) != 0) {
         Throw(Exception::LockFailed);
+    }
 }
 
 void RecursiveMutex::Unlock() const
 {
-    if (pthread_mutex_unlock(&m_mutex) != 0)
+    if (pthread_mutex_unlock(&m_mutex) != 0) {
         Throw(Exception::UnlockFailed);
+    }
 }
 
-RecursiveMutex::ScopedLock::ScopedLock(RecursiveMutex *mutex)
-    : m_mutex(mutex)
+RecursiveMutex::ScopedLock::ScopedLock(RecursiveMutex *mutex) :
+    m_mutex(mutex)
 {
     Assert(mutex != NULL);
     m_mutex->Lock();

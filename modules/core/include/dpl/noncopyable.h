@@ -22,18 +22,17 @@
 #ifndef DPL_NONCOPYABLE_H
 #define DPL_NONCOPYABLE_H
 
-namespace DPL
-{
+namespace DPL {
 class Noncopyable
 {
-private:
+  private:
     Noncopyable(const Noncopyable &);
     const Noncopyable &operator=(const Noncopyable &);
-public:
+
+  public:
     Noncopyable();
     virtual ~Noncopyable();
 };
-
 } // namespace DPL
 
 #endif // DPL_NONCOPYABLE_H

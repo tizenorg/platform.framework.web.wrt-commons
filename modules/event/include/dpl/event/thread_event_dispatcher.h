@@ -26,15 +26,12 @@
 #include <dpl/event/abstract_event_call.h>
 #include <dpl/thread.h>
 
-namespace DPL
+namespace DPL {
+namespace Event {
+class ThreadEventDispatcher :
+    public AbstractEventDispatcher
 {
-namespace Event
-{
-
-class ThreadEventDispatcher
-    : public AbstractEventDispatcher
-{
-protected:
+  protected:
     Thread *m_thread;
 
     static void StaticEventDelete(void *event, void *userParam);
@@ -43,16 +40,16 @@ protected:
     void EventDelete(AbstractEventCall *abstractEventCall);
     void EventDispatch(AbstractEventCall *abstractEventCall);
 
-public:
+  public:
     explicit ThreadEventDispatcher();
     virtual ~ThreadEventDispatcher();
 
     void SetThread(Thread *thread);
 
     virtual void AddEventCall(AbstractEventCall *abstractEventCall);
-    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime);
+    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall,
+                                   double dueTime);
 };
-
 }
 } // namespace DPL
 

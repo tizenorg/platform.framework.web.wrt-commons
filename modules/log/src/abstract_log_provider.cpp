@@ -23,10 +23,8 @@
 #include <dpl/log/abstract_log_provider.h>
 #include <cstring>
 
-namespace DPL
-{
-namespace Log
-{
+namespace DPL {
+namespace Log {
 const char *AbstractLogProvider::LocateSourceFileName(const char *filename)
 {
     const char *ptr = strrchr(filename, '/');

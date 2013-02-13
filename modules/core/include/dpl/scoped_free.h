@@ -28,14 +28,19 @@
 
 #include <dpl/scoped_resource.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename Class>
 struct ScopedFreePolicy
 {
     typedef Class* Type;
-    static Type NullValue() { return NULL; }
-    static void Destroy(Type ptr) { free(ptr); }
+    static Type NullValue()
+    {
+        return NULL;
+    }
+    static void Destroy(Type ptr)
+    {
+        free(ptr);
+    }
 };
 
 template<typename Memory>
