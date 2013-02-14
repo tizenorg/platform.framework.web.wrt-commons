@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for PathBuilde class.
  */
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/path_builder.h>
 #include <sstream>
 
@@ -31,13 +32,11 @@ class PathBuilderImpl : DPL::Noncopyable
 {
   public:
     PathBuilderImpl()
-    {
-    }
+    {}
 
     explicit PathBuilderImpl(const std::string& path) :
         m_stream(path, std::ios_base::app)
-    {
-    }
+    {}
 
     void Append(const std::string& path)
     {
@@ -79,13 +78,11 @@ class PathBuilderImpl : DPL::Noncopyable
 };
 
 PathBuilder::PathBuilder() : m_impl(new PathBuilderImpl())
-{
-}
+{}
 
 PathBuilder::PathBuilder(const std::string& path) :
     m_impl(new PathBuilderImpl(path))
-{
-}
+{}
 
 PathBuilder::~PathBuilder()
 {
@@ -125,5 +122,4 @@ std::string PathBuilder::GetFullPath() const
 {
     return m_impl->GetFullPath();
 }
-
 } // namespace WrtDB

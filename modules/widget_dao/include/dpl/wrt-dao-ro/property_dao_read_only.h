@@ -31,17 +31,16 @@
 
 namespace WrtDB {
 namespace PropertyDAOReadOnly {
-
 typedef DPL::String WidgetPropertyKey;
 typedef DPL::OptionalString WidgetPropertyValue;
 
 typedef std::list<WidgetPropertyKey> WidgetPropertyKeyList;
 
 struct WidgetPreferenceRow {
-    int                 app_id;
-    WidgetPropertyKey   key_name;
+    TizenAppId tizen_appid;
+    WidgetPropertyKey key_name;
     WidgetPropertyValue key_value;
-    DPL::OptionalInt    readonly;
+    DPL::OptionalInt readonly;
 };
 
 typedef std::list<WidgetPreferenceRow> WidgetPreferenceList;
@@ -57,24 +56,36 @@ class Exception
     DECLARE_EXCEPTION_TYPE(Base, ReadOnlyProperty)
 };
 
+//deprecated
 /* This method checks read only flag for given property
  */
 DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
-                                  const WidgetPropertyKey &key);
+                                       const WidgetPropertyKey &key)
+__attribute__((deprecated));
+
+/* This method checks read only flag for given property
+ */
+DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
+                                       const WidgetPropertyKey &key);
 
 /* This method gets widget property key list
  */
-WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle);
+WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid);
+
+//deprecated
+/* This method gets widget property list
+ */
+WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
+__attribute__((deprecated));
 
 /* This method gets widget property list
  */
-WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle);
+WidgetPreferenceList GetPropertyList(TizenAppId tzAppid);
 
 /* This method get widget property value
  */
-WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
+WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                                      const WidgetPropertyKey &key);
-
 } // PropertyDAOReadOnly
 } // namespace WrtDB
 

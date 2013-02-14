@@ -26,25 +26,24 @@
 #include <dpl/exception.h>
 #include <string>
 
-namespace DPL
+namespace DPL {
+class SingleInstance :
+    private Noncopyable
 {
-class SingleInstance
-    : private Noncopyable
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, LockError)
         DECLARE_EXCEPTION_TYPE(Base, ReleaseError)
     };
 
-private:
+  private:
     bool m_locked;
     int m_fdLock;
 
-public:
+  public:
     SingleInstance();
     virtual ~SingleInstance();
 

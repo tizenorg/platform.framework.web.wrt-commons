@@ -20,92 +20,83 @@
  * @version     1.0
  * @brief       Implementation for function calculating directory size
  */
-
+#include <stddef.h>
 #include <string.h>
-#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fts.h>
 
 #include <sstream>
 #include <vector>
 
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
-#include <folder_size.h>
+#include <dpl/utils/folder_size.h>
 
 namespace Utils {
-namespace {
-
-size_t getObjectSize(const std::string& path)
-{
-    struct stat tmp;
-
-    if (stat(path.c_str(), &tmp) == -1) {
-        LogError("Failed to open file" << path);
-        return 0;
-    }
-    //it is not a file nor a directory
-    //not counting
-    if (!S_ISDIR(tmp.st_mode) && !S_ISREG(tmp.st_mode)) {
-        LogWarning("Not a regular file nor a directory: " << path);
-        return 0;
-    }
-    return tmp.st_size;
-}
-}
-
 size_t getFolderSize(const std::string& path)
 {
     size_t size = 0;
+    FTS *fts;
+    FTSENT *ftsent;
+    char * const paths[] = { const_cast<char * const>(path.c_str()), NULL };
 
-    DIR *dir;
-    std::vector<std::string> localDirs;
-    if ((dir=opendir(path.c_str())) == NULL) {
-        LogError("Cannot open dir " << path);
+    if ((fts = fts_open(paths, FTS_PHYSICAL | FTS_NOCHDIR, NULL)) == NULL) {
+        //ERROR
+        int error = errno;
+        LogWarning(__PRETTY_FUNCTION__ << ": fts_open failed with error: "
+                                       << strerror(error));
         return 0;
     }
-    struct dirent* el;
-    while ((el = readdir(dir)) != 0) {
-        if (strcmp(el->d_name, ".") == 0 || strcmp(el->d_name, "..") == 0) {
-            continue;
-        }
-        struct stat tmp;
-        std::string local = path + el->d_name;
-        if (stat(local.c_str(), &tmp) == -1) {
-            LogError("Failed to open file " << local);
-            char* errstring = strerror(errno);
-            LogError("Reason: " << errstring);
-            continue;
-        }
 
-        size += getObjectSize(local);
-        if (S_ISDIR(tmp.st_mode)) {
-            localDirs.push_back(local + "/");
+    while ((ftsent = fts_read(fts)) != NULL) {
+        switch (ftsent->fts_info) {
+        case FTS_DP:
+        case FTS_DC:
+            //directory in postorder and directory causing a loop
+            break;
+        case FTS_F:
+        case FTS_D:
+        case FTS_NSOK:
+        case FTS_SL:
+        case FTS_SLNONE:
+        case FTS_DEFAULT:
+            //regular files and other objects that can be counted
+            size += ftsent->fts_statp->st_size;
+            break;
+        case FTS_NS:
+        case FTS_DOT:
+        case FTS_DNR:
+        case FTS_ERR:
+        default:
+            LogWarning(__PRETTY_FUNCTION__
+                       << ": traversal failed on file: "
+                       << ftsent->fts_path
+                       << " with error: "
+                       << strerror(ftsent->fts_errno));
+            return 0;
         }
     }
 
-    closedir(dir);
-
-    FOREACH (localDir, localDirs) {
-        size += getFolderSize(*localDir);
+    if (fts_close(fts) == -1) {
+        int error = errno;
+        LogWarning(__PRETTY_FUNCTION__ << ": fts_close failed with error: "
+                                       << strerror(error));
+        return 0;
     }
 
     return size;
 }
 
-
-
-
-
 namespace {
 #define DECLARE_PREFIX_STRUCT(name)     \
-struct Prefix##name                     \
-{                                       \
-  static std::string get()              \
-  {                                     \
-        return std::string(#name);      \
-  }                                     \
-};                                      \
+    struct Prefix##name                     \
+    {                                       \
+        static std::string get()              \
+        {                                     \
+            return std::string(#name);      \
+        }                                     \
+    };                                      \
 
 DECLARE_PREFIX_STRUCT(B)
 DECLARE_PREFIX_STRUCT(KB)
@@ -114,53 +105,51 @@ DECLARE_PREFIX_STRUCT(GB)
 
 #undef DECLARE_PREFIX_STRUCT
 
-
 const int stepSize = 1024;
-template<typename... Rest>
+template<typename ... Rest>
 struct Pre;
 
-template<typename Postfix, typename... Rest>
-struct Pre<Postfix, Rest...>
+template<typename Postfix, typename ... Rest>
+struct Pre<Postfix, Rest ...>
 {
-    static const double value = Pre<Rest...>::value * stepSize;
+    static const double value;
     static std::string printSize(double fileSize)
     {
-        if(fileSize >= Pre<Rest...>::value) {
-            double now = fileSize / Pre<Rest...>::value;
+        if (fileSize >= Pre<Rest ...>::value) {
+            double now = fileSize / Pre<Rest ...>::value;
             std::ostringstream outputStream;
             outputStream.setf(std::ios::fixed, std::ios::floatfield);
             outputStream.precision(2);
             outputStream << now << Postfix::get();
             return outputStream.str();
         } else {
-            return Pre<Rest...>::printSize(fileSize);
+            return Pre<Rest ...>::printSize(fileSize);
         }
-
     }
 };
 
 template<>
 struct Pre<>
 {
-        static const double value;
-        static std::string printSize(double /*fileSize*/)
-        {
-                return "0B";
-        }
-
+    static const double value;
+    static std::string printSize(double /*fileSize*/)
+    {
+        return "0B";
+    }
 };
+
 const double Pre<>::value = 1.0;
+template<typename Postfix, typename ... Params> const double Pre<Postfix,
+                                                                 Params ...>::
+    value(Pre<>::value * stepSize);
 
 typedef Pre<PrefixGB, PrefixMB, PrefixKB, PrefixB> FolderSizeToStringType;
 } //anonymous namespace
 
-
 DPL::String fromFileSizeString(size_t fileSize)
 {
-
     std::string output =
         FolderSizeToStringType::printSize(static_cast<double>(fileSize));
     return DPL::FromUTF8String(output);
 }
-
 } // end of namespace Utils

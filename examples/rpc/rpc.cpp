@@ -19,10 +19,11 @@
  * @version     1.0
  * @brief       This file is the implementation file of RPC example
  */
+#include <stddef.h>
 #include <dpl/unix_socket_rpc_client.h>
 #include <dpl/unix_socket_rpc_server.h>
 #include <dpl/unix_socket_rpc_connection.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/application.h>
 #include <dpl/controller.h>
 #include <dpl/thread.h>
@@ -40,7 +41,7 @@ class MyThread
 {
 private:
     DPL::UnixSocketRPCClient m_rpcClient;
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcConnection;
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::AsyncCallEvent &event)
     {
@@ -69,7 +70,7 @@ private:
     {
         // Save connection pointer
         LogInfo("CLIENT: Acquiring new connection");
-        m_rpcConnection.Reset(event.GetArg1());
+        m_rpcConnection.reset(event.GetArg1());
 
         // Attach listener to new connection
         LogInfo("CLIENT: Attaching connection event listeners");
@@ -108,7 +109,7 @@ public:
         int ret = Exec();
 
         // Detach RPC listeners
-        if (m_rpcConnection.Get())
+        if (m_rpcConnection.get())
         {
             LogInfo("CLIENT: Detaching RPC connection events");
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::RemoveListener(this);
@@ -116,7 +117,7 @@ public:
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::RemoveListener(this);
 
             LogInfo("CLIENT: Resetting connection");
-            m_rpcConnection.Reset();
+            m_rpcConnection.reset();
         }
 
         // Detach RPC client listener
@@ -146,7 +147,7 @@ class MyApplication
 {
 private:
     DPL::UnixSocketRPCServer m_rpcServer;
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcConnection;
 
     MyThread m_thread;
 
@@ -184,7 +185,7 @@ private:
         LogInfo("SERVER: Closing RPC connection on event...");
 
         // Detach RPC connection listeners
-        if (m_rpcConnection.Get())
+        if (m_rpcConnection.get())
         {
             LogInfo("SERVER: Detaching connection events");
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::RemoveListener(this);
@@ -208,7 +209,7 @@ private:
     {
         // Save connection pointer
         LogInfo("SERVER: Acquiring RPC connection");
-        m_rpcConnection.Reset(event.GetArg1());
+        m_rpcConnection.reset(event.GetArg1());
 
         // Attach event listeners
         LogInfo("SERVER: Attaching connection listeners");

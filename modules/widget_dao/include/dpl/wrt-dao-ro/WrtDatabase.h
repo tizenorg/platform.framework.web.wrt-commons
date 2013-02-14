@@ -14,18 +14,18 @@
  *    limitations under the License.
  */
 #ifndef WRT_SRC_CONFIGURATION_WRTDATABASE_H_
-#define	WRT_SRC_CONFIGURATION_WRTDATABASE_H_
+#define WRT_SRC_CONFIGURATION_WRTDATABASE_H_
 
 #include <dpl/db/thread_database_support.h>
 
 namespace WrtDB {
-
 class WrtDatabase
 {
   public:
     static const char *Address();
     static DPL::DB::SqlConnection::Flag::Type Flags();
-    static void attachToThread();
+    static void attachToThreadRO();
+    static void attachToThreadRW();
     static void detachFromThread();
     static DPL::DB::ThreadDatabaseSupport& interface();
     static bool CheckTableExist(const char *name);
@@ -33,7 +33,6 @@ class WrtDatabase
   private:
     static DPL::DB::ThreadDatabaseSupport m_interface;
 };
-
 }
 
 #endif /* WRTDATABASE_H */

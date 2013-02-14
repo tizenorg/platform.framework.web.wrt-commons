@@ -20,12 +20,12 @@
  * @version     1.0
  * @brief       This file is the implementation file of RPC example
  */
-
+#include <stddef.h>
 #include <dpl/unix_socket_rpc_client.h>
 #include <dpl/unix_socket_rpc_server.h>
 #include <dpl/unix_socket_rpc_connection.h>
 #include <dpl/fake_rpc_connection.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/application.h>
 #include <dpl/controller.h>
 #include <dpl/thread.h>
@@ -62,8 +62,8 @@ private:
     int m_sentData;
     int m_receivedData;
 
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcUnixConnection;
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcFakeConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcUnixConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcFakeConnection;
 
     virtual void OnEventReceived(const AsyncCallEvent &event)
     {
@@ -81,14 +81,14 @@ private:
         if (dynamic_cast<DPL::FakeRpcConnection *>(event.GetArg1())){
             ++m_connections;
             LogInfo("CLIENT: Acquiring new fake connection");
-            m_rpcFakeConnection.Reset(event.GetArg1());
+            m_rpcFakeConnection.reset(event.GetArg1());
             //this is not used on this side
 //            m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
         else{
             ++m_connections;
             LogInfo("CLIENT: Acquiring new unix connection");
-            m_rpcUnixConnection.Reset(event.GetArg1());
+            m_rpcUnixConnection.reset(event.GetArg1());
             m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
         if(m_connections == 2){
@@ -125,19 +125,19 @@ public:
         LogInfo("CLIENT: Starting thread event loop");
         int ret = Exec();
 
-        if (m_rpcUnixConnection.Get()){
+        if (m_rpcUnixConnection.get()){
             LogInfo("CLIENT: Removing Unix connection");
             m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
-            m_rpcUnixConnection.Reset();
+            m_rpcUnixConnection.reset();
         }
 
         LogInfo("CLIENT: Closing");
 
-        if (m_rpcFakeConnection.Get()){
+        if (m_rpcFakeConnection.get()){
             LogInfo("CLIENT: Removing Fake connection");
             //this is not used on this side
 //            m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
-            m_rpcFakeConnection.Reset();
+            m_rpcFakeConnection.reset();
         }
 
         // Detach RPC client listener
@@ -169,8 +169,8 @@ private:
     DPL::UnixSocketRPCServer m_rpcUnixServer;
     DPL::FakeRpcServer m_rpcFakeServer;
 
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcUnixConnection;
-    DPL::ScopedPtr<DPL::AbstractRPCConnection> m_rpcFakeConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcUnixConnection;
+    std::unique_ptr<DPL::AbstractRPCConnection> m_rpcFakeConnection;
 
     MyThread m_thread;
 
@@ -180,15 +180,15 @@ private:
         LogInfo("SERVER: Closing RPC connection...");
 
         // Detach RPC connection listeners
-        if (m_rpcUnixConnection.Get()) {
+        if (m_rpcUnixConnection.get()) {
             //this is not used on this side
 //            m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
-            m_rpcUnixConnection.Reset();
+            m_rpcUnixConnection.reset();
         }
 
-        if (m_rpcFakeConnection.Get()) {
+        if (m_rpcFakeConnection.get()) {
             m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
-            m_rpcFakeConnection.Reset();
+            m_rpcFakeConnection.reset();
         }
 
         LogInfo("SERVER: Closing Server");
@@ -227,12 +227,12 @@ private:
         // Save connection pointer
         if (dynamic_cast<DPL::FakeRpcConnection *>(event.GetArg1())){
             LogInfo("SERVER: Acquiring Fake RPC connection");
-            m_rpcFakeConnection.Reset(event.GetArg1());
+            m_rpcFakeConnection.reset(event.GetArg1());
             m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
         else{
             LogInfo("SERVER: Acquiring Unix RPC connection");
-            m_rpcUnixConnection.Reset(event.GetArg1());
+            m_rpcUnixConnection.reset(event.GetArg1());
             //this is not used on this side
 //            m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }

@@ -19,8 +19,9 @@
  *  Created on: Nov 16, 2011
  *      Author: Krzysztof Jackiewicz(k.jackiewicz@samsung.com)
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/property_dao_read_only.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
 #include <dpl/wrt-dao-ro/webruntime_database.h>
@@ -29,16 +30,14 @@
 
 namespace WrtDB {
 namespace PropertyDAOReadOnly {
-
 namespace {
-
 typedef DPL::DB::ORM::wrt::WidgetPreference::key_name::ColumnType
-    ORMWidgetPropertyKey;
+ORMWidgetPropertyKey;
 typedef DPL::DB::ORM::wrt::WidgetPreference::key_value::ColumnType
-    ORMWidgetPropertyValue;
-typedef std::list<DPL::DB::ORM::wrt::WidgetPreference::Row> ORMWidgetPreferenceList;
+ORMWidgetPropertyValue;
+typedef std::list<DPL::DB::ORM::wrt::WidgetPreference::Row>
+ORMWidgetPreferenceList;
 typedef std::list<WidgetPropertyKey> ORMWidgetPropertyKeyList;
-
 
 void convertPropertyKey(const ORMWidgetPropertyKey& ormKey,
                         WidgetPropertyKey& key)
@@ -58,7 +57,7 @@ void convertWidgetPreferenceRow(const ORMWidgetPreferenceList& ormWidgetPrefRow,
     FOREACH(it, ormWidgetPrefRow) {
         WidgetPreferenceRow row;
 
-        row.app_id = it->Get_app_id();
+        row.tizen_appid = it->Get_tizen_appid();
         row.key_name = it->Get_key_name();
         row.key_value = it->Get_key_value();
         row.readonly = it->Get_readonly();
@@ -74,19 +73,46 @@ void convertWidgetPropertyKeyList(const ORMWidgetPropertyKeyList& propKeyList,
         keyList.push_back(*it);
     }
 }
-
-
 }
 
-WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
+//deprecated
+DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
+                                       const WidgetPropertyKey &key)
 {
-    LogDebug("Get PropertyKey list. Handle: " << widgetHandle);
+    return CheckPropertyReadFlag(WidgetDAOReadOnly::getTzAppId(widgetHandle),
+                                 key);
+}
+
+DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
+                                       const WidgetPropertyKey &key)
+{
+    LogDebug("Checking Property flag. appid: " << tzAppid <<
+             ", key: " << key);
+
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
+        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
+                          Equals<WidgetPreference::key_name>(key)));
+
+        return select->GetSingleValue<WidgetPreference::readonly>();
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(Exception::DatabaseError,
+                   "Failure during checking readonly flag for property");
+    }
+}
+
+WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
+{
+    LogDebug("Get PropertyKey list. appid: " << tzAppid);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         ORMWidgetPropertyKeyList keyList;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppid));
         keyList = select->GetValueList<WidgetPreference::key_name>();
 
         WidgetPropertyKeyList retKeyList;
@@ -100,14 +126,26 @@ WidgetPropertyKeyList GetPropertyKeyList(DbWidgetHandle widgetHandle)
     }
 }
 
+//deprecated
 WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
 {
-    LogDebug("Get Property list. Handle: " << widgetHandle);
+    Try {
+        TizenAppId tzAppid = WidgetDAOReadOnly::getTzAppId(widgetHandle);
+        return GetPropertyList(tzAppid);
+    } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
+        WidgetPreferenceList empty;
+        return empty;
+    }
+}
+
+WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
+{
+    LogDebug("Get Property list. tizenAppId: " << tzAppId);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppId));
 
         ORMWidgetPreferenceList ormPrefList = select->GetRowList();
         WidgetPreferenceList prefList;
@@ -121,20 +159,20 @@ WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
     }
 }
 
-WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
+WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                                      const WidgetPropertyKey &key)
 {
-    LogDebug("Get Property value. Handle: " << widgetHandle <<
+    LogDebug("Get Property value. appid: " << tzAppid <<
              ", key: " << key);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
+        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
                           Equals<WidgetPreference::key_name>(key)));
 
         ORMWidgetPropertyValue ormPropValue =
-                select->GetSingleValue<WidgetPreference::key_value>();
+            select->GetSingleValue<WidgetPreference::key_value>();
 
         WidgetPropertyValue propValue;
 
@@ -147,26 +185,5 @@ WidgetPropertyValue GetPropertyValue(DbWidgetHandle widgetHandle,
                    "Failure during getting property");
     }
 }
-
-DPL::OptionalInt CheckPropertyReadFlag(DbWidgetHandle widgetHandle,
-                                  const WidgetPropertyKey &key)
-{
-    LogDebug("Checking Property flag. Handle: " << widgetHandle <<
-             ", key: " << key);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
-                          Equals<WidgetPreference::key_name>(key)));
-
-        return select->GetSingleValue<WidgetPreference::readonly>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(Exception::DatabaseError,
-                   "Failure during checking readonly flag for property");
-    }
-}
-
 } // namespace PropertyDAOReadOnly
 } // namespace WrtDB

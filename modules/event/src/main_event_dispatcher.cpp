@@ -17,21 +17,19 @@
  * @file        main_event_dispatcher.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of main event dispatcher for EFL
+ * @brief       This file is the implementation file of main event dispatcher
+ * for EFL
  */
+#include <stddef.h>
 #include <dpl/event/main_event_dispatcher.h>
 #include <dpl/log/log.h>
 #include <dpl/assert.h>
 #include <dpl/singleton_impl.h>
 
-namespace DPL
-{
-
+namespace DPL {
 IMPLEMENT_SINGLETON(Event::MainEventDispatcher)
 
-namespace Event
-{
-
+namespace Event {
 typedef Singleton<Event::MainEventDispatcher> MainEventDispatcherSingleton;
 
 namespace // anonymous
@@ -60,29 +58,47 @@ MainEventDispatcher::MainEventDispatcher()
     LogPedantic("ECORE event class registered: " << m_eventId);
 
     // Register event class handler
-    if ((m_eventCallHandler = ecore_event_handler_add(m_eventId, &StaticDispatchEvent, this)) == NULL)
+    if ((m_eventCallHandler =
+             ecore_event_handler_add(m_eventId, &StaticDispatchEvent,
+                                     this)) == NULL)
+    {
         ThrowMsg(Exception::CreateFailed, "Failed to register event handler!");
+    }
+
+    // Allocate WaitableEvent
+    m_crossEventCallInvoker = new WaitableEvent();
 
     // Register cross event handler
-    m_crossEventCallHandler = ecore_main_fd_handler_add(m_crossEventCallInvoker.GetHandle(), ECORE_FD_READ, &StaticDispatchCrossInvoker, this, NULL, NULL);
+    m_crossEventCallHandler = ecore_main_fd_handler_add(
+            m_crossEventCallInvoker->GetHandle(),
+            ECORE_FD_READ,
+            &StaticDispatchCrossInvoker,
+            this,
+            NULL,
+            NULL);
 
-    if (m_crossEventCallHandler == NULL)
-        ThrowMsg(Exception::CreateFailed, "Failed to register cross event handler!");
+    if (m_crossEventCallHandler == NULL) {
+        ThrowMsg(Exception::CreateFailed,
+                 "Failed to register cross event handler!");
+    }
 
     LogPedantic("ECORE cross-event handler registered");
 }
 
 MainEventDispatcher::~MainEventDispatcher()
 {
-    // Remove event class handler
-    ecore_event_handler_del(m_eventCallHandler);
-    m_eventCallHandler = NULL;
-
     // Remove cross event handler
     ecore_main_fd_handler_del(m_crossEventCallHandler);
     m_crossEventCallHandler = NULL;
-
     LogPedantic("ECORE cross-event handler unregistered");
+
+    // Remove m_crossEventCallInvoker
+    delete m_crossEventCallInvoker;
+    m_crossEventCallInvoker = NULL;
+
+    // Remove event class handler
+    ecore_event_handler_del(m_eventCallHandler);
+    m_eventCallHandler = NULL;
 
     // Decrement ECORE init count
     // We do not need ecore routines any more
@@ -93,46 +109,72 @@ MainEventDispatcher::~MainEventDispatcher()
     g_lateMainEventDispatcher = NULL;
 }
 
+void MainEventDispatcher::ResetCrossEventCallHandler()
+{
+    // Remove cross event handler
+    ecore_main_fd_handler_del(m_crossEventCallHandler);
+    m_crossEventCallHandler = NULL;
+    LogPedantic("ECORE cross-event handler unregistered");
+
+    // Re-allocate WaitableEvent
+    delete m_crossEventCallInvoker;
+    m_crossEventCallInvoker = new WaitableEvent();
+
+    // Register cross event handler
+    m_crossEventCallHandler =
+        ecore_main_fd_handler_add(m_crossEventCallInvoker->GetHandle(),
+                                  ECORE_FD_READ,
+                                  &StaticDispatchCrossInvoker,
+                                  this,
+                                  NULL,
+                                  NULL);
+
+    if (m_crossEventCallHandler == NULL) {
+        ThrowMsg(Exception::CreateFailed,
+                 "Failed to register cross event handler!");
+    }
+
+    LogPedantic("ECORE cross-event handler re-registered");
+}
+
 void MainEventDispatcher::StaticDeleteEvent(void *data, void *event)
 {
     LogPedantic("Static ECORE delete event handler");
 
     MainEventDispatcher *This = static_cast<MainEventDispatcher *>(data);
-    AbstractEventCall *abstractEventCall = static_cast<AbstractEventCall *>(event);
+    AbstractEventCall *abstractEventCall =
+        static_cast<AbstractEventCall *>(event);
 
     Assert(This != NULL);
     Assert(abstractEventCall != NULL);
 
     // Late EFL event handling
-    if (g_lateMainEventDispatcher == NULL)
-    {
+    if (g_lateMainEventDispatcher == NULL) {
         LogPedantic("WARNING: Late EFL event delete!");
         delete abstractEventCall;
-    }
-    else
-    {
+    } else {
         This->DeleteEvent(abstractEventCall);
     }
 }
 
-Eina_Bool MainEventDispatcher::StaticDispatchEvent(void *data, int type, void *event)
+Eina_Bool MainEventDispatcher::StaticDispatchEvent(void *data,
+                                                   int type,
+                                                   void *event)
 {
     LogPedantic("Static ECORE dispatch event");
 
     MainEventDispatcher *This = static_cast<MainEventDispatcher *>(data);
-    AbstractEventCall *abstractEventCall = static_cast<AbstractEventCall *>(event);
+    AbstractEventCall *abstractEventCall =
+        static_cast<AbstractEventCall *>(event);
     (void)type;
 
     Assert(This != NULL);
     Assert(abstractEventCall != NULL);
 
     // Late EFL event handling
-    if (g_lateMainEventDispatcher == NULL)
-    {
+    if (g_lateMainEventDispatcher == NULL) {
         LogPedantic("WARNING: Late EFL event dispatch!");
-    }
-    else
-    {
+    } else {
         This->DispatchEvent(abstractEventCall);
     }
 
@@ -153,26 +195,27 @@ Eina_Bool MainEventDispatcher::StaticDispatchTimedEvent(void *data)
     Assert(abstractEventCall != NULL);
 
     // Late EFL event handling
-    if (g_lateMainEventDispatcher == NULL)
-    {
+    if (g_lateMainEventDispatcher == NULL) {
         LogPedantic("WARNING: Late EFL timed event dispatch!");
-    }
-    else
-    {
+    } else {
         // Dispatch timed event
         This->DispatchEvent(abstractEventCall);
     }
 
     // And delete manually event, because ECORE does not
     // use delete handler for timers
-    StaticDeleteEvent(static_cast<void *>(This), static_cast<void *>(abstractEventCall));
+    StaticDeleteEvent(static_cast<void *>(This),
+                      static_cast<void *>(abstractEventCall));
 
     // Do not continue timed event handlers
     // This also releases ECORE timer
     return ECORE_CALLBACK_CANCEL;
 }
 
-Eina_Bool MainEventDispatcher::StaticDispatchCrossInvoker(void *data, Ecore_Fd_Handler *fd_handler)
+Eina_Bool MainEventDispatcher::StaticDispatchCrossInvoker(
+    void *data,
+    Ecore_Fd_Handler *
+    fd_handler)
 {
     LogPedantic("Static ECORE dispatch cross invoker");
 
@@ -182,12 +225,9 @@ Eina_Bool MainEventDispatcher::StaticDispatchCrossInvoker(void *data, Ecore_Fd_H
     Assert(This != NULL);
 
     // Late EFL event handling
-    if (g_lateMainEventDispatcher == NULL)
-    {
+    if (g_lateMainEventDispatcher == NULL) {
         LogPedantic("WARNING: Late EFL cross invoker dispatch!");
-    }
-    else
-    {
+    } else {
         This->DispatchCrossInvoker();
     }
 
@@ -208,7 +248,8 @@ void MainEventDispatcher::DispatchEvent(AbstractEventCall *abstractEventCall)
     abstractEventCall->Call();
 }
 
-void MainEventDispatcher::DispatchTimedEvent(AbstractEventCall *abstractEventCall)
+void MainEventDispatcher::DispatchTimedEvent(
+    AbstractEventCall *abstractEventCall)
 {
     LogPedantic("ECORE dispatch timed event");
 
@@ -225,21 +266,27 @@ void MainEventDispatcher::DispatchCrossInvoker()
 
     // Critical section
     {
-        m_crossEventCallInvoker.Reset();
+        m_crossEventCallInvoker->Reset();
         Mutex::ScopedLock lock(&m_crossEventCallMutex);
         m_wrappedCrossEventCallList.swap(stolenCrossEvents);
     }
 
-    LogPedantic("Cross-thread event list stolen. Number of events: " << stolenCrossEvents.size());
+    LogPedantic(
+        "Cross-thread event list stolen. Number of events: " <<
+        stolenCrossEvents.size());
 
     // Repush all stolen events
     WrappedEventCallList::const_iterator eventIterator;
 
-    for (eventIterator = stolenCrossEvents.begin(); eventIterator != stolenCrossEvents.end(); ++eventIterator)
+    for (eventIterator = stolenCrossEvents.begin();
+         eventIterator != stolenCrossEvents.end();
+         ++eventIterator)
     {
         // Unwrap events
         LogPedantic("Dispatching event from invoker");
-        InternalAddEvent(eventIterator->abstractEventCall, eventIterator->timed, eventIterator->dueTime);
+        InternalAddEvent(eventIterator->abstractEventCall,
+                         eventIterator->timed,
+                         eventIterator->dueTime);
     }
 
     LogPedantic("Cross-thread events dispatched");
@@ -247,74 +294,78 @@ void MainEventDispatcher::DispatchCrossInvoker()
 
 void MainEventDispatcher::AddEventCall(AbstractEventCall *abstractEventCall)
 {
-    if (pthread_equal(pthread_self(), g_threadMain))
-    {
+    if (pthread_equal(pthread_self(), g_threadMain)) {
         LogPedantic("Main thread ECORE event push");
         InternalAddEvent(abstractEventCall, false, 0.0);
-    }
-    else
-    {
+    } else {
         LogPedantic("Cross-thread ECORE event push");
 
         // Push event to cross event list
         {
             Mutex::ScopedLock lock(&m_crossEventCallMutex);
-            m_wrappedCrossEventCallList.push_back(WrappedEventCall(abstractEventCall, false, 0.0));
-            m_crossEventCallInvoker.Signal();
+            m_wrappedCrossEventCallList.push_back(WrappedEventCall(
+                                                      abstractEventCall, false,
+                                                      0.0));
+            m_crossEventCallInvoker->Signal();
         }
 
         LogPedantic("Event pushed to cross-thread event list");
     }
 }
 
-void MainEventDispatcher::AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime)
+void MainEventDispatcher::AddTimedEventCall(
+    AbstractEventCall *abstractEventCall,
+    double dueTime)
 {
-    if (pthread_equal(pthread_self(), g_threadMain))
-    {
+    if (pthread_equal(pthread_self(), g_threadMain)) {
         LogPedantic("Main thread timed ECORE event push");
         InternalAddEvent(abstractEventCall, true, dueTime);
-    }
-    else
-    {
+    } else {
         LogPedantic("Cross-thread timed ECORE event push");
 
         // Push event to cross event list
         {
             Mutex::ScopedLock lock(&m_crossEventCallMutex);
-            m_wrappedCrossEventCallList.push_back(WrappedEventCall(abstractEventCall, true, dueTime));
-            m_crossEventCallInvoker.Signal();
+            m_wrappedCrossEventCallList.push_back(WrappedEventCall(
+                                                      abstractEventCall, true,
+                                                      dueTime));
+            m_crossEventCallInvoker->Signal();
         }
 
         LogPedantic("Event pushed to cross-thread event list");
     }
 }
 
-void MainEventDispatcher::InternalAddEvent(AbstractEventCall *abstractEventCall, bool timed, double dueTime)
+void MainEventDispatcher::InternalAddEvent(AbstractEventCall *abstractEventCall,
+                                           bool timed,
+                                           double dueTime)
 {
     LogPedantic("Adding base event");
 
-    if (timed == true)
-    {
+    if (timed == true) {
         // Push timed event onto ecore stack
-        TimedEventStruct* eventData = new TimedEventStruct(abstractEventCall, this);
-        Ecore_Timer *timedEvent = ecore_timer_add(dueTime, &StaticDispatchTimedEvent, eventData);
+        TimedEventStruct* eventData = new TimedEventStruct(abstractEventCall,
+                                                           this);
+        Ecore_Timer *timedEvent = ecore_timer_add(dueTime,
+                                                  &StaticDispatchTimedEvent,
+                                                  eventData);
 
-        if (timedEvent == NULL)
-        {
+        if (timedEvent == NULL) {
             delete eventData;
             delete abstractEventCall;
-            ThrowMsg(Exception::AddTimedEventFailed, "Failed to add ECORE timed event");
+            ThrowMsg(Exception::AddTimedEventFailed,
+                     "Failed to add ECORE timed event");
         }
 
         LogPedantic("Timed wrapped event added");
-    }
-    else
-    {
+    } else {
         // Push immediate event onto ecore stack
-        Ecore_Event *event = ecore_event_add(m_eventId, abstractEventCall, &StaticDeleteEvent, this);
+        Ecore_Event *event = ecore_event_add(m_eventId,
+                                             abstractEventCall,
+                                             &StaticDeleteEvent,
+                                             this);
 
-        if (event == NULL)
-        {
+        if (event == NULL) {
             delete abstractEventCall;
             ThrowMsg(Exception::AddEventFailed, "Failed to add ECORE event");
         }
@@ -327,6 +378,5 @@ MainEventDispatcher& GetMainEventDispatcherInstance()
 {
     return MainEventDispatcherSingleton::Instance();
 }
-
 }
 } // namespace DPL

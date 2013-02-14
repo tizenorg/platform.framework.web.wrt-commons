@@ -26,18 +26,16 @@
 #include <dpl/noncopyable.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename Class>
 class EnableSharedFromThis : private Noncopyable
 {
-
-private:
+  private:
     // A weak pointer to shared counter
     SharedCounter *m_counter;
     Class *m_ptr;
 
-public:
+  public:
     DPL::SharedPtr<Class> SharedFromThis()
     {
         Assert(m_counter != NULL && "Pointer is not shared!");
@@ -57,15 +55,13 @@ public:
         m_ptr = ptr;
     }
 
-    EnableSharedFromThis()
-        : m_counter(NULL),
-          m_ptr(NULL)
-    {
-    }
+    EnableSharedFromThis() :
+        m_counter(NULL),
+        m_ptr(NULL)
+    {}
 
     virtual ~EnableSharedFromThis()
-    {
-    }
+    {}
 };
 } // namespace DPL
 

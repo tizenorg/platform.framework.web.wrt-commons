@@ -29,10 +29,9 @@
 
 namespace WrtDB {
 namespace FeatureDAO {
-    FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
-                                  const DbPluginHandle pluginHandle);
-
-    FeatureHandle RegisterStrangeFeature(const std::string& featureName);
+FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
+                              const DbPluginHandle pluginHandle);
+void UnregisterFeature(FeatureHandle featureHandle);
 } // namespace FeatureDB
 } // namespace WrtDB
 

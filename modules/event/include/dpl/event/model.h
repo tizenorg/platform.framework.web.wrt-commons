@@ -25,15 +25,12 @@
 #include <dpl/read_write_mutex.h>
 #include <dpl/noncopyable.h>
 
-namespace DPL
+namespace DPL {
+namespace Event {
+class Model :
+    public Noncopyable
 {
-namespace Event
-{
-
-class Model
-    : public Noncopyable
-{
-protected:
+  protected:
     mutable DPL::ReadWriteMutex m_mutex;
 
     template<typename Type, typename StorageMethod>
@@ -42,10 +39,9 @@ protected:
     template<typename Type, typename AccessType, typename StorageMethod>
     friend class Property;
 
-public:
+  public:
     virtual ~Model() = 0;
 };
-
 }
 } // namespace DPL
 

@@ -25,7 +25,7 @@
 #include <dpl/noncopyable.h>
 #include <dpl/exception.h>
 #include <dpl/optional.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/string.h>
 #include <dpl/log/log.h>
 #include <sqlite3.h>
@@ -34,23 +34,20 @@
 #include <memory>
 #include <stdint.h>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 /**
  * SQL connection class
  */
 class SqlConnection
 {
-public:
+  public:
     /**
      * SQL Exception classes
      */
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, SyntaxError)
         DECLARE_EXCEPTION_TYPE(Base, ConnectionBroken)
@@ -64,10 +61,10 @@ public:
     /*
      * SQL processed data command
      */
-    class DataCommand
-        : private Noncopyable
+    class DataCommand :
+        private Noncopyable
     {
-    private:
+      private:
         SqlConnection *m_masterConnection;
         sqlite3_stmt *m_stmt;
 
@@ -78,7 +75,7 @@ public:
 
         friend class SqlConnection;
 
-    public:
+      public:
         virtual ~DataCommand();
 
         /**
@@ -371,11 +368,23 @@ public:
     // Open flags
     class Flag
     {
-    public:
+      public:
         enum Type
         {
-            None      = 1<<0,
-            UseLucene = 1<<1
+            None = 1 << 0,
+            UseLucene = 1 << 1
+        };
+
+        enum Option
+        {
+            RO = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READONLY,
+            /**
+             * *TODO: please remove CREATE option from RW flag when all places
+             *      that need that switched do CRW
+             */
+            RW = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE |
+                SQLITE_OPEN_CREATE,
+            CRW = RW | SQLITE_OPEN_CREATE
         };
     };
 
@@ -388,7 +397,7 @@ public:
      */
     class SynchronizationObject
     {
-    public:
+      public:
         virtual ~SynchronizationObject() {}
 
         /**
@@ -402,7 +411,7 @@ public:
         virtual void NotifyAll() = 0;
     };
 
-protected:
+  protected:
     sqlite3 *m_connection;
 
     // Options
@@ -412,16 +421,17 @@ protected:
     int m_dataCommandsCount;
 
     // Synchronization object
-    ScopedPtr<SynchronizationObject> m_synchronizationObject;
+    std::unique_ptr<SynchronizationObject> m_synchronizationObject;
 
-    virtual void Connect(const std::string &address, Flag::Type = Flag::None);
+    virtual void Connect(const std::string &address,
+                         Flag::Type = Flag::None, Flag::Option = Flag::RO);
     virtual void Disconnect();
 
     void TurnOnForeignKeys();
 
     static SynchronizationObject *AllocDefaultSynchronizationObject();
 
-public:
+  public:
     /**
      * Open SQL connection
      *
@@ -436,6 +446,7 @@ public:
      */
     explicit SqlConnection(const std::string &address = std::string(),
                            Flag::Type flags = Flag::None,
+                           Flag::Option options = Flag::RO,
                            SynchronizationObject *synchronizationObject =
                                AllocDefaultSynchronizationObject());
 
@@ -475,7 +486,6 @@ public:
      */
     RowID GetLastInsertRowID() const;
 };
-
 } // namespace DB
 } // namespace DPL
 

@@ -19,37 +19,34 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
 #include <dpl/dbus/server.h>
 
 namespace DPL {
 namespace DBus {
-
 ServerPtr Server::create(const std::string& address)
 {
     GError* error = NULL;
 
     int flags = G_DBUS_SERVER_FLAGS_NONE |
-                G_DBUS_SERVER_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS;
+        G_DBUS_SERVER_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS;
 
     gchar* serverId = g_dbus_generate_guid();
 
     GDBusServer* server = g_dbus_server_new_sync(
-                                  address.c_str(),
-                                  static_cast<GDBusServerFlags>(flags),
-                                  serverId,
-                                  NULL,
-                                  NULL,
-                                  &error);
+            address.c_str(),
+            static_cast<GDBusServerFlags>(flags),
+            serverId,
+            NULL,
+            NULL,
+            &error);
     g_free(serverId);
 
-    if (NULL == server)
-    {
+    if (NULL == server) {
         std::string message;
-        if (NULL != error)
-        {
+        if (NULL != error) {
             message = error->message;
             g_error_free(error);
         }
@@ -60,15 +57,13 @@ ServerPtr Server::create(const std::string& address)
     return ServerPtr(new Server(server));
 }
 
-Server::Server(GDBusServer* server)
-    : m_server(server)
-{
-}
+Server::Server(GDBusServer* server) :
+    m_server(server)
+{}
 
 Server::~Server()
 {
-    if (g_dbus_server_is_active(m_server))
-    {
+    if (g_dbus_server_is_active(m_server)) {
         stop();
     }
     g_object_unref(m_server);
@@ -105,16 +100,15 @@ gboolean Server::onNewConnection(GDBusServer* /*server*/,
     Server* self = static_cast<Server*>(data);
 
     ServerEvents::NewConnectionEvent event(
-            ConnectionPtr(new Connection(connection)));
+        ConnectionPtr(new Connection(connection)));
 
     LogInfo("Emitting new connection event");
     // TODO Blocking to allow object registration before any DBus messages are
     //      processed.
     self->DPL::Event::EventSupport<ServerEvents::NewConnectionEvent>::
-            EmitEvent(event, DPL::Event::EmitMode::Blocking);
+        EmitEvent(event, DPL::Event::EmitMode::Blocking);
 
     return TRUE;
 }
-
 }
 }

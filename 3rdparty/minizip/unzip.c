@@ -586,7 +586,9 @@ local unzFile unzOpenInternal (const void *path,
                                int is64bitOpenFunction)
 {
     unz64_s us;
-    unz64_s *s;
+    memset(&us,0,sizeof(unz64_s));
+
+    unz64_s *s = NULL;
     ZPOS64_T central_pos;
     uLong   uL;
 
@@ -782,6 +784,7 @@ extern unzFile ZEXPORT unzOpen2_64 (const void *path,
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
+        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
         zlib_filefunc64_32_def_fill.ztell32_file = NULL;
         zlib_filefunc64_32_def_fill.zseek32_file = NULL;
         return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 1);

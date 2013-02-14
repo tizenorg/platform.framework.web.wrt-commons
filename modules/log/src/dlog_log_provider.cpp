@@ -19,64 +19,84 @@
  * @version     1.0
  * @brief       This file is the implementation file of DLOG log provider
  */
+#include <stddef.h>
 #include <dpl/log/dlog_log_provider.h>
 #include <cstring>
 #include <sstream>
 #include <dlog.h>
 
-namespace DPL
-{
-namespace Log
-{
-
-std::string DLOGLogProvider::FormatMessage(const char *message, const char *filename, int line, const char *function)
+namespace DPL {
+namespace Log {
+std::string DLOGLogProvider::FormatMessage(const char *message,
+                                           const char *filename,
+                                           int line,
+                                           const char *function)
 {
     std::ostringstream val;
 
     val << std::string("[") <<
-           LocateSourceFileName(filename) << std::string(":") << line <<
-           std::string("] ") << function << std::string("(): ") << message;
+    LocateSourceFileName(filename) << std::string(":") << line <<
+    std::string("] ") << function << std::string("(): ") << message;
 
     return val.str();
 }
 
 DLOGLogProvider::DLOGLogProvider()
-{
-}
+{}
 
 DLOGLogProvider::~DLOGLogProvider()
-{
-}
+{}
 
 void DLOGLogProvider::SetTag(const char *tag)
 {
     m_tag.Reset(strdup(tag));
 }
 
-void DLOGLogProvider::Debug(const char *message, const char *filename, int line, const char *function)
+void DLOGLogProvider::Debug(const char *message,
+                            const char *filename,
+                            int line,
+                            const char *function)
 {
-    LOG(LOG_DEBUG, m_tag.Get(), "%s" , FormatMessage(message, filename, line, function).c_str());
+    LOG(LOG_DEBUG, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
 }
 
-void DLOGLogProvider::Info(const char *message, const char *filename, int line, const char *function)
+void DLOGLogProvider::Info(const char *message,
+                           const char *filename,
+                           int line,
+                           const char *function)
 {
-    LOG(LOG_INFO, m_tag.Get(), "%s" , FormatMessage(message, filename, line, function).c_str());
+    LOG(LOG_INFO, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
 }
 
-void DLOGLogProvider::Warning(const char *message, const char *filename, int line, const char *function)
+void DLOGLogProvider::Warning(const char *message,
+                              const char *filename,
+                              int line,
+                              const char *function)
 {
-    LOG(LOG_WARN, m_tag.Get(), "%s" , FormatMessage(message, filename, line, function).c_str());
+    LOG(LOG_WARN, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
 }
 
-void DLOGLogProvider::Error(const char *message, const char *filename, int line, const char *function)
+void DLOGLogProvider::Error(const char *message,
+                            const char *filename,
+                            int line,
+                            const char *function)
 {
-    LOG(LOG_ERROR, m_tag.Get(), "%s" , FormatMessage(message, filename, line, function).c_str());
+    LOG(LOG_ERROR, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
 }
 
-void DLOGLogProvider::Pedantic(const char *message, const char *filename, int line, const char *function)
+void DLOGLogProvider::Pedantic(const char *message,
+                               const char *filename,
+                               int line,
+                               const char *function)
 {
-    LOG(LOG_DEBUG, "DPL", "%s",  FormatMessage(message, filename, line, function).c_str());
+    LOG(LOG_DEBUG, "DPL", "%s", FormatMessage(message,
+                                              filename,
+                                              line,
+                                              function).c_str());
 }
-
 }
 } // namespace DPL

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of semaphore
  */
+#include <stddef.h>
 #include <dpl/semaphore.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
@@ -28,15 +29,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-namespace DPL
-{
+namespace DPL {
 void Semaphore::Remove(const std::string &fileName)
 {
     if (sem_unlink(fileName.c_str()) == -1) {
         int error = errno;
         LogPedantic("Failed to unlink semaphore. Errno: " << error);
         ThrowMsg(Exception::RemoveFailed,
-                "Failed to unlink semaphore. Errno: " << error);
+                 "Failed to unlink semaphore. Errno: " << error);
     }
 }
 
@@ -54,7 +54,7 @@ Semaphore::Semaphore(size_t maxLockCount)
         LogPedantic("Failed to create semaphore. Errno: " << error);
 
         ThrowMsg(Exception::CreateFailed,
-            "Failed to create semaphore. Errno: " << error);
+                 "Failed to create semaphore. Errno: " << error);
     }
 
     m_type = Type_Unnamed;
@@ -78,50 +78,42 @@ Semaphore::Semaphore(const std::string &fileName,
 
     sem_t *semaphore;
 
-    do
-    {
-        if (allowCreate)
-        {
-            if (exclusiveCreate)
-            {
+    do {
+        if (allowCreate) {
+            if (exclusiveCreate) {
                 semaphore = sem_open(fileName.c_str(),
                                      O_CREAT | O_EXCL,
                                      permissions,
                                      static_cast<unsigned>(maxLockCount));
-            }
-            else
-            {
+            } else {
                 semaphore = sem_open(fileName.c_str(),
                                      O_CREAT,
                                      permissions,
                                      static_cast<unsigned>(maxLockCount));
             }
-        }
-        else
-        {
+        } else {
             semaphore = sem_open(fileName.c_str(), 0);
         }
-    }
-    while (semaphore == SEM_FAILED && errno == EINTR);
+    } while (semaphore == SEM_FAILED && errno == EINTR);
 
-    if (semaphore == SEM_FAILED)
-    {
+    if (semaphore == SEM_FAILED) {
         int error = errno;
 
         LogPedantic("Failed to create semaphore '" << fileName
-                    << "'. Errno: " << error);
+                                                   << "'. Errno: " << error);
 
         ThrowMsg(Exception::CreateFailed,
                  "Failed to create semaphore '" << fileName
-                     << "'. Errno: " << error);
+                                                << "'. Errno: " << error);
     }
 
     m_semaphore.named.handle = semaphore;
 
     m_semaphore.named.name = strdup(fileName.c_str()); // May be NULL
 
-    if (m_semaphore.named.name == NULL)
+    if (m_semaphore.named.name == NULL) {
         LogPedantic("Out of memory while duplicating semaphore name");
+    }
 
     m_semaphore.named.unlinkOnDestroy = unlinkOnDestroy;
 
@@ -135,16 +127,15 @@ Semaphore::~Semaphore()
 
 sem_t *Semaphore::InternalGet() const
 {
-    switch (m_type)
-    {
-        case Type_Unnamed:
-            return &m_semaphore.unnamed.handle;
+    switch (m_type) {
+    case Type_Unnamed:
+        return &m_semaphore.unnamed.handle;
 
-        case Type_Named:
-            return m_semaphore.named.handle;
+    case Type_Named:
+        return m_semaphore.named.handle;
 
-        default:
-            Assert(false && "Invalid type");
+    default:
+        Assert(false && "Invalid type");
     }
 
     return NULL;
@@ -152,75 +143,69 @@ sem_t *Semaphore::InternalGet() const
 
 void Semaphore::InternalDestroy()
 {
-    switch (m_type)
-    {
-        case Type_Unnamed:
-            if (sem_destroy(&m_semaphore.unnamed.handle) == -1)
+    switch (m_type) {
+    case Type_Unnamed:
+        if (sem_destroy(&m_semaphore.unnamed.handle) == -1) {
+            int error = errno;
+
+            LogPedantic("Failed to destroy semaphore. Errno: " << error);
+        }
+        break;
+
+    case Type_Named:
+        if (sem_close(m_semaphore.named.handle) == -1) {
+            int error = errno;
+
+            LogPedantic("Failed to close semaphore. Errno: " << error);
+        }
+
+        if (m_semaphore.named.name != NULL) {
+            // Unlink named semaphore
+            if (m_semaphore.named.unlinkOnDestroy &&
+                sem_unlink(m_semaphore.named.name) == -1)
             {
                 int error = errno;
 
-                LogPedantic("Failed to destroy semaphore. Errno: " << error);
-            }
-            break;
-
-        case Type_Named:
-            if (sem_close(m_semaphore.named.handle) == -1)
-            {
-                int error = errno;
-
-                LogPedantic("Failed to close semaphore. Errno: " << error);
+                LogPedantic("Failed to unlink semaphore. Errno: "
+                            << error);
             }
 
-            if (m_semaphore.named.name != NULL)
-            {
-                // Unlink named semaphore
-                if (m_semaphore.named.unlinkOnDestroy &&
-                    sem_unlink(m_semaphore.named.name) == -1)
-                {
-                    int error = errno;
+            // Free name
+            free(m_semaphore.named.name);
+        }
+        break;
 
-                    LogPedantic("Failed to unlink semaphore. Errno: "
-                                << error);
-                }
-
-                // Free name
-                free(m_semaphore.named.name);
-            }
-            break;
-
-        default:
-            Assert(false && "Invalid type");
+    default:
+        Assert(false && "Invalid type");
     }
 }
 
 void Semaphore::Lock() const
 {
-    if (TEMP_FAILURE_RETRY(sem_wait(InternalGet())) != 0)
-    {
+    if (TEMP_FAILURE_RETRY(sem_wait(InternalGet())) != 0) {
         int error = errno;
 
         LogPedantic("Failed to lock semaphore. Errno: " << error);
 
         ThrowMsg(Exception::LockFailed,
-            "Failed to lock semaphore. Errno: " << error);
+                 "Failed to lock semaphore. Errno: " << error);
     }
 }
 
 void Semaphore::Unlock() const
 {
-    if (sem_post(InternalGet()) != 0)
-    {
+    if (sem_post(InternalGet()) != 0) {
         int error = errno;
 
         LogPedantic("Failed to unlock semaphore. Errno: " << error);
 
         ThrowMsg(Exception::UnlockFailed,
-            "Failed to unlock semaphore. Errno: " << error);
+                 "Failed to unlock semaphore. Errno: " << error);
     }
 }
 
-Semaphore::ScopedLock::ScopedLock(Semaphore *semaphore)
-    : m_semaphore(semaphore)
+Semaphore::ScopedLock::ScopedLock(Semaphore *semaphore) :
+    m_semaphore(semaphore)
 {
     Assert(semaphore != NULL);
     m_semaphore->Lock();
@@ -232,7 +217,7 @@ Semaphore::ScopedLock::~ScopedLock()
     {
         m_semaphore->Unlock();
     }
-    Catch (Semaphore::Exception::UnlockFailed)
+    Catch(Semaphore::Exception::UnlockFailed)
     {
         LogPedantic("Failed to leave semaphore scoped lock");
     }

@@ -25,18 +25,15 @@
 #include <dpl/waitable_handle.h>
 #include <dpl/abstract_input.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableInput :
+    public AbstractInput
 {
-
-class AbstractWaitableInput
-    : public AbstractInput
-{
-public:
+  public:
     virtual ~AbstractWaitableInput() {}
 
     virtual WaitableHandle WaitableReadHandle() const = 0;
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_INPUT_H

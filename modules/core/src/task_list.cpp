@@ -20,22 +20,23 @@
  * @version 1.0
  * @brief   Implementation file for task list
  */
+#include <stddef.h>
 #include <dpl/task_list.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-TaskList::TaskList()
-    : m_switched(false),
-      m_running(false)
+namespace DPL {
+TaskList::TaskList() :
+    m_switched(false),
+    m_running(false)
 {
     m_currentTask = m_tasks.end();
 }
 
 TaskList::~TaskList()
 {
-    for (Tasks::iterator i = m_tasks.begin(); i != m_tasks.end(); ++i)
+    for (Tasks::iterator i = m_tasks.begin(); i != m_tasks.end(); ++i) {
         delete *i;
+    }
 }
 
 void TaskList::AddTask(Task *task)
@@ -49,38 +50,40 @@ bool TaskList::NextStep()
 {
     m_running = true;
 
-    Assert(m_currentTask != m_tasks.end() && "Task list is empty or all tasks done");
+    Assert(
+        m_currentTask != m_tasks.end() &&
+        "Task list is empty or all tasks done");
 
     m_switched = false;
 
     bool result = (*m_currentTask)->NextStep();
 
-    if (result || m_switched)
+    if (result || m_switched) {
         return true;
+    }
 
     return ++m_currentTask != m_tasks.end();
 }
 
 bool TaskList::Abort()
 {
-    m_tasks.erase(m_currentTask,m_tasks.end());
+    m_tasks.erase(m_currentTask, m_tasks.end());
     m_tasks.reverse();
-    for (Tasks::iterator i = m_tasks.begin(); i != m_tasks.end();)
-    {
+    for (Tasks::iterator i = m_tasks.begin(); i != m_tasks.end();) {
         //If given task does not have any "abortSteps", remove it from the list
-        if(!(*i)->Abort())
-        {
+        if (!(*i)->Abort()) {
             delete *i;
-            i=m_tasks.erase(i);
+            i = m_tasks.erase(i);
             continue;
         }
         ++i;
     }
 
-    if(m_tasks.empty())
+    if (m_tasks.empty()) {
         return false;
+    }
 
-    m_currentTask=m_tasks.begin();
+    m_currentTask = m_tasks.begin();
 
     return true;
 }
@@ -102,10 +105,10 @@ size_t TaskList::GetStepCount() const
 {
     size_t count = 0;
 
-    for (Tasks::const_iterator i = m_tasks.begin(); i != m_tasks.end(); ++i)
+    for (Tasks::const_iterator i = m_tasks.begin(); i != m_tasks.end(); ++i) {
         count += (*i)->GetStepCount();
+    }
 
     return count;
 }
-
 } // namespace DPL

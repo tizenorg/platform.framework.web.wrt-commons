@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of tcpsock example
  */
+#include <stddef.h>
 #include <dpl/tcp_socket.h>
 #include <dpl/abstract_socket.h>
 #include <dpl/application.h>

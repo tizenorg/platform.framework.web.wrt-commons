@@ -26,17 +26,15 @@
 #include <dpl/abstract_waitable_output_adapter.h>
 #include <dpl/abstract_input_output.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableInputOutputAdapter :
+    public AbstractWaitableInputAdapter,
+    public AbstractWaitableOutputAdapter
 {
-
-class AbstractWaitableInputOutputAdapter
-    : public AbstractWaitableInputAdapter,
-      public AbstractWaitableOutputAdapter
-{
-public:
-    explicit AbstractWaitableInputOutputAdapter(AbstractInputOutput *inputOutput);
+  public:
+    explicit AbstractWaitableInputOutputAdapter(
+        AbstractInputOutput *inputOutput);
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_INPUT_OUTPUT_ADAPTER_H

@@ -28,9 +28,7 @@
 #include <dpl/scoped_resource.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-
+namespace DPL {
 struct ScopedGPointerPolicy
 {
     typedef gpointer Type;
@@ -54,10 +52,9 @@ class ScopedGPointer : public DPL::ScopedResource<ScopedGPointerPolicy>
 
   public:
     explicit ScopedGPointer(typename Policy::Type pointer =
-                Policy::NullValue()) :
+                                Policy::NullValue()) :
         BaseType(pointer)
-    {
-    }
+    {}
 
     Class *operator->() const throw()
     {
@@ -73,7 +70,6 @@ class ScopedGPointer : public DPL::ScopedResource<ScopedGPointerPolicy>
         return *static_cast<Class *>(this->m_value);
     }
 };
-
 } // namespace DPL
 
 #endif // DPL_SCOPED_GPOINTER_H

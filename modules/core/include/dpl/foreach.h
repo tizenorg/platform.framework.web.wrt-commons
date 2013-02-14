@@ -18,18 +18,16 @@
  * @author      Bartosz Janiak (b.janiak@samsung.com)
  * @author      Lukasz Wrzosek (l.wrzosek@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of foreach macro for stl containers
+ * @brief       This file is the implementation file of foreach macro for stl
+ * containers
  */
 #ifndef DPL_FOREACH_H
 #define DPL_FOREACH_H
 
 #include <dpl/preprocessor.h>
 
-namespace DPL
-{
-namespace Private
-{
-
+namespace DPL {
+namespace Private {
 /*
  * Used to detect type of valid reference to value object.
  */
@@ -44,23 +42,20 @@ const T& ValueReference(const T& t)
 {
     return(t);
 }
-
-
 } //Private
 } //DPL
-
 
 #define DPL_FOREACH_IMPL(temporaryName, iterator, container)            \
     __typeof__ (DPL::Private::ValueReference((container))) &            \
     temporaryName = (container);                                        \
-    for (__typeof__ (temporaryName.begin()) iterator =                  \
+    for (__typeof__ (temporaryName.begin())iterator =                  \
              temporaryName.begin();                                     \
          (iterator) != temporaryName.end(); ++iterator)
 
 #define FOREACH(iterator, container)                                    \
     DPL_FOREACH_IMPL(                                                   \
         DPL_MACRO_CONCAT(foreachContainerReference, __COUNTER__),       \
-                         iterator,                                      \
-                         container)
+        iterator,                                      \
+        container)
 
 #endif // DPL_FOREACH_H

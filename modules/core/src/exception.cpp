@@ -19,12 +19,12 @@
  * @version     1.0
  * @brief       This file is the implementation of exception system
  */
+#include <stddef.h>
 #include <dpl/exception.h>
 #include <dpl/log/log.h>
 #include <cstdio>
 
-namespace DPL
-{
+namespace DPL {
 Exception* Exception::m_lastException = NULL;
 unsigned int Exception::m_exceptionCount = 0;
 void (*Exception::m_terminateHandler)() = NULL;
@@ -38,15 +38,20 @@ void LogUnhandledException(const std::string &str)
     LogPedantic(str);
 }
 
-void LogUnhandledException(const std::string &str, const char *filename, int line, const char *function)
+void LogUnhandledException(const std::string &str,
+                           const char *filename,
+                           int line,
+                           const char *function)
 {
     // Logging to console
     std::ostringstream msg;
-    msg << "\033[1;5;31m\n=== [" << filename << ":" << line << "] " << function << " ===\033[m";
+    msg << "\033[1;5;31m\n=== [" << filename << ":" << line << "] " <<
+    function << " ===\033[m";
     msg << str;
     printf("%s\n", msg.str().c_str());
 
     // Logging to dlog
-    DPL::Log::LogSystemSingleton::Instance().Error(str.c_str(), filename, line, function);
+    DPL::Log::LogSystemSingleton::Instance().Error(
+        str.c_str(), filename, line, function);
 }
 } // namespace DPL

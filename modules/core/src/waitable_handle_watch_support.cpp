@@ -17,8 +17,10 @@
  * @file        waitable_handle_watch_support.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of waitable handle watch support
+ * @brief       This file is the implementation file of waitable handle watch
+ * support
  */
+#include <stddef.h>
 #include <dpl/waitable_handle_watch_support.h>
 #include <dpl/thread.h>
 #include <dpl/main.h>
@@ -26,38 +28,41 @@
 #include <algorithm>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 WaitableHandleWatchSupport::WaitableHandleWatchSupport()
-{
-}
+{}
 
 WaitableHandleWatchSupport::~WaitableHandleWatchSupport()
 {
     // Developer assertions
-    if (!m_watchersMap.empty())
-    {
-        LogPedantic("### Leaked watchers map dump ###");
+    if (!m_watchersMap.empty()) {
+        LogWarning("### Leaked watchers map dump ###");
 
-        for (WaitableHandleWatchersMap::const_iterator iterator = m_watchersMap.begin();
+        for (WaitableHandleWatchersMap::const_iterator iterator =
+                 m_watchersMap.begin();
              iterator != m_watchersMap.end();
              ++iterator)
         {
-            LogPedantic("###   Waitable handle: " << iterator->first);
+            LogWarning("###   Waitable handle: " << iterator->first);
 
-            LogPedantic("###     Read listeners: " << iterator->second.readListenersCount);
-            LogPedantic("###     Write listeners: " << iterator->second.writeListenersCount);
+            LogWarning(
+                "###     Read listeners: " <<
+                iterator->second.readListenersCount);
+            LogWarning(
+                "###     Write listeners: " <<
+                iterator->second.writeListenersCount);
 
-            for (WaitableHandleListenerList::const_iterator listenersIterator = iterator->second.listeners.begin();
+            for (WaitableHandleListenerList::const_iterator listenersIterator =
+                     iterator->second.listeners.begin();
                  listenersIterator != iterator->second.listeners.end();
                  ++listenersIterator)
             {
-                LogPedantic("###       Mode: " << listenersIterator->mode << ". Listener: 0x" << std::hex << listenersIterator->listener);
+                LogWarning(
+                    "###       Mode: " << listenersIterator->mode <<
+                    ". Listener: 0x" << std::hex << listenersIterator->listener);
             }
         }
     }
-
-    Assert(m_watchersMap.empty() == true);
 }
 
 WaitableHandle WaitableHandleWatchSupport::WaitableInvokerHandle() const
@@ -73,18 +78,23 @@ WaitableHandleListEx WaitableHandleWatchSupport::WaitableWatcherHandles() const
 
         WaitableHandleListEx handleList;
 
-        for (WaitableHandleWatchersMap::const_iterator iterator = m_watchersMap.begin();
+        for (WaitableHandleWatchersMap::const_iterator iterator =
+                 m_watchersMap.begin();
              iterator != m_watchersMap.end();
              ++iterator)
         {
             // Register waitable event id for wait
             // Check if there are any read listeners and write listeners
             // and register for both if applicable
-            if (iterator->second.readListenersCount > 0)
-                handleList.push_back(std::make_pair(iterator->first, WaitMode::Read));
+            if (iterator->second.readListenersCount > 0) {
+                handleList.push_back(std::make_pair(iterator->first,
+                                                    WaitMode::Read));
+            }
 
-            if (iterator->second.writeListenersCount > 0)
-                handleList.push_back(std::make_pair(iterator->first, WaitMode::Write));
+            if (iterator->second.writeListenersCount > 0) {
+                handleList.push_back(std::make_pair(iterator->first,
+                                                    WaitMode::Write));
+            }
         }
 
         return handleList;
@@ -102,13 +112,15 @@ void WaitableHandleWatchSupport::InvokerFinished()
     m_watchersInvokerCommit.Signal();
 }
 
-void WaitableHandleWatchSupport::HandleWatcher(WaitableHandle waitableHandle, WaitMode::Type mode)
+void WaitableHandleWatchSupport::HandleWatcher(WaitableHandle waitableHandle,
+                                               WaitMode::Type mode)
 {
     //
     // Waitable event occurred
     // Now call all listeners for that waitable event. It is possible
     // that some of listeners early disappeared. This is not a problem.
-    // Warning: Listeners and/or watcher may also disappear during dispatching handlers!
+    // Warning: Listeners and/or watcher may also disappear during dispatching
+    // handlers!
     //
     LogPedantic("Waitable event occurred");
 
@@ -116,44 +128,58 @@ void WaitableHandleWatchSupport::HandleWatcher(WaitableHandle waitableHandle, Wa
     {
         RecursiveMutex::ScopedLock lock(&m_watchersMutex);
 
-        // Notice: We must carefully call watchers here as they may disappear (zero listeners) or be created during each of handler call
-        //         All removed listeners are handled correctly. Adding additional listener to the same waitable handle
+        // Notice: We must carefully call watchers here as they may disappear
+        // (zero listeners) or be created during each of handler call
+        //         All removed listeners are handled correctly. Adding
+        // additional listener to the same waitable handle
         //         during handler dispatch sequence is _not_ supported.
         WaitableHandleWatchersMap trackedWatchers = m_watchersMap;
 
-        for (WaitableHandleWatchersMap::const_iterator trackedWatchersIterator = trackedWatchers.begin();
+        for (WaitableHandleWatchersMap::const_iterator trackedWatchersIterator
+                 = trackedWatchers.begin();
              trackedWatchersIterator != trackedWatchers.end();
              ++trackedWatchersIterator)
         {
             // Check if this watcher still exists
             // If not, go to next tracked watcher
-            if (m_watchersMap.find(trackedWatchersIterator->first) == m_watchersMap.end())
+            if (m_watchersMap.find(trackedWatchersIterator->first) ==
+                m_watchersMap.end())
             {
                 LogPedantic("Watcher disappeared during watcher handler");
                 continue;
             }
 
             // Is this is a waitable handle that we are searching for ?
-            if (waitableHandle != trackedWatchersIterator->first)
+            if (waitableHandle != trackedWatchersIterator->first) {
                 continue;
+            }
 
             // Track watcher listeners list
-            WaitableHandleListenerList trackedListeners = trackedWatchersIterator->second.listeners;
+            WaitableHandleListenerList trackedListeners =
+                trackedWatchersIterator->second.listeners;
 
-            LogPedantic("Calling waitable event listeners (" << trackedListeners.size() << ")...");
+            LogPedantic(
+                "Calling waitable event listeners (" <<
+                trackedListeners.size() << ")...");
 
-            // Notice: We must carefully call listeners here as they may disappear or be created during each of handler call
-            //         All removed listeners are handled correctly. Adding additional listener to the same waitable handle
-            //         during handler dispatch sequence is should be also handled, as an extremly case.
- 
+            // Notice: We must carefully call listeners here as they may
+            // disappear or be created during each of handler call
+            //         All removed listeners are handled correctly. Adding
+            // additional listener to the same waitable handle
+            //         during handler dispatch sequence is should be also
+            // handled, as an extremly case.
+
             // Call all waitable event listeners who listen for that event
-            for (WaitableHandleListenerList::const_iterator trackedListenersIterator = trackedListeners.begin();
+            for (WaitableHandleListenerList::const_iterator
+                 trackedListenersIterator = trackedListeners.begin();
                  trackedListenersIterator != trackedListeners.end();
                  ++trackedListenersIterator)
             {
                 // Check if this watcher still exists
-                // If not, there cannot be another one. Must exit now (after break, we actually exit)
-                if (m_watchersMap.find(trackedWatchersIterator->first) == m_watchersMap.end())
+                // If not, there cannot be another one. Must exit now (after
+                // break, we actually exit)
+                if (m_watchersMap.find(trackedWatchersIterator->first) ==
+                    m_watchersMap.end())
                 {
                     LogPedantic("Watcher disappeared during watcher handler");
                     break;
@@ -163,31 +189,39 @@ void WaitableHandleWatchSupport::HandleWatcher(WaitableHandle waitableHandle, Wa
                 // If not, go to next tracked watcher listener
                 bool listenerStillExists = false;
 
-                for (WaitableHandleListenerList::const_iterator searchListenerIterator = trackedWatchersIterator->second.listeners.begin();
-                     searchListenerIterator != trackedWatchersIterator->second.listeners.end();
+                for (WaitableHandleListenerList::const_iterator
+                     searchListenerIterator =
+                         trackedWatchersIterator->second.listeners.begin();
+                     searchListenerIterator !=
+                     trackedWatchersIterator->second.listeners.end();
                      ++searchListenerIterator)
                 {
-                    if (searchListenerIterator->listener == trackedListenersIterator->listener &&
-                        searchListenerIterator->mode == trackedListenersIterator->mode)
+                    if (searchListenerIterator->listener ==
+                        trackedListenersIterator->listener &&
+                        searchListenerIterator->mode ==
+                        trackedListenersIterator->mode)
                     {
                         listenerStillExists = true;
                         break;
                     }
                 }
 
-                if (!listenerStillExists)
-                {
-                    LogPedantic("Watcher listener disappeared during watcher handler");
+                if (!listenerStillExists) {
+                    LogPedantic(
+                        "Watcher listener disappeared during watcher handler");
                     break;
                 }
 
                 // Is this is a listener mode that we are searching for ?
-                if (mode != trackedListenersIterator->mode)
+                if (mode != trackedListenersIterator->mode) {
                     continue;
+                }
 
                 // Call waitable event watch listener
                 LogPedantic("Before tracker listener call...");
-                trackedListenersIterator->listener->OnWaitableHandleEvent(trackedWatchersIterator->first, trackedListenersIterator->mode);
+                trackedListenersIterator->listener->OnWaitableHandleEvent(
+                    trackedWatchersIterator->first,
+                    trackedListenersIterator->mode);
                 LogPedantic("After tracker listener call...");
             }
 
@@ -202,47 +236,56 @@ void WaitableHandleWatchSupport::HandleWatcher(WaitableHandle waitableHandle, Wa
     }
 }
 
-void WaitableHandleWatchSupport::AddWaitableHandleWatch(WaitableHandleListener* listener, WaitableHandle waitableHandle, WaitMode::Type mode)
+void WaitableHandleWatchSupport::AddWaitableHandleWatch(
+    WaitableHandleListener* listener,
+    WaitableHandle waitableHandle,
+    WaitMode::Type mode)
 {
     // Enter waitable event list critical section
     RecursiveMutex::ScopedLock lock(&m_watchersMutex);
 
     // Find proper list to register into
-    WaitableHandleWatchersMap::iterator mapIterator = m_watchersMap.find(waitableHandle);
+    WaitableHandleWatchersMap::iterator mapIterator = m_watchersMap.find(
+            waitableHandle);
 
-    if (mapIterator != m_watchersMap.end())
-    {
-        // Assert if there is no such listener already that is listening in this mode
-        for (WaitableHandleListenerList::iterator listenersIterator = mapIterator->second.listeners.begin();
+    if (mapIterator != m_watchersMap.end()) {
+        // Assert if there is no such listener already that is listening in this
+        // mode
+        for (WaitableHandleListenerList::iterator listenersIterator =
+                 mapIterator->second.listeners.begin();
              listenersIterator != mapIterator->second.listeners.end();
              ++listenersIterator)
         {
             // Must not insert same listener-mode pair
-            Assert(listenersIterator->listener != listener || listenersIterator->mode != mode);
+            Assert(
+                listenersIterator->listener != listener ||
+                listenersIterator->mode != mode);
         }
     }
 
     LogPedantic("Adding waitable handle watch: " << waitableHandle);
 
     // Push new waitable event watch
-    if (mapIterator != m_watchersMap.end())
-        mapIterator->second.listeners.push_back(WaitableHandleWatcher(listener, mode));
-    else
-        m_watchersMap[waitableHandle].listeners.push_back(WaitableHandleWatcher(listener, mode));
+    if (mapIterator != m_watchersMap.end()) {
+        mapIterator->second.listeners.push_back(WaitableHandleWatcher(listener,
+                                                                      mode));
+    } else {
+        m_watchersMap[waitableHandle].listeners.push_back(WaitableHandleWatcher(
+                                                              listener, mode));
+    }
 
     // Update counters
-    switch (mode)
-    {
-        case WaitMode::Read:
-            m_watchersMap[waitableHandle].readListenersCount++;
-            break;
+    switch (mode) {
+    case WaitMode::Read:
+        m_watchersMap[waitableHandle].readListenersCount++;
+        break;
 
-        case WaitMode::Write:
-            m_watchersMap[waitableHandle].writeListenersCount++;
-            break;
+    case WaitMode::Write:
+        m_watchersMap[waitableHandle].writeListenersCount++;
+        break;
 
-        default:
-            Assert(0);
+    default:
+        Assert(0);
     }
 
     // Trigger waitable event invoker to commit changes
@@ -251,25 +294,32 @@ void WaitableHandleWatchSupport::AddWaitableHandleWatch(WaitableHandleListener* 
     LogPedantic("Waitable event watch added and invoker signaled");
 }
 
-void WaitableHandleWatchSupport::RemoveWaitableHandleWatch(WaitableHandleListener *listener, WaitableHandle waitableHandle, WaitMode::Type mode)
+void WaitableHandleWatchSupport::RemoveWaitableHandleWatch(
+    WaitableHandleListener *listener,
+    WaitableHandle waitableHandle,
+    WaitMode::Type mode)
 {
     // Enter waitable event list critical section
     RecursiveMutex::ScopedLock lock(&m_watchersMutex);
 
     // Find proper list with listener
-    WaitableHandleWatchersMap::iterator mapIterator = m_watchersMap.find(waitableHandle);
+    WaitableHandleWatchersMap::iterator mapIterator = m_watchersMap.find(
+            waitableHandle);
 
     Assert(mapIterator != m_watchersMap.end());
 
     // Assert if there is such listener and mode
-    WaitableHandleListenerList::iterator listIterator = mapIterator->second.listeners.end();
+    WaitableHandleListenerList::iterator listIterator =
+        mapIterator->second.listeners.end();
 
-    for (WaitableHandleListenerList::iterator listenersIterator = mapIterator->second.listeners.begin();
+    for (WaitableHandleListenerList::iterator listenersIterator =
+             mapIterator->second.listeners.begin();
          listenersIterator != mapIterator->second.listeners.end();
          ++listenersIterator)
     {
         // Check same pair listener-mode
-        if (listenersIterator->listener == listener && listenersIterator->mode == mode)
+        if (listenersIterator->listener == listener &&
+            listenersIterator->mode == mode)
         {
             listIterator = listenersIterator;
             break;
@@ -280,28 +330,28 @@ void WaitableHandleWatchSupport::RemoveWaitableHandleWatch(WaitableHandleListene
     Assert(listIterator != mapIterator->second.listeners.end());
 
     LogPedantic("Removing waitable handle watch: " << waitableHandle);
-  
+
     // Remove waitable event watch
     mapIterator->second.listeners.erase(listIterator);
 
     // Update counters
-    switch (mode)
-    {
-        case WaitMode::Read:
-            mapIterator->second.readListenersCount--;
-            break;
+    switch (mode) {
+    case WaitMode::Read:
+        mapIterator->second.readListenersCount--;
+        break;
 
-        case WaitMode::Write:
-            mapIterator->second.writeListenersCount--;
-            break;
+    case WaitMode::Write:
+        mapIterator->second.writeListenersCount--;
+        break;
 
-        default:
-            Assert(0);
+    default:
+        Assert(0);
     }
 
     // If list is empty, remove it too
-    if (mapIterator->second.listeners.empty())
+    if (mapIterator->second.listeners.empty()) {
         m_watchersMap.erase(mapIterator);
+    }
 
     // Trigger waitable event invoker to commit changes
     CommitInvoker();
@@ -312,15 +362,12 @@ void WaitableHandleWatchSupport::RemoveWaitableHandleWatch(WaitableHandleListene
 void WaitableHandleWatchSupport::CommitInvoker()
 {
     // Check calling context and execute invoker
-    if (Thread::GetCurrentThread() == GetInvokerThread())
-    {
+    if (Thread::GetCurrentThread() == GetInvokerThread()) {
         LogPedantic("Calling direct invoker");
 
         // Direct invoker call
         HandleDirectInvoker();
-    }
-    else
-    {
+    } else {
         LogPedantic("Calling indirect invoker");
 
         // Indirect invoker call
@@ -338,9 +385,10 @@ WaitableHandleWatchSupport *WaitableHandleWatchSupport::InheritedContext()
 {
     // In threaded context, return thread waitable handle watch implementation
     // In main loop, return main waitable handle watch implementation
-    if (Thread::GetCurrentThread() != NULL)
+    if (Thread::GetCurrentThread() != NULL) {
         return Thread::GetCurrentThread();
-    else
+    } else {
         return &MainSingleton::Instance();
+    }
 }
 } // namespace DPL

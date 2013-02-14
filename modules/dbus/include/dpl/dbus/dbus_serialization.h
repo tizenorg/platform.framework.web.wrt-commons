@@ -34,14 +34,12 @@
 
 namespace DPL {
 namespace DBus {
-
 struct Serialization
 {
-
     // std::string
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::string& str)
+        DBusMessageIter* argsIterator,
+        const std::string& str)
     {
         return serialize(argsIterator, str.c_str());
     }
@@ -65,17 +63,19 @@ struct Serialization
     // dbus array serialization
     template<typename T>
     static bool serializeContainer(
-            DBusMessageIter* argsIterator,
-            const T& arg)
+        DBusMessageIter* argsIterator,
+        const T& arg)
     {
         typename T::const_iterator containerIt;
         DBusMessageIter subIterator;
         if (!dbus_message_iter_open_container(argsIterator, DBUS_TYPE_ARRAY,
-                Signature<typename T::value_type>::value(), &subIterator)) {
+                                              Signature<typename T::value_type>
+                                                  ::value(), &subIterator))
+        {
             return false;
         }
-        FOREACH(containerIt,arg) {
-            if (!serialize(&subIterator, *containerIt)){
+        FOREACH(containerIt, arg) {
+            if (!serialize(&subIterator, *containerIt)) {
                 return false;
             }
         }
@@ -85,8 +85,8 @@ struct Serialization
     // std::vector
     template<typename T>
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::vector<T> &arg)
+        DBusMessageIter* argsIterator,
+        const std::vector<T> &arg)
     {
         return serializeContainer(argsIterator, arg);
     }
@@ -94,8 +94,8 @@ struct Serialization
     // std::list
     template<typename T>
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::list<T> &arg)
+        DBusMessageIter* argsIterator,
+        const std::list<T> &arg)
     {
         return serializeContainer(argsIterator, arg);
     }
@@ -103,8 +103,8 @@ struct Serialization
     // std::set
     template<typename T>
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::set<T> &arg)
+        DBusMessageIter* argsIterator,
+        const std::set<T> &arg)
     {
         return serializeContainer(argsIterator, arg);
     }
@@ -112,18 +112,20 @@ struct Serialization
     // std::pair
     template<typename A, typename B>
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::pair<A, B> &arg)
+        DBusMessageIter* argsIterator,
+        const std::pair<A, B> &arg)
     {
         DBusMessageIter dictEntryIterator;
         if (!dbus_message_iter_open_container(argsIterator,
-                DBUS_TYPE_DICT_ENTRY, NULL, &dictEntryIterator)) {
+                                              DBUS_TYPE_DICT_ENTRY, NULL,
+                                              &dictEntryIterator))
+        {
             return false;
         }
-        if (!serialize(dictEntryIterator, arg.first)){
+        if (!serialize(dictEntryIterator, arg.first)) {
             return false;
         }
-        if (!serialize(dictEntryIterator, arg.second)){
+        if (!serialize(dictEntryIterator, arg.second)) {
             return false;
         }
         return dbus_message_iter_close_container(argsIterator,
@@ -133,12 +135,11 @@ struct Serialization
     // std::map
     template<typename K, typename V>
     static bool serialize(
-            DBusMessageIter* argsIterator,
-            const std::map<K, V> &arg)
+        DBusMessageIter* argsIterator,
+        const std::map<K, V> &arg)
     {
         return serializeContainer(argsIterator, arg);
     }
-
 };
 
 // char* and all integer types + doubles
@@ -151,7 +152,6 @@ inline bool Serialization::serialize<bool>(DBusMessageIter* argsIterator,
                                           SimpleType<bool>::value,
                                           &value);
 }
-
 } // namespace DBus
 } // namespace DPL
 

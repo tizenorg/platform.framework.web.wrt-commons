@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of MVC application support
  */
+#include <stddef.h>
 #include <dpl/application.h>
 #include <dpl/log/log.h>
 
@@ -27,53 +28,54 @@ namespace // anonymous
 static DPL::Application *g_application = NULL;
 } // namespace anonymous
 
-namespace DPL
-{
+namespace DPL {
 int Application::app_create(void *data)
 {
-    Application *This=static_cast<Application *>(data);
+    Application *This = static_cast<Application *>(data);
     This->OnCreate();
     return 0;
 }
 
 int Application::app_terminate(void *data)
 {
-    Application *This=static_cast<Application *>(data);
+    Application *This = static_cast<Application *>(data);
     This->OnTerminate();
     return 0;
 }
 
 int Application::app_pause(void *data)
 {
-    Application *This=static_cast<Application *>(data);
+    Application *This = static_cast<Application *>(data);
     This->OnPause();
     return 0;
 }
 
 int Application::app_resume(void *data)
 {
-    Application *This=static_cast<Application *>(data);
+    Application *This = static_cast<Application *>(data);
     This->OnResume();
     return 0;
 }
 
 int Application::app_reset(bundle *b, void *data)
 {
-    Application *This=static_cast<Application *>(data);
+    Application *This = static_cast<Application *>(data);
     This->OnReset(b);
     return 0;
 }
 
 Application::Application(int argc, char** argv,
                          const std::string& applicationName,
-                         bool showMainWindow)
-    : m_argc(argc),
-      m_argv(argv),
-      m_applicationName(applicationName),
-      m_mainWindowVisible(showMainWindow)
+                         bool showMainWindow) :
+    m_argc(argc),
+    m_argv(argv),
+    m_applicationName(applicationName),
+    m_mainWindowVisible(showMainWindow)
 {
-    if (g_application != NULL)
-        ThrowMsg(Exception::TooManyInstances, "Only single instance of Application allowed at one time!");
+    if (g_application != NULL) {
+        ThrowMsg(Exception::TooManyInstances,
+                 "Only single instance of Application allowed at one time!");
+    }
 
     g_application = this;
 }
@@ -93,9 +95,10 @@ int Application::Exec()
     ops.pause = app_pause;
     ops.resume = app_resume;
     ops.reset = app_reset;
-    ops.data=this;
+    ops.data = this;
 
-    int result = appcore_efl_main(m_applicationName.c_str(), &m_argc, &m_argv, &ops);
+    int result = appcore_efl_main(
+            m_applicationName.c_str(), &m_argc, &m_argv, &ops);
 
     LogPedantic("Exited application framework");
 
@@ -165,23 +168,21 @@ void Application::Quit()
 
 DPL::Atomic ApplicationExt::m_useCount(0);
 
-ApplicationExt::ApplicationExt(int argc, char** argv, const std::string& applicationName, bool showMainWindow) :
+ApplicationExt::ApplicationExt(int argc,
+                               char** argv,
+                               const std::string& applicationName,
+                               bool showMainWindow) :
     Application(argc, argv, applicationName, showMainWindow)
-{
-}
+{}
 
 ApplicationExt::~ApplicationExt()
-{
-}
+{}
 
 int ApplicationExt::Exec()
 {
-    if (0 == m_useCount.CompareAndExchange(0, 1))
-    {
+    if (0 == m_useCount.CompareAndExchange(0, 1)) {
         return Application::Exec();
-    }
-    else
-    {
+    } else {
         elm_run();
     }
     return 0;

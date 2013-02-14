@@ -17,9 +17,12 @@
  * @file        char_traits.cpp
  * @author      Piotr Marcinkiewicz (p.marcinkiew@samsung.com)
  * @version     1.0
- * @biref       Char traits are used to create basic_string extended with additional features
- *              Current char traits could be extended in feature to boost performance
+ * @biref       Char traits are used to create basic_string extended with
+ * additional features
+ *              Current char traits could be extended in feature to boost
+ * performance
  */
+#include <stddef.h>
 #include <dpl/char_traits.h>
 
 //

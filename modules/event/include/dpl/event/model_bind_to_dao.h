@@ -23,11 +23,8 @@
 #ifndef DPL_MODEL_BIND_TO_DAO_H_
 #define DPL_MODEL_BIND_TO_DAO_H_
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 /**
  * @param ObjectType type of object used as delegate argument
  * @param RetType Type returned from the external function
@@ -70,7 +67,6 @@ struct BindToDAO
         return (extObject.*externalGetter)();
     }
 };
-
 }
 }
 

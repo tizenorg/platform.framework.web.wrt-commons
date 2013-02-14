@@ -19,20 +19,18 @@
  * @version     1.0
  * @brief       This file is the implementation file of generic RPC connection
  */
+#include <stddef.h>
 #include <dpl/rpc/generic_rpc_connection.h>
 #include <dpl/scoped_array.h>
 #include <dpl/log/log.h>
 #include <dpl/aligned.h>
 #include <stdexcept>
 
-namespace DPL
-{
-namespace RPC
-{
+namespace DPL {
+namespace RPC {
 namespace // anonymous
 {
-namespace Protocol
-{
+namespace Protocol {
 // Packet definitions
 enum PacketType
 {
@@ -46,17 +44,17 @@ struct Header
     unsigned short type;
 } DPL_ALIGNED(1);
 
-struct AsyncCall
-    : public Header
+struct AsyncCall :
+    public Header
 {
     unsigned char data[1];
 } DPL_ALIGNED(1);
-
 } // namespace Protocol
 } // namespace anonymous
 
-GenericRPCConnection::GenericRPCConnection(AbstractWaitableInputOutput *inputOutput)
-    : m_inputOutput(inputOutput)
+GenericRPCConnection::GenericRPCConnection(
+    AbstractWaitableInputOutput *inputOutput) :
+    m_inputOutput(inputOutput)
 {
     LogPedantic("Opening generic RPC...");
     WaitableInputOutputExecutionContextSupport::Open(inputOutput);
@@ -91,7 +89,7 @@ void GenericRPCConnection::AsyncCall(const RPCFunction &function)
     {
         FeedOutput();
     }
-    Catch (WaitableInputOutputExecutionContextSupport::Exception::NotOpened)
+    Catch(WaitableInputOutputExecutionContextSupport::Exception::NotOpened)
     {
         // Error occurred while feeding
         ReThrow(AbstractRPCConnection::Exception::AsyncCallFailed);
@@ -114,7 +112,7 @@ void GenericRPCConnection::Ping()
     {
         FeedOutput();
     }
-    Catch (WaitableInputOutputExecutionContextSupport::Exception::NotOpened)
+    Catch(WaitableInputOutputExecutionContextSupport::Exception::NotOpened)
     {
         // Error occurred while feeding
         ReThrow(AbstractRPCConnection::Exception::PingFailed);
@@ -126,76 +124,82 @@ void GenericRPCConnection::OnInputStreamRead()
     LogPedantic("Interpreting " << m_inputStream.Size() << " bytes buffer");
 
     // Enough bytes to read at least one header ?
-    if (m_inputStream.Size() >= sizeof(Protocol::Header))
-    {
+    if (m_inputStream.Size() >= sizeof(Protocol::Header)) {
         // Begin consuming as much packets as it is possible
-        while (m_inputStream.Size() >= sizeof(Protocol::Header))
-        {
+        while (m_inputStream.Size() >= sizeof(Protocol::Header)) {
             Protocol::Header header;
             m_inputStream.Flatten(&header, sizeof(header));
 
-            if (m_inputStream.Size() >= sizeof(Protocol::Header) + header.size)
+            if (m_inputStream.Size() >= sizeof(Protocol::Header) +
+                header.size)
             {
                 LogPedantic("Will parse packet of type: " << header.type);
 
                 // Allocate new packet (header + real packet data)
-                void *binaryPacket = malloc(sizeof(Protocol::Header) + header.size);
+                void *binaryPacket = malloc(
+                        sizeof(Protocol::Header) + header.size);
 
-                if (binaryPacket == NULL)
+                if (binaryPacket == NULL) {
                     throw std::bad_alloc();
+                }
 
                 // Get it from stream
-                m_inputStream.FlattenConsume(binaryPacket, sizeof(Protocol::Header) + header.size);
+                m_inputStream.FlattenConsume(
+                    binaryPacket,
+                    sizeof(Protocol::Header) +
+                    header.size);
 
                 // Parse specific packet
-                switch (header.type)
+                switch (header.type) {
+                case Protocol::PacketType_AsyncCall:
                 {
-                    case Protocol::PacketType_AsyncCall:
-                        {
-                            BinaryQueue call;
+                    BinaryQueue call;
 
-                            // No need to delete packet data, we can use it
-                            call.AppendUnmanaged(binaryPacket, sizeof(Protocol::Header) + header.size, &BinaryQueue::BufferDeleterFree, NULL);
+                    // No need to delete packet data, we can use it
+                    call.AppendUnmanaged(binaryPacket,
+                                         sizeof(Protocol::Header) + header.size,
+                                         &BinaryQueue::BufferDeleterFree,
+                                         NULL);
 
-                            // ...but just remove protocol header
-                            call.Consume(sizeof(Protocol::Header));
+                    // ...but just remove protocol header
+                    call.Consume(sizeof(Protocol::Header));
 
-                            LogPedantic("Async call of size: " << header.size << " parsed");
+                    LogPedantic(
+                        "Async call of size: " << header.size <<
+                        " parsed");
 
-                            // Call async call event listeners
-                            DPL::Event::EventSupport<AbstractRPCConnectionEvents::AsyncCallEvent>::
-                                EmitEvent(AbstractRPCConnectionEvents::AsyncCallEvent(
-                                    RPCFunction(call), EventSender(this)), DPL::Event::EmitMode::Queued);
-                        }
-                        break;
-
-                    case Protocol::PacketType_PingPong:
-                        {
-                            // Reply with ping/pong
-                            Ping();
-
-                            // Do not need packet data
-                            free(binaryPacket);
-
-                            LogPedantic("Ping pong replied");
-                        }
-                        break;
-
-                    default:
-                        LogPedantic("Warning: Unknown packet type");
-                        free(binaryPacket);
-                        break;
+                    // Call async call event listeners
+                    DPL::Event::EventSupport<AbstractRPCConnectionEvents::
+                                                 AsyncCallEvent>::
+                        EmitEvent(AbstractRPCConnectionEvents::AsyncCallEvent(
+                                      RPCFunction(call), EventSender(
+                                          this)), DPL::Event::EmitMode::Queued);
                 }
-            }
-            else
-            {
+                break;
+
+                case Protocol::PacketType_PingPong:
+                {
+                    // Reply with ping/pong
+                    Ping();
+
+                    // Do not need packet data
+                    free(binaryPacket);
+
+                    LogPedantic("Ping pong replied");
+                }
+                break;
+
+                default:
+                    LogPedantic("Warning: Unknown packet type");
+                    free(binaryPacket);
+                    break;
+                }
+            } else {
                 LogPedantic("Too few bytes to read packet");
                 break;
             }
         }
-    }
-    else
-    {
+    } else {
         LogPedantic("Too few bytes to read header");
     }
 }
@@ -203,18 +207,19 @@ void GenericRPCConnection::OnInputStreamRead()
 void GenericRPCConnection::OnInputStreamClosed()
 {
     // Emit closed event
-    DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionClosedEvent>::
+    DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionClosedEvent>
+        ::
         EmitEvent(AbstractRPCConnectionEvents::ConnectionClosedEvent(
-            EventSender(this)), DPL::Event::EmitMode::Queued);
+                      EventSender(this)), DPL::Event::EmitMode::Queued);
 }
 
 void GenericRPCConnection::OnInputStreamBroken()
 {
     // Emit broken event
-    DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionBrokenEvent>::
+    DPL::Event::EventSupport<AbstractRPCConnectionEvents::ConnectionBrokenEvent>
+        ::
         EmitEvent(AbstractRPCConnectionEvents::ConnectionBrokenEvent(
-            EventSender(this)), DPL::Event::EmitMode::Queued);
+                      EventSender(this)), DPL::Event::EmitMode::Queued);
 }
-
 }
 } // namespace DPL

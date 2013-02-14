@@ -32,21 +32,28 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <map>
 
-namespace DPL
-{
-namespace Test
-{
+namespace DPL {
+namespace Test {
 class TestRunner
 {
-    TestResultsCollectorBasePtr m_collector;
-    std::string m_collectorName;
-    std::string m_startTestId;
+    typedef std::map<std::string, TestResultsCollectorBasePtr>
+    TestResultsCollectors;
+    TestResultsCollectors m_collectors;
 
-public:
+    std::string m_startTestId;
+    bool m_runIgnored;
+
+  public:
+    TestRunner() :
+        m_terminate(false)
+      , m_allowChildLogs(false)
+    {}
+
     typedef void (*TestCase)();
 
-private:
+  private:
     struct TestCaseStruct
     {
         std::string name;
@@ -62,11 +69,10 @@ private:
             return name == other.name;
         }
 
-        TestCaseStruct(const std::string &n, TestCase p)
-            : name(n),
-              proc(p)
-        {
-        }
+        TestCaseStruct(const std::string &n, TestCase p) :
+            name(n),
+            proc(p)
+        {}
     };
 
     typedef std::list<TestCaseStruct> TestCaseStructList;
@@ -81,26 +87,37 @@ private:
 
     DPL::Atomic m_totalAssertions;
 
+    // Terminate without any logs.
+    // Some test requires to call fork function.
+    // Child process must not produce any logs and should die quietly.
+    bool m_terminate;
+    bool m_allowChildLogs;
+
     void Banner();
-    void InvalidArgs();
+    void InvalidArgs(const std::string& message = "Invalid arguments!");
     void Usage();
 
-    enum Status { FAILED, TODO, IGNORED, PASS };
+    enum Status { FAILED, IGNORED, PASS };
 
     Status RunTestCase(const TestCaseStruct& testCase);
 
     void RunTests();
 
-public:
+    void CollectResult(const std::string& id,
+                       const std::string& description,
+                       const TestResultsCollectorBase::FailStatus::Type status
+                           = TestResultsCollectorBase::FailStatus::NONE,
+                       const std::string& reason = std::string());
+
+  public:
     class TestFailed
     {
-    private:
+      private:
         std::string m_message;
 
-    public:
+      public:
         TestFailed()
-        {
-        }
+        {}
 
         //! \brief Failed test message creator
         //!
@@ -108,28 +125,12 @@ public:
         //! \param[in] aFile source file name
         //! \param[in] aLine source file line
         //! \param[in] aMessage error message
-        TestFailed(const char* aTest, const char* aFile, int aLine, const std::string &aMessage);
+        TestFailed(const char* aTest,
+                   const char* aFile,
+                   int aLine,
+                   const std::string &aMessage);
 
-        std::string GetMessage() const
-        {
-            return m_message;
-        }
-    };
-
-    class ToDo
-    {
-    private:
-        std::string m_message;
-
-    public:
-        ToDo()
-        {
-        }
-
-        ToDo(const std::string &message)
-            : m_message(message)
-        {
-        }
+        TestFailed(const std::string &message);
 
         std::string GetMessage() const
         {
@@ -139,18 +140,16 @@ public:
 
     class Ignored
     {
-    private:
+      private:
         std::string m_message;
 
-    public:
+      public:
         Ignored()
-        {
-        }
+        {}
 
-        Ignored(const std::string &message)
-            : m_message(message)
-        {
-        }
+        Ignored(const std::string &message) :
+            m_message(message)
+        {}
 
         std::string GetMessage() const
         {
@@ -166,20 +165,23 @@ public:
     int ExecTestRunner(int argc, char *argv[]);
     typedef std::vector<std::string> ArgsList;
     int ExecTestRunner(const ArgsList& args);
+    bool getRunIgnored() const;
+    // The runner will terminate as soon as possible (after current test).
+    void Terminate();
+    bool GetAllowChildLogs();
 };
 
 typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
-
 }
 } // namespace DPL
 
 #define RUNNER_TEST_GROUP_INIT(GroupName)                                \
     static int Static##GroupName##Init()                                 \
     {                                                                    \
-        DPL::Test::TestRunnerSingleton::Instance().InitGroup(#GroupName);\
+        DPL::Test::TestRunnerSingleton::Instance().InitGroup(#GroupName); \
         return 0;                                                        \
     }                                                                    \
-    const int DPL_UNUSED  Static##GroupName##InitVar =                   \
+    const int DPL_UNUSED Static##GroupName##InitVar =                   \
         Static##GroupName##Init();
 
 #define RUNNER_TEST(Proc)                                                \
@@ -189,30 +191,35 @@ typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
         DPL::Test::TestRunnerSingleton::Instance().RegisterTest(#Proc, &Proc); \
         return 0;                                                        \
     }                                                                    \
-    const int DPL_UNUSED  Static##Proc##InitVar = Static##Proc##Init();  \
+    const int DPL_UNUSED Static##Proc##InitVar = Static##Proc##Init();  \
     void Proc()
 
 //! \brief Returns base name for path
 
 #define RUNNER_ASSERT_MSG(test, message)                                               \
-do                                                                                     \
-{                                                                                      \
-    DPL::Test::TestRunnerSingleton::Instance().MarkAssertion();                        \
+    do                                                                                     \
+    {                                                                                      \
+        DPL::Test::TestRunnerSingleton::Instance().MarkAssertion();                        \
                                                                                        \
-    if (!(test))                                                                       \
-    {                                                                                  \
-        std::ostringstream assertMsg;                                                  \
-        assertMsg << message;                                                          \
-        throw DPL::Test::TestRunner::TestFailed(#test, __FILE__, __LINE__, assertMsg.str()); \
-    }                                                                                  \
-} while (0)
+        if (!(test))                                                                       \
+        {                                                                                  \
+            std::ostringstream assertMsg;                                                  \
+            assertMsg << message;                                                          \
+            throw DPL::Test::TestRunner::TestFailed(#test, \
+                                                    __FILE__, \
+                                                    __LINE__, \
+                                                    assertMsg.str()); \
+        }                                                                                  \
+    } while (0)
 
 #define RUNNER_ASSERT(test) RUNNER_ASSERT_MSG(test, "")
 
 #define RUNNER_FAIL RUNNER_ASSERT(false)
 
-#define RUNNER_TODO_MSG(message) do { std::ostringstream assertMsg; assertMsg << message; throw DPL::Test::TestRunner::ToDo(assertMsg.str()); } while (0)
-
-#define RUNNER_IGNORED_MSG(message) do { std::ostringstream assertMsg; assertMsg << message; throw DPL::Test::TestRunner::Ignored(assertMsg.str()); } while (0)
+#define RUNNER_IGNORED_MSG(message) do { std::ostringstream assertMsg; \
+                                         assertMsg << message; \
+                                         throw DPL::Test::TestRunner::Ignored( \
+                                                   assertMsg.str()); \
+} while (0)
 
 #endif // DPL_TEST_RUNNER_H

@@ -22,6 +22,7 @@
 SET(DPL_TEST_ENGINE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/test/src/test_results_collector.cpp
     ${PROJECT_SOURCE_DIR}/modules/test/src/test_runner.cpp
+    ${PROJECT_SOURCE_DIR}/modules/test/src/test_runner_child.cpp
     PARENT_SCOPE
 )
 
@@ -29,6 +30,7 @@ SET(DPL_TEST_ENGINE_SOURCES
 SET(DPL_TEST_ENGINE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/test_results_collector.h
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/test_runner.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/test_runner_child.h
     PARENT_SCOPE
 )
 

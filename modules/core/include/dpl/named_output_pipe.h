@@ -27,26 +27,25 @@
 #include <dpl/abstract_waitable_output.h>
 #include <dpl/named_base_pipe.h>
 
-namespace DPL
+namespace DPL {
+class NamedOutputPipe :
+    private Noncopyable,
+    public NamedBasePipe,
+    public AbstractWaitableOutput
 {
-class NamedOutputPipe
-    : private Noncopyable,
-      public NamedBasePipe,
-      public AbstractWaitableOutput
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
         DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
     };
 
-protected:
+  protected:
     int m_fifo;
 
-public:
+  public:
     NamedOutputPipe();
     virtual ~NamedOutputPipe();
 

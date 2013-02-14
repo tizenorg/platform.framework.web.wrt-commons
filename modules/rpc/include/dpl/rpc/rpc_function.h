@@ -29,20 +29,17 @@
 #include <dpl/serialization.h>
 #include <string>
 
-namespace DPL
-{
-namespace RPC
-{
-
+namespace DPL {
+namespace RPC {
 class RPCFunction : public IStream
 {
-protected:
+  protected:
     BinaryQueue m_buffer; ///< Serialized RPC function call as a binary queue
 
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, ParseFailed)
     };
@@ -51,8 +48,7 @@ public:
      * Constructor
      */
     RPCFunction()
-    {
-    }
+    {}
 
     /**
      * Constructor
@@ -68,15 +64,15 @@ public:
      * Destructor
      */
     virtual ~RPCFunction()
-    {
-    }
+    {}
 
     /**
      * Append argument to call
      *
      * @param[in] arg Template based argument to append
      * @return none
-     * @warning Carefully add any pointers to buffer because of template nature of this method
+     * @warning Carefully add any pointers to buffer because of template nature
+     * of this method
      */
     template<typename Type>
     void AppendArg(const Type &arg)
@@ -116,7 +112,8 @@ public:
      * (same as they were pushed onto RPC function argument stack)
      *
      * @param[out] arg Reference to output template based argument
-     * @warning Carefully add any pointers to buffer because of template nature of this method
+     * @warning Carefully add any pointers to buffer because of template nature
+     * of this method
      * @return none
      */
     template<typename Type>
@@ -127,19 +124,21 @@ public:
             size_t argSize = sizeof(arg);
             m_buffer.FlattenConsume(&argSize, sizeof(argSize));
 
-            if (argSize != sizeof(arg))
+            if (argSize != sizeof(arg)) {
                 ThrowMsg(Exception::ParseFailed, "Stream parse CRC failed");
+            }
 
             m_buffer.FlattenConsume(&arg, sizeof(arg));
         }
-        Catch (BinaryQueue::Exception::OutOfData)
+        Catch(BinaryQueue::Exception::OutOfData)
         {
             ReThrowMsg(Exception::ParseFailed, "Unexpected end of stream");
         }
     }
 
     /**
-     * Consume @a std::string argument from call. Arguments are retrieved in non-reversed order
+     * Consume @a std::string argument from call. Arguments are retrieved in
+     * non-reversed order
      * (same as they were pushed onto RPC function argument stack)
      *
      * @param[out] arg Reference to output @a std::string argument
@@ -155,14 +154,15 @@ public:
             m_buffer.FlattenConsume(str.Get(), size);
             arg = std::string(str.Get(), str.Get() + size);
         }
-        Catch (BinaryQueue::Exception::OutOfData)
+        Catch(BinaryQueue::Exception::OutOfData)
         {
             ReThrowMsg(Exception::ParseFailed, "Unexpected end of stream");
         }
     }
 
     /**
-     * Consume @a DPL::String argument from call. Arguments are converted to UTF-8 string
+     * Consume @a DPL::String argument from call. Arguments are converted to
+     * UTF-8 string
      *
      * @param[out] arg Reference to output @a DPL::String argument
      * @return none
@@ -206,7 +206,6 @@ public:
         m_buffer.AppendCopy(bytes, num);
     }
 };
-
 }
 } // namespace DPL
 

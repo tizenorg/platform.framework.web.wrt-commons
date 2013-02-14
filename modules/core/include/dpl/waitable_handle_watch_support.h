@@ -17,7 +17,8 @@
  * @file        waitable_handle_watch_support.h
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of waitable handle watch support
+ * @brief       This file is the implementation file of waitable handle watch
+ * support
  */
 #ifndef DPL_WAITABLE_HANDLE_WATCH_SUPPORT_H
 #define DPL_WAITABLE_HANDLE_WATCH_SUPPORT_H
@@ -29,23 +30,22 @@
 #include <list>
 #include <map>
 
-namespace DPL
-{
-
+namespace DPL {
 class Thread;
 
 class WaitableHandleWatchSupport
 {
-public:
+  public:
     class WaitableHandleListener
     {
-    public:
+      public:
         virtual ~WaitableHandleListener() {}
 
-        virtual void OnWaitableHandleEvent(WaitableHandle waitableHandle, WaitMode::Type mode) = 0;
+        virtual void OnWaitableHandleEvent(WaitableHandle waitableHandle,
+                                           WaitMode::Type mode) = 0;
     };
 
-protected:
+  protected:
     // Invoker waitable handle
     // Signaled by Add/Remove methods
     // After being signaled one must call Handle invoke to reset invoker
@@ -67,18 +67,17 @@ protected:
     // Invoke direct invoker
     virtual void HandleDirectInvoker() = 0;
 
-private:
+  private:
     // Waitable event watchers
     struct WaitableHandleWatcher
     {
         WaitableHandleListener *listener;
         WaitMode::Type mode;
 
-        WaitableHandleWatcher(WaitableHandleListener *l, WaitMode::Type m)
-            : listener(l),
-              mode(m)
-        {
-        }
+        WaitableHandleWatcher(WaitableHandleListener *l, WaitMode::Type m) :
+            listener(l),
+            mode(m)
+        {}
     };
 
     typedef std::list<WaitableHandleWatcher> WaitableHandleListenerList;
@@ -89,14 +88,14 @@ private:
         size_t readListenersCount;
         size_t writeListenersCount;
 
-        WaitableHandleWatchers()
-            : readListenersCount(0),
-              writeListenersCount(0)
-        {
-        }
+        WaitableHandleWatchers() :
+            readListenersCount(0),
+            writeListenersCount(0)
+        {}
     };
 
-    typedef std::map<WaitableHandle, WaitableHandleWatchers> WaitableHandleWatchersMap;
+    typedef std::map<WaitableHandle,
+                     WaitableHandleWatchers> WaitableHandleWatchersMap;
 
     // Waitable event watch support
     mutable RecursiveMutex m_watchersMutex;
@@ -107,7 +106,7 @@ private:
     // Invoke call
     void CommitInvoker();
 
-public:
+  public:
     /**
      * Constructor
      */
@@ -127,7 +126,9 @@ public:
      * @return none
      * @see WaitMode::Type
      */
-    void AddWaitableHandleWatch(WaitableHandleListener *listener, WaitableHandle waitableHandle, WaitMode::Type mode);
+    void AddWaitableHandleWatch(WaitableHandleListener *listener,
+                                WaitableHandle waitableHandle,
+                                WaitMode::Type mode);
 
     /**
      * Remove listener for specific waitable event
@@ -138,7 +139,9 @@ public:
      * @return none
      * @see WaitMode::Type
      */
-    void RemoveWaitableHandleWatch(WaitableHandleListener *listener, WaitableHandle waitableHandle, WaitMode::Type mode);
+    void RemoveWaitableHandleWatch(WaitableHandleListener *listener,
+                                   WaitableHandle waitableHandle,
+                                   WaitMode::Type mode);
 
     /**
      * Retrieve inherited context
@@ -147,7 +150,6 @@ public:
      */
     static WaitableHandleWatchSupport *InheritedContext();
 };
-
 } // namespace DPL
 
 #endif // DPL_WAITABLE_HANDLE_WATCH_SUPPORT_H

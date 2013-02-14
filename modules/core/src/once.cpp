@@ -19,22 +19,24 @@
  * @version     1.0
  * @brief       This file is the implementation file of once
  */
+#include <stddef.h>
 #include <dpl/once.h>
 
-namespace DPL
-{
+namespace DPL {
 void Once::Call(Delegate delegate)
 {
     // First chance test
-    if (m_atomic == 1)
+    if (m_atomic == 1) {
         return;
+    }
 
     // Enter mutex
     Mutex::ScopedLock lock(&m_mutex);
 
     // Second chance test
-    if (m_atomic == 1)
+    if (m_atomic == 1) {
         return;
+    }
 
     // Initialization: call delegate
     delegate();

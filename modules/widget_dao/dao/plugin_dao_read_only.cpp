@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the implementation of plugin dao read only
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/plugin_dao_read_only.h>
 
 #include <sstream>
@@ -31,9 +31,7 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 namespace {
-
 typedef DPL::DB::ORM::wrt::PluginProperties::Row PluginRow;
 
 PluginRow getPluginRow(DbPluginHandle pluginHandle)
@@ -101,7 +99,8 @@ PluginDAOReadOnly::PluginDAOReadOnly(const std::string &libraryName)
 void PluginDAOReadOnly::checkInstallationCompleted()
 {
     if (getInstallationStateForHandle(m_pluginHandle)
-        != PluginDAOReadOnly::INSTALLATION_COMPLETED) {
+        != PluginDAOReadOnly::INSTALLATION_COMPLETED)
+    {
         LogError("Plugin " << m_pluginHandle << " installation not completed");
         Throw(PluginDAOReadOnly::Exception::PluginInstallationNotCompleted);
     }
@@ -160,7 +159,6 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandle() const
     return m_pluginHandle;
 }
 
-
 //"value" cannot be null, as in registerPlugin it is always set
 #define RETURN_STD_STRING(in, what)                 \
     std::string ret = "";                           \
@@ -183,34 +181,6 @@ std::string PluginDAOReadOnly::getLibraryName() const
     std::string ret = DPL::ToUTF8String(row.Get_PluginLibraryName());
     LogDebug(" >> Plugin library name: " << ret);
     return ret;
-}
-
-std::string PluginDAOReadOnly::getInstallURI() const
-{
-    LogDebug("Getting plugin install URI. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_InstallURI(), "install URI")
-}
-
-std::string PluginDAOReadOnly::getKeyCn() const
-{
-    LogDebug("Getting plugin KeyCn. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_KeyCN(), "keyCN")
-}
-
-std::string PluginDAOReadOnly::getRootKey() const
-{
-    LogDebug("Getting plugin rootKey. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyCN(), "rootKey")
-}
-
-std::string PluginDAOReadOnly::getRootKeyFingerprint() const
-{
-    LogDebug("Getting plugin rootKeyFingerprint. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyFingerprint(), "rootKeyFingerprint")
 }
 
 #undef RETURN_STD_STRING
@@ -245,7 +215,7 @@ PluginHandleSetPtr PluginDAOReadOnly::getLibraryDependencies() const
 }
 
 DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
-        const std::string& objectName)
+    const std::string& objectName)
 {
     LogDebug("GetPluginHandle for object: " << objectName);
 
@@ -277,7 +247,7 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
 }
 
 ImplementedObjectsList PluginDAOReadOnly::getImplementedObjectsForPluginHandle(
-        DbPluginHandle handle)
+    DbPluginHandle handle)
 {
     LogDebug("getImplementedObjects for pluginHandle: " << handle);
 
@@ -309,8 +279,9 @@ ImplementedObjectsList PluginDAOReadOnly::getImplementedObjectsForPluginHandle(
     }
 }
 
-PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::getRequiredObjectsForPluginHandle(
-        DbPluginHandle handle)
+PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::
+    getRequiredObjectsForPluginHandle(
+    DbPluginHandle handle)
 {
     Try
     {
@@ -342,7 +313,7 @@ PluginObjectsDAO::ObjectsPtr PluginDAOReadOnly::getRequiredObjectsForPluginHandl
 }
 
 PluginHandleSetPtr PluginDAOReadOnly::getPluginHandleByStatus(
-        PluginInstallationState state)
+    PluginInstallationState state)
 {
     Try
     {
@@ -372,14 +343,16 @@ PluginHandleSetPtr PluginDAOReadOnly::getPluginHandleByStatus(
     }
 }
 
-PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::getInstallationStatus() const
+PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::
+    getInstallationStatus() const
 {
     PluginRow row = getPluginRow(m_pluginHandle);
     return ToState(row.Get_InstallationState());
 }
 
-PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::getInstallationStateForHandle(
-        DbPluginHandle handle)
+PluginDAOReadOnly::PluginInstallationState PluginDAOReadOnly::
+    getInstallationStateForHandle(
+    DbPluginHandle handle)
 {
     Try
     {
@@ -424,5 +397,4 @@ bool PluginDAOReadOnly::isPluginInstalled(DbPluginHandle pluginHandle)
                    "Failed in isPluginInstalled");
     }
 }
-
 } // namespace WrtDB

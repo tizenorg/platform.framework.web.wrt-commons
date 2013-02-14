@@ -20,12 +20,11 @@
 #
 
 SET(DPL_UTILS_SOURCES
-    ${PROJECT_SOURCE_DIR}/modules/utils/src/file_utils.cpp
+    ${PROJECT_SOURCE_DIR}/modules/utils/src/bash_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/folder_size.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/mime_type_utils.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/warp_iri.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/widget_version.cpp
-    ${PROJECT_SOURCE_DIR}/modules/utils/src/wrt_global_settings_internal.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/wrt_global_settings.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/wrt_utility.cpp
     PARENT_SCOPE
@@ -33,14 +32,13 @@ SET(DPL_UTILS_SOURCES
 
 
 SET(DPL_UTILS_HEADERS
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/file_utils.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/folder_size.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/mime_type_utils.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/warp_iri.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/widget_version.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/wrt_global_settings.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/wrt_global_settings_internal.h
-    ${PROJECT_SOURCE_DIR}/modules/utils/include/wrt_utility.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/bash_utils.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/folder_size.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/mime_type_utils.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/warp_iri.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/widget_version.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/wrt_global_settings.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/wrt_utility.h
     PARENT_SCOPE
 )
 

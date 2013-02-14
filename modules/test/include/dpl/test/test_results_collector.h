@@ -23,24 +23,21 @@
 #ifndef DPL_TEST_RESULTS_COLLECTOR_H
 #define DPL_TEST_RESULTS_COLLECTOR_H
 
-#include <dpl/shared_ptr.h>
 #include <dpl/noncopyable.h>
 #include <vector>
 #include <list>
 #include <map>
 #include <string>
+#include <memory>
 
-namespace DPL
-{
-namespace Test
-{
-
+namespace DPL {
+namespace Test {
 class TestResultsCollectorBase;
-typedef DPL::SharedPtr<TestResultsCollectorBase>
-    TestResultsCollectorBasePtr;
+typedef std::shared_ptr<TestResultsCollectorBase>
+TestResultsCollectorBasePtr;
 
-class TestResultsCollectorBase
-    : private DPL::Noncopyable
+class TestResultsCollectorBase :
+    private DPL::Noncopyable
 {
   public:
     typedef TestResultsCollectorBase* (*CollectorConstructorFunc)();
@@ -52,39 +49,46 @@ class TestResultsCollectorBase
             NONE,
             FAILED,
             IGNORED,
-            TODO,
             INTERNAL
         };
     };
 
     virtual ~TestResultsCollectorBase() {}
 
-    virtual bool Configure() { return true; }
+    virtual bool Configure()
+    {
+        return true;
+    }
     virtual void Start() { }
     virtual void Finish() { }
-    virtual void CollectCurrentTestGroupName(const std::string& /*groupName*/) {}
+    virtual void CollectCurrentTestGroupName(const std::string& /*groupName*/)
+    {}
 
     virtual void CollectTestsCasesList(const TestCaseIdList& /*list*/) {}
     virtual void CollectResult(const std::string& id,
                                const std::string& description,
                                const FailStatus::Type status = FailStatus::NONE,
                                const std::string& reason = "") = 0;
-    virtual std::string CollectorSpecificHelp() const { return ""; }
+    virtual std::string CollectorSpecificHelp() const
+    {
+        return "";
+    }
     virtual bool ParseCollectorSpecificArg (const std::string& /*arg*/)
     {
         return false;
     }
 
     static TestResultsCollectorBase* Create(const std::string& name);
-    static void RegisterCollectorConstructor(const std::string& name,
-                                             CollectorConstructorFunc constructor);
+    static void RegisterCollectorConstructor(
+        const std::string& name,
+        CollectorConstructorFunc
+        constructor);
     static std::vector<std::string> GetCollectorsNames();
 
   private:
     typedef std::map<std::string, CollectorConstructorFunc> ConstructorsMap;
     static ConstructorsMap m_constructorsMap;
 };
-
 }
 }
 

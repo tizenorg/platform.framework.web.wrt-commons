@@ -30,14 +30,12 @@
 
 namespace DPL {
 namespace DBus {
-
 class InterfaceDispatcher : public DBus::Dispatcher
 {
-public:
-    explicit InterfaceDispatcher(const std::string& interfaceName):
+  public:
+    explicit InterfaceDispatcher(const std::string& interfaceName) :
         m_interfaceName(interfaceName)
-    {
-    }
+    {}
 
     virtual ~InterfaceDispatcher()
     {}
@@ -69,11 +67,11 @@ public:
                               GVariant* parameters,
                               GDBusMethodInvocation* invocation)
     {
-        if (g_strcmp0(interfaceName, m_interfaceName.c_str()) == 0){
+        if (g_strcmp0(interfaceName, m_interfaceName.c_str()) == 0) {
             onMethodCall(methodName, parameters, invocation);
         } else {
             LogPedantic("Called invalid interface: " << interfaceName <<
-                     " instead of: " << m_interfaceName);
+                        " instead of: " << m_interfaceName);
         }
     }
 
@@ -97,10 +95,10 @@ public:
         LogInfo("InterfaceDispatcher onPropertySet: " << propertyName);
         return false;
     }
-private:
-    std::string m_interfaceName,  m_xml;
-};
 
+  private:
+    std::string m_interfaceName, m_xml;
+};
 } // namespace DBus
 } // namespace DPL
 

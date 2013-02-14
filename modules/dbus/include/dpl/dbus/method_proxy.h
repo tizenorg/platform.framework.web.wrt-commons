@@ -36,16 +36,15 @@
 
 namespace DPL {
 namespace DBus {
-
 class ObjectProxy;
 
 /**
  * Represents a remote method.
  */
-template<typename Result, typename ...Args>
+template<typename Result, typename ... Args>
 class MethodProxy
 {
-public:
+  public:
     ~MethodProxy()
     {
         g_object_unref(m_connection);
@@ -60,24 +59,24 @@ public:
      * @throw DBus::ConnectionClosedException If connection is closed.
      * @throw DBus::Exception If some other error occurs.
      */
-    Result operator()(const Args&... args)
+    Result operator()(const Args& ... args)
     {
-        return invoke(args...);
+        return invoke(args ...);
     }
 
-private:
+  private:
     friend class ObjectProxy;
 
     MethodProxy(GDBusConnection* connection,
                 const std::string& serviceName,
                 const std::string& objectPath,
                 const std::string& interfaceName,
-                const std::string& methodName)
-        : m_connection(connection),
-          m_serviceName(serviceName),
-          m_objectPath(objectPath),
-          m_interfaceName(interfaceName),
-          m_methodName(methodName)
+                const std::string& methodName) :
+        m_connection(connection),
+        m_serviceName(serviceName),
+        m_objectPath(objectPath),
+        m_interfaceName(interfaceName),
+        m_methodName(methodName)
     {
         Assert(m_connection && "Connection is not set.");
 
@@ -91,9 +90,9 @@ private:
      */
     template<typename R = Result>
     typename std::enable_if<!std::is_void<R>::value, R>::type
-    invoke(const Args&... args)
+    invoke(const Args& ... args)
     {
-        GVariant* parameters = serialize(args...);
+        GVariant* parameters = serialize(args ...);
 
         GVariant* invokeResult = invokeSync(parameters);
 
@@ -111,9 +110,9 @@ private:
      */
     template<typename R = Result>
     typename std::enable_if<std::is_void<R>::value>::type
-    invoke(const Args&... args)
+    invoke(const Args& ... args)
     {
-        GVariant* parameters = serialize(args...);
+        GVariant* parameters = serialize(args ...);
 
         GVariant* invokeResult = invokeSync(parameters);
 
@@ -124,10 +123,10 @@ private:
      * @remarks ArgsM... are the same as Args...; it has been made a template
      *          to make overloading/specialization possible.
      */
-    template<typename ...ArgsM>
-    GVariant* serialize(ArgsM&&... args)
+    template<typename ... ArgsM>
+    GVariant* serialize(ArgsM && ... args)
     {
-        return ServerSerialization::serialize(std::forward<ArgsM>(args)...);
+        return ServerSerialization::serialize(std::forward<ArgsM>(args) ...);
     }
 
     /**
@@ -151,7 +150,8 @@ private:
     {
         GError* error = NULL;
 
-        LogPedantic("Invoking method: " << m_interfaceName << "." << m_methodName);
+        LogPedantic(
+            "Invoking method: " << m_interfaceName << "." << m_methodName);
         GVariant* result = g_dbus_connection_call_sync(m_connection,
                                                        m_serviceName.c_str(),
                                                        m_objectPath.c_str(),
@@ -163,8 +163,7 @@ private:
                                                        DBUS_SYNC_CALL_TIMEOUT,
                                                        NULL,
                                                        &error);
-        if (NULL == result)
-        {
+        if (NULL == result) {
             std::ostringstream oss;
             oss << "Error while invoking: "
                 << m_interfaceName << "." << m_methodName
@@ -175,8 +174,7 @@ private:
 
             g_error_free(error);
 
-            switch (code)
-            {
+            switch (code) {
             case G_IO_ERROR_INVALID_ARGUMENT:
                 ThrowMsg(DBus::InvalidArgumentException, message);
             case G_IO_ERROR_CLOSED:
@@ -206,26 +204,24 @@ private:
 /**
  * Smart pointer for MethodProxy objects.
  */
-template<typename Result, typename ...Args>
+template<typename Result, typename ... Args>
 class MethodProxyPtr
 {
-public:
-    explicit MethodProxyPtr(MethodProxy<Result, Args...>* method = NULL)
-        : m_method(method)
-    {
-    }
+  public:
+    explicit MethodProxyPtr(MethodProxy<Result, Args ...>* method = NULL) :
+        m_method(method)
+    {}
 
-    Result operator()(const Args&... args) const
+    Result operator()(const Args& ... args) const
     {
         Assert(NULL != m_method.get() && "Method not set.");
 
-        return (*m_method)(args...);
+        return (*m_method)(args ...);
     }
 
-private:
-    std::shared_ptr<MethodProxy<Result, Args...> > m_method;
+  private:
+    std::shared_ptr<MethodProxy<Result, Args ...> > m_method;
 };
-
 }
 }
 

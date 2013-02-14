@@ -215,7 +215,7 @@ int isLargeFile(const char* filename)
 
   if(pFile != NULL)
   {
-    int n = fseeko64(pFile, 0, SEEK_END);
+    (void)fseeko64(pFile, 0, SEEK_END);
 
     pos = ftello64(pFile);
 
@@ -382,7 +382,7 @@ int main(argc,argv)
                    ((argv[i][1]>='0') || (argv[i][1]<='9'))) &&
                   (strlen(argv[i]) == 2)))
             {
-                FILE * fin;
+                FILE * fin = NULL;
                 int size_read;
                 const char* filenameinzip = argv[i];
                 const char *savefilenameinzip;

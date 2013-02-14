@@ -17,20 +17,22 @@
  * @file        abstract_waitable_output_adapter.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of abstract waitable output adapter
+ * @brief       This file is the implementation file of abstract waitable output
+ * adapter
  */
+#include <stddef.h>
 #include <dpl/abstract_waitable_output_adapter.h>
 
-namespace DPL
-{
-
-AbstractWaitableOutputAdapter::AbstractWaitableOutputAdapter(AbstractOutput *output)
-    : m_output(output)
+namespace DPL {
+AbstractWaitableOutputAdapter::AbstractWaitableOutputAdapter(
+    AbstractOutput *output) :
+    m_output(output)
 {
     m_waitableEvent.Signal();
 }
 
-size_t AbstractWaitableOutputAdapter::Write(const BinaryQueue &buffer, size_t bufferSize)
+size_t AbstractWaitableOutputAdapter::Write(const BinaryQueue &buffer,
+                                            size_t bufferSize)
 {
     return m_output->Write(buffer, bufferSize);
 }
@@ -39,5 +41,4 @@ WaitableHandle AbstractWaitableOutputAdapter::WaitableWriteHandle() const
 {
     return m_waitableEvent.GetHandle();
 }
-
 } // namespace DPL

@@ -33,7 +33,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef std::list<DPL::String> WidgetPackageList;
 typedef std::set<DPL::String> DeviceCapabilitySet;
 
@@ -55,42 +54,8 @@ class GlobalDAOReadOnly
     };
 
   public:
-    /**
-     * Retrieve Parental mode status
-     *
-     * @return true for Parental Mode on, false for Parental Mode off
-     */
-    static bool GetParentalMode();
-
-    /**
-     * Retrieve Parental mode maximal allowed age
-     *
-     * @return NULL if allowed age not set, else pointer value is allowed age
-     */
-    static DPL::OptionalInt GetParentalAllowedAge();
-    /**
-     * Retrieve Parental mode maximal allowed age
-     *
-     * @return NULL if allowed age not set, else pointer value is allowed age
-     */
 
     static bool IsValidSubTag(const DPL::String& tag, int type);
-
-    static bool IsPowderRulePresent(
-            const ChildProtection::PowderRules::CategoryRule& rule);
-
-    static ChildProtection::PowderRules GetPowderRules();
-
-    static ChildProtection::BlackList GetAdultBlackList();
-
-    static bool IsElementOnAdultBlackList(const DPL::String &url);
-
-    /**
-     * Retrieve list of deffered widget packages to be installed
-     *
-     * @return Widget package list
-     */
-    static WidgetPackageList GetDefferedWidgetPackageInstallationList();
 
     static bool GetDeveloperMode();
 
@@ -103,6 +68,8 @@ class GlobalDAOReadOnly
     static std::string getComplianceFakeMeid();
 
     static WidgetAccessInfoList GetWhiteURIList();
+
+    static bool GetCookieSharingMode();
 
     enum NetworkAccessMode
     {
@@ -131,27 +98,12 @@ class GlobalDAOReadOnly
      * This method returns set of device capabilities used by apifeature.
      */
     static DeviceCapabilitySet GetDeviceCapability(
-            const DPL::String &apifeature);
-
-
-    /**
-     * This method gets Autofill for Webkit
-     */
-    struct AutoSaveData
-    {
-        DPL::String userId;
-        DPL::String passwd;
-    };
-
-    static DPL::Optional<AutoSaveData> GetAutoSaveIdPasswd(
-            const DPL::String &url);
+        const DPL::String &apifeature);
 
   protected:
     GlobalDAOReadOnly()
-    {
-    }
+    {}
 };
-
 } // namespace WrtDB
 
 #endif // WRT_SRC_CONFIGURATION_GLOBAL_DAO_READ_ONLY_H_

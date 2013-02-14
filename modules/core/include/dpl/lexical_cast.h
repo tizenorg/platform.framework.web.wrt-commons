@@ -24,8 +24,7 @@
 
 #include <sstream>
 
-namespace DPL
-{
+namespace DPL {
 template<typename TargetType, typename SourceType>
 TargetType lexical_cast(const SourceType &data)
 {

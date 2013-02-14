@@ -20,7 +20,7 @@
  * @version 1.0
  * @brief   This file contains the definition of plugin dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/plugin_dao.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
@@ -29,24 +29,22 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 PluginDAO::PluginDAO(DbPluginHandle pluginHandle) :
     PluginDAOReadOnly(pluginHandle)
-{
-}
+{}
 
 PluginDAO::PluginDAO(const std::string &libraryName) :
     PluginDAOReadOnly(libraryName)
-{
-}
+{}
 
 DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
-                                       const std::string& pluginPath)
+                                         const std::string& pluginPath)
 {
     LogDebug("Registering plugin. Path: " << pluginPath);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
         DbPluginHandle handle;
 
         if (isPluginInstalled(metafile.m_libraryName)) {
@@ -67,18 +65,10 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
             row.Set_InstallationState(INSTALLATION_IN_PROGRESS);
             row.Set_PluginLibraryPath(
                 DPL::FromUTF8String(pluginPath));
-            row.Set_InstallURI(
-                DPL::FromUTF8String(metafile.m_featuresInstallURI));
-            row.Set_KeyCN(
-                DPL::FromUTF8String(metafile.m_featuresKeyCN));
-            row.Set_RootKeyCN(
-                DPL::FromUTF8String(metafile.m_featuresRootCN));
-            row.Set_RootKeyFingerprint(
-                DPL::FromUTF8String(metafile.m_featuresRootFingerprint));
 
             WRT_DB_INSERT(insert, PluginProperties, &WrtDatabase::interface())
             insert->Values(row);
-            handle = insert->Execute();
+            handle = static_cast<WrtDB::DbWidgetHandle>(insert->Execute());
             LogDebug(" >> Plugin Registered. Handle: " << handle);
         }
         transaction.Commit();
@@ -92,12 +82,13 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
 }
 
 void PluginDAO::registerPluginImplementedObject(const std::string& objectName,
-        DbPluginHandle pluginHandle)
+                                                DbPluginHandle pluginHandle)
 {
     LogDebug("Registering plugin object: " << objectName);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         LogDebug("Register Object: " << objectName);
 
@@ -123,12 +114,13 @@ void PluginDAO::registerPluginImplementedObject(const std::string& objectName,
 }
 
 void PluginDAO::registerPluginRequiredObject(const std::string& objectName,
-        DbPluginHandle pluginHandle)
+                                             DbPluginHandle pluginHandle)
 {
     LogDebug("Registering plugin object: " << objectName);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         LogDebug("Register Object: " << objectName);
 
@@ -154,13 +146,14 @@ void PluginDAO::registerPluginRequiredObject(const std::string& objectName,
 }
 
 void PluginDAO::registerPluginLibrariesDependencies(
-        DbPluginHandle pluginHandle,
-        const PluginHandleSetPtr& dependencies)
+    DbPluginHandle pluginHandle,
+    const PluginHandleSetPtr& dependencies)
 {
     LogDebug("Registering plugin library dependencies: " << pluginHandle);
 
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
@@ -217,4 +210,34 @@ void PluginDAO::setPluginInstallationStatus(DbPluginHandle pluginHandle,
     }
 }
 
+void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
+{
+    LogDebug("unregisterPlugin plugin. Handle: " << pluginHandle);
+
+    Try {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
+
+        if (!isPluginInstalled(pluginHandle)) {
+            LogInfo("PluginHandle is invalid. Handle: " << pluginHandle);
+            return;
+        } else {
+            using namespace DPL::DB::ORM;
+            using namespace DPL::DB::ORM::wrt;
+
+            WRT_DB_DELETE(del, PluginProperties, &WrtDatabase::interface())
+            del->Where(
+                Equals<PluginProperties::PluginPropertiesId>(pluginHandle));
+            del->Execute();
+
+            transaction.Commit();
+            LogDebug(" >> Plugin Unregistered. Handle: " << pluginHandle);
+        }
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base)
+    {
+        ReThrowMsg(PluginDAO::Exception::DatabaseError,
+                   "Failed in UnregisterPlugin");
+    }
+}
 } // namespace WrtDB

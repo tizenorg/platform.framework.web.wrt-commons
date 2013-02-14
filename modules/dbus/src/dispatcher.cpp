@@ -19,14 +19,11 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/dbus/dispatcher.h>
 
-namespace DPL
-{
-namespace DBus
-{
-
+namespace DPL {
+namespace DBus {
 Dispatcher::~Dispatcher() { }
 
 GVariant* Dispatcher::onPropertyGet(GDBusConnection* /*connection*/,
@@ -49,6 +46,5 @@ gboolean Dispatcher::onPropertySet(GDBusConnection* /*connection*/,
 {
     return false;
 }
-
 }
 }

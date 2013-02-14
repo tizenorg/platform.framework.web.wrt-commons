@@ -19,12 +19,11 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/dbus/object.h>
 
 namespace DPL {
 namespace DBus {
-
 ObjectPtr Object::create(const std::string& path, const InterfacePtr& interface)
 {
     return ObjectPtr(new Object(path, interface));
@@ -40,11 +39,9 @@ InterfacePtr Object::getInterface() const
     return m_interface;
 }
 
-Object::Object(const std::string& path, const InterfacePtr& interface)
-    : m_path(path),
-      m_interface(interface)
-{
-}
-
+Object::Object(const std::string& path, const InterfacePtr& interface) :
+    m_path(path),
+    m_interface(interface)
+{}
 }
 }

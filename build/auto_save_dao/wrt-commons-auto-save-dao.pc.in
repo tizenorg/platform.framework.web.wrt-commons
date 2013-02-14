@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: wrt-commons-auto-save-dao
+Description: wrt-commons-auto-save-dao
+
+Version: @VERSION@
+Requires: dpl-efl libxml-2.0
+Libs: -lwrt-commons-auto-save-dao -L${libdir}
+Cflags: -I${includedir}/dpl-efl

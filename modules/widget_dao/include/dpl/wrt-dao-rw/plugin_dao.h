@@ -28,7 +28,6 @@
 #include <dpl/wrt-dao-ro/plugin_dao_read_only.h>
 
 namespace WrtDB {
-
 class PluginDAO : public PluginDAOReadOnly
 {
   public:
@@ -36,26 +35,27 @@ class PluginDAO : public PluginDAOReadOnly
     PluginDAO(const std::string &libraryName);
 
     static DbPluginHandle registerPlugin(
-            const PluginMetafileData& metafile,
-            const std::string& pluginPath);
+        const PluginMetafileData& metafile,
+        const std::string& pluginPath);
 
     static void registerPluginImplementedObject(
-            const std::string& objectName,
-            DbPluginHandle pluginHandle);
+        const std::string& objectName,
+        DbPluginHandle pluginHandle);
 
     static void registerPluginRequiredObject(
-            const std::string& objectName,
-            DbPluginHandle pluginHandle);
+        const std::string& objectName,
+        DbPluginHandle pluginHandle);
 
     static void registerPluginLibrariesDependencies(
-            DbPluginHandle plugin,
-            const PluginHandleSetPtr& dependencies);
+        DbPluginHandle plugin,
+        const PluginHandleSetPtr& dependencies);
 
     static void setPluginInstallationStatus(
-            DbPluginHandle,
-            PluginInstallationState);
-};
+        DbPluginHandle,
+        PluginInstallationState);
 
+    static void unregisterPlugin(DbPluginHandle pluginHandle);
+};
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_PLUGIN_DAO_H_ */

@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-log-efl
+Description: DPL Log Engine - EFL based
+Version: @VERSION@
+Requires: dpl-efl dlog
+Libs: -L${libdir} -ldpl-log-efl
+Cflags: -I${includedir}/dpl-efl

@@ -19,24 +19,41 @@
  * @version     1.0
  * @brief       Implementation file some concrete TestResulstsCollector
  */
-
+#include <cstddef>
 #include <dpl/test/test_results_collector.h>
 #include <dpl/colors.h>
 #include <dpl/assert.h>
 #include <dpl/foreach.h>
 #include <dpl/scoped_fclose.h>
+#include <dpl/exception.h>
+#include <dpl/errno_string.h>
 
 #include <string>
+#include <string.h>
 #include <cstdio>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
-namespace DPL
-{
-namespace Test
-{
+#define GREEN_RESULT_OK "[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", \
+    BOLD_GREEN_END
 
-namespace
-{
+namespace DPL {
+namespace Test {
+namespace {
 const char *DEFAULT_HTML_FILE_NAME = "index.html";
+const char *DEFAULT_TAP_FILE_NAME = "results.tap";
+const char *DEFAULT_XML_FILE_NAME = "results.xml";
+
+bool ParseCollectorFileArg(const std::string &arg, std::string &filename)
+{
+    const std::string argname = "--file=";
+    if (0 == arg.find(argname)) {
+        filename = arg.substr(argname.size());
+        return true;
+    }
+    return false;
+}
 
 class Statistic
 {
@@ -44,32 +61,46 @@ class Statistic
     Statistic() :
         m_failed(0),
         m_ignored(0),
-        m_todo(0),
         m_passed(0),
         m_count(0)
-    {
-    }
+    {}
 
     void AddTest(TestResultsCollectorBase::FailStatus::Type type)
     {
         ++m_count;
         switch (type) {
-            case TestResultsCollectorBase::FailStatus::INTERNAL:
-            case TestResultsCollectorBase::FailStatus::FAILED:   ++m_failed; break;
-            case TestResultsCollectorBase::FailStatus::IGNORED:  ++m_ignored; break;
-            case TestResultsCollectorBase::FailStatus::TODO:     ++m_todo; break;
-            case TestResultsCollectorBase::FailStatus::NONE:     ++m_passed; break;
-            default:
-                Assert(false && "Bad FailStatus");
+        case TestResultsCollectorBase::FailStatus::INTERNAL:
+        case TestResultsCollectorBase::FailStatus::FAILED:   ++m_failed;
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED:  ++m_ignored;
+            break;
+        case TestResultsCollectorBase::FailStatus::NONE:     ++m_passed;
+            break;
+        default:
+            Assert(false && "Bad FailStatus");
         }
     }
 
-    size_t GetTotal() const { return m_count; }
-    size_t GetPassed() const { return m_passed; }
-    size_t GetSuccesed() const { return m_passed; }
-    size_t GetFailed() const { return m_failed; }
-    size_t GetTODO() const { return m_todo; }
-    size_t GetIgnored() const { return m_ignored; }
+    std::size_t GetTotal() const
+    {
+        return m_count;
+    }
+    std::size_t GetPassed() const
+    {
+        return m_passed;
+    }
+    std::size_t GetSuccesed() const
+    {
+        return m_passed;
+    }
+    std::size_t GetFailed() const
+    {
+        return m_failed;
+    }
+    std::size_t GetIgnored() const
+    {
+        return m_ignored;
+    }
     float GetPassedOrIgnoredPercend() const
     {
         float passIgnoredPercent =
@@ -80,15 +111,14 @@ class Statistic
     }
 
   private:
-    size_t m_failed;
-    size_t m_ignored;
-    size_t m_todo;
-    size_t m_passed;
-    size_t m_count;
+    std::size_t m_failed;
+    std::size_t m_ignored;
+    std::size_t m_passed;
+    std::size_t m_count;
 };
 
-class ConsoleCollector
-    : public TestResultsCollectorBase
+class ConsoleCollector :
+    public TestResultsCollectorBase
 {
   public:
     static TestResultsCollectorBase* Constructor();
@@ -122,19 +152,21 @@ class ConsoleCollector
         std::string tmp = "'" + id + "' ...";
 
         printf("Running test case %-60s", tmp.c_str());
-        switch(status) {
-            case TestResultsCollectorBase::FailStatus::NONE:
-                printf("[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", BOLD_GREEN_END); break;
-            case TestResultsCollectorBase::FailStatus::FAILED:
-                PrintfErrorMessage(  " FAILED ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::IGNORED:
-                PrintfIgnoredMessage("Ignored ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::TODO:
-                PrintfTODOMessage(   "  TODO  ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::INTERNAL:
-                PrintfErrorMessage(  "INTERNAL", reason, true); break;
-            default:
-                Assert(false && "Bad status");
+        switch (status) {
+        case TestResultsCollectorBase::FailStatus::NONE:
+            printf(GREEN_RESULT_OK);
+            break;
+        case TestResultsCollectorBase::FailStatus::FAILED:
+            PrintfErrorMessage(" FAILED ", reason, true);
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED:
+            PrintfIgnoredMessage("Ignored ", reason, true);
+            break;
+        case TestResultsCollectorBase::FailStatus::INTERNAL:
+            PrintfErrorMessage("INTERNAL", reason, true);
+            break;
+        default:
+            Assert(false && "Bad status");
         }
         m_stats.AddTest(status);
         m_groupsStats[m_currentGroup].AddTest(status);
@@ -155,30 +187,9 @@ class ConsoleCollector
                    BOLD_YELLOW_END);
         } else {
             printf("[%s%s%s]\n",
-                    BOLD_RED_BEGIN,
-                    type,
-                    BOLD_RED_END);
-        }
-    }
-
-    void PrintfTODOMessage(const char* type,
-                           const std::string& message,
-                           bool verbosity)
-    {
-        using namespace DPL::Colors::Text;
-        if (verbosity) {
-            printf("[%s%s%s] %s%s%s\n",
-                   BOLD_WHITE_BEGIN,
+                   BOLD_RED_BEGIN,
                    type,
-                   BOLD_WHITE_END,
-                   BOLD_GOLD_BEGIN,
-                   message.c_str(),
-                   BOLD_GOLD_END);
-        } else {
-            printf("[%s%s%s]\n",
-                   BOLD_WHITE_BEGIN,
-                   type,
-                   BOLD_WHITE_END);
+                   BOLD_RED_END);
         }
     }
 
@@ -197,7 +208,7 @@ class ConsoleCollector
                    BOLD_GOLD_END);
         } else {
             printf("[%s%s%s]\n",
-                   CYAN_BEGIN ,
+                   CYAN_BEGIN,
                    type,
                    CYAN_END);
         }
@@ -206,14 +217,28 @@ class ConsoleCollector
     void PrintStats(const std::string& title, const Statistic& stats)
     {
         using namespace DPL::Colors::Text;
-        printf("\n%sResults [%s]: %s\n", BOLD_GREEN_BEGIN, title.c_str(), BOLD_GREEN_END);
-        printf("%s%s%3d%s\n", CYAN_BEGIN,     "Total tests:            ", stats.GetTotal(), CYAN_END);
-        printf("%s%s%3d%s\n", CYAN_BEGIN,     "Succeeded or ignored:   ", stats.GetPassed() + stats.GetIgnored(), CYAN_END);
-        printf("  %s%s%3d%s\n", CYAN_BEGIN,     "Succeeded:            ", stats.GetPassed(), CYAN_END);
-        printf("  %s%s%3d%s\n", CYAN_BEGIN,     "Ignored:              ", stats.GetIgnored(), CYAN_END);
-        printf("%s%s%3d%s\n", CYAN_BEGIN,     "Failed:                 ", stats.GetFailed(), CYAN_END);
-        printf("%s%s%3d%s\n", CYAN_BEGIN,     "Todo:                   ", stats.GetTODO(), CYAN_END);
-        printf("%s%s%3.0f%%%s\n", CYAN_BEGIN, "Succeeded or ignored %: ", stats.GetPassedOrIgnoredPercend(), CYAN_END);
+        printf("\n%sResults [%s]: %s\n", BOLD_GREEN_BEGIN,
+               title.c_str(), BOLD_GREEN_END);
+        printf("%s%s%3d%s\n",
+               CYAN_BEGIN,
+               "Total tests:            ",
+               stats.GetTotal(),
+               CYAN_END);
+        printf("  %s%s%3d%s\n",
+               CYAN_BEGIN,
+               "Succeeded:            ",
+               stats.GetPassed(),
+               CYAN_END);
+        printf("  %s%s%3d%s\n",
+               CYAN_BEGIN,
+               "Failed:               ",
+               stats.GetFailed(),
+               CYAN_END);
+        printf("  %s%s%3d%s\n",
+               CYAN_BEGIN,
+               "Ignored:              ",
+               stats.GetIgnored(),
+               CYAN_END);
     }
 
     Statistic m_stats;
@@ -221,15 +246,13 @@ class ConsoleCollector
     std::string m_currentGroup;
 };
 
-
 TestResultsCollectorBase* ConsoleCollector::Constructor()
 {
     return new ConsoleCollector();
 }
 
-
-class HtmlCollector
-    : public TestResultsCollectorBase
+class HtmlCollector :
+    public TestResultsCollectorBase
 {
   public:
     static TestResultsCollectorBase* Constructor();
@@ -239,13 +262,13 @@ class HtmlCollector
 
     virtual void CollectCurrentTestGroupName(const std::string& name)
     {
-        fprintf(m_fp.Get(),"<b>Starting group %s", name.c_str());
+        fprintf(m_fp.Get(), "<b>Starting group %s", name.c_str());
         m_currentGroup = name;
     }
 
     virtual bool Configure()
     {
-        m_fp.Reset(fopen (m_filename.c_str(), "w"));
+        m_fp.Reset(fopen(m_filename.c_str(), "w"));
         if (!m_fp) {
             LogPedantic("Could not open file " << m_filename << " for writing");
             return false;
@@ -290,13 +313,7 @@ class HtmlCollector
 
     virtual bool ParseCollectorSpecificArg(const std::string& arg)
     {
-        const std::string argname = "--file=";
-        if (0 == arg.find(argname)) {
-            m_filename = arg.substr(argname.size());
-            return true;
-        } else {
-            return false;
-        }
+        return ParseCollectorFileArg(arg, m_filename);
     }
 
     virtual void CollectResult(const std::string& id,
@@ -308,19 +325,21 @@ class HtmlCollector
         std::string tmp = "'" + id + "' ...";
 
         fprintf(m_fp.Get(), "Running test case %-100s", tmp.c_str());
-        switch(status) {
-            case TestResultsCollectorBase::FailStatus::NONE:
-                fprintf(m_fp.Get(), "[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", BOLD_GREEN_END); break;
-            case TestResultsCollectorBase::FailStatus::FAILED:
-                PrintfErrorMessage(  " FAILED ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::IGNORED:
-                PrintfIgnoredMessage("Ignored ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::TODO:
-                PrintfTODOMessage(   "  TODO  ", reason, true); break;
-            case TestResultsCollectorBase::FailStatus::INTERNAL:
-                PrintfErrorMessage(  "INTERNAL", reason, true); break;
-            default:
-                Assert(false && "Bad status");
+        switch (status) {
+        case TestResultsCollectorBase::FailStatus::NONE:
+            fprintf(m_fp.Get(), GREEN_RESULT_OK);
+            break;
+        case TestResultsCollectorBase::FailStatus::FAILED:
+            PrintfErrorMessage(" FAILED ", reason, true);
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED:
+            PrintfIgnoredMessage("Ignored ", reason, true);
+            break;
+        case TestResultsCollectorBase::FailStatus::INTERNAL:
+            PrintfErrorMessage("INTERNAL", reason, true);
+            break;
+        default:
+            Assert(false && "Bad status");
         }
         m_groupsStats[m_currentGroup].AddTest(status);
         m_stats.AddTest(status);
@@ -349,29 +368,6 @@ class HtmlCollector
         }
     }
 
-    void PrintfTODOMessage(const char* type,
-                           const std::string& message,
-                           bool verbosity)
-    {
-        using namespace DPL::Colors::Html;
-        if (verbosity) {
-            fprintf(m_fp.Get(),
-                    "[%s%s%s] %s%s%s\n",
-                    BOLD_WHITE_BEGIN,
-                    type,
-                    BOLD_WHITE_END,
-                    BOLD_GOLD_BEGIN,
-                    message.c_str(),
-                    BOLD_GOLD_END);
-        } else {
-            fprintf(m_fp.Get(),
-                    "[%s%s%s]\n",
-                    BOLD_WHITE_BEGIN,
-                    type,
-                    BOLD_WHITE_END);
-        }
-    }
-
     void PrintfIgnoredMessage(const char* type,
                               const std::string& message,
                               bool verbosity)
@@ -390,7 +386,7 @@ class HtmlCollector
         } else {
             fprintf(m_fp.Get(),
                     "[%s%s%s]\n",
-                    CYAN_BEGIN ,
+                    CYAN_BEGIN,
                     type,
                     CYAN_END);
         }
@@ -399,14 +395,21 @@ class HtmlCollector
     void PrintStats(const std::string& name, const Statistic& stats)
     {
         using namespace DPL::Colors::Html;
-        fprintf(m_fp.Get(), "\n%sResults [%s]:%s\n", BOLD_GREEN_BEGIN, name.c_str(), BOLD_GREEN_END);
-        fprintf(m_fp.Get(), "%s%s%3d%s\n", CYAN_BEGIN,     "Total tests:            ", stats.GetTotal(), CYAN_END);
-        fprintf(m_fp.Get(), "%s%s%3d%s\n", CYAN_BEGIN,     "Succeeded or ignored:   ", stats.GetPassed() + stats.GetIgnored(), CYAN_END);
-        fprintf(m_fp.Get(), "  %s%s%3d%s\n", CYAN_BEGIN,     "Succeeded:            ", stats.GetPassed(), CYAN_END);
-        fprintf(m_fp.Get(), "  %s%s%3d%s\n", CYAN_BEGIN,     "Ignored:              ", stats.GetIgnored(), CYAN_END);
-        fprintf(m_fp.Get(), "%s%s%3d%s\n", CYAN_BEGIN,     "Failed:                 ", stats.GetFailed(), CYAN_END);
-        fprintf(m_fp.Get(), "%s%s%3d%s\n", CYAN_BEGIN,     "Todo:                   ", stats.GetTODO(), CYAN_END);
-        fprintf(m_fp.Get(), "%s%s%3.0f%%%s\n", CYAN_BEGIN, "Succeeded or ignored %: ", stats.GetPassedOrIgnoredPercend(), CYAN_END);
+        fprintf(
+            m_fp.Get(), "\n%sResults [%s]:%s\n", BOLD_GREEN_BEGIN,
+            name.c_str(), BOLD_GREEN_END);
+        fprintf(
+            m_fp.Get(), "%s%s%3d%s\n", CYAN_BEGIN,
+            "Total tests:            ", stats.GetTotal(), CYAN_END);
+        fprintf(
+            m_fp.Get(), "  %s%s%3d%s\n", CYAN_BEGIN,
+            "Succeeded:            ", stats.GetPassed(), CYAN_END);
+        fprintf(
+            m_fp.Get(), "  %s%s%3d%s\n", CYAN_BEGIN,
+            "Failed:               ", stats.GetFailed(), CYAN_END);
+        fprintf(
+            m_fp.Get(), "  %s%s%3d%s\n", CYAN_BEGIN,
+            "Ignored:              ", stats.GetIgnored(), CYAN_END);
     }
 
     std::string m_filename;
@@ -421,8 +424,336 @@ TestResultsCollectorBase* HtmlCollector::Constructor()
     return new HtmlCollector();
 }
 
-class CSVCollector
-    : public TestResultsCollectorBase
+class XmlCollector :
+    public TestResultsCollectorBase
+{
+  public:
+    static TestResultsCollectorBase* Constructor();
+
+  private:
+    XmlCollector() : m_filename(DEFAULT_XML_FILE_NAME) {}
+
+    virtual void CollectCurrentTestGroupName(const std::string& name)
+    {
+        std::size_t pos = GetCurrentGroupPosition();
+        if (std::string::npos != pos) {
+            GroupFinish(pos);
+            FlushOutput();
+            m_stats = Statistic();
+        }
+
+        pos = m_outputBuffer.find("</testsuites>");
+        if (std::string::npos == pos) {
+            ThrowMsg(DPL::Exception, "Could not find test suites closing tag");
+        }
+        GroupStart(pos, name);
+    }
+
+    void GroupStart(const std::size_t pos, const std::string& name)
+    {
+        std::stringstream groupHeader;
+        groupHeader << "\n\t<testsuite";
+        groupHeader << " name=\"" << EscapeSpecialCharacters(name) << "\"";
+        groupHeader << R"( tests="1")"; // include SegFault
+        groupHeader << R"( failures="1")"; // include SegFault
+        groupHeader << R"( skipped="0")";
+        groupHeader << ">";
+
+        groupHeader << "\n\t\t<testcase name=\"unknown\" status=\"FAILED\">";
+        groupHeader <<
+        "\n\t\t\t<failure type=\"FAILED\" message=\"segmentation fault\"/>";
+        groupHeader << "\n\t\t</testcase>";
+
+        groupHeader << "\n\t</testsuite>";
+
+        m_outputBuffer.insert(pos - 1, groupHeader.str());
+    }
+
+    virtual bool Configure()
+    {
+        m_fp.Reset(fopen(m_filename.c_str(), "w"));
+        if (!m_fp) {
+            LogPedantic("Could not open file " << m_filename << " for writing");
+            return false;
+        }
+        return true;
+    }
+
+    virtual std::string CollectorSpecificHelp() const
+    {
+        return "--file=<filename> - name of file for output\n"
+               "                    default - results.xml\n";
+    }
+
+    virtual void Start()
+    {
+        Assert(!!m_fp && "File handle must not be null");
+        m_outputBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+        m_outputBuffer.append("<testsuites>\n</testsuites>");
+        FlushOutput();
+    }
+
+    virtual void Finish()
+    {
+        std::size_t pos = GetCurrentGroupPosition();
+        if (std::string::npos != pos) {
+            GroupFinish(pos);
+            FlushOutput();
+        }
+    }
+
+    virtual bool ParseCollectorSpecificArg(const std::string& arg)
+    {
+        return ParseCollectorFileArg(arg, m_filename);
+    }
+
+    virtual void CollectResult(const std::string& id,
+                               const std::string& /*description*/,
+                               const FailStatus::Type status = FailStatus::NONE,
+                               const std::string& reason = "")
+    {
+        m_resultBuffer.erase();
+        m_resultBuffer.append("\t\t<testcase name=\"");
+        m_resultBuffer.append(EscapeSpecialCharacters(id));
+        m_resultBuffer.append("\"");
+        switch (status) {
+        case TestResultsCollectorBase::FailStatus::NONE:
+            m_resultBuffer.append(" status=\"OK\"/>\n");
+            break;
+        case TestResultsCollectorBase::FailStatus::FAILED:
+            m_resultBuffer.append(" status=\"FAILED\">\n");
+            PrintfErrorMessage("FAILED", EscapeSpecialCharacters(reason), true);
+            m_resultBuffer.append("\t\t</testcase>\n");
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED:
+            m_resultBuffer.append(" status=\"Ignored\">\n");
+            PrintfIgnoredMessage("Ignored", EscapeSpecialCharacters(
+                                     reason), true);
+            m_resultBuffer.append("\t\t</testcase>\n");
+            break;
+        case TestResultsCollectorBase::FailStatus::INTERNAL:
+            m_resultBuffer.append(" status=\"FAILED\">\n");
+            PrintfErrorMessage("INTERNAL", EscapeSpecialCharacters(
+                                   reason), true);
+            m_resultBuffer.append("\t\t</testcase>");
+            break;
+        default:
+            Assert(false && "Bad status");
+        }
+        std::size_t group_pos = GetCurrentGroupPosition();
+        if (std::string::npos == group_pos) {
+            ThrowMsg(DPL::Exception, "No current group set");
+        }
+
+        std::size_t last_case_pos = m_outputBuffer.find(
+                "<testcase name=\"unknown\"",
+                group_pos);
+        if (std::string::npos == last_case_pos) {
+            ThrowMsg(DPL::Exception, "Could not find SegFault test case");
+        }
+        m_outputBuffer.insert(last_case_pos - 2, m_resultBuffer);
+
+        m_stats.AddTest(status);
+
+        UpdateGroupHeader(group_pos,
+                          m_stats.GetTotal() + 1, // include SegFault
+                          m_stats.GetFailed() + 1, // include SegFault
+                          m_stats.GetIgnored());
+        FlushOutput();
+    }
+
+    std::size_t GetCurrentGroupPosition() const
+    {
+        return m_outputBuffer.rfind("<testsuite ");
+    }
+
+    void UpdateGroupHeader(const std::size_t groupPosition,
+                           const unsigned int tests,
+                           const unsigned int failures,
+                           const unsigned int skipped)
+    {
+        UpdateElementAttribute(groupPosition, "tests", UIntToString(tests));
+        UpdateElementAttribute(groupPosition, "failures", UIntToString(failures));
+        UpdateElementAttribute(groupPosition, "skipped", UIntToString(skipped));
+    }
+
+    void UpdateElementAttribute(const std::size_t elementPosition,
+                                const std::string& name,
+                                const std::string& value)
+    {
+        std::string pattern = name + "=\"";
+
+        std::size_t start = m_outputBuffer.find(pattern, elementPosition);
+        if (std::string::npos == start) {
+            ThrowMsg(DPL::Exception,
+                     "Could not find attribute " << name << " beginning");
+        }
+
+        std::size_t end = m_outputBuffer.find("\"", start + pattern.length());
+        if (std::string::npos == end) {
+            ThrowMsg(DPL::Exception,
+                     "Could not find attribute " << name << " end");
+        }
+
+        m_outputBuffer.replace(start + pattern.length(),
+                               end - start - pattern.length(),
+                               value);
+    }
+
+    std::string UIntToString(const unsigned int value)
+    {
+        std::stringstream result;
+        result << value;
+        return result.str();
+    }
+
+    void GroupFinish(const std::size_t groupPosition)
+    {
+        std::size_t segFaultStart =
+            m_outputBuffer.find("<testcase name=\"unknown\"", groupPosition);
+        if (std::string::npos == segFaultStart) {
+            ThrowMsg(DPL::Exception,
+                     "Could not find SegFault test case start position");
+        }
+        segFaultStart -= 2; // to erase tabs
+
+        std::string closeTag = "</testcase>";
+        std::size_t segFaultEnd = m_outputBuffer.find(closeTag, segFaultStart);
+        if (std::string::npos == segFaultEnd) {
+            ThrowMsg(DPL::Exception,
+                     "Could not find SegFault test case end position");
+        }
+        segFaultEnd += closeTag.length() + 1; // to erase new line
+
+        m_outputBuffer.erase(segFaultStart, segFaultEnd - segFaultStart);
+
+        UpdateGroupHeader(groupPosition,
+                          m_stats.GetTotal(),
+                          m_stats.GetFailed(),
+                          m_stats.GetIgnored());
+    }
+
+    void FlushOutput()
+    {
+        int fd = fileno(m_fp.Get());
+        if (-1 == fd) {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(ftruncate(fd, 0L))) {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(fseek(m_fp.Get(), 0L, SEEK_SET))) {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (m_outputBuffer.size() !=
+            fwrite(m_outputBuffer.c_str(), 1, m_outputBuffer.size(),
+                   m_fp.Get()))
+        {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+
+        if (-1 == TEMP_FAILURE_RETRY(fflush(m_fp.Get()))) {
+            int error = errno;
+            ThrowMsg(DPL::Exception, DPL::GetErrnoString(error));
+        }
+    }
+
+    void PrintfErrorMessage(const char* type,
+                            const std::string& message,
+                            bool verbosity)
+    {
+        if (verbosity) {
+            m_resultBuffer.append("\t\t\t<failure type=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(type));
+            m_resultBuffer.append("\" message=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(message));
+            m_resultBuffer.append("\"/>\n");
+        } else {
+            m_resultBuffer.append("\t\t\t<failure type=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(type));
+            m_resultBuffer.append("\"/>\n");
+        }
+    }
+
+    void PrintfIgnoredMessage(const char* type,
+                              const std::string& message,
+                              bool verbosity)
+    {
+        if (verbosity) {
+            m_resultBuffer.append("\t\t\t<skipped type=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(type));
+            m_resultBuffer.append("\" message=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(message));
+            m_resultBuffer.append("\"/>\n");
+        } else {
+            m_resultBuffer.append("\t\t\t<skipped type=\"");
+            m_resultBuffer.append(EscapeSpecialCharacters(type));
+            m_resultBuffer.append("\"/>\n");
+        }
+    }
+
+    std::string EscapeSpecialCharacters(std::string s)
+    {
+        for (unsigned int i = 0; i < s.size();) {
+            switch (s[i]) {
+            case '"':
+                s.erase(i, 1);
+                s.insert(i, "&quot;");
+                i += 6;
+                break;
+
+            case '&':
+                s.erase(i, 1);
+                s.insert(i, "&amp;");
+                i += 5;
+                break;
+
+            case '<':
+                s.erase(i, 1);
+                s.insert(i, "&lt;");
+                i += 4;
+                break;
+
+            case '>':
+                s.erase(i, 1);
+                s.insert(i, "&gt;");
+                i += 4;
+                break;
+
+            case '\'':
+                s.erase(i, 1);
+                s.insert(i, "&#39;");
+                i += 5;
+                break;
+            default:
+                ++i;
+                break;
+            }
+        }
+        return s;
+    }
+
+    std::string m_filename;
+    ScopedFClose m_fp;
+    Statistic m_stats;
+    std::string m_outputBuffer;
+    std::string m_resultBuffer;
+};
+
+TestResultsCollectorBase* XmlCollector::Constructor()
+{
+    return new XmlCollector();
+}
+
+class CSVCollector :
+    public TestResultsCollectorBase
 {
   public:
     static TestResultsCollectorBase* Constructor();
@@ -430,7 +761,8 @@ class CSVCollector
   private:
     CSVCollector() {}
 
-    virtual void Start() {
+    virtual void Start()
+    {
         printf("GROUP;ID;RESULT;REASON\n");
     }
 
@@ -445,14 +777,19 @@ class CSVCollector
                                const std::string& reason = "")
     {
         std::string statusMsg = "";
-        switch(status) {
-            case TestResultsCollectorBase::FailStatus::NONE: statusMsg = "OK"; break;
-            case TestResultsCollectorBase::FailStatus::FAILED: statusMsg = "FAILED"; break;
-            case TestResultsCollectorBase::FailStatus::IGNORED: statusMsg = "IGNORED"; break;
-            case TestResultsCollectorBase::FailStatus::TODO:  statusMsg = "TODO"; break;
-            case TestResultsCollectorBase::FailStatus::INTERNAL: statusMsg = "FAILED"; break;
-            default:
-                Assert(false && "Bad status");
+        switch (status) {
+        case TestResultsCollectorBase::FailStatus::NONE: statusMsg = "OK";
+            break;
+        case TestResultsCollectorBase::FailStatus::FAILED: statusMsg = "FAILED";
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED: statusMsg =
+            "IGNORED";
+            break;
+        case TestResultsCollectorBase::FailStatus::INTERNAL: statusMsg =
+            "FAILED";
+            break;
+        default:
+            Assert(false && "Bad status");
         }
         printf("%s;%s;%s;%s\n",
                m_currentGroup.c_str(),
@@ -464,12 +801,115 @@ class CSVCollector
     std::string m_currentGroup;
 };
 
-
 TestResultsCollectorBase* CSVCollector::Constructor()
 {
     return new CSVCollector();
 }
+}
 
+class TAPCollector :
+    public TestResultsCollectorBase
+{
+  public:
+    static TestResultsCollectorBase* Constructor();
+
+  private:
+    TAPCollector() : m_filename(DEFAULT_TAP_FILE_NAME)  {}
+
+    virtual bool Configure()
+    {
+        m_output.open(m_filename.c_str(), std::ios_base::trunc);
+        if (m_output.fail()) {
+            LogError("Can't open output file: " << m_filename);
+            return false;
+        }
+        return true;
+    }
+    virtual std::string CollectorSpecificHelp() const
+    {
+        std::string retVal = "--file=<filename> - name of file for output\n"
+                             "                    default - ";
+        retVal += DEFAULT_TAP_FILE_NAME;
+        retVal += "\n";
+        return retVal;
+    }
+
+    virtual void Start()
+    {
+        Assert(m_output.good() && "Output file must be opened.");
+        m_output << "TAP version 13" << std::endl;
+        m_testIndex = 0;
+    }
+
+    virtual void Finish()
+    {
+        m_output << "1.." << m_testIndex << std::endl;
+        m_output << m_collectedData.rdbuf();
+        m_output.close();
+    }
+
+    virtual bool ParseCollectorSpecificArg(const std::string& arg)
+    {
+        return ParseCollectorFileArg(arg, m_filename);
+    }
+
+    virtual void CollectResult(const std::string& id,
+                               const std::string& description,
+                               const FailStatus::Type status = FailStatus::NONE,
+                               const std::string& reason = "")
+    {
+        m_testIndex++;
+        switch (status) {
+        case TestResultsCollectorBase::FailStatus::NONE:
+            LogBasicTAP(true, id, description);
+            endTAPLine();
+            break;
+        case TestResultsCollectorBase::FailStatus::FAILED:
+            LogBasicTAP(false, id, description);
+            endTAPLine();
+            break;
+        case TestResultsCollectorBase::FailStatus::IGNORED:
+            LogBasicTAP(true, id, description);
+            m_collectedData << " # skip " << reason;
+            endTAPLine();
+            break;
+        case TestResultsCollectorBase::FailStatus::INTERNAL:
+            LogBasicTAP(true, id, description);
+            endTAPLine();
+            m_collectedData << "    ---" << std::endl;
+            m_collectedData << "    message: " << reason << std::endl;
+            m_collectedData << "    severity: Internal" << std::endl;
+            m_collectedData << "    ..." << std::endl;
+            break;
+        default:
+            Assert(false && "Bad status");
+        }
+    }
+
+    void LogBasicTAP(bool isOK, const std::string& id,
+                     const std::string& description)
+    {
+        if (!isOK) {
+            m_collectedData << "not ";
+        }
+        m_collectedData << "ok " << m_testIndex << " [" <<
+        id << "] " << description;
+    }
+
+    void endTAPLine()
+    {
+        m_collectedData << std::endl;
+    }
+
+    std::string m_filename;
+    std::stringstream m_collectedData;
+    std::ofstream m_output;
+    int m_testIndex;
+};
+
+TestResultsCollectorBase* TAPCollector::Constructor()
+{
+    return new TAPCollector();
 }
 
 void TestResultsCollectorBase::RegisterCollectorConstructor(
@@ -484,10 +924,11 @@ TestResultsCollectorBase* TestResultsCollectorBase::Create(
     const std::string& name)
 {
     ConstructorsMap::iterator found = m_constructorsMap.find(name);
-    if (found != m_constructorsMap.end())
+    if (found != m_constructorsMap.end()) {
         return found->second();
-    else
+    } else {
         return NULL;
+    }
 }
 
 std::vector<std::string> TestResultsCollectorBase::GetCollectorsNames()
@@ -500,10 +941,10 @@ std::vector<std::string> TestResultsCollectorBase::GetCollectorsNames()
     return list;
 }
 
-TestResultsCollectorBase::ConstructorsMap TestResultsCollectorBase::m_constructorsMap;
+TestResultsCollectorBase::ConstructorsMap TestResultsCollectorBase::
+    m_constructorsMap;
 
-namespace
-{
+namespace {
 static int RegisterCollectorConstructors();
 static const int RegisterHelperVariable = RegisterCollectorConstructors();
 int RegisterCollectorConstructors()
@@ -519,11 +960,16 @@ int RegisterCollectorConstructors()
     TestResultsCollectorBase::RegisterCollectorConstructor(
         "csv",
         &CSVCollector::Constructor);
+    TestResultsCollectorBase::RegisterCollectorConstructor(
+        "tap",
+        &TAPCollector::Constructor);
+    TestResultsCollectorBase::RegisterCollectorConstructor(
+        "xml",
+        &XmlCollector::Constructor);
 
     return 0;
 }
-
-}
-
 }
 }
+}
+#undef GREEN_RESULT_OK

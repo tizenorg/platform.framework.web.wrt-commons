@@ -24,20 +24,24 @@
 
 #include <dpl/event/model.h>
 #include <dpl/event/property.h>
-#include <dpl/shared_ptr.h>
+#include <memory>
 #include <string>
 #include <list>
 #include <set>
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef int FeatureHandle;
 typedef std::list<FeatureHandle> FeatureHandleList;
-typedef DPL::SharedPtr<FeatureHandleList> FeatureHandleListPtr;
+typedef std::shared_ptr<FeatureHandleList> FeatureHandleListPtr;
 
 typedef int FeatureSetHandle;
 typedef std::list<FeatureSetHandle> FeatureSetHandleList;
+
+typedef struct {
+    std::string featureName;
+    DbPluginHandle pluginHandle;
+} FeatureData;
 
 class FeatureModel : public DPL::Event::Model
 {
@@ -53,12 +57,19 @@ class FeatureModel : public DPL::Event::Model
         Name(this),
         DeviceCapabilities(this),
         PHandle(this, -1)
+    {}
+
+    void SetData(const std::string& name,
+                 const std::set<std::string>& deviceCapabilities,
+                 const DbPluginHandle& pluginHandle)
     {
+        Name.SetWithoutLock(name);
+        DeviceCapabilities.SetWithoutLock(deviceCapabilities);
+        PHandle.SetWithoutLock(pluginHandle);
     }
 };
 
-typedef DPL::SharedPtr<FeatureModel> FeatureModelPtr;
-
+typedef std::shared_ptr<FeatureModel> FeatureModelPtr;
 } // namespace WrtDB
 
 #endif // FEATURE_MODEL_H

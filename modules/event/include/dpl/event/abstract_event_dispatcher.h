@@ -17,7 +17,8 @@
  * @file        abstract_event_dispatcher.h
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of abstract event dispatcher
+ * @brief       This file is the implementation file of abstract event
+ * dispatcher
  */
 #ifndef DPL_ABSTRACT_EVENT_DISPATCHER_H
 #define DPL_ABSTRACT_EVENT_DISPATCHER_H
@@ -25,15 +26,12 @@
 #include <dpl/event/abstract_event_call.h>
 #include <dpl/noncopyable.h>
 
-namespace DPL
+namespace DPL {
+namespace Event {
+class AbstractEventDispatcher :
+    private Noncopyable
 {
-namespace Event
-{
-
-class AbstractEventDispatcher
-    : private Noncopyable
-{
-public:
+  public:
     /**
      * Constructor
      */
@@ -59,9 +57,9 @@ public:
      * @param[in] dueTime Due time for timed event in seconds
      * @return none
      */
-    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime) = 0;
+    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall,
+                                   double dueTime) = 0;
 };
-
 }
 } // namespace DPL
 

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of unix socket
  */
+#include <stddef.h>
 #include <dpl/socket/unix_socket.h>
 #include <dpl/log/log.h>
 #include <dpl/exception.h>
@@ -29,15 +30,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
-namespace DPL
-{
-namespace Socket
-{
-
+namespace DPL {
+namespace Socket {
 UnixSocket::UnixSocket()
-{
-}
+{}
 
 int UnixSocket::AllocSpecificDescriptor() const
 {
@@ -46,8 +44,9 @@ int UnixSocket::AllocSpecificDescriptor() const
     // Create new descriptor
     int newSocket = socket(AF_UNIX, SOCK_STREAM, 0);
 
-    if (newSocket == -1)
+    if (newSocket == -1) {
         Throw(Exception::CreateFailed);
+    }
 
     LogPedantic("UNIX socket created");
 
@@ -55,27 +54,36 @@ int UnixSocket::AllocSpecificDescriptor() const
     return newSocket;
 }
 
-std::pair<sockaddr *, socklen_t> UnixSocket::TranslateAddressGenericToSpecific(const Address &address) const
+std::pair<sockaddr *, socklen_t> UnixSocket::TranslateAddressGenericToSpecific(
+    const Address &address) const
 {
     // Allocate new socket address structure
-    sockaddr_un *sockAddress = static_cast<sockaddr_un *>(malloc(sizeof(sockaddr_un)));
-    if (!sockAddress) throw std::bad_alloc();
+    sockaddr_un *sockAddress =
+        static_cast<sockaddr_un *>(malloc(sizeof(sockaddr_un)));
+    if (!sockAddress) {
+        throw std::bad_alloc();
+    }
 
     memset(sockAddress, 0, sizeof(sockaddr_un));
 
     // Copy address properties
     sockAddress->sun_family = AF_UNIX;
-    strncpy(sockAddress->sun_path, address.GetAddress().c_str(), sizeof(sockAddress->sun_path) - 1);
-    sockAddress->sun_path[sizeof(sockAddress->sun_path) - 1] = '\0'; // Prevent buffer overflows
+    strncpy(sockAddress->sun_path, address.GetAddress().c_str(),
+            sizeof(sockAddress->sun_path) - 1);
+
+    //Prevent buffer overflows
+    sockAddress->sun_path[sizeof(sockAddress->sun_path) - 1] = '\0';
 
     // Set proper address length
     socklen_t sockAddressLength = SUN_LEN(sockAddress);
 
     // Return new translated address
-    return std::make_pair(reinterpret_cast<sockaddr *>(sockAddress), sockAddressLength);
+    return std::make_pair(reinterpret_cast<sockaddr *>(sockAddress),
+                          sockAddressLength);
 }
 
-Address UnixSocket::TranslateAddressSpecificToGeneric(sockaddr *address, socklen_t) const
+Address UnixSocket::TranslateAddressSpecificToGeneric(sockaddr *address,
+                                                      socklen_t) const
 {
     // FIXME: Constrain check ?
     sockaddr_un *unixAddress = reinterpret_cast<sockaddr_un *>(address);
@@ -101,8 +109,11 @@ void UnixSocket::Bind(const Address &address)
     GenericSocket<UnixSocket>::Bind(address);
 
     // Always set proper permissions to the socket file
-    chmod(address.GetAddress().c_str(), 0777);
+    if (chmod(address.GetAddress().c_str(), 0777) < 0) {
+        LogError(
+            "Error setting permissions to the socket file. Errno " <<
+            strerror(errno));
+    }
 }
-
 }
 } // namespace DPL

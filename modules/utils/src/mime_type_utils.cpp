@@ -13,13 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#include <stddef.h>
 #include <set>
 #include <dpl/assert.h>
 #include <vector>
 
 #include <map>
 
-#include <mime_type_utils.h>
+#include <dpl/utils/mime_type_utils.h>
 
 const std::set<DPL::String>& MimeTypeUtils::getMimeTypesSupportedForIcon()
 {
@@ -93,7 +94,7 @@ DPL::String MimeTypeUtils::stripMimeParameters(const DPL::String& mimeType)
 }
 
 MimeTypeUtils::MimeAttributes MimeTypeUtils::getMimeAttributes(
-        const DPL::String& mimeType)
+    const DPL::String& mimeType)
 {
     MimeAttributes attributes;
     std::vector<DPL::String> tokens;
@@ -109,8 +110,10 @@ bool MimeTypeUtils::isValidIcon(const DPL::String& path)
     return getMimeTypesSupportedForIcon().count(identifyFileMimeType(path)) > 0;
 }
 
-bool MimeTypeUtils::isValidStartFile(const DPL::String& path,
-        const DPL::OptionalString& providedMimeType)
+bool MimeTypeUtils::isValidStartFile(
+    const DPL::String& path,
+    const DPL::OptionalString&
+    providedMimeType)
 {
     DPL::String mimeType = (!!providedMimeType) ? stripMimeParameters(
             *providedMimeType) : identifyFileMimeType(path);

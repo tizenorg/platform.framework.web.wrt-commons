@@ -25,19 +25,15 @@
 #include <dpl/rpc/generic_socket_rpc_connection.h>
 #include <dpl/socket/unix_socket.h>
 
-namespace DPL
+namespace DPL {
+namespace RPC {
+class UnixSocketRPCConnection :
+    public GenericSocketRPCConnection<DPL::Socket::UnixSocket>
 {
-namespace RPC
-{
-
-class UnixSocketRPCConnection
-    : public GenericSocketRPCConnection<DPL::Socket::UnixSocket>
-{
-public:
+  public:
     // Socket acquisition
     UnixSocketRPCConnection(DPL::Socket::UnixSocket *socket);
 };
-
 }
 } // namespace DPL
 

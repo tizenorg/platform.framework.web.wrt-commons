@@ -30,11 +30,8 @@
 #include <dpl/assert.h>
 #include <stdint.h>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 /**
  * Thread database support
  *
@@ -142,14 +139,14 @@ class ThreadDatabaseSupport :
                           DPL::DB::SqlConnection::Flag::Type flags) :
         m_address(address),
         m_flags(flags)
-    {
-    }
+    {}
 
     virtual ~ThreadDatabaseSupport()
-    {
-    }
+    {}
 
-    void AttachToThread()
+    void AttachToThread(
+        DPL::DB::SqlConnection::Flag::Option options =
+            DPL::DB::SqlConnection::Flag::RO)
     {
         Linger() = false;
 
@@ -162,7 +159,8 @@ class ThreadDatabaseSupport :
         // Initialize SQL connection described in traits
         LogInfo("Attaching thread database connection: " << m_address);
 
-        Connection() = new DPL::DB::SqlConnection(m_address.c_str(), m_flags);
+        Connection() = new DPL::DB::SqlConnection(
+                m_address.c_str(), m_flags, options);
 
         RefCounter() = 0;
 
@@ -211,7 +209,7 @@ class ThreadDatabaseSupport :
     }
 
     DPL::DB::SqlConnection::DataCommand *AllocDataCommand(
-            const std::string &statement)
+        const std::string &statement)
     {
         // Calling thread must support thread database connections
         Assert(!Connection().IsNull());
@@ -296,7 +294,6 @@ class ThreadDatabaseSupport :
         return (*Connection())->CheckTableExist(name);
     }
 };
-
 }
 }
 

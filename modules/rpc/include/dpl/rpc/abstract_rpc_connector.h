@@ -26,28 +26,27 @@
 #include <dpl/event/event_support.h>
 #include <dpl/generic_event.h>
 
-namespace DPL
-{
-namespace RPC
-{
-namespace AbstractRPCConnectorEvents
-{
+namespace DPL {
+namespace RPC {
+namespace AbstractRPCConnectorEvents {
 /**
  * RPC connection established
  */
-DECLARE_GENERIC_EVENT_2(ConnectionEstablishedEvent, AbstractRPCConnectionID, AbstractRPCConnection *)
+DECLARE_GENERIC_EVENT_2(ConnectionEstablishedEvent,
+                        AbstractRPCConnectionID,
+                        AbstractRPCConnection *)
 } // namespace AbstractRPCClientEvents
 
-class AbstractRPCConnector
-    : public DPL::Event::EventSupport<AbstractRPCConnectorEvents::ConnectionEstablishedEvent>
+class AbstractRPCConnector :
+    public DPL::Event::EventSupport<AbstractRPCConnectorEvents::
+                                        ConnectionEstablishedEvent>
 {
-public:
+  public:
     /**
      * Destructor
      */
     virtual ~AbstractRPCConnector() {}
 };
-
 }
 } // namespace DPL
 

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of SQL connection
  */
+#include <stddef.h>
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/scoped_free.h>
@@ -29,30 +30,27 @@
 #include <cstdio>
 #include <cstdarg>
 
-namespace DPL
-{
-namespace DB
-{
-
+namespace DPL {
+namespace DB {
 namespace // anonymous
 {
-class ScopedNotifyAll
-    : public Noncopyable
+class ScopedNotifyAll :
+    public Noncopyable
 {
-private:
+  private:
     SqlConnection::SynchronizationObject *m_synchronizationObject;
 
-public:
+  public:
     explicit ScopedNotifyAll(
-        SqlConnection::SynchronizationObject *synchronizationObject)
-        : m_synchronizationObject(synchronizationObject)
-    {
-    }
+        SqlConnection::SynchronizationObject *synchronizationObject) :
+        m_synchronizationObject(synchronizationObject)
+    {}
 
     ~ScopedNotifyAll()
     {
-        if (!m_synchronizationObject)
+        if (!m_synchronizationObject) {
             return;
+        }
 
         LogPedantic("Notifying after successful synchronize");
         m_synchronizationObject->NotifyAll();
@@ -61,33 +59,28 @@ public:
 } // namespace anonymous
 
 SqlConnection::DataCommand::DataCommand(SqlConnection *connection,
-                                        const char *buffer)
-    : m_masterConnection(connection),
-      m_stmt(NULL)
+                                        const char *buffer) :
+    m_masterConnection(connection),
+    m_stmt(NULL)
 {
     Assert(connection != NULL);
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.get());
 
-    for (;;)
-    {
+    for (;;) {
         int ret = sqlite3_prepare_v2(connection->m_connection,
                                      buffer, strlen(buffer),
                                      &m_stmt, NULL);
 
-        if (ret == SQLITE_OK)
-        {
+        if (ret == SQLITE_OK) {
             LogPedantic("Data command prepared successfuly");
             break;
-        }
-        else if (ret == SQLITE_BUSY)
-        {
+        } else if (ret == SQLITE_BUSY) {
             LogPedantic("Collision occurred while preparing SQL command");
 
             // Synchronize if synchronization object is available
-            if (connection->m_synchronizationObject)
-            {
+            if (connection->m_synchronizationObject) {
                 LogPedantic("Performing synchronization");
                 connection->m_synchronizationObject->Synchronize();
                 continue;
@@ -116,8 +109,9 @@ SqlConnection::DataCommand::~DataCommand()
 {
     LogPedantic("SQL data command finalizing");
 
-    if (sqlite3_finalize(m_stmt) != SQLITE_OK)
+    if (sqlite3_finalize(m_stmt) != SQLITE_OK) {
         LogPedantic("Failed to finalize data command");
+    }
 
     // Decrement stored data command count
     --m_masterConnection->m_dataCommandsCount;
@@ -125,10 +119,9 @@ SqlConnection::DataCommand::~DataCommand()
 
 void SqlConnection::DataCommand::CheckBindResult(int result)
 {
-    if (result != SQLITE_OK)
-    {
+    if (result != SQLITE_OK) {
         const char *error = sqlite3_errmsg(
-            m_masterConnection->m_connection);
+                m_masterConnection->m_connection);
 
         LogPedantic("Failed to bind SQL statement parameter");
         LogPedantic("    Error: " << error);
@@ -217,8 +210,7 @@ void SqlConnection::DataCommand::BindString(
     SqlConnection::ArgumentIndex position,
     const char *value)
 {
-    if (!value)
-    {
+    if (!value) {
         BindNull(position);
         return;
     }
@@ -243,109 +235,110 @@ void SqlConnection::DataCommand::BindInteger(
     SqlConnection::ArgumentIndex position,
     const Optional<int> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindInteger(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindInt8(
     SqlConnection::ArgumentIndex position,
     const Optional<int8_t> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindInt8(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindInt16(
     SqlConnection::ArgumentIndex position,
     const Optional<int16_t> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindInt16(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindInt32(
     SqlConnection::ArgumentIndex position,
     const Optional<int32_t> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindInt32(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindInt64(
     SqlConnection::ArgumentIndex position,
     const Optional<int64_t> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindInt64(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindFloat(
     SqlConnection::ArgumentIndex position,
     const Optional<float> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindFloat(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindDouble(
     SqlConnection::ArgumentIndex position,
     const Optional<double> &value)
 {
-    if (value.IsNull())
+    if (value.IsNull()) {
         BindNull(position);
-    else
+    } else {
         BindDouble(position, *value);
+    }
 }
 
 void SqlConnection::DataCommand::BindString(
     SqlConnection::ArgumentIndex position,
     const Optional<String> &value)
 {
-    if (!!value)
+    if (!!value) {
         BindString(position, ToUTF8String(*value).c_str());
-    else
+    } else {
         BindNull(position);
+    }
 }
 
 bool SqlConnection::DataCommand::Step()
 {
     // Notify all after potentially synchronized database connection access
     ScopedNotifyAll notifyAll(
-        m_masterConnection->m_synchronizationObject.Get());
+        m_masterConnection->m_synchronizationObject.get());
 
-    for (;;)
-    {
+    for (;;) {
         int ret = sqlite3_step(m_stmt);
 
-        if (ret == SQLITE_ROW)
-        {
+        if (ret == SQLITE_ROW) {
             LogPedantic("SQL data command step ROW");
             return true;
-        }
-        else if (ret == SQLITE_DONE)
-        {
+        } else if (ret == SQLITE_DONE) {
             LogPedantic("SQL data command step DONE");
             return false;
-        }
-        else if (ret == SQLITE_BUSY)
-        {
+        } else if (ret == SQLITE_BUSY) {
             LogPedantic("Collision occurred while executing SQL command");
 
             // Synchronize if synchronization object is available
-            if (m_masterConnection->m_synchronizationObject)
-            {
+            if (m_masterConnection->m_synchronizationObject) {
                 LogPedantic("Performing synchronization");
 
                 m_masterConnection->
@@ -385,8 +378,9 @@ void SqlConnection::DataCommand::Reset()
 void SqlConnection::DataCommand::CheckColumnIndex(
     SqlConnection::ColumnIndex column)
 {
-    if (column < 0 || column >= sqlite3_column_count(m_stmt))
+    if (column < 0 || column >= sqlite3_column_count(m_stmt)) {
         ThrowMsg(Exception::InvalidColumn, "Column index is out of bounds");
+    }
 }
 
 bool SqlConnection::DataCommand::IsColumnNull(
@@ -474,12 +468,13 @@ std::string SqlConnection::DataCommand::GetColumnString(
     CheckColumnIndex(column);
 
     const char *value = reinterpret_cast<const char *>(
-        sqlite3_column_text(m_stmt, column));
+            sqlite3_column_text(m_stmt, column));
 
     LogPedantic("Value: " << (value ? value : "NULL"));
 
-    if (value == NULL)
+    if (value == NULL) {
         return std::string();
+    }
 
     return std::string(value);
 }
@@ -490,8 +485,9 @@ Optional<int> SqlConnection::DataCommand::GetColumnOptionalInteger(
     LogPedantic("SQL data command get column optional integer: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<int>::Null;
+    }
     int value = sqlite3_column_int(m_stmt, column);
     LogPedantic("    Value: " << value);
     return Optional<int>(value);
@@ -503,8 +499,9 @@ Optional<int8_t> SqlConnection::DataCommand::GetColumnOptionalInt8(
     LogPedantic("SQL data command get column optional int8: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<int8_t>::Null;
+    }
     int8_t value = static_cast<int8_t>(sqlite3_column_int(m_stmt, column));
     LogPedantic("    Value: " << value);
     return Optional<int8_t>(value);
@@ -516,8 +513,9 @@ Optional<int16_t> SqlConnection::DataCommand::GetColumnOptionalInt16(
     LogPedantic("SQL data command get column optional int16: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<int16_t>::Null;
+    }
     int16_t value = static_cast<int16_t>(sqlite3_column_int(m_stmt, column));
     LogPedantic("    Value: " << value);
     return Optional<int16_t>(value);
@@ -529,8 +527,9 @@ Optional<int32_t> SqlConnection::DataCommand::GetColumnOptionalInt32(
     LogPedantic("SQL data command get column optional int32: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<int32_t>::Null;
+    }
     int32_t value = static_cast<int32_t>(sqlite3_column_int(m_stmt, column));
     LogPedantic("    Value: " << value);
     return Optional<int32_t>(value);
@@ -542,8 +541,9 @@ Optional<int64_t> SqlConnection::DataCommand::GetColumnOptionalInt64(
     LogPedantic("SQL data command get column optional int64: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<int64_t>::Null;
+    }
     int64_t value = static_cast<int64_t>(sqlite3_column_int64(m_stmt, column));
     LogPedantic("    Value: " << value);
     return Optional<int64_t>(value);
@@ -555,8 +555,9 @@ Optional<float> SqlConnection::DataCommand::GetColumnOptionalFloat(
     LogPedantic("SQL data command get column optional float: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<float>::Null;
+    }
     float value = static_cast<float>(sqlite3_column_double(m_stmt, column));
     LogPedantic("    Value: " << value);
     return Optional<float>(value);
@@ -568,8 +569,9 @@ Optional<double> SqlConnection::DataCommand::GetColumnOptionalDouble(
     LogPedantic("SQL data command get column optional double: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<double>::Null;
+    }
     double value = sqlite3_column_double(m_stmt, column);
     LogPedantic("    Value: " << value);
     return Optional<double>(value);
@@ -581,57 +583,51 @@ Optional<String> SqlConnection::DataCommand::GetColumnOptionalString(
     LogPedantic("SQL data command get column optional string: ["
                 << column << "]");
     CheckColumnIndex(column);
-    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL)
+    if (sqlite3_column_type(m_stmt, column) == SQLITE_NULL) {
         return Optional<String>::Null;
+    }
     const char *value = reinterpret_cast<const char *>(
-        sqlite3_column_text(m_stmt, column));
+            sqlite3_column_text(m_stmt, column));
     LogPedantic("Value: " << value);
     String s = FromUTF8String(value);
     return Optional<String>(s);
 }
 
-void SqlConnection::Connect(const std::string &address, Flag::Type flag)
+void SqlConnection::Connect(const std::string &address,
+                            Flag::Type type,
+                            Flag::Option flag)
 {
-    if (m_connection != NULL)
-    {
+    if (m_connection != NULL) {
         LogPedantic("Already connected.");
         return;
     }
-
     LogPedantic("Connecting to DB: " << address << "...");
 
     // Connect to database
     int result;
-
-    if (flag & Flag::UseLucene)
-    {
+    if (type & Flag::UseLucene) {
         result = db_util_open_with_options(
-            address.c_str(),
-            &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-            NULL);
+                address.c_str(),
+                &m_connection,
+                flag,
+                NULL);
 
         m_usingLucene = true;
         LogPedantic("Lucene index enabled");
-    }
-    else
-    {
+    } else {
         result = sqlite3_open_v2(
-            address.c_str(),
-            &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-            NULL);
+                address.c_str(),
+                &m_connection,
+                flag,
+                NULL);
 
         m_usingLucene = false;
         LogPedantic("Lucene index disabled");
     }
 
-    if (result == SQLITE_OK)
-    {
+    if (result == SQLITE_OK) {
         LogPedantic("Connected to DB");
-    }
-    else
-    {
+    } else {
         LogPedantic("Failed to connect to DB!");
         ThrowMsg(Exception::ConnectionBroken, address);
     }
@@ -642,8 +638,7 @@ void SqlConnection::Connect(const std::string &address, Flag::Type flag)
 
 void SqlConnection::Disconnect()
 {
-    if (m_connection == NULL)
-    {
+    if (m_connection == NULL) {
         LogPedantic("Already disconnected.");
         return;
     }
@@ -657,17 +652,13 @@ void SqlConnection::Disconnect()
 
     int result;
 
-    if (m_usingLucene)
-    {
+    if (m_usingLucene) {
         result = db_util_close(m_connection);
-    }
-    else
-    {
+    } else {
         result = sqlite3_close(m_connection);
     }
 
-    if (result != SQLITE_OK)
-    {
+    if (result != SQLITE_OK) {
         const char *error = sqlite3_errmsg(m_connection);
         LogPedantic("SQL close failed");
         LogPedantic("    Error: " << error);
@@ -681,8 +672,7 @@ void SqlConnection::Disconnect()
 
 bool SqlConnection::CheckTableExist(const char *tableName)
 {
-    if (m_connection == NULL)
-    {
+    if (m_connection == NULL) {
         LogPedantic("Cannot execute command. Not connected to DB!");
         return false;
     }
@@ -692,8 +682,7 @@ bool SqlConnection::CheckTableExist(const char *tableName)
 
     command->BindString(1, tableName);
 
-    if (!command->Step())
-    {
+    if (!command->Step()) {
         LogPedantic("No matching records in table");
         return false;
     }
@@ -703,19 +692,19 @@ bool SqlConnection::CheckTableExist(const char *tableName)
 
 SqlConnection::SqlConnection(const std::string &address,
                              Flag::Type flag,
-                             SynchronizationObject *synchronizationObject)
-    : m_connection(NULL),
-      m_usingLucene(false),
-      m_dataCommandsCount(0),
-      m_synchronizationObject(synchronizationObject)
+                             Flag::Option option,
+                             SynchronizationObject *synchronizationObject) :
+    m_connection(NULL),
+    m_usingLucene(false),
+    m_dataCommandsCount(0),
+    m_synchronizationObject(synchronizationObject)
 {
     LogPedantic("Opening database connection to: " << address);
 
     // Connect to DB
-    SqlConnection::Connect(address, flag);
+    SqlConnection::Connect(address, flag, option);
 
-    if (!m_synchronizationObject)
-    {
+    if (!m_synchronizationObject) {
         LogPedantic("No synchronization object defined");
     }
 }
@@ -729,7 +718,7 @@ SqlConnection::~SqlConnection()
     {
         SqlConnection::Disconnect();
     }
-    Catch (Exception::Base)
+    Catch(Exception::Base)
     {
         LogPedantic("Failed to disconnect from database");
     }
@@ -737,10 +726,14 @@ SqlConnection::~SqlConnection()
 
 void SqlConnection::ExecCommand(const char *format, ...)
 {
-    if (m_connection == NULL)
-    {
+    if (m_connection == NULL) {
         LogPedantic("Cannot execute command. Not connected to DB!");
         return;
+    }
+
+    if (format == NULL) {
+        LogPedantic("Null query!");
+        ThrowMsg(Exception::SyntaxError, "Null statement");
     }
 
     char *rawBuffer;
@@ -748,15 +741,15 @@ void SqlConnection::ExecCommand(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    if (vasprintf(&rawBuffer, format, args) == -1)
+    if (vasprintf(&rawBuffer, format, args) == -1) {
         rawBuffer = NULL;
+    }
 
     va_end(args);
 
     ScopedFree<char> buffer(rawBuffer);
 
-    if (!buffer)
-    {
+    if (!buffer) {
         LogPedantic("Failed to allocate statement string");
         return;
     }
@@ -764,10 +757,9 @@ void SqlConnection::ExecCommand(const char *format, ...)
     LogPedantic("Executing SQL command: " << buffer.Get());
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(m_synchronizationObject.get());
 
-    for (;;)
-    {
+    for (;;) {
         char *errorBuffer;
 
         int ret = sqlite3_exec(m_connection,
@@ -779,22 +771,20 @@ void SqlConnection::ExecCommand(const char *format, ...)
         std::string errorMsg;
 
         // Take allocated error buffer
-        if (errorBuffer != NULL)
-        {
+        if (errorBuffer != NULL) {
             errorMsg = errorBuffer;
             sqlite3_free(errorBuffer);
         }
 
-        if (ret == SQLITE_OK)
+        if (ret == SQLITE_OK) {
             return;
+        }
 
-        if (ret == SQLITE_BUSY)
-        {
+        if (ret == SQLITE_BUSY) {
             LogPedantic("Collision occurred while executing SQL command");
 
             // Synchronize if synchronization object is available
-            if (m_synchronizationObject)
-            {
+            if (m_synchronizationObject) {
                 LogPedantic("Performing synchronization");
                 m_synchronizationObject->Synchronize();
                 continue;
@@ -813,8 +803,7 @@ SqlConnection::DataCommandAutoPtr SqlConnection::PrepareDataCommand(
     const char *format,
     ...)
 {
-    if (m_connection == NULL)
-    {
+    if (m_connection == NULL) {
         LogPedantic("Cannot execute data command. Not connected to DB!");
         return DataCommandAutoPtr();
     }
@@ -824,15 +813,15 @@ SqlConnection::DataCommandAutoPtr SqlConnection::PrepareDataCommand(
     va_list args;
     va_start(args, format);
 
-    if (vasprintf(&rawBuffer, format, args) == -1)
+    if (vasprintf(&rawBuffer, format, args) == -1) {
         rawBuffer = NULL;
+    }
 
     va_end(args);
 
     ScopedFree<char> buffer(rawBuffer);
 
-    if (!buffer)
-    {
+    if (!buffer) {
         LogPedantic("Failed to allocate statement string");
         return DataCommandAutoPtr();
     }
@@ -853,10 +842,9 @@ void SqlConnection::TurnOnForeignKeys()
 }
 
 SqlConnection::SynchronizationObject *
-    SqlConnection::AllocDefaultSynchronizationObject()
+SqlConnection::AllocDefaultSynchronizationObject()
 {
     return new NaiveSynchronizationObject();
 }
-
 } // namespace DB
 } // namespace DPL

@@ -26,17 +26,24 @@
 #include <dpl/wrt-dao-ro/property_dao_read_only.h>
 
 namespace WrtDB {
-
 struct WidgetRegisterInfo; //forward declaration
 
 namespace PropertyDAO {
-
-void RemoveProperty(DbWidgetHandle widgetHandle,
+void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key);
 
+//deprecated
 /* This method sets widget property
  */
 void SetProperty(DbWidgetHandle widgetHandle,
+                 const PropertyDAOReadOnly::WidgetPropertyKey &key,
+                 const PropertyDAOReadOnly::WidgetPropertyValue &value,
+                 bool readOnly = false)
+__attribute__((deprecated));
+
+/* This method sets widget property
+ */
+void SetProperty(TizenAppId tzAppid,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly = false);
@@ -44,9 +51,8 @@ void SetProperty(DbWidgetHandle widgetHandle,
 /* This method registers properties for widget.
  * Properties unregistering is done via "delete cascade" mechanism in SQL
  */
-void RegisterProperties(DbWidgetHandle widgetHandle,
+void RegisterProperties(TizenAppId tzAppid,
                         const WidgetRegisterInfo &regInfo);
-
 } // namespace PropertyDAO
 } // namespace WrtDB
 

@@ -40,6 +40,7 @@ SET(DPL_DBUS_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/dbus_server_serialization.h
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/dbus_signature.h
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/dispatcher.h
+    ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/glib_util.h
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/exception.h
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/interface.h
     ${PROJECT_SOURCE_DIR}/modules/dbus/include/dpl/dbus/method_proxy.h

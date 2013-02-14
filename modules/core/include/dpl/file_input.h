@@ -26,25 +26,24 @@
 #include <dpl/exception.h>
 #include <dpl/abstract_waitable_input.h>
 
-namespace DPL
+namespace DPL {
+class FileInput :
+    private Noncopyable,
+    public AbstractWaitableInput
 {
-class FileInput
-    : private Noncopyable,
-      public AbstractWaitableInput
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
         DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
     };
 
-protected:
+  protected:
     int m_fd;
 
-public:
+  public:
     FileInput();
     FileInput(const std::string &fileName);
     virtual ~FileInput();

@@ -25,18 +25,15 @@
 #include <dpl/abstract_output.h>
 #include <dpl/waitable_handle.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableOutput :
+    public AbstractOutput
 {
-
-class AbstractWaitableOutput
-    : public AbstractOutput
-{
-public:
+  public:
     virtual ~AbstractWaitableOutput() {}
 
     virtual WaitableHandle WaitableWriteHandle() const = 0;
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_OUTPUT_H

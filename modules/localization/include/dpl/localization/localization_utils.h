@@ -39,8 +39,7 @@ struct WidgetIcon
     WidgetIcon() :
         width(DPL::Optional<int>::Null),
         height(DPL::Optional<int>::Null)
-    {
-    }
+    {}
 
     /*
      * a valid URI to an image file inside the widget package that represents an
@@ -73,18 +72,6 @@ struct WidgetStartFileInfo
 };
 
 typedef DPL::Optional<WidgetIcon> OptionalWidgetIcon;
-typedef std::list<DPL::String> LanguageTagsList;
 typedef DPL::Optional<WidgetStartFileInfo> OptionalWidgetStartFileInfo;
-
-namespace LocalizationUtils {
-DPL::String BCP47LanguageTagToLocale(const DPL::String&);
-DPL::String LocaleToBCP47LanguageTag(const DPL::String&);
-
-void SetUserLanguageTags(const LanguageTagsList& tags);
-void SetSystemLanguageTags(const LanguageTagsList& tags);
-LanguageTagsList GetUserAgentLanguageTags();
-
-void Initialize();
-}
 
 #endif //LOCALIZATION_UTILS_H

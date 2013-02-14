@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the definition of property dao class.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-rw/property_dao.h>
 #include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/log/log.h>
@@ -30,20 +30,20 @@
 
 namespace WrtDB {
 namespace PropertyDAO {
-
-void RemoveProperty(DbWidgetHandle widgetHandle,
+void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key)
 {
     //TODO below there are two queries.
     // First query asks if given property can be removed,
     // Second removes it. Maybe it should be combined two one.
 
-    LogDebug("Removing Property. Handle: " << widgetHandle << ", key: " << key);
+    LogDebug("Removing Property. appid: " << tzAppid << ", key: " << key);
     Try {
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
-                widgetHandle,
+                tzAppid,
                 key);
         if (!readonly.IsNull() && *readonly == 1) {
             LogError("'" << key <<
@@ -58,7 +58,7 @@ void RemoveProperty(DbWidgetHandle widgetHandle,
         using namespace DPL::DB::ORM::wrt;
         WRT_DB_DELETE(del, WidgetPreference, &WrtDatabase::interface())
         del->Where(And(
-                       Equals<WidgetPreference::app_id>(widgetHandle),
+                       Equals<WidgetPreference::tizen_appid>(tzAppid),
                        Equals<WidgetPreference::key_name>(key)));
         del->Execute();
 
@@ -70,20 +70,31 @@ void RemoveProperty(DbWidgetHandle widgetHandle,
     }
 }
 
+//deprecated
 void SetProperty(DbWidgetHandle widgetHandle,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly)
 {
-    LogDebug("Setting/updating Property. Handle: " << widgetHandle <<
+    SetProperty(WidgetDAOReadOnly::getTzAppId(
+                    widgetHandle), key, value, readOnly);
+}
+
+void SetProperty(TizenAppId tzAppid,
+                 const PropertyDAOReadOnly::WidgetPropertyKey &key,
+                 const PropertyDAOReadOnly::WidgetPropertyValue &value,
+                 bool readOnly)
+{
+    LogDebug("Setting/updating Property. appid: " << tzAppid <<
              ", key: " << key);
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         DPL::OptionalInt readonly = PropertyDAOReadOnly::CheckPropertyReadFlag(
-                widgetHandle,
+                tzAppid,
                 key);
         if (!readonly.IsNull() && *readonly == 1) {
             LogError("'" << key <<
@@ -94,7 +105,7 @@ void SetProperty(DbWidgetHandle widgetHandle,
 
         if (readonly.IsNull()) {
             WidgetPreference::Row row;
-            row.Set_app_id(widgetHandle);
+            row.Set_tizen_appid(tzAppid);
             row.Set_key_name(key);
             row.Set_key_value(value);
             row.Set_readonly(readOnly ? 1 : 0);
@@ -108,7 +119,7 @@ void SetProperty(DbWidgetHandle widgetHandle,
 
             WRT_DB_UPDATE(update, WidgetPreference, &WrtDatabase::interface())
             update->Where(And(
-                              Equals<WidgetPreference::app_id>(widgetHandle),
+                              Equals<WidgetPreference::tizen_appid>(tzAppid),
                               Equals<WidgetPreference::key_name>(key)));
 
             update->Values(row);
@@ -122,10 +133,10 @@ void SetProperty(DbWidgetHandle widgetHandle,
     }
 }
 
-void RegisterProperties(DbWidgetHandle widgetHandle,
+void RegisterProperties(TizenAppId tzAppid,
                         const WidgetRegisterInfo &regInfo)
 {
-    LogDebug("Registering proferences for widget. Handle: " << widgetHandle);
+    LogDebug("Registering proferences for widget. appid: " << tzAppid);
 
     // Try-Catch in WidgetDAO
 
@@ -137,7 +148,7 @@ void RegisterProperties(DbWidgetHandle widgetHandle,
     {
         { // Insert into table Widget Preferences
             WidgetPreference::Row row;
-            row.Set_app_id(widgetHandle);
+            row.Set_tizen_appid(tzAppid);
             row.Set_key_name(it->name);
             row.Set_key_value(it->value);
             int readonly = true == it->readonly ? 1 : 0;
@@ -149,6 +160,5 @@ void RegisterProperties(DbWidgetHandle widgetHandle,
         }
     }
 }
-
 } // namespace PropertyDAO
 } // namespace WrtDB

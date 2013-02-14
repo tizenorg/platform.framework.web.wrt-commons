@@ -22,43 +22,15 @@
 #ifndef DPL_NAMED_PIPE_H
 #define DPL_NAMED_PIPE_H
 
-#include <dpl/noncopyable.h>
 #include <dpl/exception.h>
-#include <dpl/abstract_waitable_input.h>
 #include <dpl/named_base_pipe.h>
+#include <dpl/file_input.h>
 
-namespace DPL
-{
-class NamedInputPipe
-    : private Noncopyable,
-      public NamedBasePipe,
-      public AbstractWaitableInput
-{
-public:
-    class Exception
-    {
-    public:
-        DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
-        DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
-        DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
-    };
-
-protected:
-    int m_fifo;
-
-public:
-    NamedInputPipe();
-    virtual ~NamedInputPipe();
-
-    void Open(const std::string &fileName);
-    void Close();
-
-    // AbstractInput
-    virtual BinaryQueueAutoPtr Read(size_t size);
-
-    // AbstractWaitableInput
-    virtual WaitableHandle WaitableReadHandle() const;
-};
+namespace DPL {
+class NamedInputPipe :
+    public NamedBasePipe,
+    public FileInput
+{};
 } // namespace DPL
 
 #endif // DPL_NAMED_PIPE_H

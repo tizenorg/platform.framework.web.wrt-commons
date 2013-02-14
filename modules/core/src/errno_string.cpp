@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of errno string
  */
+#include <stddef.h>
 #include <dpl/errno_string.h>
 #include <dpl/assert.h>
 #include <dpl/exception.h>
@@ -31,8 +32,7 @@
 #include <cerrno>
 #include <stdexcept>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 const size_t DEFAULT_ERRNO_STRING_SIZE = 32;
@@ -43,13 +43,11 @@ std::string GetErrnoString(int error)
     size_t size = DEFAULT_ERRNO_STRING_SIZE;
     char *buffer = NULL;
 
-    for (;;)
-    {
+    for (;;) {
         // Add one extra characted for end of string null value
         char *newBuffer = static_cast<char *>(::realloc(buffer, size + 1));
 
-        if (!newBuffer)
-        {
+        if (!newBuffer) {
             // Failed to realloc
             ::free(buffer);
             throw std::bad_alloc();
@@ -60,12 +58,11 @@ std::string GetErrnoString(int error)
         ::memset(buffer, 0, size + 1);
 
         // Try to retrieve error string
-#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !_GNU_SOURCE
         // The XSI-compliant version of strerror_r() is provided if:
         int result = ::strerror_r(error, buffer, size);
 
-        if (result == 0)
-        {
+        if (result == 0) {
             ScopedFree<char> scopedBufferFree(buffer);
             return std::string(buffer);
         }
@@ -75,19 +72,17 @@ std::string GetErrnoString(int error)
         // Otherwise, the GNU-specific version is provided.
         char *result = ::strerror_r(error, buffer, size);
 
-        if (result != NULL)
-        {
+        if (result != NULL) {
             ScopedFree<char> scopedBufferFree(buffer);
             return std::string(result);
         }
 #endif
 
         // Interpret errors
-        switch (errno)
-        {
+        switch (errno) {
         case EINVAL:
             // We got an invalid errno value
-            ::free(buffer);
+                ::free(buffer);
             ThrowMsg(InvalidErrnoValue, "Invalid errno value: " << error);
 
         case ERANGE:

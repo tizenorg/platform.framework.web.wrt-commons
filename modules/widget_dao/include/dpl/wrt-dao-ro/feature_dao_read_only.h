@@ -32,7 +32,6 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 class FeatureDAOReadOnly
 {
   public:
@@ -48,6 +47,9 @@ class FeatureDAOReadOnly
     };
 
     typedef std::set<std::string> DeviceCapabilitiesList;
+    typedef std::multimap<FeatureHandle, std::string> DeviceCapabilitiesMap;
+    typedef std::map<FeatureHandle, std::string> NameMap;
+    typedef std::map<FeatureHandle, FeatureData> FeatureMap;
 
     static bool isDeviceCapabilityInstalled(const std::string &deviceCapName);
 
@@ -55,27 +57,27 @@ class FeatureDAOReadOnly
     FeatureDAOReadOnly(const std::string &featureName);
 
     static FeatureHandleListPtr GetFeatureHandleListForPlugin(
-            DbPluginHandle pluginHandle);
+        DbPluginHandle pluginHandle);
 
     static bool isFeatureInstalled(const std::string &featureName);
     static bool isFeatureInstalled(FeatureHandle handle);
     static FeatureHandleList GetHandleList();
 
     std::string             GetName() const;
-    std::string             GetInstallURI() const;
-    std::string             GetKeyCn() const;
-    std::string             GetRootKey() const;
-    std::string             GetRootKeyFingerprint() const;
     FeatureHandle           GetFeatureHandle() const;
     std::string             GetLibraryPath() const;
     std::string             GetLibraryName() const;
     DeviceCapabilitiesList  GetDeviceCapabilities() const;
     DbPluginHandle          GetPluginHandle() const;
 
+    static NameMap                 GetNames();
+    static DeviceCapabilitiesMap   GetDevCapWithFeatureHandle();
+
+    static FeatureMap GetFeatures(const std::list<std::string>& featureNames);
+
   protected:
     FeatureHandle m_featureHandle;
 };
-
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_FEATURE_DAO_READ_ONLY_H_ */

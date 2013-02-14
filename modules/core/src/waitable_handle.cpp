@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of waitable handle
  */
+#include <stddef.h>
 #include <dpl/waitable_event.h>
 #include <dpl/workaround.h>
 #include <dpl/log/log.h>
@@ -28,8 +29,7 @@
 #include <errno.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 void CheckWaitableHandle(WaitableHandle handle)
@@ -38,29 +38,35 @@ void CheckWaitableHandle(WaitableHandle handle)
     // Try to get descriptor flags
     int result = fcntl(handle, F_GETFL);
 
-    if (result == -1 && errno == EBADF)
+    if (result == -1 && errno == EBADF) {
         Assert(0 && "CheckWaitableHandle: Invalid WaitableHandle! (EBADF)");
+    }
 
     Assert(result != -1 && "CheckWaitableHandle: Invalid WaitableHandle!");
 #endif // DPL_ENABLE_WAITABLE_HANDLE_BADF_CHECK
 }
 } // namespace anonymous
 
-WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, unsigned long miliseconds)
+WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle,
+                                            unsigned long miliseconds)
 {
     WaitableHandleList waitHandles;
     waitHandles.push_back(handle);
     return WaitForMultipleHandles(waitHandles, miliseconds);
 }
 
-WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, WaitMode::Type mode, unsigned long miliseconds)
+WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle,
+                                            WaitMode::Type mode,
+                                            unsigned long miliseconds)
 {
     WaitableHandleListEx waitHandles;
     waitHandles.push_back(std::make_pair(handle, mode));
     return WaitForMultipleHandles(waitHandles, miliseconds);
 }
 
-WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleList &waitableHandleList, unsigned long miliseconds)
+WaitableHandleIndexList WaitForMultipleHandles(
+    const WaitableHandleList &waitableHandleList,
+    unsigned long miliseconds)
 {
     WaitableHandleListEx handleList;
 
@@ -76,7 +82,9 @@ WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleList &waitabl
     return WaitForMultipleHandles(handleList, miliseconds);
 }
 
-WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleListEx &waitableHandleListEx, unsigned long miliseconds)
+WaitableHandleIndexList WaitForMultipleHandles(
+    const WaitableHandleListEx &waitableHandleListEx,
+    unsigned long miliseconds)
 {
     fd_set readFds, writeFds, errorFds;
 
@@ -88,24 +96,23 @@ WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleListEx &waita
     FD_ZERO(&errorFds);
 
     // Add read wait handles
-    for (WaitableHandleListEx::const_iterator iterator = waitableHandleListEx.begin();
+    for (WaitableHandleListEx::const_iterator iterator =
+             waitableHandleListEx.begin();
          iterator != waitableHandleListEx.end();
          ++iterator)
     {
-        if (iterator->first > maxFd)
+        if (iterator->first > maxFd) {
             maxFd = iterator->first;
+        }
 
         CheckWaitableHandle(iterator->first);
 
         // Handle errors along with read and write events
         FD_SET(iterator->first, &errorFds);
 
-        if (iterator->second == WaitMode::Read)
-        {
+        if (iterator->second == WaitMode::Read) {
             FD_SET(iterator->first, &readFds);
-        }
-        else if (iterator->second == WaitMode::Write)
-        {
+        } else if (iterator->second == WaitMode::Write) {
             FD_SET(iterator->first, &writeFds);
         }
     }
@@ -119,30 +126,32 @@ WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleListEx &waita
         effectiveTimeout = &timeout;
     }
 
-    if (TEMP_FAILURE_RETRY(select(maxFd + 1, &readFds, &writeFds, &errorFds, effectiveTimeout)) == -1)
+    if (TEMP_FAILURE_RETRY(select(maxFd + 1, &readFds, &writeFds, &errorFds,
+                                  effectiveTimeout)) == -1)
+    {
         Throw(WaitFailed);
+    }
 
     // Check results
     WaitableHandleIndexList indexes;
     size_t index = 0;
 
-    for (WaitableHandleListEx::const_iterator iterator = waitableHandleListEx.begin();
+    for (WaitableHandleListEx::const_iterator iterator =
+             waitableHandleListEx.begin();
          iterator != waitableHandleListEx.end();
          ++iterator)
     {
         // Always return errors, no matter what type of listening is set
         if (FD_ISSET(iterator->first, &errorFds)) {
             indexes.push_back(index);
-        }
-        else if (iterator->second == WaitMode::Read)
-        {
-            if (FD_ISSET(iterator->first, &readFds))
+        } else if (iterator->second == WaitMode::Read) {
+            if (FD_ISSET(iterator->first, &readFds)) {
                 indexes.push_back(index);
-        }
-        else if (iterator->second == WaitMode::Write)
-        {
-            if (FD_ISSET(iterator->first, &writeFds))
+            }
+        } else if (iterator->second == WaitMode::Write) {
+            if (FD_ISSET(iterator->first, &writeFds)) {
                 indexes.push_back(index);
+            }
         }
         ++index;
     }

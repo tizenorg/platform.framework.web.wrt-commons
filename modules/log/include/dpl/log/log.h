@@ -27,26 +27,21 @@
 #include <dpl/log/abstract_log_provider.h>
 #include <dpl/log/dlog_log_provider.h>
 #include <dpl/log/old_style_log_provider.h>
-#include <dpl/read_write_mutex.h>
 #include <sstream>
 #include <list>
 
-namespace DPL
-{
-namespace Log
-{
+namespace DPL {
+namespace Log {
 /**
  * DPL log system
  *
  * To switch logs into old style, export
  * DPL_USE_OLD_STYLE_LOGS before application start
  */
-class LogSystem
-    : private Noncopyable
+class LogSystem :
+    private Noncopyable
 {
-private:
-    ReadWriteMutex m_spinLock;
-
+  private:
     typedef std::list<AbstractLogProvider *> AbstractLogProviderPtrList;
     AbstractLogProviderPtrList m_providers;
 
@@ -55,7 +50,7 @@ private:
 
     bool m_isLoggingEnabled;
 
-public:
+  public:
     bool IsLoggingEnabled() const;
     LogSystem();
     virtual ~LogSystem();
@@ -63,27 +58,42 @@ public:
     /**
      * Log debug message
      */
-    void Debug(const char *message, const char *filename, int line, const char *function);
+    void Debug(const char *message,
+               const char *filename,
+               int line,
+               const char *function);
 
     /**
      * Log info message
      */
-    void Info(const char *message, const char *filename, int line, const char *function);
+    void Info(const char *message,
+              const char *filename,
+              int line,
+              const char *function);
 
     /**
      * Log warning message
      */
-    void Warning(const char *message, const char *filename, int line, const char *function);
+    void Warning(const char *message,
+                 const char *filename,
+                 int line,
+                 const char *function);
 
     /**
      * Log error message
      */
-    void Error(const char *message, const char *filename, int line, const char *function);
+    void Error(const char *message,
+               const char *filename,
+               int line,
+               const char *function);
 
     /**
      * Log pedantic message
      */
-    void Pedantic(const char *message, const char *filename, int line, const char *function);
+    void Pedantic(const char *message,
+                  const char *filename,
+                  int line,
+                  const char *function);
 
     /**
      * Set default's DLOG provider Tag
@@ -106,19 +116,22 @@ public:
 /*
  * Replacement low overhead null logging class
  */
-class NullStream {
+class NullStream
+{
   public:
     NullStream() {}
 
     template <typename T>
-    NullStream& operator<<(const T&) { return *this; }
+    NullStream& operator<<(const T&)
+    {
+        return *this;
+    }
 };
 
 /**
  * Log system singleton
  */
 typedef Singleton<LogSystem> LogSystemSingleton;
-
 }
 } // namespace DPL
 
@@ -129,26 +142,25 @@ typedef Singleton<LogSystem> LogSystemSingleton;
 
 #ifdef DPL_LOGS_ENABLED
     #define DPL_MACRO_FOR_LOGGING(message, function)                           \
-        do                                                                     \
-        {                                                                      \
-            if (DPL::Log::LogSystemSingleton::Instance().IsLoggingEnabled())   \
-            {                                                                  \
-                std::ostringstream platformLog;                                \
-                platformLog << message;                                        \
-                DPL::Log::LogSystemSingleton::Instance().function(             \
-                    platformLog.str().c_str(),                                 \
-                    __FILE__, __LINE__, __FUNCTION__);                         \
-            }                                                                  \
-        } while (0)
+    do                                                                     \
+    {                                                                      \
+        if (DPL::Log::LogSystemSingleton::Instance().IsLoggingEnabled())   \
+        {                                                                  \
+            std::ostringstream platformLog;                                \
+            platformLog << message;                                        \
+            DPL::Log::LogSystemSingleton::Instance().function(             \
+                platformLog.str().c_str(),                                 \
+                __FILE__, __LINE__, __FUNCTION__);                         \
+        }                                                                  \
+    } while (0)
 #else
 /* avoid warnings about unused variables */
     #define DPL_MACRO_FOR_LOGGING(message, function)                           \
-        do {                                                                   \
-            DPL::Log::NullStream ns;                                           \
-            ns << message;                                                     \
-        } while (0)
+    do {                                                                   \
+        DPL::Log::NullStream ns;                                           \
+        ns << message;                                                     \
+    } while (0)
 #endif
-
 
 #define  LogDebug(message) DPL_MACRO_FOR_LOGGING(message, Debug)
 #define  LogInfo(message) DPL_MACRO_FOR_LOGGING(message, Info)

@@ -22,7 +22,6 @@
 #ifndef DPL_SCOPED_FCLOSE_H
 #define DPL_SCOPED_FCLOSE_H
 
-
 #include <unistd.h>
 #include <cerrno>
 #include <cstdio>
@@ -31,27 +30,26 @@
 #include <dpl/scoped_resource.h>
 #include <dpl/errno_string.h>
 
-namespace DPL
-{
+namespace DPL {
 struct ScopedFClosePolicy
 {
     typedef FILE* Type;
-    static Type NullValue() { return NULL; }
+    static Type NullValue()
+    {
+        return NULL;
+    }
     static void Destroy(Type file)
     {
-        if (file != NULL)
-        {
+        if (file != NULL) {
             // Try to flush first
-            if (TEMP_FAILURE_RETRY(fflush(file)) != 0)
-            {
+            if (TEMP_FAILURE_RETRY(fflush(file)) != 0) {
                 std::string errString = GetErrnoString();
                 LogPedantic("Failed to fflush scoped fclose error: "
                             << errString);
             }
 
             // fclose cannot be retried, try to close once
-            if (fclose(file) != 0)
-            {
+            if (fclose(file) != 0) {
                 std::string errString = GetErrnoString();
                 LogPedantic("Failed scoped fclose error: " << errString);
             }

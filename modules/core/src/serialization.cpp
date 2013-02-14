@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of data serialization.
  */
+#include <stddef.h>
 #include <dpl/serialization.h>
 
 //

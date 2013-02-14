@@ -29,25 +29,27 @@
 #include <dpl/framework_efl.h>
 #include <list>
 
-namespace DPL
+namespace DPL {
+class Main :
+    public WaitableHandleWatchSupport
 {
-class Main
-    : public WaitableHandleWatchSupport
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
     };
 
-protected:
+  protected:
     Ecore_Fd_Handler *m_invokerHandler;
 
-    static Eina_Bool StaticDispatchInvoker(void *data, Ecore_Fd_Handler *fd_handler);
-    static Eina_Bool StaticDispatchReadWatcher(void *data, Ecore_Fd_Handler *fd_handler);
-    static Eina_Bool StaticDispatchWriteWatcher(void *data, Ecore_Fd_Handler *fd_handler);
+    static Eina_Bool StaticDispatchInvoker(void *data,
+                                           Ecore_Fd_Handler *fd_handler);
+    static Eina_Bool StaticDispatchReadWatcher(void *data,
+                                               Ecore_Fd_Handler *fd_handler);
+    static Eina_Bool StaticDispatchWriteWatcher(void *data,
+                                                Ecore_Fd_Handler *fd_handler);
 
     typedef std::list<Ecore_Fd_Handler *> EcoreFdHandlerList;
 
@@ -66,13 +68,18 @@ protected:
 
 #ifdef DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
     // GLIB loop intergration workaround
-    typedef int (*EcoreSelectType)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+    typedef int (*EcoreSelectType)(int nfds, fd_set *readfds, fd_set *writefds,
+                                   fd_set *exceptfds, struct timeval *timeout);
     EcoreSelectType m_oldEcoreSelect;
 
-    static int EcoreSelectInterceptor(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+    static int EcoreSelectInterceptor(int nfds,
+                                      fd_set *readfds,
+                                      fd_set *writefds,
+                                      fd_set *exceptfds,
+                                      struct timeval *timeout);
 #endif // DPL_ENABLE_GLIB_LOOP_INTEGRATION_WORKAROUND
 
-public:
+  public:
     explicit Main();
     virtual ~Main();
 };

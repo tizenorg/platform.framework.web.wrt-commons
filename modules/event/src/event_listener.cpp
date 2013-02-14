@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of MVC event listener
  */
+#include <stddef.h>
 #include <dpl/event/event_listener.h>
 
 //

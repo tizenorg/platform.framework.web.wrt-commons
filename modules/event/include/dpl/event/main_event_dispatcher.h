@@ -17,7 +17,8 @@
  * @file        main_event_dispatcher.h
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of main event dispatcher for EFL
+ * @brief       This file is the implementation file of main event dispatcher
+ * for EFL
  */
 #ifndef DPL_MAIN_EVENT_DISPATCHER_H
 #define DPL_MAIN_EVENT_DISPATCHER_H
@@ -31,25 +32,22 @@
 #include <dpl/framework_efl.h>
 #include <list>
 
-namespace DPL
+namespace DPL {
+namespace Event {
+class MainEventDispatcher :
+    public AbstractEventDispatcher
 {
-namespace Event
-{
-
-class MainEventDispatcher
-    : public AbstractEventDispatcher
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, AddEventFailed)
         DECLARE_EXCEPTION_TYPE(Base, AddTimedEventFailed)
     };
 
-protected:
+  protected:
     struct WrappedEventCall
     {
         AbstractEventCall *abstractEventCall;
@@ -58,12 +56,11 @@ protected:
 
         WrappedEventCall(AbstractEventCall *abstractEventCallArg,
                          bool timedArg,
-                         double dueTimeArg)
-            : abstractEventCall(abstractEventCallArg),
-              timed(timedArg),
-              dueTime(dueTimeArg)
-        {
-        }
+                         double dueTimeArg) :
+            abstractEventCall(abstractEventCallArg),
+            timed(timedArg),
+            dueTime(dueTimeArg)
+        {}
     };
 
     typedef std::list<WrappedEventCall> WrappedEventCallList;
@@ -71,7 +68,7 @@ protected:
     // Cross thread send support
     WrappedEventCallList m_wrappedCrossEventCallList;
     Mutex m_crossEventCallMutex;
-    WaitableEvent m_crossEventCallInvoker;
+    WaitableEvent* m_crossEventCallInvoker;
 
     Ecore_Event_Handler *m_eventCallHandler;
     Ecore_Fd_Handler *m_crossEventCallHandler;
@@ -85,35 +82,38 @@ protected:
         MainEventDispatcher *This;
 
         TimedEventStruct(AbstractEventCall *abstractEventCallArg,
-                         MainEventDispatcher *ThisArg)
-            : abstractEventCall(abstractEventCallArg),
-              This(ThisArg)
-        {
-        }
+                         MainEventDispatcher *ThisArg) :
+            abstractEventCall(abstractEventCallArg),
+            This(ThisArg)
+        {}
     };
 
-    void InternalAddEvent(AbstractEventCall *abstractEventCall, bool timed, double dueTime);
+    void InternalAddEvent(AbstractEventCall *abstractEventCall,
+                          bool timed,
+                          double dueTime);
 
     static void StaticDeleteEvent(void *data, void *event);
     static Eina_Bool StaticDispatchEvent(void *data, int type, void *event);
     static Eina_Bool StaticDispatchTimedEvent(void *event);
-    static Eina_Bool StaticDispatchCrossInvoker(void *data, Ecore_Fd_Handler *fd_handler);
+    static Eina_Bool StaticDispatchCrossInvoker(void *data,
+                                                Ecore_Fd_Handler *fd_handler);
 
     void DeleteEvent(AbstractEventCall *abstractEventCall);
     void DispatchEvent(AbstractEventCall *abstractEventCall);
     void DispatchTimedEvent(AbstractEventCall *abstractEventCall);
     void DispatchCrossInvoker();
 
-public:
+  public:
     explicit MainEventDispatcher();
     virtual ~MainEventDispatcher();
 
     virtual void AddEventCall(AbstractEventCall *abstractEventCall);
-    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall, double dueTime);
+    virtual void AddTimedEventCall(AbstractEventCall *abstractEventCall,
+                                   double dueTime);
+    virtual void ResetCrossEventCallHandler();
 };
 
 MainEventDispatcher& GetMainEventDispatcherInstance();
-
 }
 } // namespace DPL
 

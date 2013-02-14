@@ -1,38 +1,18 @@
-# Copyright (c) 2011 Samsung Electronics Co., Ltd All Rights Reserved
-#
-#    Licensed under the Apache License, Version 2.0 (the "License");
-#    you may not use this file except in compliance with the License.
-#    You may obtain a copy of the License at
-#
-#        http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
-#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#    See the License for the specific language governing permissions and
-#    limitations under the License.
-#
-# @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
-# @version     1.0
-# @brief
-#
+# Suppress all warnings; TODO: inhibit only specific warnings per target (TURNED OFF)
+#SET(CMAKE_CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
-SET(DPL_TEST_INCLUDE_DIR
-    ${DPL_CORE_INCLUDE_DIR}
-    ${DPL_EVENT_INCLUDE_DIR}
-    ${DPL_DBUS_INCLUDE_DIR}
-    ${DPL_DB_INCLUDE_DIR}
-    ${DPL_RPC_INCLUDE_DIR}
-    ${DPL_SOCKET_INCLUDE_DIR}
-    ${DPL_TEST_ENGINE_INCLUDE_DIR}
-    ${DPL_LOG_INCLUDE_DIR}
+INCLUDE(CMakeUtils.txt)
+
+SET(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+SET(TESTS_COMMON_DIR "${TESTS_DIR}/common")
+
+WRT_ADD_INTERNAL_DEPENDENCIES(
+  ${TARGET_DPL_TEST_ENGINE_EFL}
 )
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(event)
-ADD_SUBDIRECTORY(ace)
-ADD_SUBDIRECTORY(vcore)
-ADD_SUBDIRECTORY(localization)
+ADD_SUBDIRECTORY(dao)
+ADD_SUBDIRECTORY(dpl)
+
+# Rollback CXX flags
+#SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_BACKUP})

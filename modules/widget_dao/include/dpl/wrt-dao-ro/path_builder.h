@@ -26,7 +26,6 @@
 #include <dpl/noncopyable.h>
 
 namespace WrtDB {
-
 class PathBuilderImpl;
 
 class PathBuilder : private DPL::Noncopyable
@@ -51,7 +50,6 @@ class PathBuilder : private DPL::Noncopyable
   private:
     PathBuilderImpl* m_impl;
 };
-
 } // namespace WrtDB
 
 #endif

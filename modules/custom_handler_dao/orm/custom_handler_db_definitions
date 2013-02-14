@@ -1,0 +1,6 @@
+DATABASE_START(custom_handler)
+
+#include "custom_handler_db"
+#include "version_db"
+
+DATABASE_END()

@@ -28,27 +28,26 @@
 #include <dpl/atomic.h>
 #include <string>
 
-namespace DPL
-{
+namespace DPL {
 class Application
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, TooManyInstances)
         DECLARE_EXCEPTION_TYPE(Base, FrameworkError)
     };
 
-private:
+  private:
     static int app_create(void *data);
     static int app_terminate(void *data);
     static int app_pause(void *data);
     static int app_resume(void *data);
     static int app_reset(bundle *b, void *data);
 
-protected:
+  protected:
     int m_argc;
     char **m_argv;
     std::string m_applicationName;
@@ -67,15 +66,18 @@ protected:
     virtual void OnLowBattery();
     virtual void OnLanguageChanged();
 
-public:
-    Application(int argc, char **argv, const std::string &applicationName, bool showMainWindow = true);
+  public:
+    Application(int argc,
+                char **argv,
+                const std::string &applicationName,
+                bool showMainWindow = true);
     virtual ~Application();
 
     /**
      * @brief Execute application and start message processing
      */
     virtual int Exec();
-    
+
     /*
      * @brief Sends quit message to application message loop
      */
@@ -84,8 +86,11 @@ public:
 
 class ApplicationExt : public Application
 {
-public:
-    ApplicationExt(int argc, char **argv, const std::string &applicationName, bool showMainWindow = true);
+  public:
+    ApplicationExt(int argc,
+                   char **argv,
+                   const std::string &applicationName,
+                   bool showMainWindow = true);
     virtual ~ApplicationExt();
 
     /**
@@ -97,10 +102,10 @@ public:
      * @brief Sends quit message to application message loop
      */
     virtual void Quit();
-private:
+
+  private:
     static DPL::Atomic m_useCount;
 };
-
 } // namespace DPL
 
 #endif // DPL_APPLICATION_H

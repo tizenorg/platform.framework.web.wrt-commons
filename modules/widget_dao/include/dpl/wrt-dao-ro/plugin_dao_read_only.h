@@ -20,22 +20,20 @@
  * @brief   This file contains the declaration of plugin dao read only
  */
 
-
 #ifndef WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_
 #define WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_
 
 #include <string>
 #include <list>
+#include <memory>
 #include <dpl/exception.h>
-#include <dpl/shared_ptr.h>
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
 typedef std::list<DbPluginHandle> PluginHandleList;
 typedef std::set<DbPluginHandle> PluginHandleSet;
 typedef std::list<std::string> ImplementedObjectsList;
-typedef DPL::SharedPtr<PluginHandleSet> PluginHandleSetPtr;
+typedef std::shared_ptr<PluginHandleSet> PluginHandleSetPtr;
 
 //TODO make it friend to FeatureDAO or inherit
 class PluginDAOReadOnly
@@ -86,28 +84,24 @@ class PluginDAOReadOnly
     static bool isPluginInstalled(DbPluginHandle pluginHandle);
 
     static PluginHandleSetPtr getPluginHandleByStatus(
-            PluginInstallationState state);
+        PluginInstallationState state);
 
     static DbPluginHandle getPluginHandleForImplementedObject(
-            const std::string& objectName);
+        const std::string& objectName);
 
     static ImplementedObjectsList getImplementedObjectsForPluginHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     static PluginObjectsDAO::ObjectsPtr getRequiredObjectsForPluginHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     static PluginInstallationState getInstallationStateForHandle(
-            DbPluginHandle handle);
+        DbPluginHandle handle);
 
     DbPluginHandle getPluginHandle() const;
     PluginInstallationState getInstallationStatus() const;
     std::string  getLibraryPath() const;
     std::string  getLibraryName() const;
-    std::string  getInstallURI() const;
-    std::string  getKeyCn() const;
-    std::string  getRootKey() const;
-    std::string  getRootKeyFingerprint() const;
     PluginHandleSetPtr getLibraryDependencies() const;
 
   private:
@@ -115,7 +109,6 @@ class PluginDAOReadOnly
 
     void checkInstallationCompleted();
 };
-
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_PLUGIN_DAO_READ_ONLY_H_ */

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of file output
  */
+#include <stddef.h>
 #include <dpl/file_output.h>
 #include <dpl/binary_queue.h>
 #include <dpl/scoped_free.h>
@@ -28,15 +29,13 @@
 #include <fcntl.h>
 #include <errno.h>
 
-namespace DPL
-{
-FileOutput::FileOutput()
-    : m_fd(-1)
-{
-}
+namespace DPL {
+FileOutput::FileOutput() :
+    m_fd(-1)
+{}
 
-FileOutput::FileOutput(const std::string& fileName)
-    : m_fd(-1)
+FileOutput::FileOutput(const std::string& fileName) :
+    m_fd(-1)
 {
     Open(fileName);
 }
@@ -49,11 +48,15 @@ FileOutput::~FileOutput()
 void FileOutput::Open(const std::string& fileName)
 {
     // Open non-blocking
-    int fd = TEMP_FAILURE_RETRY(open(fileName.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_NONBLOCK, 0664));
+    int fd =
+        TEMP_FAILURE_RETRY(open(fileName.c_str(), O_WRONLY | O_CREAT |
+                                O_TRUNC |
+                                O_NONBLOCK, 0664));
 
     // Throw an exception if an error occurred
-    if (fd == -1)
+    if (fd == -1) {
         ThrowMsg(Exception::OpenFailed, fileName);
+    }
 
     // Close if any existing
     Close();
@@ -66,11 +69,13 @@ void FileOutput::Open(const std::string& fileName)
 
 void FileOutput::Close()
 {
-    if (m_fd == -1)
+    if (m_fd == -1) {
         return;
+    }
 
-    if (TEMP_FAILURE_RETRY(close(m_fd)) == -1)
+    if (TEMP_FAILURE_RETRY(close(m_fd)) == -1) {
         Throw(Exception::CloseFailed);
+    }
 
     m_fd = -1;
 
@@ -80,8 +85,9 @@ void FileOutput::Close()
 size_t FileOutput::Write(const BinaryQueue &buffer, size_t bufferSize)
 {
     // Adjust write size
-    if (bufferSize > buffer.Size())
+    if (bufferSize > buffer.Size()) {
         bufferSize = buffer.Size();
+    }
 
     // FIXME: User write visitor to write !
     // WriteVisitor visitor
@@ -95,18 +101,14 @@ size_t FileOutput::Write(const BinaryQueue &buffer, size_t bufferSize)
 
     LogPedantic("Wrote " << result << " bytes to file");
 
-    if (result > 0)
-    {
+    if (result > 0) {
         // Successfuly written some bytes
         return static_cast<size_t>(result);
-    }
-    else if (result == 0)
-    {
+    } else if (result == 0) {
         // This is abnormal result
-        ThrowMsg(CommonException::InternalError, "Invalid write result, 0 bytes written");
-    }
-    else
-    {
+        ThrowMsg(CommonException::InternalError,
+                 "Invalid write result, 0 bytes written");
+    } else {
         // Interpret error result
         // FIXME: Handle errno
         Throw(AbstractOutput::Exception::WriteFailed);

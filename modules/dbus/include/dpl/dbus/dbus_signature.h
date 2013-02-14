@@ -28,7 +28,6 @@
 
 namespace DPL {
 namespace DBus {
-
 template<typename T>
 struct SimpleType;
 
@@ -119,7 +118,7 @@ template<>
 struct SimpleType<unsigned char>
 {
     static const int value =
-            __UnsignedIntegerType<sizeof(unsigned char)>::value;
+        __UnsignedIntegerType<sizeof(unsigned char)>::value;
 };
 
 template<>
@@ -132,7 +131,7 @@ template<>
 struct SimpleType<unsigned short>
 {
     static const int value =
-            __UnsignedIntegerType<sizeof(unsigned short)>::value;
+        __UnsignedIntegerType<sizeof(unsigned short)>::value;
 };
 
 template<>
@@ -145,7 +144,7 @@ template<>
 struct SimpleType<unsigned int>
 {
     static const int value =
-            __UnsignedIntegerType<sizeof(unsigned int)>::value;
+        __UnsignedIntegerType<sizeof(unsigned int)>::value;
 };
 
 template<>
@@ -158,7 +157,7 @@ template<>
 struct SimpleType<unsigned long>
 {
     static const int value =
-            __UnsignedIntegerType<sizeof(unsigned long)>::value;
+        __UnsignedIntegerType<sizeof(unsigned long)>::value;
 };
 
 template<>
@@ -221,20 +220,17 @@ struct ArraySignature
 // std::vector
 template<typename T>
 struct Signature<std::vector<T> > : public ArraySignature<T>
-{
-};
+{};
 
 // std::list
 template<typename T>
 struct Signature<std::list<T> > : public ArraySignature<T>
-{
-};
+{};
 
 // std::set
 template<typename T>
 struct Signature<std::set<T> > : public ArraySignature<T>
-{
-};
+{};
 
 // std::pair
 template<typename K, typename V>
@@ -244,8 +240,8 @@ struct Signature<std::pair<K, V> >
     {
         static const std::string signature = std::string(
                 DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING)
-                + Signature<K>::value() + Signature<V>::value()
-                + DBUS_DICT_ENTRY_END_CHAR_AS_STRING;
+            + Signature<K>::value() + Signature<V>::value()
+            + DBUS_DICT_ENTRY_END_CHAR_AS_STRING;
         return signature.c_str();
     }
 };
@@ -253,9 +249,7 @@ struct Signature<std::pair<K, V> >
 // std::map
 template<typename K, typename V>
 struct Signature<std::map<K, V> > : public ArraySignature<std::pair<K, V> >
-{
-};
-
+{};
 } // namespace DBus
 } // namespace DPL
 
