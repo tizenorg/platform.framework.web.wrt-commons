@@ -20,6 +20,7 @@
  * @biref       Char traits are used to create basic_string extended with additional features
  *              Current char traits could be extended in feature to boost performance
  */
+#include <stddef.h>
 #include <dpl/char_traits.h>
 
 //

@@ -149,7 +149,9 @@ class ThreadDatabaseSupport :
     {
     }
 
-    void AttachToThread()
+    void AttachToThread(
+                          DPL::DB::SqlConnection::Flag::Option options =
+                          DPL::DB::SqlConnection::Flag::RO)
     {
         Linger() = false;
 
@@ -162,7 +164,7 @@ class ThreadDatabaseSupport :
         // Initialize SQL connection described in traits
         LogInfo("Attaching thread database connection: " << m_address);
 
-        Connection() = new DPL::DB::SqlConnection(m_address.c_str(), m_flags);
+        Connection() = new DPL::DB::SqlConnection(m_address.c_str(), m_flags, options);
 
         RefCounter() = 0;
 

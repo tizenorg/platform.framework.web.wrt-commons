@@ -19,4 +19,5 @@
  * @version     1.0
  * @brief       This file is the implementation file of fast delegate
  */
+#include <stddef.h>
 #include <dpl/fast_delegate.h>

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of DLOG log provider
  */
+#include <stddef.h>
 #include <dpl/log/dlog_log_provider.h>
 #include <cstring>
 #include <sstream>

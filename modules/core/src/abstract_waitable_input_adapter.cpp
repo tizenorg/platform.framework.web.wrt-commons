@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of abstract waitable input adapter
  */
+#include <stddef.h>
 #include <dpl/abstract_waitable_input_adapter.h>
 
 namespace DPL

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of file output
  */
+#include <stddef.h>
 #include <dpl/file_output.h>
 #include <dpl/binary_queue.h>
 #include <dpl/scoped_free.h>

@@ -19,12 +19,16 @@
  * @version     0.1
  * @brief
  */
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/config_parser_data.h>
 #include <dpl/log/log.h>
 #include <libxml/xmlreader.h>
 #include <libxml/xmlstring.h>
 
 namespace WrtDB {
+bool IsSpace(const xmlChar* str);
+bool CopyChar(xmlChar* out, xmlChar* in);
+
 
 bool IsSpace(const xmlChar* str)
 {
@@ -87,6 +91,8 @@ bool IsSpace(const xmlChar* str)
                 case 0xa9:
                 case 0xaf:
                     return true;
+                default:
+                    return false;
                 }
             case 0x81:
                 if (*(str + 2) == 0x9f) {
@@ -293,6 +299,36 @@ bool ConfigParserData::Feature::operator<=(const Feature& other) const
     return paramsList <= other.paramsList;
 }
 
+bool ConfigParserData::Privilege::operator==(const Privilege& other) const
+{
+    return name == other.name;
+}
+
+bool ConfigParserData::Privilege::operator!=(const Privilege& other) const
+{
+    return name != other.name;
+}
+
+bool ConfigParserData::Privilege::operator >(const Privilege& other) const
+{
+    return name > other.name;
+}
+
+bool ConfigParserData::Privilege::operator>=(const Privilege& other) const
+{
+    return name >= other.name;
+}
+
+bool ConfigParserData::Privilege::operator <(const Privilege& other) const
+{
+    return name < other.name;
+}
+
+bool ConfigParserData::Privilege::operator<=(const Privilege& other) const
+{
+    return name < other.name;
+}
+
 bool ConfigParserData::Icon::operator==(const Icon& other) const
 {
     return src == other.src;
@@ -421,4 +457,25 @@ bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
     m_scheme != info.m_scheme &&
     m_mime != info.m_mime;
 }
+
+bool ConfigParserData::LiveboxInfo::operator==(const LiveboxInfo& other) const
+{
+    return m_liveboxId == other.m_liveboxId &&
+        m_autoLaunch == other.m_autoLaunch &&
+        m_updatePeriod == other.m_updatePeriod &&
+        m_primary == other.m_primary &&
+        m_label == other.m_label &&
+        m_icon == other.m_icon;
+}
+
+bool ConfigParserData::LiveboxInfo::operator!=(const LiveboxInfo& other) const
+{
+    return m_liveboxId != other.m_liveboxId &&
+	 m_autoLaunch != other.m_autoLaunch &&
+        m_updatePeriod != other.m_updatePeriod &&
+        m_primary != other.m_primary &&
+        m_label != other.m_label &&
+        m_icon != other.m_icon;
+}
+
 } // namespace WrtDB

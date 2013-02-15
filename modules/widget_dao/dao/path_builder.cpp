@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for PathBuilde class.
  */
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/path_builder.h>
 #include <sstream>
 

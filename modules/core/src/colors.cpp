@@ -20,7 +20,7 @@
  * @brief       Some constants with definition of colors for Console
  *              and html output
  */
-
+#include <stddef.h>
 #include <dpl/colors.h>
 
 

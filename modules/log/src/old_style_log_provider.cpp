@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of old style log provider
  */
+#include <stddef.h>
 #include <dpl/log/old_style_log_provider.h>
 #include <dpl/colors.h>
 #include <cstdio>

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of address
  */
+#include <stddef.h>
 #include <dpl/address.h>
 #include <sstream>
 #include <dpl/assert.h>

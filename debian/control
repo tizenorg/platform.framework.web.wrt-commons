@@ -4,9 +4,9 @@ Priority: extra
 Maintainer: Lukasz Wrzosek<l.wrzosek@samsung.com>,  Taejeong.lee <taejeong.lee@samsung.com>
 Standards-Version: 3.7.2
 Uploaders: Yunchan Cho <yunchan.cho@samsung.com>,Przemyslaw Dobrowolski <p.dobrowolsk@samsung.com>, Pawel Sikorski <p.sikorski@samsung.com>, Zbigniew Kostrzewa <z.kostrzewa@samsung.com>
-Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev, libicu-dev, libxmlsec1-dev, openssl, libxml2-dev, libsoup2.4-dev, libcert-svc-dev, libiri-dev, libidn11-dev, libslp-tapi-dev
+Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev, libicu-dev, libxmlsec1-dev, openssl, libxml2-dev, libsoup2.4-dev, libiri-dev, libidn11-dev
 # If you want to build version of gtk, comment out above one live and use the following one line
-#Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), libgtk2.0-dev, zlib1g-dev, libpcre-dev, libicu-dev
+#Build-Depends: debhelper (>= 5), libecore-dev, libslp-setting-dev (>=0.2.5-2), libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libglib2.0-dev, libslp-db-util-dev (>= 0.1.0-23), libgtk2.0-dev, zlib1g-dev, libpcre-dev, libicu-dev
 
 Package: wrt-commons
 Section: libs
@@ -35,7 +35,7 @@ Provides: dpl-efl-dev
 Conflicts: dpl-efl-dev
 Replaces: dpl-efl-dev
 Architecture: any
-Depends: wrt-commons (= ${Source-Version}), libecore-dev, libslp-setting-dev (>=0.2.5-2), libheynoti-dev, libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev
+Depends: wrt-commons (= ${Source-Version}), libecore-dev, libslp-setting-dev (>=0.2.5-2), libappcore-efl-dev, libssl-dev, libsqlite3-dev, dlog-dev (>= 0.2.14-0), libslp-db-util-dev (>= 0.1.0-23), zlib1g-dev, libpcre-dev, libxml2-dev
 Description: Design patterns library - EFL based developer files
  Design patterns library is a collection of useful C++ utilities
  to easily develop window applications. The most important part of

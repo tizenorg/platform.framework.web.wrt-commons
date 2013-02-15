@@ -13,13 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#include <stddef.h>
 #include <set>
 #include <dpl/assert.h>
 #include <vector>
 
 #include <map>
 
-#include <mime_type_utils.h>
+#include <dpl/utils/mime_type_utils.h>
 
 const std::set<DPL::String>& MimeTypeUtils::getMimeTypesSupportedForIcon()
 {

@@ -36,12 +36,10 @@ SET(DPL_CORE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/core/src/exception.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/fast_delegate.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/file_input.cpp
-    ${PROJECT_SOURCE_DIR}/modules/core/src/file_input_mapping.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/file_output.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/lexical_cast.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/mutex.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_base_pipe.cpp
-    ${PROJECT_SOURCE_DIR}/modules/core/src/named_input_pipe.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_output_pipe.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/noncopyable.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/once.cpp
@@ -84,6 +82,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/apply.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/assert.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/atomic.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/auto_ptr.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/binary_queue.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/bool_operator.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/char_traits.h
@@ -94,7 +93,6 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/exception.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/fast_delegate.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/file_input.h
-    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/file_input_mapping.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/file_output.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/foreach.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/generic_event.h

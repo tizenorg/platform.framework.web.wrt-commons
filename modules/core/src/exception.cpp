@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation of exception system
  */
+#include <stddef.h>
 #include <dpl/exception.h>
 #include <dpl/log/log.h>
 #include <cstdio>

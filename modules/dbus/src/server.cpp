@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>
 #include <dpl/dbus/server.h>

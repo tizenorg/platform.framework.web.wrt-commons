@@ -29,7 +29,7 @@
 
 #include <dpl/exception.h>
 #include <dpl/errno_string.h>
-#include <file_utils.h>
+#include <dpl/utils/file_utils.h>
 
 #include <dpl/wrt-dao-ro/path_builder.h>
 
@@ -145,7 +145,7 @@ void MakePath(const std::string& path,
         mode_t mode)
 {
     if (mkpath(path.c_str(), mode) == -1) {
-        ThrowMsg(DPL::CommonException::InternalError, "Cannot make path");
+        ThrowMsg(CreateDirectoryException, "Cannot make path");
     }
 }
 

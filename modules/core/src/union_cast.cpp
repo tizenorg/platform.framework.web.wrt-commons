@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for union cast
  */
+#include <stddef.h>
 #include <dpl/union_cast.h>
 
 //

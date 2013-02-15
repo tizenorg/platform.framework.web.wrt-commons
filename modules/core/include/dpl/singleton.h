@@ -61,46 +61,6 @@ public:
     static void ResetThreadGuard();
 };
 
-//This is needed for backward compatibility
-#ifndef SEPARATED_SINGLETON_IMPLEMENTATION
-template<typename Class>
-Singleton<Class>& Singleton<Class>::InternalInstance()
-{
-    static Singleton<Class> instance;
-    return instance;
-}
-
-template<typename Class>
-Class &Singleton<Class>::Instance()
-{
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
-
-    if (!!instance.m_guard)
-    {
-        Assert(Thread::GetCurrentThread() == *instance.m_guard &&
-               "Singleton thread guard failed. A forbidden call from foreign thread was detected!");
-    }
-
-    return instance;
-}
-
-// Thread guarding
-template<typename Class>
-void Singleton<Class>::SetThreadGuard(Thread *thread)
-{
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
-    instance.m_guard = OptionalThreadPtr(thread);
-}
-
-template<typename Class>
-void Singleton<Class>::ResetThreadGuard()
-{
-    Singleton<Class>& instance = Singleton<Class>::InternalInstance();
-    instance.m_guard = OptionalThreadPtr::Null;
-}
-
-#endif
-
 } // namespace DPL
 
 #endif // DPL_SINGLETON_H

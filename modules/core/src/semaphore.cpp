@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of semaphore
  */
+#include <stddef.h>
 #include <dpl/semaphore.h>
 #include <dpl/assert.h>
 #include <dpl/log/log.h>

@@ -43,7 +43,7 @@ class ConfigParserData
   public:
     struct Param
     {
-        Param(const DPL::String& name) : name(name)
+        Param(const DPL::String& _name) : name(_name)
         {
         }
         DPL::String name;
@@ -59,9 +59,9 @@ class ConfigParserData
 
     struct Feature
     {
-        Feature(const DPL::String& name,
-                bool required = true) : name(name),
-            required(required)
+        Feature(const DPL::String& _name,
+                bool _required = true) : name(_name),
+            required(_required)
         {
         }
         DPL::String name;
@@ -77,9 +77,25 @@ class ConfigParserData
     };
     typedef std::set<Feature> FeaturesList;
 
+    struct Privilege
+    {
+        Privilege(const DPL::String& _name) : name(_name)
+        {
+        }
+        DPL::String name;
+
+        bool operator==(const Privilege&) const;
+        bool operator!=(const Privilege&) const;
+        bool operator >(const Privilege&) const;
+        bool operator>=(const Privilege&) const;
+        bool operator <(const Privilege&) const;
+        bool operator<=(const Privilege&) const;
+    };
+    typedef std::set<Privilege> PrivilegeList;
+
     struct Icon
     {
-        Icon(const DPL::String& src) : src(src)
+        Icon(const DPL::String& _src) : src(_src)
         {
         }
         DPL::String src;
@@ -109,11 +125,11 @@ class ConfigParserData
 
     struct Preference
     {
-        Preference(const DPL::String& name,
-                bool readonly = false) :
-            name(name),
+        Preference(const DPL::String& _name,
+                bool _readonly = false) :
+            name(_name),
             value(),
-            readonly(readonly)
+            readonly(_readonly)
         {
         }
         DPL::String name;
@@ -167,6 +183,9 @@ class ConfigParserData
 
     typedef std::set<Setting> SettingsList;
 
+    /* ServiceInfo will be removed.
+     * ServiceInfo will be changed AppControl
+     */
     struct ServiceInfo
     {
         ServiceInfo(
@@ -188,7 +207,62 @@ class ConfigParserData
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;
     };
-    typedef std::list<ServiceInfo> ServiceInfoList;
+
+    struct AppControlInfo
+    {
+        AppControlInfo(
+            const DPL::String& operation) :
+            m_operation(operation)
+        {
+        }
+        DPL::String m_src;
+        DPL::String m_operation;
+        std::set <DPL::String> m_uriList;
+        std::set <DPL::String> m_mimeList;
+
+        bool operator==(const AppControlInfo&) const;
+        bool operator!=(const AppControlInfo&) const;
+    };
+
+    typedef std::list<ServiceInfo> ServiceInfoList; // It will be removed.
+    typedef std::list<AppControlInfo> AppControlInfoList;
+
+    typedef std::list<std::pair<DPL::String, DPL::String>> BoxSizeList;
+
+    struct LiveboxInfo
+    {
+        LiveboxInfo() { }
+
+        struct BoxContent
+        {
+            DPL::String m_boxSrc;
+            BoxSizeList m_boxSize ;
+            DPL::String m_pdSrc;
+            DPL::String m_pdWidth;
+            DPL::String m_pdHeight;
+        }; typedef BoxContent BoxContentInfo;
+
+        DPL::String m_label;
+        DPL::String m_icon;
+        DPL::String m_liveboxId;
+        DPL::String m_primary;
+        DPL::String m_autoLaunch;
+        DPL::String m_updatePeriod;
+        BoxContentInfo m_boxInfo;
+
+        bool operator==(const LiveboxInfo&) const;
+        bool operator!=(const LiveboxInfo&) const;
+        bool operator >(const LiveboxInfo&) const;
+        bool operator>=(const LiveboxInfo&) const;
+        bool operator <(const LiveboxInfo&) const;
+        bool operator<=(const LiveboxInfo&) const;
+    };
+    typedef std::list<DPL::Optional<LiveboxInfo>> LiveboxList;
+    LiveboxList m_livebox;
+
+    typedef std::list<DPL::OptionalString> DependsPkgList;
+
+    typedef std::set<DPL::String> CategoryList;
 
     StringsList nameSpaces;
 
@@ -199,6 +273,7 @@ class ConfigParserData
     DPL::OptionalString authorEmail;
 
     FeaturesList featuresList;
+    PrivilegeList privilegeList;
 
     SettingsList settingsList;
 
@@ -217,9 +292,7 @@ class ConfigParserData
 
     bool flashNeeded;
 
-    DPL::OptionalFloat minVersionRequired;
-    DPL::OptionalInt minVersionRequiredFound;
-    StringsList powderDescriptionLinks;
+    DPL::OptionalString minVersionRequired;
 
     bool backSupported;
     bool accessNetwork;
@@ -231,15 +304,26 @@ class ConfigParserData
     DPL::OptionalString startFileContentType;
     IconsList iconsList;
 
-    // pakcage name determined by operator for TIZEN webapp
-    DPL::OptionalString pkgname;
+    // tizen id / required platform min version for TIZEN webapp
+    DPL::OptionalString tizenId;
+    DPL::OptionalString tizenMinVersionRequired;
+
     //Application service model list
-    ServiceInfoList appServiceList;
+    ServiceInfoList appServiceList; //It will be removed.
+    AppControlInfoList appControlList;
+
+    // For link shared directory
+    DependsPkgList dependsPkgList;
+    // Splash image path
+    DPL::OptionalString splashImgSrc;
+    // Background page filename
+    DPL::OptionalString backgroundPage;
+    // For category
+    CategoryList categoryList;
 
     ConfigParserData() :
         flashNeeded(false),
-        minVersionRequired(1.0),
-        minVersionRequiredFound(),
+        minVersionRequired(),
         backSupported(false),
         accessNetwork(false),
         startFileEncountered(false)

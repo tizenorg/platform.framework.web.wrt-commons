@@ -19,46 +19,46 @@
 # @brief
 #
 
-#
 # Check minimum CMake version
-#
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-#
 # Project name
-#
 PROJECT(dpl)
 
-#
-# Logs
-#
+STRING(REGEX MATCH "([^.]*)" API_VERSION "${VERSION}")
+ADD_DEFINITIONS("-DAPI_VERSION=\"$(API_VERSION)\"")
 
+# Comment this to disable control of global settings with environment variable
+ADD_DEFINITIONS("-DGLOBAL_SETTINGS_CONTROL")
 
+# Build type
+IF(NOT CMAKE_BUILD_TYPE)
+    SET(CMAKE_BUILD_TYPE "Release")
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
+# Options
 OPTION(DPL_LOG "DPL logs status" OFF)
-
-IF(DPL_LOG)
+IF(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
     MESSAGE(STATUS "Logging enabled for DPL")
     ADD_DEFINITIONS("-DDPL_LOGS_ENABLED")
-ELSE(DPL_LOG)
+ELSE(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
     MESSAGE(STATUS "Logging disabled for DPL")
-ENDIF(DPL_LOG)
-ADD_DEFINITIONS("-DSEPARATED_SINGLETON_IMPLEMENTATION")
+ENDIF(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
 
-# Gtk
-OPTION(DISABLE_GTK "Disable GTK stuff" ON)
+OPTION(WITH_TESTS "Build tests" OFF)
 
-#
-# Build type
-#
+# Compiler flags
+SET(CMAKE_C_FLAGS_PROFILING    "-O2")
+SET(CMAKE_CXX_FLAGS_PROFILING  "-O2 -std=c++0x")
+SET(CMAKE_C_FLAGS_DEBUG        "-O0 -g")
+SET(CMAKE_CXX_FLAGS_DEBUG      "-O0 -std=c++0x -g")
+SET(CMAKE_C_FLAGS_RELEASE      "-O2 -g")
+SET(CMAKE_CXX_FLAGS_RELEASE    "-O2 -std=c++0x -g")
+SET(CMAKE_CXX_FLAGS_CCOV       "-O0 -std=c++0x -g --coverage")
 
-SET(CMAKE_BUILD_TYPE "Release")
+ADD_DEFINITIONS("-fPIC")                        # If supported for the target machine, emit position-independent code, suitable for dynamic linking and avoiding any limit on the size of the global offset table. This option makes a difference on the m68k, PowerPC and SPARC. (BJ: our ARM too?)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-SET(CMAKE_CXX_FLAGS "-O2 -g -fPIC -D_FORTIFY_SOURCE=0")
-
-#
 # CMake settings
-#
 MESSAGE(STATUS "========================================")
 MESSAGE(STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR})
 MESSAGE(STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR})
@@ -107,17 +107,13 @@ MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCC: " ${CMAKE_COMPILER_IS_GNUCC})
 MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX})
 MESSAGE(STATUS "CMAKE_AR: " ${CMAKE_AR})
 MESSAGE(STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB})
+MESSAGE(STATUS "WITH_TESTS: " ${WITH_TESTS})
 MESSAGE(STATUS "========================================")
 
-#
 # Build 3rd party libraries first
-#
 ADD_SUBDIRECTORY(3rdparty)
 
-#
 # Compiler flags
-#
-
 ADD_DEFINITIONS("-fvisibility=default")         # mark all exported symbols as visible
 
 # Warnings mode
@@ -186,18 +182,27 @@ SET(TARGET_DPL_SOCKET_EFL "lib${PROJECT_NAME}-socket-efl")
 SET(TARGET_DPL_RPC_EFL "lib${PROJECT_NAME}-rpc-efl")
 SET(TARGET_DPL_TEST_ENGINE_EFL "lib${PROJECT_NAME}-test-efl")
 SET(TARGET_DPL_LOG_EFL "lib${PROJECT_NAME}-log-efl")
-SET(TARGET_DPL_POPUP "lib${PROJECT_NAME}-popup-efl")
 SET(TARGET_WRT_DAO_RW_LIB "dpl-wrt-dao-rw")
 SET(TARGET_WRT_DAO_RO_LIB "dpl-wrt-dao-ro")
+SET(TARGET_AUTO_SAVE_DAO_LIB "wrt-commons-auto-save-dao")
+SET(TARGET_AUTO_SAVE_DAO_RW_LIB "wrt-commons-auto-save-dao-rw")
+SET(TARGET_AUTO_SAVE_DAO_RO_LIB "wrt-commons-auto-save-dao-ro")
+SET(TARGET_CUSTOM_HANDLER_DAO_RW_LIB "wrt-commons-custom-handler-dao-rw")
+SET(TARGET_CUSTOM_HANDLER_DAO_RO_LIB "wrt-commons-custom-handler-dao-ro")
+SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
-SET(TARGET_ACE_DAO_RO_LIB "dpl-ace-dao-ro")
-SET(TARGET_ACE_DAO_RW_LIB "dpl-ace-dao-rw")
-SET(TARGET_ACE_LIB "dpl-ace")
-SET(TARGET_VCORE_LIB "dpl-vcore")
+SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
+
+macro(configure_and_install_pkg PKG_FILE)
+    CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_FILE} DESTINATION lib/pkgconfig)
+endmacro(configure_and_install_pkg)
 
 ADD_SUBDIRECTORY(modules)
 
 ADD_SUBDIRECTORY(build)
-ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(etc)
 
+IF(WITH_TESTS)
+  ADD_SUBDIRECTORY(tests)
+ENDIF(WITH_TESTS)

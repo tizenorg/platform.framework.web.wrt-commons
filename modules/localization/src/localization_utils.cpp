@@ -21,40 +21,11 @@
 
 #include <dpl/localization/localization_utils.h>
 
-#include <appcore-efl.h>
-#include <vconf.h>
-#include <dpl/framework_efl.h>
-
 #include <dpl/foreach.h>
 #include <dpl/mutex.h>
-#include <dpl/wrt-dao-rw/widget_dao.h>
-
-namespace {
-
-static int LanguageChanged(void *)
-{
-    char* lang = vconf_get_str(VCONFKEY_LANGSET);
-    if (!lang) {
-        LogError("Cannot get locale settings from vconf");
-        return 0;
-    }
-    LogDebug("Language set to: " << lang);
-
-    using namespace LocalizationUtils;
-
-    LanguageTagsList list;
-    list.push_back(DPL::FromUTF8String(lang));
-    SetSystemLanguageTags(list);
-
-    LogDebug("LanguageChanged to " << lang);
-
-    return 0;
-}
-}
 
 namespace LocalizationUtils {
 static LanguageTagsList m_systemLanguageTags;
-static LanguageTagsList m_userLanguageTags;
 static LanguageTagsList m_languageTags;
 static DPL::ReadWriteMutex m_readWriteMutex;
 
@@ -92,13 +63,9 @@ void UpdateUserAgentLanguageTags()
     // WARNING!!!!!  This function shall be called
     // only when mutex is locked in readWriteMode!
 
-    LanguageTagsList list = m_userLanguageTags;
-    list.insert(list.begin(),
-                m_systemLanguageTags.begin(),
-                m_systemLanguageTags.end());
     m_languageTags.clear();
 
-    FOREACH(i, list) {
+    FOREACH(i, m_systemLanguageTags) {
         DPL::String tag = LocaleToBCP47LanguageTag(*i);
         while (true) { //W3C Packaging 9. Step 5. 2. D
             if (tag.empty()) { continue; }
@@ -118,15 +85,6 @@ void UpdateUserAgentLanguageTags()
     m_languageTags.push_back(L"");
 }
 
-void SetUserLanguageTags(const LanguageTagsList& tags)
-{
-    DPL::ReadWriteMutex::ScopedWriteLock lock(&m_readWriteMutex);
-    if (m_userLanguageTags != tags) {
-        m_userLanguageTags = tags;
-        UpdateUserAgentLanguageTags();
-    }
-}
-
 void SetSystemLanguageTags(const LanguageTagsList& tags)
 {
     DPL::ReadWriteMutex::ScopedWriteLock lock(&m_readWriteMutex);
@@ -141,15 +99,4 @@ LanguageTagsList GetUserAgentLanguageTags()
     DPL::ReadWriteMutex::ScopedReadLock lock(&m_readWriteMutex);
     return m_languageTags;
 }
-
-void Initialize()
-{
-    appcore_set_event_callback(
-        APPCORE_EVENT_LANG_CHANGE,
-        &LanguageChanged,
-        NULL);
-
-    LanguageChanged(NULL); // updating language for the first time
-}
-
 }

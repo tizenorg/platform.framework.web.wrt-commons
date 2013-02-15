@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of once
  */
+#include <stddef.h>
 #include <dpl/once.h>
 
 namespace DPL

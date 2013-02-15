@@ -20,6 +20,7 @@
  * @version 1.0
  * @brief   Implementation file for abstaract task definition
  */
+#include <stddef.h>
 #include <dpl/task.h>
 
 //

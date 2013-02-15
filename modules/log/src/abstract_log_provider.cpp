@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of abstract log provider
  */
+#include <stddef.h>
 #include <dpl/log/abstract_log_provider.h>
 #include <cstring>
 

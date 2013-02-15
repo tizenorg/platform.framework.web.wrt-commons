@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of abstract waitable output adapter
  */
+#include <stddef.h>
 #include <dpl/abstract_waitable_output_adapter.h>
 
 namespace DPL

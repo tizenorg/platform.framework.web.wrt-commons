@@ -22,7 +22,7 @@
 #ifndef W3C_FILE_LOCALIZATION_H
 #define W3C_FILE_LOCALIZATION_H
 
-#include <dpl/wrt-dao-rw/widget_dao.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/optional.h>
 #include <dpl/string.h>
 #include <list>
@@ -37,24 +37,49 @@ typedef std::list<WidgetIcon> WidgetIconList;
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
+        const DPL::String &url);
+DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
+        const WrtDB::WidgetPkgName &pkgname,
+        const DPL::String &url);
+DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
+        WrtDB::WidgetDAOReadOnlyPtr dao,
         const DPL::String &url);
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
         WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags,
+        const DPL::String& file);
+DPL::Optional<DPL::String> getFilePathInWidgetPackage(
+        const WrtDB::WidgetPkgName &pkgname,
+        const DPL::String& file);
+DPL::Optional<DPL::String> getFilePathInWidgetPackage(
+        WrtDB::WidgetDAOReadOnlyPtr dao,
         const DPL::String& file);
 
-DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle widgetHandle);
+DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle handle);
+DPL::OptionalString getStartFile(const WrtDB::WidgetPkgName & pkgname);
+DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao);
+
 OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle);
+OptionalWidgetIcon getIcon(const WrtDB::WidgetPkgName & pkgname);
+OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao);
+
 WidgetIconList getValidIconsList(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &languageTags);
+        WrtDB::DbWidgetHandle widgetHandle);
+WidgetIconList getValidIconsList(
+        const WrtDB::WidgetPkgName &pkgname);
+WidgetIconList getValidIconsList(
+        WrtDB::WidgetDAOReadOnlyPtr dao);
 
 OptionalWidgetStartFileInfo getStartFileInfo(
-        WrtDB::DbWidgetHandle widgetHandle,
-        const LanguageTagsList &tagsList);
+        WrtDB::DbWidgetHandle widgetHandle);
+OptionalWidgetStartFileInfo getStartFileInfo(
+        const WrtDB::WidgetPkgName &pkgname);
+OptionalWidgetStartFileInfo getStartFileInfo(
+        WrtDB::WidgetDAOReadOnlyPtr dao);
+
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::DbWidgetHandle widgetHandle);
+WrtDB::WidgetLocalizedInfo getLocalizedInfo(const WrtDB::WidgetPkgName & pkgname);
+WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::WidgetDAOReadOnlyPtr dao);
 }
 
 #endif //W3C_FILE_LOCALIZATION_H

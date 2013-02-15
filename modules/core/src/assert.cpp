@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of assert
  */
+#include <stddef.h>
 #include <dpl/assert.h>
 #include <dpl/colors.h>
 #include <dpl/log/log.h>

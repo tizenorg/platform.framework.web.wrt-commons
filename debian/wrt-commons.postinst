@@ -2,44 +2,40 @@
 
 if [ -z ${2} ]; then
     echo "This is new install of wrt-commons"
-    echo "Calling /usr/bin/wrt_reset_db.sh"
-    /usr/bin/wrt_reset_db.sh
+    echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+    /usr/bin/wrt_commons_reset_db.sh
 else
     # Find out old and new version of databases
     WRT_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt.db ".tables" | grep "DB_VERSION_"`
     WRT_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
-    ACE_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.ace.db ".tables" | grep "DB_VERSION_"`
-    ACE_NEW_DB_VERSION=`cat /usr/share/wrt-engine/ace_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
-    VCORE_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.vcore.db ".tables" | grep "DB_VERSION_"`
-    VCORE_NEW_DB_VERSION=`cat /usr/share/wrt-engine/vcore_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
+    AUTOSAVE_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt_autosave.db ".tables" | grep "DB_VERSION_"`
+    AUTOSAVE_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_autosave_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
+    CUSTOM_HANDLER_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt_custom_handler.db ".tables" | grep "DB_VERSION_"`
+    CUSTOM_HANDLER_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_custom_handler_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
     echo "OLD wrt database version ${WRT_OLD_DB_VERSION}"
     echo "NEW wrt database version ${WRT_NEW_DB_VERSION}"
-    echo "OLD ace database version ${ACE_OLD_DB_VERSION}"
-    echo "NEW ace database version ${ACE_NEW_DB_VERSION}"
-    echo "OLD vcore database version ${VCORE_OLD_DB_VERSION}"
-    echo "NEW vcore database version ${VCORE_NEW_DB_VERSION}"
+    echo "OLD wrt_autosave database version ${AUTOSAVE_OLD_DB_VERSION}"
+    echo "NEW wrt_autosave database version ${AUTOSAVE_NEW_DB_VERSION}"
+    echo "OLD wrt_custom_handler database version ${CUSTOM_HANDLER_OLD_DB_VERSION}"
+    echo "NEW wrt_custom_handler database version ${CUSTOM_HANDLER_NEW_DB_VERSION}"
 
-
-    if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} -a ${ACE_OLD_DB_VERSION} -a ${ACE_NEW_DB_VERSION} -a ${VCORE_OLD_DB_VERSION} -a ${VCORE_NEW_DB_VERSION} ]
+    if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} -a ${AUTOSAVE_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} -a ${CUSTOM_HANDLER_OLD_DB_VERSION} -a ${CUSTOM_HANDLER_NEW_DB_VERSION}]
     then
-        if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} -a ${ACE_NEW_DB_VERSION} = ${ACE_OLD_DB_VERSION} -a ${VCORE_OLD_DB_VERSION} = ${VCORE_NEW_DB_VERSION} ]
+        if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} -a ${AUTOSAVE_NEW_DB_VERSION} = ${AUTOSAVE_OLD_DB_VERSION} -a ${CUSTOM_HANDLER_NEW_DB_VERSION} = ${CUSTOM_HANDLER_OLD_DB_VERSION}]
         then
             echo "Equal database detected so db installation ignored"
         else
-            echo "Calling /usr/bin/wrt_reset_db.sh"
-            /usr/bin/wrt_reset_db.sh
+            echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+            /usr/bin/wrt_commons_reset_db.sh
         fi
     else
-        echo "Calling /usr/bin/wrt_reset_db.sh"
-        /usr/bin/wrt_reset_db.sh
+        echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+        /usr/bin/wrt_commons_reset_db.sh
     fi
 fi
 
 mkdir -p /usr/etc/ace
 mkdir -p /usr/apps/org.tizen.policy
-
-# 3. configurations
-chown root:root /usr/etc/ace/config.xml
 
 # DBUS services fix
 # WARNING: THIS IS TEMPORARY SOLUTION, AS THIS SHOULD NOT BE OUR

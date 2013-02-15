@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of unix socket
  */
+#include <stddef.h>
 #include <dpl/socket/unix_socket.h>
 #include <dpl/log/log.h>
 #include <dpl/exception.h>
@@ -29,6 +30,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 namespace DPL
 {
@@ -101,8 +103,9 @@ void UnixSocket::Bind(const Address &address)
     GenericSocket<UnixSocket>::Bind(address);
 
     // Always set proper permissions to the socket file
-    chmod(address.GetAddress().c_str(), 0777);
+    if(chmod(address.GetAddress().c_str(), 0777)<0){
+        LogError("Error setting permissions to the socket file. Errno " << strerror(errno));
+    }
 }
-
 }
 } // namespace DPL

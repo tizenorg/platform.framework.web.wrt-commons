@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of read write mutex
  */
+#include <stddef.h>
 #include <dpl/read_write_mutex.h>
 #include <dpl/assert.h>
 

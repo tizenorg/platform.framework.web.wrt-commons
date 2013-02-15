@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       Implementation for simple echo service DBus client.
  */
-
+#include <stddef.h>
 #include <iostream>
 #include <string>
 

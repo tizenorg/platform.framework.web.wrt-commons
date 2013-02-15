@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of SQL connection
  */
+#include <stddef.h>
 #include <dpl/db/sql_connection.h>
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/scoped_free.h>
@@ -68,7 +69,7 @@ SqlConnection::DataCommand::DataCommand(SqlConnection *connection,
     Assert(connection != NULL);
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(connection->m_synchronizationObject.get());
 
     for (;;)
     {
@@ -323,7 +324,7 @@ bool SqlConnection::DataCommand::Step()
 {
     // Notify all after potentially synchronized database connection access
     ScopedNotifyAll notifyAll(
-        m_masterConnection->m_synchronizationObject.Get());
+        m_masterConnection->m_synchronizationObject.get());
 
     for (;;)
     {
@@ -590,48 +591,41 @@ Optional<String> SqlConnection::DataCommand::GetColumnOptionalString(
     return Optional<String>(s);
 }
 
-void SqlConnection::Connect(const std::string &address, Flag::Type flag)
+void SqlConnection::Connect(const std::string &address,
+    Flag::Type type,
+    Flag::Option flag)
 {
-    if (m_connection != NULL)
-    {
+    if (m_connection != NULL) {
         LogPedantic("Already connected.");
         return;
     }
-
     LogPedantic("Connecting to DB: " << address << "...");
 
     // Connect to database
     int result;
-
-    if (flag & Flag::UseLucene)
-    {
+    if (type & Flag::UseLucene) {
         result = db_util_open_with_options(
             address.c_str(),
             &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            flag,
             NULL);
 
         m_usingLucene = true;
         LogPedantic("Lucene index enabled");
-    }
-    else
-    {
+    } else {
         result = sqlite3_open_v2(
             address.c_str(),
             &m_connection,
-            SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            flag,
             NULL);
 
         m_usingLucene = false;
         LogPedantic("Lucene index disabled");
     }
 
-    if (result == SQLITE_OK)
-    {
+    if (result == SQLITE_OK) {
         LogPedantic("Connected to DB");
-    }
-    else
-    {
+    } else {
         LogPedantic("Failed to connect to DB!");
         ThrowMsg(Exception::ConnectionBroken, address);
     }
@@ -703,6 +697,7 @@ bool SqlConnection::CheckTableExist(const char *tableName)
 
 SqlConnection::SqlConnection(const std::string &address,
                              Flag::Type flag,
+                             Flag::Option option,
                              SynchronizationObject *synchronizationObject)
     : m_connection(NULL),
       m_usingLucene(false),
@@ -712,7 +707,7 @@ SqlConnection::SqlConnection(const std::string &address,
     LogPedantic("Opening database connection to: " << address);
 
     // Connect to DB
-    SqlConnection::Connect(address, flag);
+    SqlConnection::Connect(address, flag, option);
 
     if (!m_synchronizationObject)
     {
@@ -743,6 +738,12 @@ void SqlConnection::ExecCommand(const char *format, ...)
         return;
     }
 
+    if (format == NULL)
+    {
+        LogPedantic("Null query!");
+        ThrowMsg(Exception::SyntaxError, "Null statement");
+    }
+
     char *rawBuffer;
 
     va_list args;
@@ -764,7 +765,7 @@ void SqlConnection::ExecCommand(const char *format, ...)
     LogPedantic("Executing SQL command: " << buffer.Get());
 
     // Notify all after potentially synchronized database connection access
-    ScopedNotifyAll notifyAll(m_synchronizationObject.Get());
+    ScopedNotifyAll notifyAll(m_synchronizationObject.get());
 
     for (;;)
     {

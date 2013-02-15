@@ -32,6 +32,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <map>
 
 namespace DPL
 {
@@ -39,9 +40,12 @@ namespace Test
 {
 class TestRunner
 {
-    TestResultsCollectorBasePtr m_collector;
-    std::string m_collectorName;
+    typedef std::map<std::string, TestResultsCollectorBasePtr>
+            TestResultsCollectors;
+    TestResultsCollectors m_collectors;
+
     std::string m_startTestId;
+    bool m_runIgnored;
 
 public:
     typedef void (*TestCase)();
@@ -82,14 +86,20 @@ private:
     DPL::Atomic m_totalAssertions;
 
     void Banner();
-    void InvalidArgs();
+    void InvalidArgs(const std::string& message = "Invalid arguments!");
     void Usage();
 
-    enum Status { FAILED, TODO, IGNORED, PASS };
+    enum Status { FAILED, IGNORED, PASS };
 
     Status RunTestCase(const TestCaseStruct& testCase);
 
     void RunTests();
+
+    void CollectResult(const std::string& id,
+                       const std::string& description,
+                       const TestResultsCollectorBase::FailStatus::Type status
+                           = TestResultsCollectorBase::FailStatus::NONE,
+                       const std::string& reason = std::string());
 
 public:
     class TestFailed
@@ -109,27 +119,6 @@ public:
         //! \param[in] aLine source file line
         //! \param[in] aMessage error message
         TestFailed(const char* aTest, const char* aFile, int aLine, const std::string &aMessage);
-
-        std::string GetMessage() const
-        {
-            return m_message;
-        }
-    };
-
-    class ToDo
-    {
-    private:
-        std::string m_message;
-
-    public:
-        ToDo()
-        {
-        }
-
-        ToDo(const std::string &message)
-            : m_message(message)
-        {
-        }
 
         std::string GetMessage() const
         {
@@ -166,6 +155,7 @@ public:
     int ExecTestRunner(int argc, char *argv[]);
     typedef std::vector<std::string> ArgsList;
     int ExecTestRunner(const ArgsList& args);
+    bool getRunIgnored() const;
 };
 
 typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
@@ -210,8 +200,6 @@ do                                                                              
 #define RUNNER_ASSERT(test) RUNNER_ASSERT_MSG(test, "")
 
 #define RUNNER_FAIL RUNNER_ASSERT(false)
-
-#define RUNNER_TODO_MSG(message) do { std::ostringstream assertMsg; assertMsg << message; throw DPL::Test::TestRunner::ToDo(assertMsg.str()); } while (0)
 
 #define RUNNER_IGNORED_MSG(message) do { std::ostringstream assertMsg; assertMsg << message; throw DPL::Test::TestRunner::Ignored(assertMsg.str()); } while (0)
 

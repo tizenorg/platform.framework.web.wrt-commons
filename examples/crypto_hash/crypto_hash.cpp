@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of crypto hash example
  */
+#include <stddef.h>
 #include <dpl/crypto_hash.h>
 #include <iostream>
 #include <string>

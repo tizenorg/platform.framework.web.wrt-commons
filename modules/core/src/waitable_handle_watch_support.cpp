@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of waitable handle watch support
  */
+#include <stddef.h>
 #include <dpl/waitable_handle_watch_support.h>
 #include <dpl/thread.h>
 #include <dpl/main.h>
@@ -37,27 +38,25 @@ WaitableHandleWatchSupport::~WaitableHandleWatchSupport()
     // Developer assertions
     if (!m_watchersMap.empty())
     {
-        LogPedantic("### Leaked watchers map dump ###");
+        LogWarning("### Leaked watchers map dump ###");
 
         for (WaitableHandleWatchersMap::const_iterator iterator = m_watchersMap.begin();
              iterator != m_watchersMap.end();
              ++iterator)
         {
-            LogPedantic("###   Waitable handle: " << iterator->first);
+            LogWarning("###   Waitable handle: " << iterator->first);
 
-            LogPedantic("###     Read listeners: " << iterator->second.readListenersCount);
-            LogPedantic("###     Write listeners: " << iterator->second.writeListenersCount);
+            LogWarning("###     Read listeners: " << iterator->second.readListenersCount);
+            LogWarning("###     Write listeners: " << iterator->second.writeListenersCount);
 
             for (WaitableHandleListenerList::const_iterator listenersIterator = iterator->second.listeners.begin();
                  listenersIterator != iterator->second.listeners.end();
                  ++listenersIterator)
             {
-                LogPedantic("###       Mode: " << listenersIterator->mode << ". Listener: 0x" << std::hex << listenersIterator->listener);
+                LogWarning("###       Mode: " << listenersIterator->mode << ". Listener: 0x" << std::hex << listenersIterator->listener);
             }
         }
     }
-
-    Assert(m_watchersMap.empty() == true);
 }
 
 WaitableHandle WaitableHandleWatchSupport::WaitableInvokerHandle() const

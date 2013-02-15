@@ -51,6 +51,11 @@ enum WidgetSignatureType
     SIGNATURE_TYPE_UNIDENTIFIED
 };
 
+enum CertificateSource {
+    SIGNATURE_DISTRIBUTOR = 0,
+    SIGNATURE_AUTHOR = 1
+};
+
 typedef std::list<DPL::String> StringList;
 
 struct WidgetLocalizedInfo
@@ -98,6 +103,7 @@ typedef std::list<WidgetCertificateData> WidgetCertificateDataList;
 
 typedef DPL::String Locale;
 typedef std::set<Locale> LocaleSet;
+typedef std::list<std::string> ExternalLocationList;
 
 /**
  * WidgetRegisterInfo
@@ -150,27 +156,34 @@ struct WidgetRegisterInfo
 
     //Constructor
     WidgetRegisterInfo() :
-        type(APP_TYPE_UNKNOWN),
+        webAppType(APP_TYPE_UNKNOWN),
         signatureType(SIGNATURE_TYPE_UNIDENTIFIED),
-        isFactoryWidget(0),
         isTestWidget(0),
-        configInfo()
+        configInfo(),
+        packagingType(PKG_TYPE_UNKNOWN)
     {
     }
 
-    WidgetType type;
+    WidgetType webAppType;
+    WidgetType type; // TODO : This type will be removed.
     DPL::OptionalString guid;
     DPL::OptionalString version;
+    DPL::OptionalString minVersion;
     std::string shareHref;
     std::string baseFolder;
     WidgetSignatureType signatureType;
-    int isFactoryWidget;
     int isTestWidget;
     ConfigParserData configInfo;
-    Powder::Description powderDescription;
     LocalizationData localizationData;
+
     DPL::OptionalString pkgname;
+    WidgetPkgName pkgName;
+
     time_t installedTime;
+    PackagingType packagingType;
+    EncryptedFileList encryptedFiles;
+    ExternalLocationList externalLocations;
+    DPL::OptionalString widgetInstalledPath;
 };
 
 typedef std::list<std::string> CertificateChainList;
@@ -187,7 +200,8 @@ class IWacSecurity
 
     virtual bool isWacSigned() const = 0;
 
-    virtual void getCertificateChainList(CertificateChainList& list) const = 0;
+    virtual void getCertificateChainList(CertificateChainList& list,
+            CertificateSource source) const = 0;
 };
 
 /**
@@ -277,13 +291,14 @@ class WidgetDAOReadOnly
     };
     typedef std::list<WidgetLocalizedStartFileRow> LocalizedStartFileList;
 
-
     /**
      * This is a constructor.
      *
      * @param[in] widgetHandle application id of widget.
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
+    WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
+    WidgetDAOReadOnly(DPL::String pkgName);
 
     /**
      * Destructor
@@ -300,6 +315,17 @@ class WidgetDAOReadOnly
     DbWidgetHandle getHandle() const;
     static DbWidgetHandle getHandle(const WidgetGUID GUID);
     static DbWidgetHandle getHandle(const DPL::String pkgName);
+
+    /**
+     * Returns pkgname for the specified widget
+     *
+     * @return pkgname
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+     */
+    WidgetPkgName getPkgName() const;
+    static WidgetPkgName getPkgName(const WidgetGUID GUID);
+    static WidgetPkgName getPkgName(const DbWidgetHandle handle);
 
     /**
      * This method returns the root directory of widget resource.
@@ -345,13 +371,14 @@ class WidgetDAOReadOnly
      */
     WidgetGUID getGUID() const;
 
+
     /**
-     * This method returns the Package name of the widget.
-     *
-     * @return pkgname
-     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
-     */
+    * This method returns the Package name of the widget.
+    *
+    * @return pkgname
+    * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+    * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in DB table.
+    */
     DPL::OptionalString getPkgname() const;
 
     /**
@@ -533,7 +560,7 @@ class WidgetDAOReadOnly
     bool getWebkitPluginsRequired() const;
 
     /**
-     * This method returns a list of all the installed widgets.
+     * This method returns a list of all the installed widgets' app id.
      *
      * @return list of installed widgets' app id.
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
@@ -541,6 +568,23 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     static DbWidgetHandleList getHandleList();
+
+    /**
+     * This method returns list of pkgname of installed packages
+     * @return list of pkgname of installed packages
+     */
+    static WidgetPkgNameList getPkgnameList();
+    static WidgetPkgNameList_TEMPORARY_API getPkgnameList_TEMPORARY_API();
+
+    /**
+     * This method returns a list of all the installed widgets.
+     *
+     * @return list of installed widgets.
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
+     *  DB table.
+     */
+    static DbWidgetDAOReadOnlyList getWidgetList();
 
    /**
      * This method removes a widget's information from EmDB.
@@ -615,14 +659,6 @@ class WidgetDAOReadOnly
     std::string getShareHref() const;
 
     /**
-     * This method checks whether specified widget is a factory widget.
-     *
-     * @param[in] widgetHandle    widget's app id
-     * @return true if yes, false if no.
-     */
-    bool isFactory() const;
-
-    /**
      * This method get widget installed time
      *
      * @return time_t : return widget's install time
@@ -638,16 +674,6 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     std::string getBaseFolder() const;
-
-    /**
-     * This method gets deletable property of widget.
-     *
-     * @return true: can be deleted; false: can not be deleted
-     * @exception WRT_CONF_ERR_GCONF_FAILURE
-     * @exception WRT_CONF_ERR_EMDB_FAILURE
-     * @exception WRT_CONF_ERR_EMDB_NO_RECORD
-     */
-    bool isDeletable() const;
 
     /* This method gets the parameter list for resource.
      */
@@ -675,21 +701,32 @@ class WidgetDAOReadOnly
     LanguageTagList getLanguageTags() const;
     LanguageTagList getIconLanguageTags() const;
 
+
+
     WidgetLocalizedInfo getLocalizedInfo(const DPL::String& languageTag) const;
     std::string getCookieDatabasePath() const;
     // Local storage
     std::string getPrivateLocalStoragePath() const;
 
-    ChildProtection::Record getChildProtection() const;
-
-    Powder::Description getPowderDescription() const;
-
     bool getBackSupported() const;
 
     static bool isWidgetInstalled(DbWidgetHandle handle);
-    static bool isWidgetInstalled(DPL::String pkgName);
+    static bool isWidgetInstalled(const WidgetPkgName & pkgName);
 
-    CertificateChainList getWidgetCertificate() const;
+    /* This method get path of the splash image.
+     *
+     * @return path of the widget's splash image
+     */
+    DPL::OptionalString getSplashImgSrc() const;
+
+    ExternalLocationList getWidgetExternalLocations() const;
+
+    /*
+     * Default value is required to keep compatibility with
+     * wrt-installer and wrt.
+     */
+    CertificateChainList getWidgetCertificate(
+            CertificateSource source = SIGNATURE_DISTRIBUTOR) const;
 
     void getWidgetSettings(WidgetSettings& outWidgetSettings) const;
 
@@ -701,6 +738,57 @@ class WidgetDAOReadOnly
      */
     void getAppServiceList(
             WidgetApplicationServiceList& outAppServiceList) const;
+
+    /**
+     * This method returns the type of the package.
+     *
+     * @return PackagingType
+     * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
+     * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching
+                                                records in DB table.
+     */
+    PackagingType getPackagingType() const;
+
+    void getEncryptedFileList(EncryptedFileList& filesList) const;
+
+    /**
+     * This method returns widget's background page filename.
+     *
+     * @return Name of file containing background page
+     */
+    DPL::OptionalString getBackgroundPage() const;
+
+    /**
+     * @brief generateTizenId generates new tizen id
+     *
+     * If widget do not supplies it's own tizen id, this method can be used,
+     * although it should be removed in future.
+     *
+     * @return new tizen id
+     */
+    static WidgetPkgName generateTizenId();
+
+    /**
+     * @brief This method return each value for security setting
+     *
+     * @return SettingsType
+     *         SETTINGS_TYPE_UNKNOWN     : unknow value
+     *         SETTINGS_TYPE_ON                : enable
+     *         SETTINGS_TYPE_ALWAYS_ASK : ask by popup
+     *         SETTINGS_TYPE_OFF               : disable
+     */
+    SettingsType getSecurityPopupUsage() const;
+    SettingsType getGeolocationUsage() const;
+    SettingsType getWebNotificationUsage() const;
+    SettingsType getWebDatabaseUsage() const;
+    SettingsType getFileSystemUsage() const;
+
+    /**
+     * This method returns widget's installed path
+     *
+     * @return path of widget installed
+     */
+    DPL::OptionalString getWidgetInstalledPath() const;
 };
 
 } // namespace WrtDB

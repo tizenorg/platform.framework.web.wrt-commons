@@ -27,7 +27,6 @@
 #include <dpl/log/abstract_log_provider.h>
 #include <dpl/log/dlog_log_provider.h>
 #include <dpl/log/old_style_log_provider.h>
-#include <dpl/read_write_mutex.h>
 #include <sstream>
 #include <list>
 
@@ -45,8 +44,6 @@ class LogSystem
     : private Noncopyable
 {
 private:
-    ReadWriteMutex m_spinLock;
-
     typedef std::list<AbstractLogProvider *> AbstractLogProviderPtrList;
     AbstractLogProviderPtrList m_providers;
 

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of single instance example
  */
+#include <stddef.h>
 #include <dpl/single_instance.h>
 #include <iostream>
 

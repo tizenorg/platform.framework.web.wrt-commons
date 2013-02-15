@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of waitable event
  */
+#include <stddef.h>
 #include <dpl/waitable_event.h>
 #include <sys/select.h>
 #include <unistd.h>

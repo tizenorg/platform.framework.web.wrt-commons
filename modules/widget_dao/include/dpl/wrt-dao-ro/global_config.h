@@ -53,19 +53,27 @@ inline const char* GetDevicePluginPath()
 }
 
 /**
- * WRT factory widgets that are loaded by default
+ * WRT widgets that are downloaded and installed by user
  */
-inline const char* GetFactoryInstalledWidgetPath()
+inline const char* GetUserInstalledWidgetPath()
 {
-    return "/opt/apps/widget/system";
+    return "/opt/usr/apps";
+}
+
+/**
+ * WRT widgets that are preloaded
+ */
+inline const char* GetUserPreloadedWidgetPath()
+{
+    return "/usr/apps";
 }
 
 /**
  * WRT widgets that are downloaded and installed by user
  */
-inline const char* GetUserInstalledWidgetPath()
+inline const char* GetWidgetUserDataPath()
 {
-    return "/opt/apps";
+    return "/opt/usr/apps";
 }
 
 /**
@@ -73,7 +81,7 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetWidgetSrcPath()
 {
-    return "res/src";
+    return "/res/wgt";
 }
 
 /**
@@ -81,7 +89,7 @@ inline const char* GetWidgetSrcPath()
  */
 inline const char* GetPublicVirtualRootPath()
 {
-    return "/opt/apps/widget/data/Public";
+    return "/opt/share/widget/data/Public";
 }
 
 /**
@@ -97,7 +105,7 @@ inline const char* GetWidgetLocalStoragePath()
  */
 inline const char* GetTestsDataPath()
 {
-    return "/opt/apps/widget/tests";
+    return "/opt/share/widget/tests";
 }
 
 /**
@@ -105,7 +113,7 @@ inline const char* GetTestsDataPath()
  */
 inline const char* GetUserWidgetExecPath()
 {
-    return "bin";
+    return "/bin";
 }
 
 /**
@@ -116,6 +124,13 @@ inline const char* GetWidgetPrivateStoragePath()
     return "data";
 }
 
+/**
+ * widgets share directory path
+ */
+inline const char* GetWidgetSharePath()
+{
+    return "share";
+}
 
 /**
  * widgets desktop files path
@@ -138,7 +153,7 @@ inline const char* GetWrtClientExec()
  */
 inline const char* GetUserWidgetDesktopIconPath()
 {
-    return "res/icons/default/small";
+    return "/opt/share/icons/default/small";
 }
 
 /**
@@ -148,14 +163,6 @@ inline const char* GetUserWidgetDefaultIconFile()
 {
     return "/usr/share/wrt-engine/wrt_widget_default_icon.png";
 }
-
-/**
- * WRT downloaded widgets
- */
-// KW inline const char* GetDownloadedWidgetPath()
-// KW {
-// KW     return "/opt/apps/widget/test-widgets";
-// KW }
 
 inline const char* GetSignatureXmlSchema()
 {
@@ -193,13 +200,29 @@ inline const char* GetPluginMetafileName()
 }
 
 /**
+ * Plugin .so prefix
+ */
+inline const char* GetPluginPrefix()
+{
+    return "libwrt-plugins-";
+}
+
+/**
+ * Plugin .so suffix
+ */
+inline const char* GetPluginSuffix()
+{
+    return ".so";
+}
+
+/**
  * WRT device plugins installation required
  * File which indicate that new plugins
  * are available and should be installed
  */
 inline const char* GetPluginInstallInitializerName()
 {
-    return "/opt/apps/widget/plugin-installation-required";
+    return "/opt/share/widget/plugin-installation-required";
 }
 
 /**
@@ -218,10 +241,8 @@ inline const char* GetFingerprintListSchema()
 
 inline const char* GetVCoreDatabaseFilePath()
 {
-    return "/opt/dbspace/.vcore.db";
+    return "/opt/dbspace/.cert_svc_vcore.db";
 }
-bool IsOCSPEnabled();
-bool IsCRLEnabled();
 
 /**
  * widgets cookie database file name
@@ -243,6 +264,62 @@ inline const char* GetTmpDirPath()
 {
     return "/tmp";
 }
+
+inline const char* GetWACVersion()
+{
+    return "2.0";
+}
+
+inline const char* GetTizenVersion()
+{
+    return "1.0";
+}
+
+inline const char* GetShareDirectoryPath()
+{
+    return "/opt/share";
+}
+
+inline const char* GetTempInstallInfoPath()
+{
+    return "/opt/share/widget/temp_info";
+}
+
+inline const char* GetVconfKeyPrefixPath()
+{
+    return "file/private";
+}
+
+inline const char* GetVconfKeyPopupUsagePath()
+{
+    return "/popup_usage";
+}
+
+inline const char* GetVconfKeyGeolocationUsagePath()
+{
+    return "/geolocation_usage";
+}
+
+inline const char* GetVconfKeyWebNotificationUsagePath()
+{
+    return "/web_notification_usage";
+}
+
+inline const char* GetVconfKeyWebDatabaseUsagePath()
+{
+    return "/web_database_usage";
+}
+
+inline const char* GetVconfKeyFilesystemUsagePath()
+{
+    return "/filesystem_usage";
+}
+
+inline const char* GetVconfKeyMemorySavingModePath()
+{
+    return "/memory_saving_mode";
+}
+
 } // namespace GlobalConfig
 } // namespace WrtDB
 

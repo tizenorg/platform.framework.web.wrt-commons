@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of copy
  */
+#include <stddef.h>
 #include <dpl/copy.h>
 #include <dpl/waitable_handle.h>
 #include <dpl/binary_queue.h>
