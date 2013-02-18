@@ -13,7 +13,21 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
+# @author      Krzysztof Jackiewicz (k.jackiewicz@samsung.com)
+# @version     1.0
+# @brief
 #
 
-ADD_SUBDIRECTORY(misc_unit)
+SET(TARGET_NAME "wrt-commons-tests-utils")
+
+# Set DPL tests sources
+SET(DPL_TESTS_UTIL_SOURCES
+    ${TESTS_DIR}/utils/main.cpp
+    ${TESTS_DIR}/utils/widget_version.cpp
+    ${TESTS_DIR}/utils/bash_utils.cpp
+    ${TESTS_DIR}/utils/wrt_utility.cpp
+)
+
+#WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_UTIL_SOURCES})
+WRT_TEST_INSTALL(${TARGET_NAME})

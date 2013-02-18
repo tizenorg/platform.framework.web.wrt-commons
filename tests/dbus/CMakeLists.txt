@@ -20,20 +20,20 @@
 
 INCLUDE(FindPkgConfig)
 
-PKG_CHECK_MODULES(DEPENDENCIES gthread-2.0 REQUIRED) 
+PKG_CHECK_MODULES(DEPENDENCIES gthread-2.0 REQUIRED)
 
-SET(TARGET_DBUS_TESTS "dpl-tests-dbus")
-SET(TARGET_DBUS_TEST_SERVICE "dpl-dbus-test-service")
+SET(TARGET_DBUS_TESTS "wrt-commons-tests-dbus")
+SET(TARGET_DBUS_TEST_SERVICE "wrt-commons-tests-dbus-test-service")
 
 SET(DBUS_TESTS_SRCS
-    ${TESTS_DPL_DIR}/dbus/main.cpp
-    ${TESTS_DPL_DIR}/dbus/test_cases.cpp
-    ${TESTS_DPL_DIR}/dbus/dbus_test.cpp
+    ${TESTS_DIR}/dbus/main.cpp
+    ${TESTS_DIR}/dbus/test_cases.cpp
+    ${TESTS_DIR}/dbus/dbus_test.cpp
     ${TESTS_COMMON_DIR}/src/loop_control.cpp
 )
 
 SET(DBUS_TEST_SERVICE_SRCS
-    ${TESTS_DPL_DIR}/dbus/test_service.cpp
+    ${TESTS_DIR}/dbus/test_service.cpp
     ${TESTS_COMMON_DIR}/src/loop_control.cpp
 )
 
@@ -58,6 +58,6 @@ WRT_TEST_BUILD(${TARGET_DBUS_TEST_SERVICE} ${DBUS_TEST_SERVICE_SRCS})
 WRT_TEST_INSTALL(${TARGET_DBUS_TEST_SERVICE})
 
 INSTALL(FILES
-        ${TESTS_DPL_DIR}/dbus/data/org.tizen.DBusTestService.service
+        ${TESTS_DIR}/dbus/data/org.tizen.DBusTestService.service
         DESTINATION /usr/share/dbus-1/services
 )

@@ -26,11 +26,11 @@
 # generating proper output files
 #
 
-SET(TARGET_LOC "dpl-tests-loc")
+SET(TARGET_LOC "wrt-commons-tests-loc")
 
 SET(LOC_TESTS_SOURCES
-    ${DPL_TESTS_DIR}/localization/test_localization.cpp
-    ${DPL_TESTS_DIR}/localization/test_suite01.cpp
+    ${TESTS_DIR}/files_localization/test_localization.cpp
+    ${TESTS_DIR}/files_localization/test_suite01.cpp
     #${DPL_TESTS_DIR}/localization/mockup_src/widget_dao.cpp
     #${PROJECT_SOURCE_DIR}/modules/localization/src/localization_utils.cpp
     #${PROJECT_SOURCE_DIR}/modules/localization/src/w3c_file_localization.cpp

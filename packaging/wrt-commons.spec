@@ -139,9 +139,7 @@ echo "[WRT] wrt-commons postinst done ..."
 %attr(755,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
 %attr(755,root,root) %{_bindir}/wrt_commons_reset_db.sh
 %if %{with_tests}
-    %attr(755,root,root) %{_bindir}/dpl-tests-*
-    %attr(755,root,root) %{_bindir}/dpl-dbus-test-service
-    %attr(755,root,root) %{_bindir}/wrt-tests-*
+    %attr(755,root,root) %{_bindir}/wrt-commons-tests-*
     %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
     %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
     /opt/share/wrt/wrt-commons/tests/*
