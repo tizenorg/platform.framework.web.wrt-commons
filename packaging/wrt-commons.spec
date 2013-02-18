@@ -24,7 +24,7 @@ BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
 BuildRequires:  libcryptsvc-devel
-BuildRequires:  dukgenerator
+BuildRequires:  dukgenerator-devel
 Requires: libcryptsvc
 
 %description
