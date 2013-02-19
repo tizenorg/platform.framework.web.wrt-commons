@@ -20,9 +20,29 @@
  * @brief       This file is the implementation file of main
  */
 #include <dpl/test/test_runner.h>
+#include <dpl/log/log.h>
+#include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 int main(int argc, char *argv[])
 {
-    return DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
+
+    int ret = system("/usr/bin/wrt_db_localization_prepare.sh start");
+    if (ret != 0) {
+        LogError("Preparation script has return error: " << ret
+                                                         << ". Quitting");
+        return -1;
+    }
+
+    WrtDB::WrtDatabase::attachToThreadRW();
+    int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
+    WrtDB::WrtDatabase::detachFromThread();
+
+    ret = system("/usr/bin/wrt_db_localization_prepare.sh stop");
+    if (ret != 0) {
+        LogError("Preparation script has return error: " << ret
+                                                         << ". Quitting");
+        return -1;
+    }
+    return status;
 }
 

@@ -349,7 +349,7 @@ class WidgetDAOReadOnly
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
      * DB table.
      */
-    DPL::String getPath() const;
+    virtual DPL::String getPath() const;
 
     DPL::String getFullPath() const;
 

@@ -24,22 +24,22 @@
 
 #include <dpl/log/log.h>
 #include <dpl/test/test_runner.h>
-
-//#include "mockup_include/dpl/wrt-dao-rw/widget_dao.h"
-#include <dpl/wrt-dao-rw/widget_dao.h>
+#include <dpl/static_block.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/localization/w3c_file_localization.h>
+#include <LanguageTagsProvider.h>
 
 namespace {
-WrtDB::LanguageTagList generateLanguageTags()
+
+STATIC_BLOCK
 {
     WrtDB::LanguageTagList tags;
     tags.push_back(L"pl-pl");
     tags.push_back(L"en-en");
     tags.push_back(L"pl-en");
-    return tags;
+    LanguageTagsProviderSingleton::Instance().setLanguageTags(tags);
 }
 
-static const WrtDB::LanguageTagList languageTags = generateLanguageTags();
 static const DPL::String widget1Path =
     L"/opt/share/widget/tests/localization/widget1/";
 static const DPL::String widget2Path =
@@ -47,73 +47,68 @@ static const DPL::String widget2Path =
 } // anonymous namespace
 
 RUNNER_TEST(test01_getFilePathInWidgetPackageFromUrl){
-    const int widgetHandle = 1;
-    WrtDB::WidgetDAO dao(widgetHandle);
-    //dao.setPath(widget1Path);
+    WrtDB::WidgetPkgName name = L"tizenid201";
+    WrtDB::WidgetDAOReadOnly dao(name);
 
-    auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-            widgetHandle,
-            languageTags,
-            L"widget://one");
+    DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
+            name,
+            DPL::String(L"widget://one"));
 
+    RUNNER_ASSERT_MSG(!!result, "No result");
     RUNNER_ASSERT(
         *result ==
-        L"/opt/share/widget/tests/localization/widget1/locales/pl-en/one");
+        L"/opt/share/widget/tests/localization/widget1/res/wgt/locales/pl-en/one");
 }
 
 RUNNER_TEST(test02_getFilePathInWidgetPackageFromUrl){
-    const int widgetHandle = 2;
-    WrtDB::WidgetDAO dao(widgetHandle);
-    //dao.setPath(widget2Path);
+    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::WidgetDAOReadOnly dao(name);
 
-    auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-            widgetHandle,
-            languageTags,
-            L"widget://one");
+    DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
+            name,
+            DPL::String(L"widget://one"));
 
+    RUNNER_ASSERT_MSG(!!result, "No result");
     RUNNER_ASSERT(
         *result ==
-        L"/opt/share/widget/tests/localization/widget2/locales/pl-en/one");
+        L"/opt/share/widget/tests/localization/widget2/res/wgt/locales/pl-en/one");
 }
 
 RUNNER_TEST(test03_getFilePathInWidgetPackageFromUrl){
-    const int widgetHandle = 2;
-    WrtDB::WidgetDAO dao(widgetHandle);
-    //dao.setPath(widget2Path);
+    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::WidgetDAOReadOnly dao(name);
 
-    auto result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
-            widgetHandle,
-            languageTags,
-            L"widget://two");
+    DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
+            name,
+            DPL::String(L"widget://two"));
 
+    RUNNER_ASSERT_MSG(!!result, "No result");
     RUNNER_ASSERT(
         *result ==
-        L"/opt/share/widget/tests/localization/widget2/locales/en-en/two");
+        L"/opt/share/widget/tests/localization/widget2/res/wgt/locales/en-en/two");
 }
 
 RUNNER_TEST(test04_getFilePathInWidgetPackage){
-    const int widgetHandle = 1;
-    WrtDB::WidgetDAO dao(widgetHandle);
-    //dao.setPath(widget1Path);
+    WrtDB::WidgetPkgName name = L"tizenid201";
+    WrtDB::WidgetDAOReadOnly dao(name);
 
-    auto result = W3CFileLocalization::getFilePathInWidgetPackage(
-            widgetHandle,
-            languageTags,
-            L"one");
+    DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackage(
+            name,
+            DPL::String(L"one"));
 
+    RUNNER_ASSERT_MSG(!!result, "No result");
     RUNNER_ASSERT(*result == L"locales/pl-en/one");
 }
 
 RUNNER_TEST(test05_getFilePathInWidgetPackage){
-    const int widgetHandle = 2;
-    WrtDB::WidgetDAO dao(widgetHandle);
-    //dao.setPath(widget2Path);
+    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::WidgetDAOReadOnly dao(name);
 
-    auto result = W3CFileLocalization::getFilePathInWidgetPackage(
-            widgetHandle,
-            languageTags,
-            L"two");
+    DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackage(
+            name,
+            DPL::String(L"two"));
 
+    RUNNER_ASSERT_MSG(!!result, "No result");
     RUNNER_ASSERT(*result == L"locales/en-en/two");
 }
 

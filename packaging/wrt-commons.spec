@@ -141,8 +141,10 @@ echo "[WRT] wrt-commons postinst done ..."
 %if %{with_tests}
     %attr(755,root,root) %{_bindir}/wrt-commons-tests-*
     %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
+    %attr(755,root,root) %{_bindir}/wrt_db_localization_prepare.sh
     %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
     /opt/share/wrt/wrt-commons/tests/*
+    /opt/share/widget/tests/localization/*
 %endif
 
 %files devel
