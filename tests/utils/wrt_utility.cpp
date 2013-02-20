@@ -89,16 +89,26 @@ RUNNER_TEST(wrt_utility_WrtUtilMakeDir)
 RUNNER_TEST(wrt_utility_WrtUtilMakeDir_PermissionError)
 {
     if (0 == getuid()) {
+        int bufsize;
+        if ((bufsize = sysconf(_SC_GETPW_R_SIZE_MAX)) == -1)
+            RUNNER_ASSERT_MSG(false,
+                    "Getting an initial value suggested for the size of buffer failed.");
+
         //Change UID to execute the test correctly
         errno = 0;
-        struct passwd *p = getpwnam("app");
-        if (p == NULL) {
+        char *buffer = new char[bufsize];
+        struct passwd p;
+        struct passwd *result = NULL;
+        int return_value = getpwnam_r("app", &p, buffer, bufsize, &result);
+        delete[] buffer;
+
+        if (return_value != 0 || !result) {
             int error = errno;
             RUNNER_ASSERT_MSG(false, "Getting app user UID failed: "
                               << (error ==
                                   0 ? "No error detected" : strerror(error)));
         }
-        if (setuid(p->pw_uid) != 0) {
+        if (setuid(p.pw_uid) != 0) {
             int error = errno;
             RUNNER_ASSERT_MSG(false, "Changing to app user's UID failed: "
                               << (error ==

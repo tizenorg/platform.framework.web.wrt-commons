@@ -558,7 +558,10 @@ class EnumTestSO1 : public TestSharedObject
 
   protected:
     explicit EnumTestSO1(const std::string& semaphore) :
-        TestSharedObject(semaphore) {}
+        TestSharedObject(semaphore),
+        m_waitable(NULL)
+    {}
+
 
     virtual void PropertyChanged(size_t propertyEnum);
 
@@ -1065,7 +1068,7 @@ RUNNER_TEST(SharedMemory_070_SharedObjectListeners)
     RUNNER_ASSERT(g_values[2] == 3);
 
     int array[64];
-    memset(array, 64 * sizeof(array[0]), 0);
+    memset(array, 0, 64 * sizeof(array[0]));
     array[5] = 5;
     sho->SetProperty<3, int[64]>(array);
     Wait(waitable);
@@ -1172,6 +1175,11 @@ RUNNER_TEST(SharedMemory_090_SetPropertyDelegate)
  */
 class LazySharedObject : public SharedObject<TestTypeList>
 {
+  private:
+    LazySharedObject() :
+        m_read(false)
+    {}
+
   public:
     explicit LazySharedObject(const std::string& semaphore) :
         SharedObject<TestTypeList>(semaphore)
@@ -1391,7 +1399,8 @@ class ShmController4 : public ListeningController<MTSharedObject>,
     };
 
     explicit ShmController4(DPL::WaitableEvent* event) :
-        ListeningController<MTSharedObject>(event)
+        ListeningController<MTSharedObject>(event),
+        m_counter(0)
     {}
 
     virtual void OnEventReceived(const int& event);
@@ -1412,6 +1421,7 @@ class ShmController4 : public ListeningController<MTSharedObject>,
     void Sleep();
 
     size_t m_counter;
+    static unsigned int seed = time(NULL);
 };
 
 void ShmController4::ValueChanged(size_t propertyEnum,
@@ -1449,7 +1459,7 @@ void ShmController4::ValueChanged(size_t propertyEnum,
 void ShmController4::Sleep()
 {
     DPL::Thread::GetCurrentThread()->MiliSleep(
-        rand() % MAX_SINGLETON_LISTENER_DELAY);
+        rand_r(&seed) % MAX_SINGLETON_LISTENER_DELAY);
 }
 
 void ShmController4::OnEventReceived(const int& event)
@@ -1530,8 +1540,6 @@ void MultipleWait(DPL::WaitableEvent(&event)[MAX_THREADS])
 RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
 {
     RemoveIpcs();   // we need non existing shm
-
-    srand(time(NULL));
 
     // writer shared object
     TestSharedObjectPtr sho = SharedObjectFactory<TestSharedObject>::Create(

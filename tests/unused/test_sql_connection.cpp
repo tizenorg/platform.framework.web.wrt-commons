@@ -31,11 +31,11 @@
 
 RUNNER_TEST(SqlConnection_MassiveReadWrite_SemaphoreSynchronization)
 {
-    srand(time(NULL));
-
     std::ostringstream dbSemaporeFileNameStream;
+    unsigned int seed = time(NULL);
+
     dbSemaporeFileNameStream << "dpl_tests_dbso_sem_";
-    dbSemaporeFileNameStream << rand() << ".sem";
+    dbSemaporeFileNameStream << rand_r(&seed) << ".sem";
 
     std::string dbSemaphoreFileName = dbSemaporeFileNameStream.str();
 

@@ -34,6 +34,10 @@
 
 RUNNER_TEST_GROUP_INIT(DPL)
 
+namespace {
+    unsigned int seed = time(NULL);
+}
+
 class IntController :
     public DPL::Event::Controller<DPL::TypeListDecl<int>::Type>
 {
@@ -375,7 +379,7 @@ class TestController :
                 return;
             }
             ++testContextPtr->g_SentCounter;
-            int id = rand() % static_cast<int>(testContextPtr->controllers.size());
+            int id = rand_r(&seed) % static_cast<int>(testContextPtr->controllers.size());
             testContextPtr->controllers.at(id)->DPL::Event::
                 ControllerEventHandler<RandomEvent>::PostEvent(RandomEvent());
         }

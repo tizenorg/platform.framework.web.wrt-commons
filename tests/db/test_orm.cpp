@@ -589,7 +589,7 @@ RUNNER_TEST(ORM_Delete)
     // properly
     for (std::list<TestTableDelete::Row>::iterator i = originalList.begin();
          i != originalList.end();
-         i++)
+         ++i)
     {
         TestTableDelete::Insert insert(interface.get());
         insert.Values(*i);
@@ -1095,14 +1095,14 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
                               DPL::FromASCIIString(
                                   "test 6"), "Wrong row 1 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 10, "Wrong row 1 order");
-            iter++;
+            ++iter;
         }
         { //2 row
             RUNNER_ASSERT_MSG(*iter->Get_TestText33() ==
                               DPL::FromASCIIString(
                                   "test 5"), "Wrong row 2 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 7, "Wrong row 2 order");
-            iter++;
+            ++iter;
         }
         { //3 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 3 order");
@@ -1110,7 +1110,7 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
                               DPL::FromASCIIString(
                                   "test 2"), "Wrong row 3 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 2, "Wrong row 3 order");
-            iter++;
+            ++iter;
         }
         { //4 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 111, "Wrong row 4 order");
@@ -1118,7 +1118,7 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
                               DPL::FromASCIIString(
                                   "test 1"), "Wrong row 4 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 1, "Wrong row 4 order");
-            iter++;
+            ++iter;
         }
         { //5 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 5 order");
@@ -1126,7 +1126,7 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
                               DPL::FromASCIIString(
                                   "test 4"), "Wrong row 5 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 6, "Wrong row 5 order");
-            iter++;
+            ++iter;
         }
         { //6 row
             RUNNER_ASSERT_MSG(iter->Get_Value3() == 222, "Wrong row 6 order");
@@ -1134,7 +1134,7 @@ RUNNER_TEST(ORM_SelectOrderByMultipleColumns)
                               DPL::FromASCIIString(
                                   "test 3"), "Wrong row 6 order");
             RUNNER_ASSERT_MSG(iter->Get_TestID() == 3, "Wrong row 6 order");
-            iter++;
+            ++iter;
         }
     }
 }

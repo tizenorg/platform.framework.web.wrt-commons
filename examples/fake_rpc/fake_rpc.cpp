@@ -102,6 +102,14 @@ private:
     }
 
 public:
+    MyThread() :
+        m_rpcUnixClient(NULL),
+        m_rpcFakeClient(NULL),
+        m_connections(0),
+        m_sentData(0),
+        m_receivedData(0)
+    {}
+
     virtual ~MyThread()
     {
         // Always quit thread

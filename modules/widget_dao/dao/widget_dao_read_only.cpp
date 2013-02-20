@@ -37,6 +37,10 @@
 #include <orm_generator_wrt.h>
 #include <LanguageTagsProvider.h>
 
+namespace {
+    unsigned int seed = time(NULL);
+}
+
 namespace WrtDB {
 //TODO in current solution in each getter there exists a check
 //"IsWidgetInstalled". Maybe it should be verified, if it could be done
@@ -1185,7 +1189,7 @@ TizenPkgId WidgetDAOReadOnly::generatePkgId()
     pkgId.resize(MAX_TIZENID_LENGTH);
     do {
         for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
-            pkgId[i] = allowed[rand() % allowed.length()];
+            pkgId[i] = allowed[rand_r(&seed) % allowed.length()];
         }
     } while (isWidgetInstalled(pkgId));
     return pkgId;

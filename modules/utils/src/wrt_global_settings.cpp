@@ -91,9 +91,9 @@ bool initializeGlobalSettings()
     // ignore environment variables if this flag is not set
 #ifdef GLOBAL_SETTINGS_CONTROL
     char * envStr = getenv(WRT_TEST_MODE);
-    int testMode = 0;
     if (NULL != envStr) {
         std::string env = envStr;
+        int testMode = 0;
         if ("1" == env) {
             testMode = ALL_TEST;
         } else {

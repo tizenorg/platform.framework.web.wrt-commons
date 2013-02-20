@@ -140,8 +140,8 @@ RUNNER_TEST(plugin_dao_test_register_library_dependencies)
         PluginHandle depHandles[] = { 117, 119 };
 
         PluginHandleSetPtr dependencies(new PluginHandleSet);
+        dependencies->insert(depHandles[0]);
         dependencies->insert(depHandles[1]);
-        dependencies->insert(depHandles[2]);
 
         PluginDAO::registerPluginLibrariesDependencies(handle, dependencies);
 
@@ -153,9 +153,9 @@ RUNNER_TEST(plugin_dao_test_register_library_dependencies)
             retDependencies->size() == sizeof(depHandles) /
             sizeof(depHandles[0]));
         RUNNER_ASSERT(
-            retDependencies->find(depHandles[1]) != retDependencies->end());
+            retDependencies->find(depHandles[0]) != retDependencies->end());
         RUNNER_ASSERT(
-            retDependencies->find(depHandles[2]) != retDependencies->end());
+            retDependencies->find(depHandles[1]) != retDependencies->end());
     }
 }
 
