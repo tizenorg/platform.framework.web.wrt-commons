@@ -1129,6 +1129,7 @@ void WidgetDAOReadOnly::getAppServiceList(
             ret.operation = it->Get_operation();
             ret.scheme = it->Get_scheme();
             ret.mime = it->Get_mime();
+            ret.disposition = static_cast<WidgetApplicationService::Disposition>(it->Get_disposition());
             outAppServiceList.push_back(ret);
         }
 

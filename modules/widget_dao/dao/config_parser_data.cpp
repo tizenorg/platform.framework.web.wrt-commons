@@ -451,7 +451,8 @@ bool ConfigParserData::ServiceInfo::operator== (const ServiceInfo& info) const
     return m_src == info.m_src &&
            m_operation == info.m_operation &&
            m_scheme == info.m_scheme &&
-           m_mime == info.m_mime;
+           m_mime == info.m_mime &&
+           m_disposition == info.m_disposition;
 }
 
 bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
@@ -459,7 +460,8 @@ bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
     return m_src != info.m_src &&
            m_operation != info.m_operation &&
            m_scheme != info.m_scheme &&
-           m_mime != info.m_mime;
+           m_mime != info.m_mime &&
+           m_disposition != info.m_disposition;
 }
 
 bool ConfigParserData::LiveboxInfo::operator==(const LiveboxInfo& other) const

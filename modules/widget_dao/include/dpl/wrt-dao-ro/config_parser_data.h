@@ -181,20 +181,27 @@ class ConfigParserData
      */
     struct ServiceInfo
     {
+        enum class Disposition {
+            WINDOW = 0,
+            INLINE
+        };
         ServiceInfo(
             const DPL::String& src,
             const DPL::String& operation,
             const DPL::String& scheme,
-            const DPL::String& mime) :
+            const DPL::String& mime,
+            const Disposition dispos) :
             m_src(src),
             m_operation(operation),
             m_scheme(scheme),
-            m_mime(mime)
+            m_mime(mime),
+            m_disposition(dispos)
         {}
         DPL::String m_src;
         DPL::String m_operation;
         DPL::String m_scheme;
         DPL::String m_mime;
+        Disposition m_disposition;
 
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;

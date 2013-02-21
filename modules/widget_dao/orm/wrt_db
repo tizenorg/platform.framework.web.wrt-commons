@@ -313,20 +313,21 @@ CREATE_TABLE(CRLResponseStorage)
 CREATE_TABLE_END()
 
 CREATE_TABLE(SettingsList)
-    COLUMN_NOT_NULL(appId,         INT,)
-    COLUMN_NOT_NULL(settingName,               TEXT,   )
-    COLUMN_NOT_NULL(settingValue,        TEXT,   )
+    COLUMN_NOT_NULL(appId,          INT,)
+    COLUMN_NOT_NULL(settingName,    TEXT,)
+    COLUMN_NOT_NULL(settingValue,   TEXT,)
     TABLE_CONSTRAINTS(
         FOREIGN KEY (appId) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 
 CREATE_TABLE(ApplicationServiceInfo)
-    COLUMN_NOT_NULL(app_id,    INT,)
-    COLUMN_NOT_NULL(src,       TEXT,)
-    COLUMN_NOT_NULL(operation, TEXT,)
-    COLUMN_NOT_NULL(scheme,    TEXT,)
-    COLUMN_NOT_NULL(mime,      TEXT,)
+    COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(src,            TEXT,)
+    COLUMN_NOT_NULL(operation,      TEXT,)
+    COLUMN_NOT_NULL(scheme,         TEXT,)
+    COLUMN_NOT_NULL(mime,           TEXT,)
+    COLUMN_NOT_NULL(disposition,    TINYINT, DEFAULT 0)
 
     TABLE_CONSTRAINTS(
         PRIMARY KEY(app_id, operation, scheme, mime)

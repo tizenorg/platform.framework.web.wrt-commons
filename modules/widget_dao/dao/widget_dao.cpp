@@ -709,6 +709,7 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
         row.Set_operation(ASIt->m_operation);
         row.Set_scheme(ASIt->m_scheme);
         row.Set_mime(ASIt->m_mime);
+        row.Set_disposition(static_cast<int>(ASIt->m_disposition));
 
         DO_INSERT(row, ApplicationServiceInfo)
     }

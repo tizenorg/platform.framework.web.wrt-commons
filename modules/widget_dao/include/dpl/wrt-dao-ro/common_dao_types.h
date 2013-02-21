@@ -378,18 +378,24 @@ typedef std::list<WidgetSetting> WidgetSettings;
  */
 struct WidgetApplicationService
 {
-  public:
+    enum class Disposition {
+        WINDOW = 0,
+        INLINE
+    };
+
     DPL::String src;       /* start uri */
     DPL::String operation; /* service name */
     DPL::String scheme;    /* scheme type*/
     DPL::String mime;      /* mime type */
+    Disposition disposition;
 
     bool operator== (const WidgetApplicationService& other) const
     {
         return src == other.src &&
                operation == other.operation &&
                scheme == other.scheme &&
-               mime == other.mime;
+               mime == other.mime &&
+               disposition == other.disposition;
     }
 };
 
