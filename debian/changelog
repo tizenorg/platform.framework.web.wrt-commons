@@ -1,3 +1,15 @@
+wrt-commons (0.2.99) unstable; urgency=low
+
+  * Unused fields in WidgetRegisterInfo
+  * Implement tizen privilege for w3c API 
+  * Renaming tests binaries
+  * Fixed buildrequires dukgenerator to dukgenerator-devel
+  * Modify to get encryption key requested by osp security team
+  * Localization tests move
+  * Compilation Warnings - Part 3  
+
+ -- leerang <leerang.song@samsung.com>  Fri, 22 Feb 2013 14:54:21 +0900
+
 wrt-commons (0.2.98) unstable; urgency=low
 
   * wrt_commons_reset.sh fix

@@ -43,8 +43,11 @@ class SecurityOriginDAO
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);
+    bool isReadOnly(const SecurityOriginData &securityOriginData);
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
-                               const Result result);
+                               const Result result,
+                               const bool readOnly = false);
+    void setPrivilegeSecurityOriginData(const Feature feature);
     void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
     void removeSecurityOriginData(const Result result);
 

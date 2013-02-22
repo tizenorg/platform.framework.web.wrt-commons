@@ -26,29 +26,29 @@
 # generating proper output files
 #
 
-SET(TARGET_NAME "dpl-tests-core")
+SET(TARGET_NAME "wrt-commons-tests-core")
 
 # Set DPL tests sources
 SET(DPL_TESTS_CORE_SOURCES
-    ${TESTS_DPL_DIR}/core/main.cpp
-    ${TESTS_DPL_DIR}/core/test_address.cpp
-    ${TESTS_DPL_DIR}/core/test_binary_queue.cpp
-    ${TESTS_DPL_DIR}/core/test_foreach.cpp
-    ${TESTS_DPL_DIR}/core/test_fast_delegate.cpp
-    ${TESTS_DPL_DIR}/core/test_log_unhandled_exception.cpp
-    ${TESTS_DPL_DIR}/core/test_once.cpp
-    ${TESTS_DPL_DIR}/core/test_serialization.cpp
-    ${TESTS_DPL_DIR}/core/test_scoped_array.cpp
-    ${TESTS_DPL_DIR}/core/test_scoped_close.cpp
-    ${TESTS_DPL_DIR}/core/test_scoped_fclose.cpp
-    ${TESTS_DPL_DIR}/core/test_scoped_free.cpp
-    ${TESTS_DPL_DIR}/core/test_scoped_ptr.cpp
-    ${TESTS_DPL_DIR}/core/test_semaphore.cpp
-    ${TESTS_DPL_DIR}/core/test_shared_ptr.cpp
-    ${TESTS_DPL_DIR}/core/test_string.cpp
-    ${TESTS_DPL_DIR}/core/test_thread.cpp
-    ${TESTS_DPL_DIR}/core/test_type_list.cpp
-    ${TESTS_DPL_DIR}/core/test_zip_input.cpp
+    ${TESTS_DIR}/core/main.cpp
+    ${TESTS_DIR}/core/test_address.cpp
+    ${TESTS_DIR}/core/test_binary_queue.cpp
+    ${TESTS_DIR}/core/test_foreach.cpp
+    ${TESTS_DIR}/core/test_fast_delegate.cpp
+    ${TESTS_DIR}/core/test_log_unhandled_exception.cpp
+    ${TESTS_DIR}/core/test_once.cpp
+    ${TESTS_DIR}/core/test_serialization.cpp
+    ${TESTS_DIR}/core/test_scoped_array.cpp
+    ${TESTS_DIR}/core/test_scoped_close.cpp
+    ${TESTS_DIR}/core/test_scoped_fclose.cpp
+    ${TESTS_DIR}/core/test_scoped_free.cpp
+    ${TESTS_DIR}/core/test_scoped_ptr.cpp
+    ${TESTS_DIR}/core/test_semaphore.cpp
+    ${TESTS_DIR}/core/test_shared_ptr.cpp
+    ${TESTS_DIR}/core/test_string.cpp
+    ${TESTS_DIR}/core/test_thread.cpp
+    ${TESTS_DIR}/core/test_type_list.cpp
+    ${TESTS_DIR}/core/test_zip_input.cpp
 )
 
 WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_EFL})
@@ -56,6 +56,6 @@ WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_CORE_SOURCES})
 WRT_TEST_INSTALL(${TARGET_NAME})
 
 INSTALL(FILES
-        ${TESTS_DPL_DIR}/core/data/sample.zip
+        ${TESTS_DIR}/core/data/sample.zip
         DESTINATION /opt/share/wrt/wrt-commons/tests/core
     )

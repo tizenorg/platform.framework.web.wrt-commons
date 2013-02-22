@@ -26,6 +26,7 @@
 #include <string>
 #include <dpl/log/log.h>
 #include <dpl/exception.h>
+#include <dukgen.h>
 
 namespace {
 #define BITS_SIZE 128
@@ -52,9 +53,10 @@ void ResourceDecryptor::SetDecryptionKey(std::string userKey)
         return;
     }
 
-    char **duk = calculate(const_cast<char*>(userKey.c_str()),
-                           userKey.size(), KEY_SIZE);
-    unsigned char *key = reinterpret_cast<unsigned char*>(*duk);
+    char* pKey = GetDeviceUniqueKey(const_cast<char*>(userKey.c_str()),
+            userKey.size(), KEY_SIZE);
+
+    unsigned char *key = reinterpret_cast<unsigned char*>(pKey);
 
     if (0 > AES_set_decrypt_key(key, BITS_SIZE, &m_decKey)) {
         ThrowMsg(ResourceDecryptor::Exception::GetDecKeyFailed,

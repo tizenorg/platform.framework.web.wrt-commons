@@ -18,12 +18,25 @@
 # @brief
 #
 
-SET(TESTS_DPL_DIR "${TESTS_DIR}/dpl")
+#
+# Test files
+#
+# Define all DPL tests sources.
+# Runner is responsible for runnint it all and
+# generating proper output files
+#
 
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(db)
-ADD_SUBDIRECTORY(dbus)
-ADD_SUBDIRECTORY(event)
-#ADD_SUBDIRECTORY(localization) TODO localization mockups need to be fixed 
-ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(test)
+SET(TARGET_NAME "wrt-commons-tests-event")
+
+# Set DPL tests sources
+SET(DPL_TESTS_EVENT_SOURCES
+    ${TESTS_DIR}/event/main.cpp
+    ${TESTS_DIR}/event/test_controller.cpp
+    ${TESTS_DIR}/event/test_event_support.cpp
+    ${TESTS_DIR}/event/test_ic_delegate.cpp
+    ${TESTS_DIR}/event/test_property.cpp
+)
+
+WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_EVENT_EFL})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_EVENT_SOURCES})
+WRT_TEST_INSTALL(${TARGET_NAME})

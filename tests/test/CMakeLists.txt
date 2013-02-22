@@ -18,12 +18,12 @@
 # @brief
 #
 
-SET(TARGET_NAME "dpl-tests-test")
+SET(TARGET_NAME "wrt-commons-tests-test-runner-child")
 
 # Set DPL tests sources
 SET(DPL_TESTS_UTIL_SOURCES
-    ${TESTS_DPL_DIR}/test/main.cpp
-    ${TESTS_DPL_DIR}/test/runner_child.cpp
+    ${TESTS_DIR}/test/main.cpp
+    ${TESTS_DIR}/test/runner_child.cpp
 )
 
 #WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})

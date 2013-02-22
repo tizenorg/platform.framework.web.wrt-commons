@@ -24,6 +24,7 @@
 
 #include <fcntl.h>
 #include <dpl/log/log.h>
+#include <dukgen.h>
 
 namespace {
 #define BITS_SIZE 128
@@ -54,9 +55,9 @@ void ResourceEncryptor::CreateEncryptionKey(std::string userKey)
         return;
     }
 
-    char **duk = calculate(const_cast<char*>(userKey.c_str()),
-                           userKey.size(), KEY_SIZE);
-    unsigned char *key = reinterpret_cast<unsigned char*>(*duk);
+    char* pKey = GetDeviceUniqueKey(const_cast<char*>(userKey.c_str()),
+            userKey.size(), KEY_SIZE);
+    unsigned char *key = reinterpret_cast<unsigned char*>(pKey);
 
     if (0 > AES_set_encrypt_key(key, BITS_SIZE, &m_encKey)) {
         ThrowMsg(ResourceEncryptor::Exception::CreateEncKeyFailed,

@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.tizen.DBusTestService
-Exec=/usr/bin/dpl-dbus-test-service

@@ -1,11 +1,12 @@
 SQL(BEGIN TRANSACTION;)
 
 CREATE_TABLE(SecurityOriginInfo)
-    COLUMN_NOT_NULL(feature, INT, )
-    COLUMN_NOT_NULL(scheme,  TEXT,DEFAULT '')
-    COLUMN_NOT_NULL(host,    TEXT,DEFAULT '')
-    COLUMN_NOT_NULL(port,    INT, DEFAULT 0)
-    COLUMN_NOT_NULL(result,  INT, DEFAULT 0)
+    COLUMN_NOT_NULL(feature,  INT, )
+    COLUMN_NOT_NULL(scheme,   TEXT,DEFAULT '')
+    COLUMN_NOT_NULL(host,     TEXT,DEFAULT '')
+    COLUMN_NOT_NULL(port,     INT, DEFAULT 0)
+    COLUMN_NOT_NULL(result,   INT, DEFAULT 0)
+    COLUMN_NOT_NULL(readonly, INT, DEFAULT 0)
     TABLE_CONSTRAINTS(PRIMARY KEY(feature,scheme,host,port))
 CREATE_TABLE_END()
 

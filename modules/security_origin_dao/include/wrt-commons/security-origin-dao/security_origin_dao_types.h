@@ -26,6 +26,7 @@
 
 #include <list>
 #include <memory>
+#include <map>
 #include <dpl/string.h>
 
 namespace SecurityOriginDB {
@@ -47,6 +48,8 @@ enum Result
     RESULT_ALLOW_ALWAYS,
     RESULT_DENY_ALWAYS
 };
+
+extern const std::map<std::string, Feature> g_W3CPrivilegeTextMap;
 
 struct Origin
 {

@@ -26,11 +26,11 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <gio/gio.h>
 #include <dpl/generic_event.h>
 #include <dpl/event/event_support.h>
 #include <dpl/dbus/object.h>
 #include <dpl/dbus/object_proxy.h>
+#include <dpl/dbus/glib_util.h>
 
 namespace DPL {
 namespace DBus {

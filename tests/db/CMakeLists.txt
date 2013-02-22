@@ -13,21 +13,37 @@
 #    limitations under the License.
 #
 # @file        CMakeLists.txt
-# @author      Krzysztof Jackiewicz (k.jackiewicz@samsung.com)
+# @author      Lukasz Marek (l.marek@samsung.com)
 # @version     1.0
 # @brief
 #
 
-SET(TARGET_NAME "dpl-tests-utils")
+#
+# Test files
+#
+# Define all DPL tests sources.
+# Runner is responsible for runnint it all and
+# generating proper output files
+#
+
+SET(TARGET_NAME "wrt-commons-tests-db")
 
 # Set DPL tests sources
-SET(DPL_TESTS_UTIL_SOURCES
-    ${TESTS_DPL_DIR}/utils/main.cpp
-    ${TESTS_DPL_DIR}/utils/widget_version.cpp
-    ${TESTS_DPL_DIR}/utils/bash_utils.cpp
-    ${TESTS_DPL_DIR}/utils/wrt_utility.cpp
+SET(DPL_TESTS_DB_SOURCES
+    ${TESTS_DIR}/db/main.cpp
+    ${TESTS_DIR}/db/test_orm.cpp
+    ${TESTS_DIR}/db/test_sql_connection.cpp
 )
 
-#WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})
-WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_UTIL_SOURCES})
+ADD_SUBDIRECTORY(orm)
+
+#include subdirectory
+WRT_INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/orm)
+WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_DB_EFL})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_DB_SOURCES})
 WRT_TEST_INSTALL(${TARGET_NAME})
+
+INSTALL(FILES
+        ${TESTS_DIR}/db/orm/dpl_orm_test.db
+        DESTINATION /opt/share/wrt/wrt-commons/tests/db
+)

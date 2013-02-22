@@ -18,25 +18,16 @@
 # @brief
 #
 
-#
-# Test files
-#
-# Define all DPL tests sources.
-# Runner is responsible for runnint it all and
-# generating proper output files
-#
-
-SET(TARGET_NAME "dpl-tests-event")
+SET(TARGET_NAME "wrt-commons-tests-utils")
 
 # Set DPL tests sources
-SET(DPL_TESTS_EVENT_SOURCES
-    ${TESTS_DPL_DIR}/event/main.cpp
-    ${TESTS_DPL_DIR}/event/test_controller.cpp
-    ${TESTS_DPL_DIR}/event/test_event_support.cpp
-    ${TESTS_DPL_DIR}/event/test_ic_delegate.cpp
-    ${TESTS_DPL_DIR}/event/test_property.cpp
+SET(DPL_TESTS_UTIL_SOURCES
+    ${TESTS_DIR}/utils/main.cpp
+    ${TESTS_DIR}/utils/widget_version.cpp
+    ${TESTS_DIR}/utils/bash_utils.cpp
+    ${TESTS_DIR}/utils/wrt_utility.cpp
 )
 
-WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_EVENT_EFL})
-WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_EVENT_SOURCES})
+#WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_UTIL_SOURCES})
 WRT_TEST_INSTALL(${TARGET_NAME})
