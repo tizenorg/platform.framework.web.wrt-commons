@@ -23,6 +23,7 @@
 #include <cmath>
 #include <cstring>
 #include <vector>
+#include <string>
 #include <dpl/test/test_runner.h>
 #include <dpl/string.h>
 #include <dpl/sstream.h>
@@ -414,5 +415,28 @@ RUNNER_TEST(String_CompareCaseInsensitive)
             DPL::FromUTF32String(L"Ala Makota ma żołądkówkę"),
             DPL::FromUTF32String(L"AlA MakOTA ma ŻoŁąDKÓwkę"),
             true) == 0);
+}
+
+/*
+Name: String_Join
+Description: tests joining strings algorithm
+Expected: join should take place correctly
+*/
+RUNNER_TEST(String_Join)
+{
+    std::vector<std::string> strings;
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "/") == "");
+    strings.push_back("one");
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "/") == "one");
+    strings.push_back("two");
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "/") == "one/two");
+    strings.push_back("three");
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "/") == "one/two/three");
+    strings.push_back("four");
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "/") == "one/two/three/four");
+    RUNNER_ASSERT(DPL::Join(++strings.begin(), --strings.end(), "/") == "two/three");
+
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "+") == "one+two+three+four");
+    RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "delim") == "onedelimtwodelimthreedelimfour");
 }
 
