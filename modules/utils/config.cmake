@@ -27,6 +27,7 @@ SET(DPL_UTILS_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/utils/src/widget_version.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/wrt_global_settings.cpp
     ${PROJECT_SOURCE_DIR}/modules/utils/src/wrt_utility.cpp
+    ${PROJECT_SOURCE_DIR}/modules/utils/src/path.cpp
     PARENT_SCOPE
 )
 
@@ -38,6 +39,7 @@ SET(DPL_UTILS_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/widget_version.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/wrt_global_settings.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/wrt_utility.h
+    ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/path.h
     PARENT_SCOPE
 )
 
