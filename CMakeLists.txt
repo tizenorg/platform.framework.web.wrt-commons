@@ -190,6 +190,7 @@ SET(TARGET_AUTO_SAVE_DAO_RO_LIB "wrt-commons-auto-save-dao-ro")
 SET(TARGET_CUSTOM_HANDLER_DAO_RW_LIB "wrt-commons-custom-handler-dao-rw")
 SET(TARGET_CUSTOM_HANDLER_DAO_RO_LIB "wrt-commons-custom-handler-dao-ro")
 SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
+SET(TARGET_CERTIFICATE_DAO_LIB "wrt-commons-certificate-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
 SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
 
