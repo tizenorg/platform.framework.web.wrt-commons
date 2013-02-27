@@ -504,6 +504,13 @@ class WidgetDAOReadOnly
     DPL::OptionalString getCspPolicy() const;
 
     /**
+     * This method is used as a getter for report only csp policy of widget.
+     * It may be provided in configuration file.
+     * @return global csp report only policy for widget
+     */
+    DPL::OptionalString getCspPolicyReportOnly() const;
+
+    /**
      * This method returns list filed with Common Name entries from certificate.
      *
      * @return Common Name of Distribuotor End Entity certificate.

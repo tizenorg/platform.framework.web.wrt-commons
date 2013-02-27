@@ -695,6 +695,12 @@ DPL::OptionalString WidgetDAOReadOnly::getCspPolicy() const
     return row.Get_csp_policy();
 }
 
+DPL::OptionalString WidgetDAOReadOnly::getCspPolicyReportOnly() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    return row.Get_csp_policy_report_only();
+}
+
 bool WidgetDAOReadOnly::getWebkitPluginsRequired() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);

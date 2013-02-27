@@ -312,6 +312,7 @@ class ConfigParserData
 
     //csp polic for widget
     DPL::OptionalString cspPolicy;
+    DPL::OptionalString cspPolicyReportOnly;
 
     //Application service model list
     ServiceInfoList appServiceList; //It will be removed.
