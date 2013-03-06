@@ -65,24 +65,6 @@ inline std::string GetVconfKeyWebNotificationUsage(DPL::String tzPkgId)
                .GetFullPath();
 }
 
-inline std::string GetVconfKeyWebDatabaseUsage(DPL::String tzPkgId)
-{
-    return PathBuilder()
-               .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
-               .Concat(GlobalConfig::GetVconfKeyWebDatabaseUsagePath())
-               .GetFullPath();
-}
-
-inline std::string GetVconfKeyFilesystemUsage(DPL::String tzPkgId)
-{
-    return PathBuilder()
-               .Append(GlobalConfig::GetVconfKeyPrefixPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
-               .Concat(GlobalConfig::GetVconfKeyFilesystemUsagePath())
-               .GetFullPath();
-}
-
 inline std::string GetVconfKeyMemorySavingMode(DPL::String tzPkgId)
 {
     return PathBuilder()
