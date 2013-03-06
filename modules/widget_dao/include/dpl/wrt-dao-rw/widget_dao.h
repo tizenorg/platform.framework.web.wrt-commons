@@ -221,6 +221,12 @@ class WidgetDAO : public WidgetDAOReadOnly
             DPL::Optional<DbWidgetHandle>());
     static void unregisterWidgetInternal(
         const TizenAppId & tzAppId);
+
+    static void insertApplicationServiceInfo(DbWidgetHandle handle,
+                                             DPL::String src,
+                                             DPL::String operation,
+                                             DPL::String scheme,
+                                             DPL::String mime);
 };
 } // namespace WrtDB
 
