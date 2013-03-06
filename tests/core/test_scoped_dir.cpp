@@ -47,7 +47,7 @@ RUNNER_TEST(ScopedDir_Basic)
         DPL::ScopedDir dir(path, S_IRUSR | S_IWUSR);
         std::ostringstream command;
         command << "touch " << path << "/" << "file.txt";
-        system(command.str().c_str());
+        (void)system(command.str().c_str());
         RUNNER_ASSERT_MSG(access(path, R_OK) == 0, "Directory should be accessible");
         RUNNER_ASSERT_MSG(access(path, W_OK) == 0, "Directory should be writable");
     }
