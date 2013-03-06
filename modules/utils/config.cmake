@@ -30,7 +30,6 @@ SET(DPL_UTILS_SOURCES
     PARENT_SCOPE
 )
 
-
 SET(DPL_UTILS_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/bash_utils.h
     ${PROJECT_SOURCE_DIR}/modules/utils/include/dpl/utils/folder_size.h

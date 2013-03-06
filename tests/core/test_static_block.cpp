@@ -41,7 +41,7 @@ struct A
         ok_class = true;
     }
 };
-STATIC_BLOCK_CLASS( A, init );
+STATIC_BLOCK_CLASS( A, init )
 }
 
 /*
