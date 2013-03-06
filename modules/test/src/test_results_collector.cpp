@@ -48,7 +48,7 @@ const char *DEFAULT_XML_FILE_NAME = "results.xml";
 bool ParseCollectorFileArg(const std::string &arg, std::string &filename)
 {
     const std::string argname = "--file=";
-    if (0 == arg.find(argname)) {
+    if (arg.find(argname) == 0 ) {
         filename = arg.substr(argname.size());
         return true;
     }

@@ -96,6 +96,10 @@ class COtherClass
     double rubbish; // to ensure this class has non-zero size.
 
   public:
+    COtherClass() :
+        rubbish(0)
+    {}
+
     virtual ~COtherClass()
     {}
 
@@ -106,6 +110,13 @@ class COtherClass
 
 class VeryBigClass
 {
+  public:
+    VeryBigClass() {
+        memset(letsMakeThingsComplicated, 0,
+                400 * sizeof(letsMakeThingsComplicated[0]));
+    }
+
+  private:
     int letsMakeThingsComplicated[400];
 };
 

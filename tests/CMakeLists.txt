@@ -16,7 +16,7 @@ ADD_SUBDIRECTORY(dao)
 ADD_SUBDIRECTORY(db)
 ADD_SUBDIRECTORY(dbus)
 ADD_SUBDIRECTORY(event)
-#ADD_SUBDIRECTORY(files_localization) TODO localization mockups need to be fixed
+ADD_SUBDIRECTORY(files_localization)
 ADD_SUBDIRECTORY(localizationTagsProvider)
 ADD_SUBDIRECTORY(utils)
 ADD_SUBDIRECTORY(test)

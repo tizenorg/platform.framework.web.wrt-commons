@@ -70,7 +70,8 @@ class TestClass : public DPL::ISerializable
         c.push_back(str2);
         c.push_back(str1 + str2);
     }
-    TestClass(DPL::IStream& stream)
+    TestClass(DPL::IStream& stream) :
+        a(0)    //TODO: consider the need (g.rynkowski)
     {
         DPL::Deserialization::Deserialize(stream, a);
         DPL::Deserialization::Deserialize(stream, b);

@@ -36,6 +36,10 @@
 #include <orm_generator_wrt.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
+namespace {
+    unsigned int seed = time(NULL);
+}
+
 namespace WrtDB {
 //TODO in current solution in each getter there exists a check
 //"IsWidgetInstalled". Maybe it should be verified, if it could be done
@@ -244,10 +248,9 @@ DbWidgetHandle WidgetDAO::registerWidget(
     //make it more precise due to very fast tests
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    srand(time(NULL) + tv.tv_usec);
     DbWidgetHandle widgetHandle;
     do {
-        widgetHandle = rand();
+        widgetHandle = rand_r(&seed);
     } while (isWidgetInstalled(widgetHandle));
 
     registerWidget(*pWidgetRegisterInfo.configInfo.tizenAppId,
@@ -391,6 +394,7 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_author_email(widgetConfigurationInfo.authorEmail);
     row.Set_author_href(widgetConfigurationInfo.authorHref);
     row.Set_csp_policy(widgetConfigurationInfo.cspPolicy);
+    row.Set_csp_policy_report_only(widgetConfigurationInfo.cspPolicyReportOnly);
     row.Set_base_folder(DPL::FromUTF8String(regInfo.baseFolder));
     row.Set_webkit_plugins_required(widgetConfigurationInfo.flashNeeded);
     row.Set_recognized(wacSecurity.isRecognized());
@@ -706,6 +710,7 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
         row.Set_operation(ASIt->m_operation);
         row.Set_scheme(ASIt->m_scheme);
         row.Set_mime(ASIt->m_mime);
+        row.Set_disposition(static_cast<int>(ASIt->m_disposition));
 
         DO_INSERT(row, ApplicationServiceInfo)
     }

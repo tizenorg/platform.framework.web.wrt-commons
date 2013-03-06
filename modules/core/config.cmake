@@ -123,6 +123,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton_impl.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton_safe_impl.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/static_block.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/string.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/sstream.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/task.h

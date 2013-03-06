@@ -45,6 +45,7 @@ SET(DPL_TESTS_CORE_SOURCES
     ${TESTS_DIR}/core/test_scoped_ptr.cpp
     ${TESTS_DIR}/core/test_semaphore.cpp
     ${TESTS_DIR}/core/test_shared_ptr.cpp
+    ${TESTS_DIR}/core/test_static_block.cpp
     ${TESTS_DIR}/core/test_string.cpp
     ${TESTS_DIR}/core/test_thread.cpp
     ${TESTS_DIR}/core/test_type_list.cpp

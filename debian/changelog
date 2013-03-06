@@ -1,3 +1,17 @@
+wrt-commons (0.2.101) unstable; urgency=low
+
+  * CSP report only support
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 06 Mar 2013 19:22:11 +0900
+
+wrt-commons (0.2.100) unstable; urgency=low
+
+  * Prepare database for additional appservice parameter
+  * Enable DPL::Localization tests
+  * Fix warnings shown by cppcheck for wrt-commons
+
+ -- leerang <leerang.song@samsung.com>  Thu, 28 Feb 2013 12:53:01 +0900
+
 wrt-commons (0.2.99) unstable; urgency=low
 
   * Unused fields in WidgetRegisterInfo

@@ -37,6 +37,10 @@
 #include <orm_generator_wrt.h>
 #include <LanguageTagsProvider.h>
 
+namespace {
+    unsigned int seed = time(NULL);
+}
+
 namespace WrtDB {
 //TODO in current solution in each getter there exists a check
 //"IsWidgetInstalled". Maybe it should be verified, if it could be done
@@ -691,6 +695,12 @@ DPL::OptionalString WidgetDAOReadOnly::getCspPolicy() const
     return row.Get_csp_policy();
 }
 
+DPL::OptionalString WidgetDAOReadOnly::getCspPolicyReportOnly() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    return row.Get_csp_policy_report_only();
+}
+
 bool WidgetDAOReadOnly::getWebkitPluginsRequired() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
@@ -1125,6 +1135,7 @@ void WidgetDAOReadOnly::getAppServiceList(
             ret.operation = it->Get_operation();
             ret.scheme = it->Get_scheme();
             ret.mime = it->Get_mime();
+            ret.disposition = static_cast<WidgetApplicationService::Disposition>(it->Get_disposition());
             outAppServiceList.push_back(ret);
         }
 
@@ -1185,7 +1196,7 @@ TizenPkgId WidgetDAOReadOnly::generatePkgId()
     pkgId.resize(MAX_TIZENID_LENGTH);
     do {
         for (int i = 0; i < MAX_TIZENID_LENGTH; ++i) {
-            pkgId[i] = allowed[rand() % allowed.length()];
+            pkgId[i] = allowed[rand_r(&seed) % allowed.length()];
         }
     } while (isWidgetInstalled(pkgId));
     return pkgId;

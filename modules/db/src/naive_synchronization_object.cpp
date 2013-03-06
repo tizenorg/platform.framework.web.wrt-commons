@@ -24,12 +24,16 @@
 #include <dpl/db/naive_synchronization_object.h>
 #include <dpl/thread.h>
 
+namespace {
+    unsigned int seed = time(NULL);
+}
+
 namespace DPL {
 namespace DB {
 void NaiveSynchronizationObject::Synchronize()
 {
     // Sleep for about 10ms - 30ms
-    Thread::MiliSleep(10 + rand() % 20);
+    Thread::MiliSleep(10 + rand_r(&seed) % 20);
 }
 
 void NaiveSynchronizationObject::NotifyAll()

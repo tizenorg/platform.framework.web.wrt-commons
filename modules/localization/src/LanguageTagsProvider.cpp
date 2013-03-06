@@ -139,12 +139,12 @@ void LanguageTagsProvider::createTagsFromLocales(const char* language)
     DPL::String langdescr =
         LocaleToBCP47LanguageTag(DPL::FromUTF8String(language));
 
-    size_t position;
     if (langdescr.empty()) {
         LogError("Empty language description while correct value needed");
     } else {
         /* Language tags list should not be cleared before this place to
          * avoid losing current data when new data are invalid */
+        size_t position;
         while (true) {
             LogDebug("Processing language description: " << langdescr);
             m_languageTagsList.push_back(langdescr);

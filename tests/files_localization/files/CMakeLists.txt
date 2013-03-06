@@ -1,19 +1,19 @@
 INSTALL(FILES
-    ${DPL_TESTS_DIR}/localization/files/one
+    ${CMAKE_CURRENT_SOURCE_DIR}/one
     DESTINATION
-    /opt/share/widget/tests/localization/widget1/locales/pl-en
+    /opt/share/widget/tests/localization/widget1/res/wgt/locales/pl-en
   )
 
 INSTALL(FILES
-    ${DPL_TESTS_DIR}/localization/files/one
-    ${DPL_TESTS_DIR}/localization/files/two
+    ${CMAKE_CURRENT_SOURCE_DIR}/one
+    ${CMAKE_CURRENT_SOURCE_DIR}/two
     DESTINATION
-    /opt/share/widget/tests/localization/widget2/locales/pl-en
+    /opt/share/widget/tests/localization/widget2/res/wgt/locales/pl-en
   )
 
 INSTALL(FILES
-    ${DPL_TESTS_DIR}/localization/files/two
+    ${CMAKE_CURRENT_SOURCE_DIR}/two
     DESTINATION
-    /opt/share/widget/tests/localization/widget2/locales/en-en
+    /opt/share/widget/tests/localization/widget2/res/wgt/locales/en-en
   )
 

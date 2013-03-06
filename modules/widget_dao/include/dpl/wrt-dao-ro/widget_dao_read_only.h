@@ -349,7 +349,7 @@ class WidgetDAOReadOnly
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
      * DB table.
      */
-    DPL::String getPath() const;
+    virtual DPL::String getPath() const;
 
     DPL::String getFullPath() const;
 
@@ -502,6 +502,13 @@ class WidgetDAOReadOnly
      * @return global csp policy for widget
      */
     DPL::OptionalString getCspPolicy() const;
+
+    /**
+     * This method is used as a getter for report only csp policy of widget.
+     * It may be provided in configuration file.
+     * @return global csp report only policy for widget
+     */
+    DPL::OptionalString getCspPolicyReportOnly() const;
 
     /**
      * This method returns list filed with Common Name entries from certificate.

@@ -89,28 +89,32 @@ int RmDir(const char* path)
         return -1;
     }
 
-    struct dirent* entry = NULL;
-    do {
-        errno = 0;
-        if (NULL != (entry = ::readdir(dir))) {
-            if (!::strncmp(entry->d_name, ".", 1) ||
-                !::strncmp(entry->d_name, "..", 2))
-            {
-                continue;
-            }
-            std::string fullPath = WrtDB::PathBuilder(path)
-                    .Append(entry->d_name)
-                    .GetFullPath();
-            if (RmNode(fullPath.c_str()) != 0) {
-                int error = errno;
-                TEMP_FAILURE_RETRY(::closedir(dir));
-                errno = error;
-                return -1;
-            }
-        }
-    } while (NULL != entry);
+    int return_code;
+    struct dirent entry = NULL;
+    struct dirent* entry_result;
 
-    int error = errno;
+    for (return_code = readdir_r(dir, &entry, &entry_result) != 0;
+            entry_result != NULL && return_code != 0;
+            return_code = readdir_r(dir, &entry, &entry_result))
+    {
+        errno = 0;
+        if (!::strncmp(entry.d_name, ".", 1) ||
+            !::strncmp(entry.d_name, "..", 2))
+        {
+            continue;
+        }
+        std::string fullPath = WrtDB::PathBuilder(path)
+                .Append(entry.d_name)
+                .GetFullPath();
+        if (RmNode(fullPath.c_str()) != 0) {
+            int error = errno;
+            TEMP_FAILURE_RETRY(::closedir(dir));
+            errno = error;
+            return -1;
+        }
+    }
+
+    int error = (!errno) ? errno : return_code;
     if (TEMP_FAILURE_RETRY(::closedir(dir)) != 0) {
         return -1;
     }

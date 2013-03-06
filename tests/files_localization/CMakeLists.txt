@@ -29,23 +29,15 @@
 SET(TARGET_LOC "wrt-commons-tests-loc")
 
 SET(LOC_TESTS_SOURCES
-    ${TESTS_DIR}/files_localization/test_localization.cpp
-    ${TESTS_DIR}/files_localization/test_suite01.cpp
-    #${DPL_TESTS_DIR}/localization/mockup_src/widget_dao.cpp
-    #${PROJECT_SOURCE_DIR}/modules/localization/src/localization_utils.cpp
-    #${PROJECT_SOURCE_DIR}/modules/localization/src/w3c_file_localization.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_localization.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_suite01.cpp
 )
 
-#WRT_INCLUDE_DIRECTORIES(
-    #${SYS_EFL_INCLUDE_DIRS}
-    #${DPL_TEST_INCLUDE_DIR}
-    #${DPL_TESTS_DIR}/localization/mockup_include
-    #${PROJECT_SOURCE_DIR}/modules/localization/include
-#)
-
-#LINK_DIRECTORIES(${SYS_EFL_LIBRARY_DIRS})
-
+WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_LOC} ${TARGET_WRT_DAO_RW_LIB} ${TARGET_CUSTOM_HANDLER_DAO_RW_LIB})
 WRT_TEST_BUILD(${TARGET_LOC} ${LOC_TESTS_SOURCES})
 WRT_TEST_INSTALL(${TARGET_LOC})
 
 ADD_SUBDIRECTORY(files)
+
+INSTALL(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/wrt_db_localization_prepare.sh"
+        DESTINATION bin)
