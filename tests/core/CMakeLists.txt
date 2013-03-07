@@ -40,6 +40,7 @@ SET(DPL_TESTS_CORE_SOURCES
     ${TESTS_DIR}/core/test_serialization.cpp
     ${TESTS_DIR}/core/test_scoped_array.cpp
     ${TESTS_DIR}/core/test_scoped_close.cpp
+    ${TESTS_DIR}/core/test_scoped_dir.cpp
     ${TESTS_DIR}/core/test_scoped_fclose.cpp
     ${TESTS_DIR}/core/test_scoped_free.cpp
     ${TESTS_DIR}/core/test_scoped_ptr.cpp

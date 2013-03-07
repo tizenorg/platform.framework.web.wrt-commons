@@ -25,6 +25,7 @@
 #include <dpl/char_traits.h>
 #include <string>
 #include <ostream>
+#include <numeric>
 
 namespace DPL {
 // @brief DPL string
@@ -105,6 +106,33 @@ void Tokenize(const StringType& str,
         nextSearchStart = pos + 1;
     }
 }
+
+namespace Utils {
+
+template<typename T> class ConcatFunc : public std::binary_function<T, T, T>
+{
+public:
+    explicit ConcatFunc(const T & val) : m_delim(val) {}
+    T operator()(const T & arg1, const T & arg2) const
+    {
+        return arg1 + m_delim + arg2;
+    }
+private:
+    T m_delim;
+};
+
+}
+
+template<typename ForwardIterator>
+typename ForwardIterator::value_type Join(ForwardIterator begin, ForwardIterator end, typename ForwardIterator::value_type delim)
+{
+    typedef typename ForwardIterator::value_type value;
+    if(begin == end) return value();
+    Utils::ConcatFunc<value> func(delim);
+    ForwardIterator init = begin;
+    return std::accumulate(++begin, end, *init, func);
+}
+
 } //namespace DPL
 
 std::ostream& operator<<(std::ostream& aStream, const DPL::String& aString);

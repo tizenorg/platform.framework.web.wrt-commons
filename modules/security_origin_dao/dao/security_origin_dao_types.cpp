@@ -28,8 +28,6 @@
 namespace SecurityOriginDB {
 const std::map<std::string, Feature> g_W3CPrivilegeTextMap = {
     {"http://tizen.org/privilege/location",     FEATURE_GEOLOCATION},
-    {"http://tizen.org/privilege/notification", FEATURE_WEB_NOTIFICATION},
-    {"http://tizen.org/privilege/unlimitedstorage",     FEATURE_WEB_DATABASE},
-    {"http://tizen.org/privilege/filesystem.write",      FEATURE_FILE_SYSTEM_ACCESS}
+    {"http://tizen.org/privilege/notification", FEATURE_WEB_NOTIFICATION}
 };
 } // namespace SecurityOriginDB
