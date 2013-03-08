@@ -1,3 +1,13 @@
+wrt-commons (0.2.103) unstable; urgency=low
+
+  * Update tizen version to 2.1
+  * Replaced VARCHAR with TEXT in databases
+  * Path class for DPL + tests
+  * Implement certificate confirm popup
+  * Add encrypt/decrypt API from trust zone
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 08 Mar 2013 17:17:26 +0900
+
 wrt-commons (0.2.102) unstable; urgency=low
 
   * DPL path join for class Path to be introduced
