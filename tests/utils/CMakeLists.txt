@@ -26,6 +26,7 @@ SET(DPL_TESTS_UTIL_SOURCES
     ${TESTS_DIR}/utils/widget_version.cpp
     ${TESTS_DIR}/utils/bash_utils.cpp
     ${TESTS_DIR}/utils/wrt_utility.cpp
+    ${TESTS_DIR}/utils/path_tests.cpp
 )
 
 #WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})

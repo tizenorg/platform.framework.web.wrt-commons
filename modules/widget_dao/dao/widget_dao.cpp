@@ -36,10 +36,6 @@
 #include <orm_generator_wrt.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
-namespace {
-    unsigned int seed = time(NULL);
-}
-
 namespace WrtDB {
 //TODO in current solution in each getter there exists a check
 //"IsWidgetInstalled". Maybe it should be verified, if it could be done
@@ -249,6 +245,7 @@ DbWidgetHandle WidgetDAO::registerWidget(
     struct timeval tv;
     gettimeofday(&tv, NULL);
     DbWidgetHandle widgetHandle;
+    unsigned int seed = time(NULL);
     do {
         widgetHandle = rand_r(&seed);
     } while (isWidgetInstalled(widgetHandle));
