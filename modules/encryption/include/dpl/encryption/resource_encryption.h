@@ -28,6 +28,8 @@
 #include <openssl/sha.h>
 #include <dpl/exception.h>
 
+extern char** calculate(char*pappId, int idLen, int keyLen);
+
 namespace WRTEncryptor {
 class ResourceEncryptor
 {
@@ -51,17 +53,9 @@ class ResourceEncryptor
     void EncryptChunk(unsigned char* inputBuf, unsigned char* encBuf, size_t
                       chunkSize);
 
-    /* TrustZone */
-    int EncryptChunkByTrustZone(
-            std::string pkgid,
-            const unsigned char *plainBuffer,
-            int pBufSize);
-    void getEncStringByTrustZone(unsigned char *encBuffer);
-
   private:
     AES_KEY GetEncryptionkey();
     AES_KEY m_encKey;
-    void *m_getBuffer;
 };
 } //namespace WRTEncryptor
 

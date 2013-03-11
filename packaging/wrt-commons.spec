@@ -23,12 +23,9 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  pkgconfig(osp-appfw)
 BuildRequires:  libcryptsvc-devel
 BuildRequires:  dukgenerator-devel
-BuildRequires:  osp-appfw-internal-devel
 Requires: libcryptsvc
-Requires: osp-appfw
 
 %description
 Wrt common library

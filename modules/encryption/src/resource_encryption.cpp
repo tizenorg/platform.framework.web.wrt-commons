@@ -25,16 +25,13 @@
 #include <fcntl.h>
 #include <dpl/log/log.h>
 #include <dukgen.h>
-#include <FBaseByteBuffer.h>
-#include <security/FSecCrypto_TrustZoneService.h>
 
 namespace {
 #define BITS_SIZE 128
 #define KEY_SIZE 16
 }
 namespace WRTEncryptor {
-ResourceEncryptor::ResourceEncryptor() :
-    m_getBuffer(NULL)
+ResourceEncryptor::ResourceEncryptor()
 {
     LogDebug("Started Encrytion");
 }
@@ -85,43 +82,5 @@ void ResourceEncryptor::EncryptChunk(unsigned char*
     unsigned char ivec[16] = { 0, };
 
     AES_cbc_encrypt(inputBuf, encBuf, chunkSize, &m_encKey, ivec, AES_ENCRYPT);
-}
-
-int ResourceEncryptor::EncryptChunkByTrustZone(
-        std::string pkgid,
-        const unsigned char *plainBuffer,
-        int pBufSize)
-{
-    using namespace Tizen::Base;
-
-    const byte *b_pkgid = reinterpret_cast<const byte*>(pkgid.c_str());
-    ByteBuffer appInfo;
-    appInfo.Construct(pkgid.length());
-    appInfo.SetArray(b_pkgid, 0, pkgid.length());
-    appInfo.Flip();
-
-    Tizen::Security::Crypto::_TrustZoneService* pInstance;
-    pInstance = Tizen::Security::Crypto::_TrustZoneService::GetInstance();
-
-    ByteBuffer pBuf;
-    pBuf.Construct(pBufSize);
-    const byte *pByte = reinterpret_cast<const byte*>(plainBuffer);
-    pBuf.SetArray(pByte, 0, pBufSize);
-    pBuf.Flip();
-
-    ByteBuffer *getBuffer =
-        pInstance->_TrustZoneService::EncryptN(appInfo, pBuf);
-    m_getBuffer = reinterpret_cast<void*>(getBuffer);
-
-    return getBuffer->GetRemaining();
-}
-
-void ResourceEncryptor::getEncStringByTrustZone(unsigned char *encBuffer)
-{
-    using namespace Tizen::Base;
-    LogDebug("Get encrypted String");
-    ByteBuffer *buffer = reinterpret_cast<ByteBuffer*>(m_getBuffer);
-    memcpy(encBuffer, buffer->GetPointer(), buffer->GetRemaining());
-    buffer->Reset();
 }
 } //namespace ResourceEnc
