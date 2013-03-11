@@ -27,16 +27,13 @@
 #include <dpl/log/log.h>
 #include <dpl/exception.h>
 #include <dukgen.h>
-#include <FBaseByteBuffer.h>
-#include <security/FSecCrypto_TrustZoneService.h>
 
 namespace {
 #define BITS_SIZE 128
 #define KEY_SIZE 16
 }
 namespace WRTDecryptor {
-ResourceDecryptor::ResourceDecryptor() :
-    m_getBuffer(NULL)
+ResourceDecryptor::ResourceDecryptor()
 {
     LogDebug("Started Decryption");
 }
@@ -86,42 +83,6 @@ void ResourceDecryptor::GetDecryptedChunk(unsigned char*
 
     AES_cbc_encrypt(inBuf, decBuf, inBufSize, &m_decKey, ivec, AES_DECRYPT);
     LogDebug("Success decryption");
-}
-
-int ResourceDecryptor::DecryptChunkByTrustZone(
-        std::string pkgid, const unsigned char* inBuffer,
-        int inBufSize)
-{
-    using namespace Tizen::Base;
-
-    const byte *b_pkgid = reinterpret_cast<const byte*>(pkgid.c_str());
-    ByteBuffer appInfo;
-    appInfo.Construct(pkgid.length());
-    appInfo.SetArray(b_pkgid, 0, pkgid.length());
-    appInfo.Flip();
-
-    Tizen::Security::Crypto::_TrustZoneService* pInstance;
-    pInstance = Tizen::Security::Crypto::_TrustZoneService::GetInstance();
-
-    ByteBuffer pBuf;
-    pBuf.Construct(inBufSize);
-    const byte *pByte = reinterpret_cast<const byte*>(inBuffer);
-    pBuf.SetArray(pByte, 0, inBufSize);
-    pBuf.Flip();
-
-    ByteBuffer *getBuffer = pInstance->_TrustZoneService::DecryptN(appInfo, pBuf);
-
-    m_getBuffer = reinterpret_cast<void*>(getBuffer);
-    return getBuffer->GetRemaining();
-}
-
-void ResourceDecryptor::getDecryptStringByTrustZone(unsigned char *decBuffer)
-{
-    using namespace Tizen::Base;
-    LogDebug("Get decrypted string");
-    ByteBuffer *buffer = reinterpret_cast<ByteBuffer*>(m_getBuffer);
-    memcpy(decBuffer, buffer->GetPointer(), buffer->GetRemaining());
-    buffer->Reset();
 }
 
 } //namespace WRTDecryptor
