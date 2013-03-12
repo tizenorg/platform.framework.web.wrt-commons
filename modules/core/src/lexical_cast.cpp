@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   Implementation file for lexical cast
  */
+#include <stddef.h>
 #include <dpl/lexical_cast.h>
 
 //

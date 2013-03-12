@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of log system
  */
+#include <stddef.h>
 #include <dpl/log/log.h>
 #include <dpl/singleton_impl.h>
 
@@ -140,52 +141,40 @@ void LogSystem::SetTag(const char* tag)
 
 void LogSystem::AddProvider(AbstractLogProvider *provider)
 {
-    ReadWriteMutex::ScopedWriteLock lock(&m_spinLock);
     m_providers.push_back(provider);
 }
 
 void LogSystem::RemoveProvider(AbstractLogProvider *provider)
 {
-    ReadWriteMutex::ScopedWriteLock lock(&m_spinLock);
     m_providers.remove(provider);
 }
 
 void LogSystem::Debug(const char *message, const char *filename, int line, const char *function)
 {
-    ReadWriteMutex::ScopedReadLock lock(&m_spinLock);
-
     for (AbstractLogProviderPtrList::iterator iterator = m_providers.begin(); iterator != m_providers.end(); ++iterator)
         (*iterator)->Debug(message, filename, line, function);
 }
 
 void LogSystem::Info(const char *message, const char *filename, int line, const char *function)
 {
-    ReadWriteMutex::ScopedReadLock lock(&m_spinLock);
-
     for (AbstractLogProviderPtrList::iterator iterator = m_providers.begin(); iterator != m_providers.end(); ++iterator)
         (*iterator)->Info(message, filename, line, function);
 }
 
 void LogSystem::Warning(const char *message, const char *filename, int line, const char *function)
 {
-    ReadWriteMutex::ScopedReadLock lock(&m_spinLock);
-
     for (AbstractLogProviderPtrList::iterator iterator = m_providers.begin(); iterator != m_providers.end(); ++iterator)
         (*iterator)->Warning(message, filename, line, function);
 }
 
 void LogSystem::Error(const char *message, const char *filename, int line, const char *function)
 {
-    ReadWriteMutex::ScopedReadLock lock(&m_spinLock);
-
     for (AbstractLogProviderPtrList::iterator iterator = m_providers.begin(); iterator != m_providers.end(); ++iterator)
         (*iterator)->Error(message, filename, line, function);
 }
 
 void LogSystem::Pedantic(const char *message, const char *filename, int line, const char *function)
 {
-    ReadWriteMutex::ScopedReadLock lock(&m_spinLock);
-
     for (AbstractLogProviderPtrList::iterator iterator = m_providers.begin(); iterator != m_providers.end(); ++iterator)
         (*iterator)->Pedantic(message, filename, line, function);
 }

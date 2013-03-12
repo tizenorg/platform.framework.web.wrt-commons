@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of atomic
  */
+#include <stddef.h>
 #include <dpl/atomic.h>
 
 namespace DPL
@@ -30,26 +31,26 @@ Atomic::Atomic(ValueType value)
 
 Atomic::ValueType Atomic::ExchangeAndAdd(ValueType value)
 {
-    return g_atomic_int_exchange_and_add(&m_value, value);
+    return g_atomic_int_exchange_and_add(const_cast<gint* >(&m_value), value);
 }
 
 bool Atomic::CompareAndExchange(ValueType oldValue, ValueType newValue)
 {
-    return g_atomic_int_compare_and_exchange(&m_value, oldValue, newValue);
+    return g_atomic_int_compare_and_exchange(const_cast<gint* >(&m_value), oldValue, newValue);
 }
 
 bool Atomic::operator--()
 {
-    return g_atomic_int_dec_and_test(&m_value) != TRUE;
+    return g_atomic_int_dec_and_test(const_cast<gint* >(&m_value)) != TRUE;
 }
 
 void Atomic::operator++()
 {
-    g_atomic_int_inc(&m_value);
+    g_atomic_int_inc(const_cast<gint* >(&m_value));
 }
 
 Atomic::operator ValueType() const
 {
-    return g_atomic_int_get(&m_value);
+    return g_atomic_int_get(const_cast<gint* >(&m_value));
 }
 } // namespace DPL

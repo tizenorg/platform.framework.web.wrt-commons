@@ -19,6 +19,7 @@
  * @version 1.0
  * @brief   This file contains the definition of webruntime database
  */
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/webruntime_database.h>
 
 DPL::Mutex g_wrtDbQueriesMutex;

@@ -21,204 +21,19 @@
  * @brief   This file contains the declaration of common data types for wrtdb
  */
 
-#ifndef WRT_SRC_CONFIGURATION_COMMON_DAO_TYPES_H_
-#define WRT_SRC_CONFIGURATION_COMMON_DAO_TYPES_H_
+#ifndef WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_
+#define WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_
 
 #include <set>
 #include <string>
 #include <map>
 #include <vector>
 #include <list>
+#include <memory>
 #include <dpl/optional_typedefs.h>
-#include <dpl/shared_ptr.h>
+
 
 namespace WrtDB {
-namespace Powder {
-
-typedef std::set<DPL::String> StringSet;
-//! Widget description
-struct Description
-{
-    //!Content level
-    typedef enum
-    {
-        Level0 = 0,
-        Level1,
-        Level2,
-        Level3,
-        Level4,
-        Level5,
-        LevelUnknown
-    } LevelEnum;
-    struct LevelEntry
-    {
-        LevelEnum level; //!< content level
-
-        typedef StringSet Context;
-
-        //! POWDER context
-        //! xa    This material appears in an artistic context
-        //! xb    This material appears in an educational context
-        //! xc    This material appears in a medical context
-        //! xd    This material appears in a sports context
-        //! xe    This material appears in a violent context
-        Context context;
-        explicit LevelEntry(LevelEnum level = LevelUnknown);
-        //! Function checks if context is valid
-        //! \param[in] level POWDER content level
-        //! \param[in] context POWDER context
-        bool isContextValid(LevelEnum level,
-                const DPL::OptionalString& context) const;
-    };
-
-    struct CategoryEntry
-    {
-        //! Levels entries for POWDER description
-        typedef std::vector <LevelEntry> LevelsContainer;
-        LevelsContainer levels;
-        //! Function checks if context is valid
-        //! \param[out] reason set if context invalid
-        //! \param[in] level POWDER content level
-        //! \param[in] context POWDER context
-        bool isCategoryValid(LevelEntry& reason,
-                LevelEnum level,
-                const DPL::OptionalString& context) const;
-    };
-
-    //! POWDER Category -> Category entry map for Widget
-    //!
-    //! nu    Nudity
-    //! se    Sex
-    //! vi    Violence
-    //! la    Potentially offensive language
-    //! dr    Drug use
-    //! ga    Gambling
-    //! ha    Hate or harmful activities
-    //! ug    Use of user-generated content
-    typedef std::map<DPL::String, CategoryEntry> CategoryEntries;
-
-    CategoryEntries categories;
-
-    //! Age rating for widget
-    //! If Null not set
-    DPL::OptionalInt ageRating;
-};
-} // namespace Powder
-
-namespace ChildProtection {
-
-//! Blacklist with forbidden URLs
-//! It should be stored in WidgetDAO
-typedef std::vector<DPL::String> BlackList;
-
-//! Widget Child protection record
-//! Record should be stored in WingetDAO
-struct Record
-{
-    //! Child protection enabled
-    bool enabled;
-    explicit Record(bool enabled) :
-        enabled(enabled)
-    {
-    }
-};
-
-//! Powder processing
-struct PowderRules
-{
-    //! Rule set by parent about forbidden category
-    //! Powder category
-    //! nu    Nudity
-    //! se    Sex
-    //! vi    Violence
-    //! la    Potentially offensive language
-    //! dr    Drug use
-    //! ga    Gambling
-    //! ha    Hate or harmful activities
-    //! ug    Use of user-generated content
-    //! Powder context
-    //! xa    This material appears in an artistic conteaxt
-    //! xb    This material appears in an educational context
-    //! xc    This material appears in a medical context
-    //! xd    This material appears in a sports context
-    //! xe    This material appears in a violent context
-    struct CategoryRule
-    {
-        DPL::String category;
-        Powder::Description::LevelEnum level;
-        DPL::OptionalString context;
-        explicit CategoryRule(const DPL::String& category = DPL::String(),
-                Powder::Description::LevelEnum level =
-                    Powder::Description::LevelUnknown,
-                const DPL::OptionalString& context = DPL::OptionalString());
-    };
-
-    struct PowderResult
-    {
-        //! Reasoning outcome: part of POWDER description used to invalidate
-        Powder::Description::LevelEntry invalidDescription;
-        //! Reasoning outcome: rule set by parent not full filed by description
-        CategoryRule invalidRule;
-
-        //! Reasoning outcome: type of invalidity
-        enum InvalidReason
-        {
-            InvalidRule, //!< One of rules was not fulfilled
-            InvalidAge, //!< Age is invalid
-            AgeRatingNotSet, //!< Age rating for widget is not set
-            Valid //!< Description valid
-        };
-        InvalidReason reason;
-        explicit PowderResult(InvalidReason reason = Valid,
-                const Powder::Description::LevelEntry& invalidDescription =
-                    Powder::Description::LevelEntry(),
-                const CategoryRule& invalidRule = CategoryRule());
-    };
-
-    typedef std::pair<bool, PowderResult> ResultPair;
-
-    //! Function checks if rule is fulfilled by description
-    //! \param[in] rule checked rule
-    //! \param[in] description
-    //! \retval true rule is valid
-    //! \retval false rule is invalid
-    ResultPair isRuleValidForDescription(const CategoryRule& rule,
-            const Powder::Description& description) const;
-    //! Function checks if age limit is fulfilled by description
-    //! \param[in] description
-    //! \retval true age is valid
-    //! \retval false age is invalid
-    ResultPair isAgeValidForDescription(
-            const Powder::Description& description) const;
-
-    //! It is the maximum age rating valid for child
-    //! Uniform age is stored in WidgetDAO
-    DPL::OptionalInt ageLimit;
-
-    //! Set to true if age rating is required
-    //! If ageLimit is not set value is ignored
-    bool isAgeRatingRequired;
-
-    //! Set of rules configured by parent
-    //! Rules are stored in WidgetDAO and are uniform for all widgets
-    typedef std::vector<CategoryRule> RulesContainer;
-    RulesContainer rules;
-
-    //! Function check if Widget description is valid for ChildProtection
-    //! configuration
-    //! \param description widget description
-    //! \retval true widget is valid
-    //! \retval false widget is invalid
-    ResultPair isDescriptionValid(const Powder::Description& description)
-    const;
-
-    PowderRules() :
-        isAgeRatingRequired(false)
-    {
-    }
-};
-} // namespace ChildProtection
-
 class PluginMetafileData
 {
   public:
@@ -241,11 +56,6 @@ class PluginMetafileData
     }
 
     std::string m_libraryName;
-    std::string m_featuresInstallURI;
-    std::string m_featuresKeyCN;
-    std::string m_featuresRootCN;
-    std::string m_featuresRootFingerprint;
-
     FeatureContainer m_featureContainer;
 };
 
@@ -253,7 +63,7 @@ class PluginObjectsDAO
 {
   public:
     typedef std::set<std::string> Objects;
-    typedef DPL::SharedPtr<Objects> ObjectsPtr;
+    typedef std::shared_ptr<Objects> ObjectsPtr;
 
   public:
     explicit PluginObjectsDAO() {}
@@ -271,6 +81,14 @@ class PluginObjectsDAO
  * FindWidgetModel routine.
  */
 typedef int DbWidgetHandle;
+typedef DPL::String WidgetPkgName;
+
+/**
+ * Value of invalid widget handle
+ */
+enum {
+    INVALID_WIDGET_HANDLE = -1
+};
 
 /**
  * @brief Structure to hold the information of widget's size
@@ -315,9 +133,32 @@ struct WidgetAccessInfo
     }
 };
 
+struct EncryptedFileInfo
+{
+    DPL::String fileName;
+    int fileSize;
+
+    bool operator==(const EncryptedFileInfo& info) const
+    {
+        return fileName == info.fileName;
+    }
+
+    bool operator==(const DPL::String& file) const
+    {
+        return fileName == file;
+    }
+
+    bool operator< (const EncryptedFileInfo& info) const
+    {
+        return fileName < info.fileName;
+    }
+};
+
 typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
 
 typedef std::list<DPL::String> WindowModeList;
+
+typedef std::set<EncryptedFileInfo> EncryptedFileList;
 
 /**
  * @brief Widget configuration parameter key
@@ -360,7 +201,8 @@ struct DbWidgetFeature
 {
     DPL::String name;        /// Feature name
     bool required;           /// Whether feature is required
-    DbPluginHandle pluginId;            /// Plugin id that implement this feature
+    bool rejected;           /// Api feature was rejected by ace
+    DbPluginHandle pluginId; /// Plugin id that implement this feature
     WidgetParamMap params;   /// Widget's params
 
     DbWidgetFeature() :
@@ -394,6 +236,16 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 
+typedef std::list<WidgetPkgName> WidgetPkgNameList; //TODO: this cannot be null -> appropriate changes in db schema needed
+typedef std::list<WidgetPkgName> WidgetPkgNameList_TEMPORARY_API; //TODO: this cannot be null -> appropriate changes in db schema needed
+
+class WidgetDAOReadOnly; //forward declaration
+typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
+/**
+ * @brief Default container with WidgetDAOReadOnly
+ */
+typedef std::list<WidgetDAOReadOnlyPtr> DbWidgetDAOReadOnlyList;
+
 /**
  * @brief Widget specific type
  *
@@ -402,9 +254,8 @@ typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 enum AppType
 {
     APP_TYPE_UNKNOWN = 0, // unknown
-    APP_TYPE_WAC10, // WAC 1.0
     APP_TYPE_WAC20, // WAC 2.0
-    APP_TYPE_TIZENWEBAPP, // Tizen webapp
+    APP_TYPE_TIZENWEBAPP // Tizen webapp
 };
 
 class WidgetType
@@ -422,12 +273,15 @@ class WidgetType
     {
         return appType == other;
     }
+    bool operator!= (const AppType& other) const
+    {
+        return appType != other;
+    }
     std::string getApptypeToString()
     {
         switch (appType) {
 #define X(x) case x: return #x;
         X(APP_TYPE_UNKNOWN)
-        X(APP_TYPE_WAC10)
         X(APP_TYPE_WAC20)
         X(APP_TYPE_TIZENWEBAPP)
 #undef X
@@ -439,6 +293,64 @@ class WidgetType
     AppType appType;
 };
 
+/**
+ * @brief Package specific type
+ *
+ * Package type describes belowed in Tizen webapp, C++ service App
+ */
+enum PkgType
+{
+    PKG_TYPE_UNKNOWN = 0, // unknown
+    PKG_TYPE_NOMAL_WEB_APP,
+    PKG_TYPE_DIRECTORY_WEB_APP,
+    PKG_TYPE_HOSTED_WEB_APP,    // request from browser
+    PKG_TYPE_HYBRID_WEB_APP // Tizen webapp with C++ service app
+};
+
+class PackagingType
+{
+  public:
+    PackagingType()
+    :pkgType(PKG_TYPE_UNKNOWN)
+    {
+    }
+    PackagingType(const PkgType type)
+    :pkgType(type)
+    {
+    }
+    bool operator== (const PkgType& other) const
+    {
+        return pkgType == other;
+    }
+    bool operator!= (const PkgType& other) const
+    {
+        return pkgType != other;
+    }
+    std::string getPkgtypeToString()
+    {
+        switch (pkgType) {
+#define X(x) case x: return #x;
+        X(PKG_TYPE_UNKNOWN)
+        X(PKG_TYPE_NOMAL_WEB_APP)
+        X(PKG_TYPE_DIRECTORY_WEB_APP)
+        X(PKG_TYPE_HOSTED_WEB_APP)
+        X(PKG_TYPE_HYBRID_WEB_APP)
+#undef X
+        default:
+            return "UNKNOWN";
+        }
+    }
+
+    PkgType pkgType;
+};
+
+enum SettingsType
+{
+    SETTINGS_TYPE_UNKNOWN = 0,
+    SETTINGS_TYPE_ON,
+    SETTINGS_TYPE_ALWAYS_ASK,
+    SETTINGS_TYPE_OFF
+};
 } // namespace WrtDB
 
 struct WidgetSetting
@@ -484,4 +396,5 @@ struct WidgetApplicationService
 };
 
 typedef std::list<WidgetApplicationService> WidgetApplicationServiceList;
-#endif /* WRT_SRC_CONFIGURATION_COMMON_DAO_TYPES_H_ */
+
+#endif /* WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_ */

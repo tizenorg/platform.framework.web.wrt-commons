@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of timed event example
  */
+#include <stddef.h>
 #include <dpl/generic_event.h>
 #include <dpl/application.h>
 #include <dpl/controller.h>

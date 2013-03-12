@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: dpl-socket-efl
+Description: DPL Socket - EFL based
+Version: @VERSION@
+Requires: dpl-efl dpl-event-efl
+Libs: -L${libdir} -ldpl-socket-efl
+Cflags: -I${includedir}/dpl-efl

@@ -172,6 +172,12 @@ public:
     void Quit();
 
     /**
+     * Checks if current thread is main one
+     * Returns true if it is main program thread, false otherwise
+     */
+    static bool IsMainThread();
+
+    /**
      * Current thread retrieval
      * Returns DPL thread handle or NULL if it is main program thread
      */
@@ -228,6 +234,7 @@ public:
     public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, NullReference)
+        DECLARE_EXCEPTION_TYPE(Base, KeyCreateFailed)
     };
 
 private:
@@ -281,7 +288,7 @@ private:
             // If yes, pthread_exit(NULL) is required
             if (!g_TLSforMainCreated)
             {
-                if (Thread::GetCurrentThread() == NULL)
+                if (Thread::IsMainThread())
                 {
                     g_TLSforMainCreated = true;
                     atexit(&MainThreadExitClean);
@@ -304,9 +311,10 @@ public:
     ThreadLocalVariable()
     {
         int result = pthread_key_create(&m_key, &InternalDestroy);
-
-        Assert(result == 0 &&
-               "Failed to allocate thread local variable");
+        if (result != 0) {
+            ThrowMsg(typename Exception::KeyCreateFailed,
+                    "Failed to allocate thread local variable: " << result);
+        }
     }
 
     ~ThreadLocalVariable()

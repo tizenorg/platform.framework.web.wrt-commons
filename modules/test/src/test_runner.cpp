@@ -20,6 +20,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of test runner
  */
+#include <stddef.h>
 #include <dpl/test/test_runner.h>
 #include <dpl/test/test_results_collector.h>
 #include <dpl/exception.h>
@@ -33,6 +34,8 @@
 #include <memory.h>
 #include <libgen.h>
 #include <cstring>
+#include <cstdlib>
+#include <dpl/utils/wrt_global_settings.h>
 
 #include <dpl/singleton_impl.h>
 IMPLEMENT_SINGLETON(DPL::Test::TestRunner)
@@ -97,67 +100,59 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
     catch (const TestFailed &e)
     {
         // Simple test failure
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::FAILED,
-                                   e.GetMessage());
+        CollectResult(testCase.name,
+                      "",
+                      TestResultsCollectorBase::FailStatus::FAILED,
+                      e.GetMessage());
         return FAILED;
     }
     catch (const Ignored &e)
     {
-        // Simple test have to be implemented
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::IGNORED,
-                                   e.GetMessage());
+        if (m_runIgnored) {
+            // Simple test have to be implemented
+            CollectResult(testCase.name,
+                          "",
+                          TestResultsCollectorBase::FailStatus::IGNORED,
+                          e.GetMessage());
+        }
 
         return IGNORED;
-    }
-    catch (const ToDo &e)
-    {
-        // Simple test have to be implemented
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::TODO,
-                                   e.GetMessage());
-
-        return TODO;
     }
     catch (const DPL::Exception &e)
     {
         // DPL exception failure
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::INTERNAL,
-                                   "DPL exception:" +
-                                   e.GetMessage());
+        CollectResult(testCase.name,
+                      "",
+                      TestResultsCollectorBase::FailStatus::INTERNAL,
+                      "DPL exception:" + e.GetMessage());
 
         return FAILED;
     }
     catch (const std::exception &)
     {
         // std exception failure
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::INTERNAL,
-                                   "std exception");
+        CollectResult(testCase.name,
+                      "",
+                      TestResultsCollectorBase::FailStatus::INTERNAL,
+                      "std exception");
 
         return FAILED;
     }
     catch (...)
     {
         // Unknown exception failure
-        m_collector->CollectResult(testCase.name,
-                                   "",
-                                   TestResultsCollectorBase::FailStatus::INTERNAL,
-                                   "unknown exception");
+        CollectResult(testCase.name,
+                      "",
+                      TestResultsCollectorBase::FailStatus::INTERNAL,
+                      "unknown exception");
 
         return FAILED;
     }
 
-    m_collector->CollectResult(testCase.name,
-                               "",
-                               TestResultsCollectorBase::FailStatus::NONE);
+    CollectResult(testCase.name,
+                  "",
+                  TestResultsCollectorBase::FailStatus::NONE);
+
     // Everything OK
     return PASS;
 }
@@ -167,13 +162,25 @@ void TestRunner::RunTests()
     using namespace DPL::Colors::Text;
 
     Banner();
-    m_collector->Start();
+    std::for_each(m_collectors.begin(),
+                  m_collectors.end(),
+                  [](const TestResultsCollectors::value_type& collector)
+                  {
+                      collector.second->Start();
+                  });
 
     fprintf(stderr, "%s%s%s\n", GREEN_BEGIN, "Running tests...", GREEN_END);
     FOREACH(group, m_testGroups) {
         TestCaseStructList list = group->second;
         if (!list.empty()) {
-            m_collector->CollectCurrentTestGroupName(group->first);
+            std::for_each(
+                    m_collectors.begin(),
+                    m_collectors.end(),
+                    [&group](const TestResultsCollectors::value_type& collector)
+                    {
+                        collector.second->
+                                CollectCurrentTestGroupName(group->first);
+                    });
             list.sort();
 
             for (TestCaseStructList::const_iterator iterator = list.begin();
@@ -191,9 +198,32 @@ void TestRunner::RunTests()
         }
     }
 
-    m_collector->Finish();
+    std::for_each(m_collectors.begin(),
+                  m_collectors.end(),
+                  [](const TestResultsCollectors::value_type& collector)
+                  {
+                      collector.second->Finish();
+                  });
+
     // Finished
     fprintf(stderr, "%s%s%s\n\n", GREEN_BEGIN, "Finished", GREEN_END);
+}
+
+void TestRunner::CollectResult(
+        const std::string& id,
+        const std::string& description,
+        const TestResultsCollectorBase::FailStatus::Type status,
+        const std::string& reason)
+{
+    std::for_each(m_collectors.begin(),
+                  m_collectors.end(),
+                  [&](const TestResultsCollectors::value_type& collector)
+                  {
+                      collector.second->CollectResult(id,
+                                                      description,
+                                                      status,
+                                                      reason);
+                  });
 }
 
 void TestRunner::Banner()
@@ -212,13 +242,13 @@ void TestRunner::Banner()
             GREEN_END);
 }
 
-void TestRunner::InvalidArgs()
+void TestRunner::InvalidArgs(const std::string& message)
 {
     using namespace DPL::Colors::Text;
     fprintf(stderr,
             "%s%s%s\n",
             BOLD_RED_BEGIN,
-            "Invalid parameters!",
+            message.c_str(),
             BOLD_RED_END);
 }
 
@@ -226,25 +256,36 @@ void TestRunner::Usage()
 {
     fprintf(stderr, "Usage: runner [options]\n\n");
     fprintf(stderr, "Output type:\n");
-    fprintf(stderr, "  --output=<output type>\n");
-    fprintf(stderr, "  possible output types:\n");
+    fprintf(stderr, "  --output=<output type> --output=<output type> ...\n");
+    fprintf(stderr, "\n  possible output types:\n");
     FOREACH (type, TestResultsCollectorBase::GetCollectorsNames()) {
-        fprintf(stderr, "  --output=%s\n", type->c_str());
+        fprintf(stderr, "    --output=%s\n", type->c_str());
     }
+    fprintf(stderr, "\n  example:\n");
+    fprintf(stderr, "    test-binary --output=text --output=xml --file=output.xml\n\n");
     fprintf(stderr, "Other parameters:\n");
     fprintf(stderr,
             "  --regexp='regexp'\t Only selected tests"
             " which names match regexp run\n\n");
     fprintf(stderr, "  --start=<test id>\tStart from concrete test id");
     fprintf(stderr, "  --group=<group name>\t Run tests only from one group\n");
+    fprintf(stderr, "  --runignored\t Run also ignored tests\n");
     fprintf(stderr, "  --list\t Show a list of Test IDs\n");
     fprintf(stderr, "  --listgroups\t Show a list of Test Group names \n");
     fprintf(stderr, "  --listingroup=<group name>\t Show a list of Test IDS in one group\n");
     fprintf(stderr, "  --help\t This help\n\n");
-    if (m_collector) {
-        fprintf(stderr, "Output %s has specific args:\n", m_collectorName.c_str());
-        fprintf(stderr, "%s\n", m_collector->CollectorSpecificHelp().c_str());
-    }
+    std::for_each(m_collectors.begin(),
+                  m_collectors.end(),
+                  [](const TestResultsCollectors::value_type& collector)
+                  {
+                      fprintf(stderr,
+                              "Output %s has specific args:\n",
+                              collector.first.c_str());
+                      fprintf(stderr,
+                              "%s\n",
+                              collector.second->
+                                      CollectorSpecificHelp().c_str());
+                  });
     fprintf(stderr, "For bug reporting, please write to:\n");
     fprintf(stderr, "<p.dobrowolsk@samsung.com>\n");
 }
@@ -266,6 +307,7 @@ void TestRunner::MarkAssertion()
 
 int TestRunner::ExecTestRunner(const ArgsList& value)
 {
+    m_runIgnored = false;
     ArgsList args = value;
     // Parse command line
     if (args.size() == 1)
@@ -279,6 +321,8 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
 
     bool showHelp = false;
 
+    TestResultsCollectorBasePtr currentCollector;
+
     // Parse each argument
     FOREACH(it, args)
     {
@@ -286,13 +330,21 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         const std::string regexp = "--regexp=";
         const std::string output = "--output=";
         const std::string groupId = "--group=";
+        const std::string runIgnored = "--runignored";
         const std::string listCmd = "--list";
         const std::string startCmd = "--start=";
         const std::string listGroupsCmd = "--listgroups";
         const std::string listInGroup = "--listingroup=";
 
-        if (m_collector && m_collector->ParseCollectorSpecificArg(arg)) continue;
-        else if (arg.find(startCmd) == 0)
+        if (currentCollector)
+        {
+            if (currentCollector->ParseCollectorSpecificArg(arg))
+            {
+                continue;
+            }
+        }
+
+        if (arg.find(startCmd) == 0)
         {
             arg.erase(0, startCmd.length());
             FOREACH(group, m_testGroups) {
@@ -326,6 +378,10 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
                 return -1;
             }
         }
+        else if (arg == runIgnored)
+        {
+            m_runIgnored = true;
+        }
         else if (arg == listCmd)
         {
             FOREACH(group, m_testGroups) {
@@ -355,14 +411,19 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         else if (arg.find(output) == 0)
         {
             arg.erase(0, output.length());
-            m_collector.Reset(TestResultsCollectorBase::Create(arg));
-            if (!m_collector) {
-                InvalidArgs();
+            if (m_collectors.find(arg) != m_collectors.end())
+            {
+                InvalidArgs("Multiple outputs of the same type are not supported!");
                 Usage();
                 return -1;
-            } else {
-                m_collectorName = arg;
             }
+            currentCollector.reset(TestResultsCollectorBase::Create(arg));
+            if (!currentCollector) {
+                InvalidArgs("Unsupported output type!");
+                Usage();
+                return -1;
+            }
+            m_collectors[arg] = currentCollector;
         }
         else if (arg.find(regexp) == 0)
         {
@@ -408,6 +469,8 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         }
     }
 
+    currentCollector.reset();
+
     // Show help
     if (showHelp)
     {
@@ -415,18 +478,31 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         return 0;
     }
 
-    if (!m_collector)
-        m_collector.Reset(TestResultsCollectorBase::Create("text"));
+    if (m_collectors.empty())
+    {
+        TestResultsCollectorBasePtr collector(
+                TestResultsCollectorBase::Create("text"));
+        m_collectors["text"] = collector;
+    }
 
-    if (!m_collector->Configure()) {
-        fprintf(stderr, "Could not configure selected output");
-        return 0;
+    for (auto it = m_collectors.begin(); it != m_collectors.end(); ++it)
+    {
+        if (!it->second->Configure())
+        {
+            fprintf(stderr, "Could not configure selected output");
+            return 0;
+        }
     }
 
     // Run tests
     RunTests();
 
     return 0;
+}
+
+bool TestRunner::getRunIgnored() const
+{
+    return m_runIgnored;
 }
 
 }

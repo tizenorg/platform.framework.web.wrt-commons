@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the implementation of feature dao read only
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/feature_dao_read_only.h>
 #include <sstream>
 #include <dpl/log/log.h>
@@ -75,26 +75,6 @@ FeatureDAOReadOnly::FeatureDAOReadOnly(const std::string &featureName)
         ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,        \
                 failure.str());                                         \
     }
-
-std::string FeatureDAOReadOnly::GetInstallURI() const
-{
-    GET_PLUGIN_DATA(getInstallURI)
-}
-
-std::string FeatureDAOReadOnly::GetKeyCn() const
-{
-    GET_PLUGIN_DATA(getKeyCn)
-}
-
-std::string FeatureDAOReadOnly::GetRootKey() const
-{
-    GET_PLUGIN_DATA(getRootKey)
-}
-
-std::string FeatureDAOReadOnly::GetRootKeyFingerprint() const
-{
-    GET_PLUGIN_DATA(getRootKeyFingerprint)
-}
 
 std::string FeatureDAOReadOnly::GetLibraryPath() const
 {
@@ -316,6 +296,97 @@ FeatureHandleListPtr FeatureDAOReadOnly::GetFeatureHandleListForPlugin(
         ReThrowMsg(
                 FeatureDAOReadOnly::Exception::DatabaseError,
                 "Failure during getting FeatureHandle Set for plugin handle");
+    }
+}
+
+FeatureDAOReadOnly::NameMap
+FeatureDAOReadOnly::GetNames()
+{
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, FeaturesList, &WrtDatabase::interface())
+
+        NameMap nameMap;
+
+        FeaturesList::Select::RowList rows = select->GetRowList();
+        FOREACH(rowIt, rows)
+        {
+            nameMap.insert(std::pair<FeatureHandle, std::string>(rowIt->Get_FeatureUUID(), DPL::ToUTF8String(rowIt->Get_FeatureName())));
+        }
+
+        return nameMap;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Failure during getting GetNames");
+    }
+}
+
+FeatureDAOReadOnly::DeviceCapabilitiesMap
+FeatureDAOReadOnly::GetDevCapWithFeatureHandle()
+{
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        DECLARE_COLUMN_TYPE_LIST()
+        SELECTED_COLUMN(FeatureDeviceCapProxy, FeatureUUID)
+        SELECTED_COLUMN(DeviceCapabilities, DeviceCapName)
+        DECLARE_COLUMN_TYPE_LIST_END(DevCapNameList)
+
+        WRT_DB_SELECT(select, FeatureDeviceCapProxy, &WrtDatabase::interface())
+        select->Join<DevCapNameList>(Equal<FeatureDeviceCapProxy::DeviceCapID, DeviceCapabilities::DeviceCapID>());
+
+        DeviceCapabilitiesMap devCap;
+
+        std::list< CustomRow<DevCapNameList> > rowList = select->GetCustomRowList< DevCapNameList, CustomRow<DevCapNameList> >();
+        FOREACH(rowIt, rowList)
+        {
+            FeatureHandle featureHandle = (*rowIt).GetColumnData<FeatureDeviceCapProxy::FeatureUUID>();
+            std::string devName = DPL::ToUTF8String((*rowIt).GetColumnData<DeviceCapabilities::DeviceCapName>());
+            devCap.insert(std::pair<FeatureHandle, std::string>(featureHandle, devName));
+        }
+
+        return devCap;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Failure during getting DeviceCapabilities names");
+    }
+}
+
+FeatureDAOReadOnly::FeatureMap
+FeatureDAOReadOnly::GetFeatures(const std::list<std::string>& featureNames)
+{
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        std::set<typename FeaturesList::FeatureName::ColumnType> nameList;
+        FOREACH(nm, featureNames) {
+            nameList.insert(DPL::FromUTF8String(*nm));
+        }
+
+        WRT_DB_SELECT(select, FeaturesList, &WrtDatabase::interface())
+        select->Where(In<FeaturesList::FeatureName>(nameList));
+
+        FeatureMap featureMap;
+        FeatureData featureData;
+        FeaturesList::Select::RowList rows = select->GetRowList();
+        FOREACH(rowIt, rows) {
+            featureData.featureName = DPL::ToUTF8String(
+                    rowIt->Get_FeatureName());
+            featureData.pluginHandle = rowIt->Get_PluginPropertiesId();
+            featureMap.insert(std::pair<FeatureHandle, FeatureData>(
+                    rowIt->Get_FeatureUUID(), featureData));
+        }
+
+        return featureMap;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Failure during getting GetFeatures");
     }
 }
 

@@ -29,7 +29,7 @@
 #include <dpl/event/generic_event_call.h>
 #include <dpl/waitable_event.h>
 #include <dpl/fast_delegate.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/exception.h>
 #include <dpl/thread.h>
 #include <dpl/assert.h>
@@ -364,7 +364,7 @@ protected:
                    double dueTime = 0.0)
     {
         // Emit event, and retrieve later in current context to dispatch
-        ScopedPtr<Mutex::ScopedLock> lock(
+        std::unique_ptr<Mutex::ScopedLock> lock(
             new Mutex::ScopedLock(&m_listenerDelegateMutex));
 
         // Show some info
@@ -583,7 +583,7 @@ protected:
         if (!synchronizationBarrier.empty())
         {
             LogPedantic("Leaving lock due to existing barrier");
-            lock.Reset();
+            lock.reset();
         }
 
         LogPedantic("Size of barrier: " << synchronizationBarrier.size());

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of thread
  */
+#include <stddef.h>
 #include <dpl/thread.h>
 #include <dpl/log/log.h>
 #include <sys/time.h>
@@ -26,6 +27,7 @@
 #include <dpl/assert.h>
 #include <errno.h>
 #include <time.h>
+#include <string.h>
 
 namespace // anonymous
 {
@@ -89,6 +91,11 @@ Thread::~Thread()
     m_eventList.clear();
 }
 
+bool Thread::IsMainThread()
+{
+    return (pthread_equal(pthread_self(), g_mainThread));
+}
+
 Thread *Thread::GetCurrentThread()
 {
     if (pthread_equal(pthread_self(), g_mainThread))
@@ -112,7 +119,12 @@ void *Thread::StaticThreadEntry(void *param)
     Assert(This != NULL);
 
     // Set thread specific
-    pthread_setspecific(g_threadSpecific.threadSpecific, This);
+    int result =  pthread_setspecific(g_threadSpecific.threadSpecific, This);
+
+    if (result!=0)
+    {
+        LogError("Failed to set threadSpecific. Error: " << strerror(result));
+    }
 
     // Enter thread proc
     // Do not allow exceptions to hit pthread core

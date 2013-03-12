@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of ICDelegate functionality
  */
+#include <stddef.h>
 #include <dpl/event/inter_context_delegate.h>
 
 //

@@ -19,6 +19,7 @@
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
  */
+#include <stddef.h>
 #include <dpl/string.h>
 #include <dpl/char_traits.h>
 #include <dpl/errno_string.h>
@@ -114,7 +115,6 @@ String FromUTF8String(const std::string& aIn)
         ThrowMsg(StringException::IconvConvertErrorUTF8ToUTF32,
                  "iconv failed for " << "UTF-32 <- UTF-8" << "error: "
                             << GetErrnoString());
-        return String();
     }
 
     // Ignore BOM in front of UTF-32
@@ -145,7 +145,6 @@ std::string ToUTF8String(const DPL::String& aIn)
         ThrowMsg(StringException::IconvInitErrorUTF32ToUTF8,
                  "iconv_open failed for " << "UTF-8 <- UTF-32"
                             << "error: " << GetErrnoString());
-        return std::string();
     }
 
     size_t iconvRet = iconv(iconvHandle, &inbuf, &inbytes, &outbuf, &outbytesleft);
@@ -157,7 +156,6 @@ std::string ToUTF8String(const DPL::String& aIn)
         ThrowMsg(StringException::IconvConvertErrorUTF32ToUTF8,
                  "iconv failed for " << "UTF-8 <- UTF-32"
                             << "error: " << GetErrnoString());
-        return std::string();
     }
 
     return &output[0];

@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of generic socket RPC connection
  */
+#include <stddef.h>
 #include <dpl/rpc/generic_socket_rpc_connection.h>
 
 //

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: wrt-commons-custom-handler-dao-ro
+Description: wrt-commons-custom-handler-dao-ro
+
+Version: @VERSION@
+Requires: dpl-efl
+Libs: -lwrt-commons-custom-handler-dao-ro -L${libdir}
+Cflags: -I${includedir}/dpl-efl

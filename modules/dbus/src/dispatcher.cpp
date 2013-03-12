@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief
  */
-
+#include <stddef.h>
 #include <dpl/dbus/dispatcher.h>
 
 namespace DPL

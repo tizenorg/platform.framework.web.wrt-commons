@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of generic RPC connection
  */
+#include <stddef.h>
 #include <dpl/rpc/generic_rpc_connection.h>
 #include <dpl/scoped_array.h>
 #include <dpl/log/log.h>

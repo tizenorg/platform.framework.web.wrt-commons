@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of thread event dispatcher
  */
+#include <stddef.h>
 #include <dpl/event/thread_event_dispatcher.h>
 #include <dpl/log/log.h>
 #include <dpl/assert.h>

@@ -17,10 +17,5 @@
 # @brief
 #
 
-CONFIGURE_FILE(dpl-wrt-dao-ro.pc.in dpl-wrt-dao-ro.pc @ONLY)
-CONFIGURE_FILE(dpl-wrt-dao-rw.pc.in dpl-wrt-dao-rw.pc @ONLY)
-INSTALL(FILES
-        ${CMAKE_BINARY_DIR}/build/widget_dao/dpl-wrt-dao-ro.pc
-        ${CMAKE_BINARY_DIR}/build/widget_dao/dpl-wrt-dao-rw.pc
-        DESTINATION
-        lib/pkgconfig)
+configure_and_install_pkg(dpl-wrt-dao-ro.pc)
+configure_and_install_pkg(dpl-wrt-dao-rw.pc)

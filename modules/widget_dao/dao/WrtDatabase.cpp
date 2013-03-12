@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 #include <dpl/db/thread_database_support.h>
@@ -39,9 +39,14 @@ DPL::DB::ThreadDatabaseSupport WrtDatabase::m_interface(
         WrtDatabase::Address(),
         WrtDatabase::Flags());
 
-void WrtDatabase::attachToThread()
+void WrtDatabase::attachToThreadRO()
 {
-    m_interface.AttachToThread();
+    m_interface.AttachToThread(DPL::DB::SqlConnection::Flag::RO);
+}
+
+void WrtDatabase::attachToThreadRW()
+{
+    m_interface.AttachToThread(DPL::DB::SqlConnection::Flag::RW);
 }
 
 void WrtDatabase::detachFromThread()

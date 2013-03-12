@@ -81,11 +81,18 @@ private:
     sem_t *InternalGet() const;
     void InternalDestroy();
 
-    void Lock() const;
-    void Unlock() const;
-
 public:
     /**
+     * decrement the semaphore counter
+     */
+    void Lock() const;
+
+    /**
+     * increment the semaphore counter
+     */
+    void Unlock() const;
+
+     /**
      * Remove a named semaphore
      *
      * @param fileName Name of the semaphore

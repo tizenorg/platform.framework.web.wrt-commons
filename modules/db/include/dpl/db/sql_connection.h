@@ -25,7 +25,7 @@
 #include <dpl/noncopyable.h>
 #include <dpl/exception.h>
 #include <dpl/optional.h>
-#include <dpl/scoped_ptr.h>
+#include <memory>
 #include <dpl/string.h>
 #include <dpl/log/log.h>
 #include <sqlite3.h>
@@ -377,6 +377,17 @@ public:
             None      = 1<<0,
             UseLucene = 1<<1
         };
+
+        enum Option
+        {
+            RO = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READONLY,
+            /**
+             *TODO: please remove CREATE option from RW flag when all places
+             *      that need that switched do CRW
+             */
+            RW = SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+            CRW = RW | SQLITE_OPEN_CREATE
+        };
     };
 
     // RowID
@@ -412,9 +423,10 @@ protected:
     int m_dataCommandsCount;
 
     // Synchronization object
-    ScopedPtr<SynchronizationObject> m_synchronizationObject;
+    std::unique_ptr<SynchronizationObject> m_synchronizationObject;
 
-    virtual void Connect(const std::string &address, Flag::Type = Flag::None);
+    virtual void Connect(const std::string &address,
+                         Flag::Type = Flag::None, Flag::Option = Flag::RO);
     virtual void Disconnect();
 
     void TurnOnForeignKeys();
@@ -436,6 +448,7 @@ public:
      */
     explicit SqlConnection(const std::string &address = std::string(),
                            Flag::Type flags = Flag::None,
+                           Flag::Option options = Flag::RO,
                            SynchronizationObject *synchronizationObject =
                                AllocDefaultSynchronizationObject());
 

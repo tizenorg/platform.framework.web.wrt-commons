@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of recursive mutex
  */
+#include <stddef.h>
 #include <dpl/recursive_mutex.h>
 #include <dpl/assert.h>
 

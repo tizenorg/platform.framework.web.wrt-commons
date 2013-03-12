@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of binary queue example
  */
+#include <stddef.h>
 #include <dpl/binary_queue.h>
 #include <dpl/exception.h>
 #include <dpl/log/log.h>

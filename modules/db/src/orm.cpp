@@ -19,7 +19,7 @@
  * @version     1.0
  * @brief       Static definitions and function template specialziations of DPL-ORM.
  */
-
+#include <stddef.h>
 #include <dpl/db/orm.h>
 
 namespace DPL {
@@ -32,6 +32,7 @@ const char LessThan[] = "<";
 const char And[] = "AND";
 const char Or[] = "OR";
 const char Is[] = "IS";
+const char In[] = "IN";
 }
 
 template<>

@@ -1,10 +1,4 @@
 usr/lib/*.so*
 /usr/share/wrt-engine/*
-/usr/bin/wrt_reset_db.sh
-/usr/bin/wrt_create_clean_db.sh
-/usr/etc/ace/config*
-/usr/etc/ace/bondixml*
-/usr/etc/ace/demo.*
-/usr/etc/ace/WACPolicy.xml
-/usr/etc/ace/UnrestrictedPolicy.xml
-/opt/share/cert-svc/certs/code-signing/wac/*
+/usr/bin/wrt_commons_reset_db.sh
+/usr/bin/wrt_commons_create_clean_db.sh

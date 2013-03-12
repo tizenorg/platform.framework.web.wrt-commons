@@ -19,6 +19,7 @@
  * @version     1.0
  * @brief       This file is the implementation file of waitable input-output execution context support
  */
+#include <stddef.h>
 #include <dpl/socket/waitable_input_output_execution_context_support.h>
 #include <dpl/scoped_array.h>
 #include <dpl/socket/abstract_socket.h> // FIXME: Remove !!!

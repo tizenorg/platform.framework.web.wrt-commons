@@ -19,7 +19,7 @@
  * @version 1.0
  * @brief   This file contains the implementation of plugin dao read only
  */
-
+#include <stddef.h>
 #include <dpl/wrt-dao-ro/plugin_dao_read_only.h>
 
 #include <sstream>
@@ -183,34 +183,6 @@ std::string PluginDAOReadOnly::getLibraryName() const
     std::string ret = DPL::ToUTF8String(row.Get_PluginLibraryName());
     LogDebug(" >> Plugin library name: " << ret);
     return ret;
-}
-
-std::string PluginDAOReadOnly::getInstallURI() const
-{
-    LogDebug("Getting plugin install URI. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_InstallURI(), "install URI")
-}
-
-std::string PluginDAOReadOnly::getKeyCn() const
-{
-    LogDebug("Getting plugin KeyCn. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_KeyCN(), "keyCN")
-}
-
-std::string PluginDAOReadOnly::getRootKey() const
-{
-    LogDebug("Getting plugin rootKey. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyCN(), "rootKey")
-}
-
-std::string PluginDAOReadOnly::getRootKeyFingerprint() const
-{
-    LogDebug("Getting plugin rootKeyFingerprint. Handle: " << m_pluginHandle);
-    PluginRow row = getPluginRow(m_pluginHandle);
-    RETURN_STD_STRING(row.Get_RootKeyFingerprint(), "rootKeyFingerprint")
 }
 
 #undef RETURN_STD_STRING

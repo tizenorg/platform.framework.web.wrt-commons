@@ -25,7 +25,8 @@ class WrtDatabase
   public:
     static const char *Address();
     static DPL::DB::SqlConnection::Flag::Type Flags();
-    static void attachToThread();
+    static void attachToThreadRO();
+    static void attachToThreadRW();
     static void detachFromThread();
     static DPL::DB::ThreadDatabaseSupport& interface();
     static bool CheckTableExist(const char *name);
