@@ -267,11 +267,15 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
 }
 
-void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature)
+void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature,
+                                                       bool isOnlyAllowedLocalOrigin)
 {
     Origin origin(DPL::FromUTF8String("file"),
                   DPL::FromUTF8String(""),
                   0);
+    if (!isOnlyAllowedLocalOrigin) {
+        origin.scheme = DPL::FromUTF8String("");
+    }
     SecurityOriginData data(feature, origin);
     setSecurityOriginData(data, RESULT_ALLOW_ALWAYS, true);
 }

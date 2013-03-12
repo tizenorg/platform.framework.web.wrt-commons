@@ -47,7 +47,8 @@ class SecurityOriginDAO
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
                                const Result result,
                                const bool readOnly = false);
-    void setPrivilegeSecurityOriginData(const Feature feature);
+    void setPrivilegeSecurityOriginData(const Feature feature,
+                                        bool isOnlyAllowedLocalOrigin = true);
     void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
     void removeSecurityOriginData(const Result result);
 
