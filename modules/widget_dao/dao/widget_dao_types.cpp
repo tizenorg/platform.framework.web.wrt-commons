@@ -15,15 +15,22 @@
  */
 /**
  *
- * @file    security_origin_dao_types.cpp
- * @author  Jihoon Chung (jihoon.chung@samsung.com)
+ * @file    widget_dao_types.cpp
+ * @author  Leerang Song (leerang.song@samsung.com)
  * @version 1.0
- * @brief   This file contains the implementation of
- *             common data types for wrt_security_origin.db
+ * @brief This file contains the declaration of
+ *           common data types forwidget database.
  */
 
-#include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
+#include <dpl/wrt-dao-ro/widget_dao_types.h>
 #include <dpl/log/log.h>
 
-namespace SecurityOriginDB {
+namespace WrtDB {
+
+const std::map<std::string, Feature> g_W3CPrivilegeTextMap = {
+    {"http://tizen.org/privilege/location",     FEATURE_GEOLOCATION},
+    {"http://tizen.org/privilege/notification", FEATURE_WEB_NOTIFICATION},
+    {"http://tizen.org/privilege/mediacapture", FEATURE_USER_MEDIA},
+    {"http://tizen.org/privilege/fullscreen", FEATURE_FULLSCREEN_MODE}
+};
 } // namespace SecurityOriginDB

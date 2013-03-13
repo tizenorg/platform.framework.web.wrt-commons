@@ -15,15 +15,32 @@
  */
 /**
  *
- * @file    security_origin_dao_types.cpp
- * @author  Jihoon Chung (jihoon.chung@samsung.com)
+ * @file    widget_dao_types.h
+ * @author  Leerang Song (leerang.song@samsung.com)
  * @version 1.0
- * @brief   This file contains the implementation of
- *             common data types for wrt_security_origin.db
+ * @brief This file contains the declaration of
+ *           common data types forwidget database.
  */
+#ifndef _WIDGET_DAO_TYPES_H_
+#define _WIDGET_DAO_TYPES_H_
 
-#include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
-#include <dpl/log/log.h>
+#include <list>
+#include <memory>
+#include <map>
+#include <dpl/string.h>
 
-namespace SecurityOriginDB {
-} // namespace SecurityOriginDB
+namespace WrtDB {
+
+enum Feature
+{
+    FEATURE_START = 0,
+    FEATURE_GEOLOCATION = 0,
+    FEATURE_WEB_NOTIFICATION,
+    FEATURE_USER_MEDIA,
+    FEATURE_FULLSCREEN_MODE,
+    FEATURE_END = FEATURE_FULLSCREEN_MODE
+};
+extern const std::map<std::string, Feature> g_W3CPrivilegeTextMap;
+} // namespace WrtDB
+
+#endif // _WIDGET_DAO_TYPES_H_

@@ -827,6 +827,7 @@ class WidgetDAOReadOnly
      * @return tizen package id
      */
     TizenPkgId getTizenPkgId() const;
+    PrivilegeList getWidgetPrivilege() const;
 };
 } // namespace WrtDB
 

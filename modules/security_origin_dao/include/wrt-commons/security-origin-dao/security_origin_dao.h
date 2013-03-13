@@ -25,6 +25,7 @@
 #include <dpl/db/thread_database_support.h>
 #include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
 #include <dpl/wrt-dao-ro/common_dao_types.h>
+#include <dpl/wrt-dao-ro/widget_dao_types.h>
 
 namespace SecurityOriginDB {
 class SecurityOriginDAO
@@ -47,7 +48,7 @@ class SecurityOriginDAO
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
                                const Result result,
                                const bool readOnly = false);
-    void setPrivilegeSecurityOriginData(const Feature feature,
+    void setPrivilegeSecurityOriginData(const WrtDB::Feature feature,
                                         bool isOnlyAllowedLocalOrigin = true);
     void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
     void removeSecurityOriginData(const Result result);
