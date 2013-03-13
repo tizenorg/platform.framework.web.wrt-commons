@@ -226,7 +226,9 @@ class WidgetDAO : public WidgetDAOReadOnly
                                              DPL::String src,
                                              DPL::String operation,
                                              DPL::String scheme,
-                                             DPL::String mime);
+                                             DPL::String mime,
+                                             unsigned index,
+                                             unsigned disposition);
 };
 } // namespace WrtDB
 

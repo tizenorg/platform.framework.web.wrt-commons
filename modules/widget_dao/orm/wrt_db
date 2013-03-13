@@ -314,6 +314,7 @@ CREATE_TABLE_END()
 
 CREATE_TABLE(ApplicationServiceInfo)
     COLUMN_NOT_NULL(app_id,         INT,)
+    COLUMN_NOT_NULL(service_index,  INT,)
     COLUMN_NOT_NULL(src,            TEXT,)
     COLUMN_NOT_NULL(operation,      TEXT,)
     COLUMN_NOT_NULL(scheme,         TEXT,)

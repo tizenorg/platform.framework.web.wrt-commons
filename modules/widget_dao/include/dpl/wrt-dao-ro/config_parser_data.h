@@ -176,13 +176,15 @@ class ConfigParserData
             m_operation(operation),
             m_scheme(scheme),
             m_mime(mime),
-            m_disposition(dispos)
+            m_disposition(dispos),
+            m_index(0)
         {}
         DPL::String m_src;
         DPL::String m_operation;
         DPL::String m_scheme;
         DPL::String m_mime;
         Disposition m_disposition;
+        unsigned m_index;
 
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;
@@ -190,14 +192,20 @@ class ConfigParserData
 
     struct AppControlInfo
     {
-        AppControlInfo(
-            const DPL::String& operation) :
-            m_operation(operation)
+        enum class Disposition {
+            WINDOW = 0,
+            INLINE
+        };
+        AppControlInfo(const DPL::String& operation) :
+            m_operation(operation),
+            m_index(0)
         {}
         DPL::String m_src;
         DPL::String m_operation;
         std::set <DPL::String> m_uriList;
         std::set <DPL::String> m_mimeList;
+        Disposition m_disposition;
+        unsigned m_index;
 
         bool operator==(const AppControlInfo&) const;
         bool operator!=(const AppControlInfo&) const;

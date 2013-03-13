@@ -368,6 +368,7 @@ struct WidgetApplicationService
     DPL::String scheme;    /* scheme type*/
     DPL::String mime;      /* mime type */
     Disposition disposition;
+    unsigned index;
 
     bool operator== (const WidgetApplicationService& other) const
     {

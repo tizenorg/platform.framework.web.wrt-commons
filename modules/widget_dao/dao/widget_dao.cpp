@@ -678,7 +678,9 @@ void WidgetDAO::insertApplicationServiceInfo(DbWidgetHandle handle,
                                              DPL::String src,
                                              DPL::String operation,
                                              DPL::String scheme,
-                                             DPL::String mime)
+                                             DPL::String mime,
+                                             unsigned index,
+                                             unsigned disposition)
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
@@ -686,10 +688,12 @@ void WidgetDAO::insertApplicationServiceInfo(DbWidgetHandle handle,
     ApplicationServiceInfo::Row row;
 
     row.Set_app_id(handle);
+    row.Set_service_index(index);
     row.Set_src(src);
     row.Set_operation(operation);
     row.Set_scheme(scheme);
     row.Set_mime(mime);
+    row.Set_disposition(disposition);
 
     DO_INSERT(row, ApplicationServiceInfo);
 }
@@ -706,6 +710,7 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
     {
         ApplicationServiceInfo::Row row;
         row.Set_app_id(widgetHandle);
+        row.Set_service_index(ASIt->m_index);
         row.Set_src(ASIt->m_src);
         row.Set_operation(ASIt->m_operation);
         row.Set_scheme(ASIt->m_scheme);
@@ -720,6 +725,9 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
     {
         DPL::String src       = appControl_it->m_src;
         DPL::String operation = appControl_it->m_operation;
+        unsigned index        = appControl_it->m_index;
+        unsigned disposition  = appControl_it->m_disposition ==
+            ConfigParserData::AppControlInfo::Disposition::INLINE ? 1 : 0;
 
         if (!appControl_it->m_uriList.empty())
         {
@@ -733,14 +741,14 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
                     {
                         DPL::String mime = *mime_it;
 
-                        insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime);
+                        insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime, index, disposition);
                     }
                 }
                 else
                 {
                     DPL::String mime = L"";
 
-                    insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime);
+                    insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime, index, disposition);
                 }
             }
         }
@@ -754,14 +762,14 @@ void WidgetDAO::registerAppService(DbWidgetHandle widgetHandle,
                 {
                     DPL::String mime = *mime_it;
 
-                    insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime);
+                    insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime, index, disposition);
                 }
             }
             else
             {
                 DPL::String mime = L"";
 
-                insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime);
+                insertApplicationServiceInfo(widgetHandle, src, operation, scheme, mime, index, disposition);
             }
         }
     }

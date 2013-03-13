@@ -387,10 +387,28 @@ bool ConfigParserData::ServiceInfo::operator== (const ServiceInfo& info) const
 
 bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
 {
-    return m_src != info.m_src &&
-           m_operation != info.m_operation &&
-           m_scheme != info.m_scheme &&
-           m_mime != info.m_mime &&
+    return m_src != info.m_src ||
+           m_operation != info.m_operation ||
+           m_scheme != info.m_scheme ||
+           m_mime != info.m_mime ||
+           m_disposition != info.m_disposition;
+}
+
+bool ConfigParserData::AppControlInfo::operator== (const AppControlInfo& info) const
+{
+    return m_src == info.m_src &&
+           m_operation == info.m_operation &&
+           m_uriList == info.m_uriList &&
+           m_mimeList == info.m_mimeList &&
+           m_disposition == info.m_disposition;
+}
+
+bool ConfigParserData::AppControlInfo::operator!= (const AppControlInfo& info) const
+{
+    return m_src != info.m_src ||
+           m_operation != info.m_operation ||
+           m_uriList != info.m_uriList ||
+           m_mimeList != info.m_mimeList ||
            m_disposition != info.m_disposition;
 }
 
