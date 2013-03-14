@@ -65,7 +65,10 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetUserPreloadedWidgetPath()
 {
-    return "/usr/apps";
+    // temp
+    // return "/usr/apps";
+
+    return "/opt/usr/apps";
 }
 
 /**

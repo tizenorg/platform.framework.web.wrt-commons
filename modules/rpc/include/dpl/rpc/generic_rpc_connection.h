@@ -46,7 +46,7 @@ class GenericRPCConnection :
      * Costructor
      *
      * Abstract waitable input/outobject is acquired by class and destroyed upon
-     * desctructor
+     * destructor
      */
     explicit GenericRPCConnection(AbstractWaitableInputOutput *inputOutput);
     virtual ~GenericRPCConnection();

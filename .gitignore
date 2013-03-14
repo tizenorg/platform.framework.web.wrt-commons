@@ -1,8 +1,5 @@
-build_log
 *.log
-*.pyc
-usr
-opt
+*.a
 *.o
 *.so
 *.so.*
