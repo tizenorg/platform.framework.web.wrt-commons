@@ -1,4 +1,12 @@
-wrt-commons (0.2.103ubuntu1) oneiric; urgency=low
+wrt-commons (0.2.105) unstable; urgency=low
+
+  * Update unmerged source code
+  * app uri passing by localization
+  * Implement privilege for usermedia permission
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 14 Mar 2013 11:24:56 +0900
+
+wrt-commons (0.2.104) unstable; urgency=low
 
   * Revert "Add encrypt/decrypt API from trust zone"
 
