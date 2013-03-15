@@ -45,6 +45,7 @@ SET(DPL_CORE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/core/src/once.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/read_write_mutex.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/recursive_mutex.cpp
+    ${PROJECT_SOURCE_DIR}/modules/core/src/scoped_dir.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/serialization.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/single_instance.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/singleton.cpp
@@ -112,6 +113,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_resource.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_array.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_close.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_dir.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_fclose.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_free.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_ptr.h
@@ -123,6 +125,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton_impl.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/singleton_safe_impl.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/static_block.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/string.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/sstream.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/task.h

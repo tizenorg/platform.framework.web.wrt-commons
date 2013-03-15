@@ -26,11 +26,10 @@
 #include <dpl/thread.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename Class>
-class Singleton
-    : private Class
+class Singleton :
+    private Class
 {
     //
     // Note:
@@ -39,28 +38,20 @@ class Singleton
     // make Class' default constructor protected
     //
 
-private:
+  private:
     Singleton()
-    {
-    }
+    {}
 
     typedef Optional<Thread *> OptionalThreadPtr;
-    OptionalThreadPtr m_guard;
 
     static Singleton &InternalInstance();
 
-public:
+  public:
     virtual ~Singleton()
-    {
-    }
+    {}
 
     static Class &Instance();
-
-    // Thread guarding
-    static void SetThreadGuard(Thread *thread);
-    static void ResetThreadGuard();
 };
-
 } // namespace DPL
 
 #endif // DPL_SINGLETON_H

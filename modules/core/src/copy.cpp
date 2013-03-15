@@ -24,8 +24,7 @@
 #include <dpl/waitable_handle.h>
 #include <dpl/binary_queue.h>
 
-namespace DPL
-{
+namespace DPL {
 namespace // anonymous
 {
 const size_t DEFAULT_COPY_BUFFER_SIZE = 16768;
@@ -35,39 +34,36 @@ void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output)
 {
     Try
     {
-        while (true)
-        {
+        while (true) {
             BinaryQueueAutoPtr buffer;
 
-            while (true)
-            {
+            while (true) {
                 // Try to get data immediately
                 buffer = input->Read(DEFAULT_COPY_BUFFER_SIZE);
 
                 // Do we need to wait for data ?
-                if (!buffer.get())
-                {
-                    WaitForSingleHandle(input->WaitableReadHandle(), WaitMode::Read);
+                if (!buffer.get()) {
+                    WaitForSingleHandle(
+                        input->WaitableReadHandle(), WaitMode::Read);
                     continue;
                 }
 
-                if (buffer->Empty())
+                if (buffer->Empty()) {
                     return; // Done
-
+                }
                 // Ok, to process
                 break;
             }
 
             // Write out all data
-            while (!buffer->Empty())
-            {
+            while (!buffer->Empty()) {
                 // Try to write all data immediately
                 size_t count = output->Write(*buffer, buffer->Size());
 
                 // Do we need to wait for writing data ?
-                if (count == 0)
-                {
-                    WaitForSingleHandle(output->WaitableWriteHandle(), WaitMode::Write);
+                if (count == 0) {
+                    WaitForSingleHandle(
+                        output->WaitableWriteHandle(), WaitMode::Write);
                     continue;
                 }
 
@@ -76,54 +72,55 @@ void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output)
             }
         }
     }
-    Catch (DPL::Exception)
+    Catch(DPL::Exception)
     {
         ReThrow(CopyFailed);
     }
 }
 
-void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output, size_t totalBytes)
+void Copy(AbstractWaitableInput *input,
+          AbstractWaitableOutput *output,
+          size_t totalBytes)
 {
     Try
     {
         size_t bytesLeft = totalBytes;
 
-        while (bytesLeft > 0)
-        {
+        while (bytesLeft > 0) {
             BinaryQueueAutoPtr buffer;
 
             // Copy at most left bytes
-            size_t bytesToCopy = bytesLeft > DEFAULT_COPY_BUFFER_SIZE ? DEFAULT_COPY_BUFFER_SIZE : bytesLeft;
+            size_t bytesToCopy = bytesLeft >
+                DEFAULT_COPY_BUFFER_SIZE ? DEFAULT_COPY_BUFFER_SIZE : bytesLeft;
 
-            while (true)
-            {
+            while (true) {
                 // Try to get data immediately
                 buffer = input->Read(bytesToCopy);
 
                 // Do we need to wait for data ?
-                if (!buffer.get())
-                {
-                    WaitForSingleHandle(input->WaitableReadHandle(), WaitMode::Read);
+                if (!buffer.get()) {
+                    WaitForSingleHandle(
+                        input->WaitableReadHandle(), WaitMode::Read);
                     continue;
                 }
 
-                if (buffer->Empty())
+                if (buffer->Empty()) {
                     ThrowMsg(CopyFailed, "Unexpected end of abstract input");
+                }
 
                 // Ok, to process
                 break;
             }
 
             // Write out all data
-            while (!buffer->Empty())
-            {
+            while (!buffer->Empty()) {
                 // Try to write all data immediately
                 size_t count = output->Write(*buffer, buffer->Size());
 
                 // Do we need to wait for writing data ?
-                if (count == 0)
-                {
-                    WaitForSingleHandle(output->WaitableWriteHandle(), WaitMode::Write);
+                if (count == 0) {
+                    WaitForSingleHandle(
+                        output->WaitableWriteHandle(), WaitMode::Write);
                     continue;
                 }
 
@@ -133,7 +130,7 @@ void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output, size_t t
             }
         }
     }
-    Catch (DPL::Exception)
+    Catch(DPL::Exception)
     {
         ReThrow(CopyFailed);
     }

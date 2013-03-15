@@ -27,7 +27,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace SecurityOriginDB {
-
 class SecurityOriginDAO
 {
   public:
@@ -44,10 +43,15 @@ class SecurityOriginDAO
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);
+    bool isReadOnly(const SecurityOriginData &securityOriginData);
     void setSecurityOriginData(const SecurityOriginData &securityOriginData,
-                               const Result result);
+                               const Result result,
+                               const bool readOnly = false);
+    void setPrivilegeSecurityOriginData(const Feature feature,
+                                        bool isOnlyAllowedLocalOrigin = true);
     void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
     void removeSecurityOriginData(const Result result);
+
   private:
     std::string m_securityOriginDBPath;
     DPL::DB::ThreadDatabaseSupport m_securityOriginDBInterface;
@@ -55,7 +59,6 @@ class SecurityOriginDAO
 };
 
 typedef std::shared_ptr<SecurityOriginDAO> SecurityOriginDAOPtr;
-
 } // namespace SecurityOriginDB
 
 #endif // _SECURITY_ORIGIN_DAO_H_

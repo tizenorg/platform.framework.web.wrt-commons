@@ -27,7 +27,6 @@
 #include <wrt-commons/custom-handler-dao-ro/custom_handler_dao_read_only.h>
 
 namespace CustomHandlerDB {
-
 class CustomHandlerDAO : public CustomHandlerDAOReadOnly
 {
   public:
@@ -69,7 +68,6 @@ class CustomHandlerDAO : public CustomHandlerDAOReadOnly
     void removeWidgetProtocolHandlers();
     void removeWidgetContentHandlers();
 };
-
 } // namespace CustomHandlerDB
 
 #endif // _CUSTOM_HANDLER_DAO_H_

@@ -27,26 +27,25 @@
 #include <semaphore.h>
 #include <string>
 
-namespace DPL
+namespace DPL {
+class Semaphore :
+    private Noncopyable
 {
-class Semaphore
-    : private Noncopyable
-{
-public:
-    class ScopedLock
-        : private Noncopyable
+  public:
+    class ScopedLock :
+        private Noncopyable
     {
-    private:
+      private:
         Semaphore *m_semaphore;
 
-    public:
+      public:
         explicit ScopedLock(Semaphore *semaphore);
         ~ScopedLock();
     };
 
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, LockFailed)
@@ -54,7 +53,7 @@ public:
         DECLARE_EXCEPTION_TYPE(Base, RemoveFailed)
     };
 
-private:
+  private:
     enum Type
     {
         Type_Unnamed,
@@ -81,7 +80,7 @@ private:
     sem_t *InternalGet() const;
     void InternalDestroy();
 
-public:
+  public:
     /**
      * decrement the semaphore counter
      */
@@ -92,7 +91,7 @@ public:
      */
     void Unlock() const;
 
-     /**
+    /**
      * Remove a named semaphore
      *
      * @param fileName Name of the semaphore

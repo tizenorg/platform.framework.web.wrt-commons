@@ -28,13 +28,11 @@
 
 namespace DPL {
 namespace DBus {
-
-const GDBusInterfaceVTable Interface::m_vTable =
-{
+const GDBusInterfaceVTable Interface::m_vTable = {
     Interface::onMethodCallFunc,
     Interface::onPropertyGetFunc,
     Interface::onPropertySetFunc,
-    {0, 0, 0, 0, 0, 0, 0, 0}
+    { 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 std::vector<InterfacePtr> Interface::fromXMLString(const std::string& xmlString)
@@ -43,11 +41,9 @@ std::vector<InterfacePtr> Interface::fromXMLString(const std::string& xmlString)
 
     GDBusNodeInfo* nodeInfo = g_dbus_node_info_new_for_xml(xmlString.c_str(),
                                                            &error);
-    if (NULL == nodeInfo)
-    {
+    if (NULL == nodeInfo) {
         std::string message;
-        if (NULL != error)
-        {
+        if (NULL != error) {
             message = error->message;
             g_error_free(error);
         }
@@ -58,8 +54,7 @@ std::vector<InterfacePtr> Interface::fromXMLString(const std::string& xmlString)
     std::vector<InterfacePtr> result;
 
     GDBusInterfaceInfo** interface = nodeInfo->interfaces;
-    while (NULL != *interface)
-    {
+    while (NULL != *interface) {
         result.push_back(InterfacePtr(new Interface(*interface)));
         ++interface;
     }
@@ -69,8 +64,8 @@ std::vector<InterfacePtr> Interface::fromXMLString(const std::string& xmlString)
     return result;
 }
 
-Interface::Interface(GDBusInterfaceInfo* info)
-    : m_info(info)
+Interface::Interface(GDBusInterfaceInfo* info) :
+    m_info(info)
 {
     g_dbus_interface_info_ref(m_info);
 }
@@ -109,10 +104,8 @@ void Interface::onMethodCallFunc(GDBusConnection *connection,
 
     // TODO Verify interface name.
 
-    if (NULL != self->m_dispatcher)
-    {
-        try
-        {
+    if (NULL != self->m_dispatcher) {
+        try {
             self->m_dispatcher->onMethodCall(connection,
                                              sender,
                                              objectPath,
@@ -120,9 +113,7 @@ void Interface::onMethodCallFunc(GDBusConnection *connection,
                                              methodName,
                                              parameters,
                                              invocation);
-        }
-        catch (const DPL::Exception& /*ex*/)
-        {
+        } catch (const DPL::Exception& /*ex*/) {
             // TODO Support for errors.
         }
     }
@@ -141,10 +132,8 @@ GVariant* Interface::onPropertyGetFunc(GDBusConnection *connection,
 
     // TODO Verify interface name.
 
-    if (NULL != self->m_dispatcher)
-    {
-        try
-        {
+    if (NULL != self->m_dispatcher) {
+        try {
             // TODO Check if NULL is returned, if so set error variable.
             return self->m_dispatcher->onPropertyGet(connection,
                                                      sender,
@@ -152,9 +141,7 @@ GVariant* Interface::onPropertyGetFunc(GDBusConnection *connection,
                                                      interfaceName,
                                                      propertyName,
                                                      error);
-        }
-        catch (const DPL::Exception& /*ex*/)
-        {
+        } catch (const DPL::Exception& /*ex*/) {
             // TODO Support for errors.
         }
     }
@@ -178,10 +165,8 @@ gboolean Interface::onPropertySetFunc(GDBusConnection *connection,
 
     // TODO Verify interface name.
 
-    if (NULL != self->m_dispatcher)
-    {
-        try
-        {
+    if (NULL != self->m_dispatcher) {
+        try {
             return self->m_dispatcher->onPropertySet(connection,
                                                      sender,
                                                      objectPath,
@@ -189,9 +174,7 @@ gboolean Interface::onPropertySetFunc(GDBusConnection *connection,
                                                      propertyName,
                                                      value,
                                                      error);
-        }
-        catch (const DPL::Exception& /*ex*/)
-        {
+        } catch (const DPL::Exception& /*ex*/) {
             // TODO Support for errors.
         }
     }
@@ -200,6 +183,5 @@ gboolean Interface::onPropertySetFunc(GDBusConnection *connection,
 
     return false;
 }
-
 }
 }

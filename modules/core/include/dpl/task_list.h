@@ -26,12 +26,11 @@
 #include <dpl/task.h>
 #include <list>
 
-namespace DPL
+namespace DPL {
+class TaskList :
+    public Task
 {
-class TaskList
-    : public Task      
-{
-private:
+  private:
     typedef std::list<Task *> Tasks;
 
     Tasks m_tasks;
@@ -40,11 +39,11 @@ private:
 
     bool m_running;
 
-protected:
+  protected:
     void AddTask(Task *task);
     void SwitchToTask(Task *task);
 
-public:
+  public:
     TaskList();
     virtual ~TaskList();
 

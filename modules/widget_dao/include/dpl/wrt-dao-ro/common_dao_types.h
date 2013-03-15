@@ -32,7 +32,6 @@
 #include <memory>
 #include <dpl/optional_typedefs.h>
 
-
 namespace WrtDB {
 class PluginMetafileData
 {
@@ -52,8 +51,7 @@ class PluginMetafileData
   public:
 
     PluginMetafileData()
-    {
-    }
+    {}
 
     std::string m_libraryName;
     FeatureContainer m_featureContainer;
@@ -81,6 +79,8 @@ class PluginObjectsDAO
  * FindWidgetModel routine.
  */
 typedef int DbWidgetHandle;
+typedef DPL::String TizenPkgId;
+typedef DPL::String TizenAppId;
 typedef DPL::String WidgetPkgName;
 
 /**
@@ -99,11 +99,10 @@ struct DbWidgetSize
     DPL::OptionalInt height;
 
     DbWidgetSize(DPL::OptionalInt w = DPL::OptionalInt::Null,
-            DPL::OptionalInt h = DPL::OptionalInt::Null) :
+                 DPL::OptionalInt h = DPL::OptionalInt::Null) :
         width(w),
         height(h)
-    {
-    }
+    {}
 };
 
 inline bool operator ==(const DbWidgetSize &objA, const DbWidgetSize &objB)
@@ -208,18 +207,17 @@ struct DbWidgetFeature
     DbWidgetFeature() :
         required(false),
         pluginId(INVALID_PLUGIN_HANDLE)
-    {
-    }
+    {}
 };
 
 inline bool operator < (const DbWidgetFeature &objA,
-        const DbWidgetFeature &objB)
+                        const DbWidgetFeature &objB)
 {
     return objA.name.compare(objB.name) < 0;
 }
 
 inline bool operator==(const DbWidgetFeature &featureA,
-        const DbWidgetFeature &featureB)
+                       const DbWidgetFeature &featureB)
 {
     return featureA.name == featureB.name &&
            featureA.required == featureB.required &&
@@ -236,8 +234,12 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 
-typedef std::list<WidgetPkgName> WidgetPkgNameList; //TODO: this cannot be null -> appropriate changes in db schema needed
-typedef std::list<WidgetPkgName> WidgetPkgNameList_TEMPORARY_API; //TODO: this cannot be null -> appropriate changes in db schema needed
+typedef std::list<WidgetPkgName> WidgetPkgNameList; //TODO: this cannot be null
+                                                    // -> appropriate changes in
+                                                    // db schema needed
+typedef std::list<TizenAppId> TizenAppIdList; //TODO: this cannot be null ->
+                                              // appropriate changes in db
+                                              // schema needed
 
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
@@ -261,14 +263,12 @@ enum AppType
 class WidgetType
 {
   public:
-    WidgetType()
-    :appType(APP_TYPE_UNKNOWN)
-    {
-    }
-    WidgetType(const AppType type)
-    :appType(type)
-    {
-    }
+    WidgetType() :
+        appType(APP_TYPE_UNKNOWN)
+    {}
+    WidgetType(const AppType type) :
+        appType(type)
+    {}
     bool operator== (const AppType& other) const
     {
         return appType == other;
@@ -281,9 +281,9 @@ class WidgetType
     {
         switch (appType) {
 #define X(x) case x: return #x;
-        X(APP_TYPE_UNKNOWN)
-        X(APP_TYPE_WAC20)
-        X(APP_TYPE_TIZENWEBAPP)
+            X(APP_TYPE_UNKNOWN)
+            X(APP_TYPE_WAC20)
+            X(APP_TYPE_TIZENWEBAPP)
 #undef X
         default:
             return "UNKNOWN";
@@ -310,14 +310,12 @@ enum PkgType
 class PackagingType
 {
   public:
-    PackagingType()
-    :pkgType(PKG_TYPE_UNKNOWN)
-    {
-    }
-    PackagingType(const PkgType type)
-    :pkgType(type)
-    {
-    }
+    PackagingType() :
+        pkgType(PKG_TYPE_UNKNOWN)
+    {}
+    PackagingType(const PkgType type) :
+        pkgType(type)
+    {}
     bool operator== (const PkgType& other) const
     {
         return pkgType == other;
@@ -330,11 +328,11 @@ class PackagingType
     {
         switch (pkgType) {
 #define X(x) case x: return #x;
-        X(PKG_TYPE_UNKNOWN)
-        X(PKG_TYPE_NOMAL_WEB_APP)
-        X(PKG_TYPE_DIRECTORY_WEB_APP)
-        X(PKG_TYPE_HOSTED_WEB_APP)
-        X(PKG_TYPE_HYBRID_WEB_APP)
+            X(PKG_TYPE_UNKNOWN)
+            X(PKG_TYPE_NOMAL_WEB_APP)
+            X(PKG_TYPE_DIRECTORY_WEB_APP)
+            X(PKG_TYPE_HOSTED_WEB_APP)
+            X(PKG_TYPE_HYBRID_WEB_APP)
 #undef X
         default:
             return "UNKNOWN";
@@ -361,12 +359,12 @@ struct WidgetSetting
     bool operator ==(const WidgetSetting& info) const
     {
         return (info.settingName == settingName &&
-               info.settingValue == settingValue);
+                info.settingValue == settingValue);
     }
     bool operator !=(const WidgetSetting& info) const
     {
         return (info.settingName != settingName ||
-               info.settingValue != settingValue);
+                info.settingValue != settingValue);
     }
 };
 
@@ -380,18 +378,24 @@ typedef std::list<WidgetSetting> WidgetSettings;
  */
 struct WidgetApplicationService
 {
-  public:
+    enum class Disposition {
+        WINDOW = 0,
+        INLINE
+    };
+
     DPL::String src;       /* start uri */
     DPL::String operation; /* service name */
     DPL::String scheme;    /* scheme type*/
     DPL::String mime;      /* mime type */
+    Disposition disposition;
 
     bool operator== (const WidgetApplicationService& other) const
     {
         return src == other.src &&
-        operation == other.operation &&
-        scheme == other.scheme &&
-        mime == other.mime;
+               operation == other.operation &&
+               scheme == other.scheme &&
+               mime == other.mime &&
+               disposition == other.disposition;
     }
 };
 

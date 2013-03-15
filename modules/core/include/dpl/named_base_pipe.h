@@ -24,21 +24,20 @@
 
 #include <dpl/exception.h>
 
-namespace DPL
-{
+namespace DPL {
 class NamedBasePipe
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, AlreadyExist)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, DestroyFailed)
     };
 
-public:
+  public:
     virtual ~NamedBasePipe();
 
     static void Create(const std::string &fileName);

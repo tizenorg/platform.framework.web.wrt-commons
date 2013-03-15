@@ -23,15 +23,15 @@
 extern DPL::Mutex g_securityOriginDBQueriesMutex;
 
 #define SECURITY_ORIGIN_DB_INTERNAL(tlsCommand, InternalType, interface)            \
-    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL; \
+    static DPL::ThreadLocalVariable<InternalType> *tlsCommand##Ptr = NULL; \
     {                                                                        \
         DPL::Mutex::ScopedLock lock(&g_securityOriginDBQueriesMutex);              \
-        if (!tlsCommand ## Ptr) {                                            \
+        if (!tlsCommand##Ptr) {                                            \
             static DPL::ThreadLocalVariable<InternalType> tmp;               \
-            tlsCommand ## Ptr = &tmp;                                        \
+            tlsCommand##Ptr = &tmp;                                        \
         }                                                                    \
     }                                                                        \
-    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr; \
+    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand##Ptr; \
     if (tlsCommand.IsNull()) { tlsCommand = InternalType(interface); }
 
 #define SECURITY_ORIGIN_DB_SELECT(name, type, interface) \

@@ -1,0 +1,13 @@
+Miscellaneous test suite
+Unit tests (manifest files, wrt-api). Internal tests for new features in wrt.
+
+Binary file: wrt-tests-misc. Uses our test framework. Allows to use different
+types of output. Text output shows results on console - green passed.
+To run:
+1. Install wrt-extra on target
+2. Run wrt-tests-localization --output=text
+
+Automatic: YES
+Included in Daily Build: NO
+Included in Gerrit Builds: NO
+Number of test cases: 75

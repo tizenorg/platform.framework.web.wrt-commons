@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 /**
-  * @file   tests_plugin_dao.cpp
+ * @file   tests_plugin_dao.cpp
  * @author  Pawel Sikorski (p.sikorski@samsung.com)
  * @version 1.0
  * @brief   This file contains tests for plugin dao class.
@@ -30,7 +30,7 @@ int main (int argc, char *argv[])
     int ret = system("/usr/bin/wrt_dao_tests_prepare_db.sh start");
     if (ret != 0) {
         LogError("Preparation script has return error: " << ret
-                 << ". Quitting");
+                                                         << ". Quitting");
         return -1;
     }
 
@@ -38,7 +38,8 @@ int main (int argc, char *argv[])
     CustomHandlerDB::Interface::attachDatabaseRW();
 
     LogInfo("Starting tests");
-    int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
+    int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc,
+                                                                           argv);
 
     CustomHandlerDB::Interface::detachDatabase();
     WrtDB::WrtDatabase::detachFromThread();

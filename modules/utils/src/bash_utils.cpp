@@ -19,29 +19,26 @@
  * @version 1.0
  */
 #include <stddef.h>
-#include<dpl/utils/bash_utils.h>
-#include<dpl/log/log.h>
+#include <dpl/utils/bash_utils.h>
+#include <dpl/log/log.h>
 
-#include<string>
+#include <string>
 
 namespace BashUtils {
-
 std::string escape_arg(const std::string & source)
 {
     static const std::string special("!$`\\\"");
     std::string ret = "\"";
-    for(std::string::const_iterator iter = source.begin(); iter != source.end(); ++iter)
+    for (std::string::const_iterator iter = source.begin();
+         iter != source.end();
+         ++iter)
     {
-        if(special.find(*iter) != std::string::npos)
-        {
+        if (special.find(*iter) != std::string::npos) {
             ret += std::string("\\") + *iter;
-        }
-        else
-        {
+        } else {
             ret += *iter;
         }
     }
     return ret + "\"";
 }
-
 }

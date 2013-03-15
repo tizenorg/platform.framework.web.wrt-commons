@@ -26,5 +26,5 @@ DPL::DB::SqlConnection::Flag::Type AUTOSAVE_DB_FLAGS =
 
 DPL::Mutex g_autoSaveDbQueriesMutex;
 DPL::DB::ThreadDatabaseSupport Interface::m_autoSavedbInterface(
-        AUTOSAVE_DB_DATABASE, AUTOSAVE_DB_FLAGS);
+    AUTOSAVE_DB_DATABASE, AUTOSAVE_DB_FLAGS);
 

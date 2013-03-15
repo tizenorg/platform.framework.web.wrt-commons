@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.92
+#git:framework/web/wrt-commons wrt-commons 0.2.105
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.93
+Version:    0.2.105
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -23,6 +23,9 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
+BuildRequires:  libcryptsvc-devel
+BuildRequires:  dukgenerator-devel
+Requires: libcryptsvc
 
 %description
 Wrt common library
@@ -44,12 +47,6 @@ Wrt common library development headers
 %endif
 
 %build
-
-%ifarch %{ix86}
-cp build/encryption/libs/libcal.i586.a build/encryption/libs/libcal.a
-%else
-cp build/encryption/libs/libcal.arm.a build/encryption/libs/libcal.a
-%endif
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
@@ -142,12 +139,12 @@ echo "[WRT] wrt-commons postinst done ..."
 %attr(755,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
 %attr(755,root,root) %{_bindir}/wrt_commons_reset_db.sh
 %if %{with_tests}
-    %attr(755,root,root) %{_bindir}/dpl-tests-*
-    %attr(755,root,root) %{_bindir}/dpl-dbus-test-service
-    %attr(755,root,root) %{_bindir}/wrt-tests-*
+    %attr(755,root,root) %{_bindir}/wrt-commons-tests-*
     %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
+    %attr(755,root,root) %{_bindir}/wrt_db_localization_prepare.sh
     %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
     /opt/share/wrt/wrt-commons/tests/*
+    /opt/share/widget/tests/localization/*
 %endif
 
 %files devel

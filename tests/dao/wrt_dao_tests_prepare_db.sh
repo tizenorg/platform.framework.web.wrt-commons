@@ -59,14 +59,14 @@ if [ "x$1" == "xstart" ]; then
 
     #Widgets
     INS_ALL_WIDGETEXT="insert into WidgetExtendedInfo(app_id, share_href, signature_type)"
-    INS_ALL_WIDGET="insert into WidgetInfo(app_id, widget_id, widget_version, widget_width, widget_height, author_name, author_email, author_href, base_folder, webkit_plugins_required, recognized, wac_signed, distributor_signed, min_version, pkgname)"
+    INS_ALL_WIDGET="insert into WidgetInfo(app_id, widget_id, widget_version, widget_width, widget_height, author_name, author_email, author_href, base_folder, webkit_plugins_required, recognized, wac_signed, distributor_signed, min_version, tizen_appid)"
     INS_ALL_WIDGET_LOC="insert into LocalizedWidgetInfo(app_id, widget_locale, widget_name, widget_shortname, widget_description, widget_license, widget_license_file, widget_license_href)"
     INS_ALL_WIDGET_ICONS="insert into WidgetIcon(app_id, icon_src, icon_width, icon_height)"
     INS_ALL_WIDGET_LOC_ICONS="insert into WidgetLocalizedIcon(app_id, icon_id, widget_locale)"
     INS_ALL_WIDGET_STARTFILE="insert into WidgetStartFile(app_id, src)"
     INS_ALL_WIDGET_LOC_STARTFILE="insert into WidgetLocalizedStartFile(app_id, start_file_id, widget_locale, type, encoding)"
     INS_ALL_WIDGET_DEFPREF="insert into WidgetDefaultPreference(app_id, key_name, key_value, readonly)"
-    INS_ALL_WIDGET_PREF="insert into WidgetPreference(pkgname, key_name, key_value, readonly)"
+    INS_ALL_WIDGET_PREF="insert into WidgetPreference(tizen_appid, key_name, key_value, readonly)"
     INS_ALL_WIDGET_FEATURE="insert into WidgetFeature(app_id, name, required)"
     INS_ALL_WIDGET_FEATURE_PARAM="insert into FeatureParam(widget_feature_id, name, value)"
     INS_ALL_WIDGET_WINMODES="insert into WidgetWindowModes(app_id, window_mode)"
@@ -78,8 +78,8 @@ if [ "x$1" == "xstart" ]; then
 
     sqlite3 $WRT_DB "${INS_ALL_WIDGET} VALUES(2000, 'w_id_2000', '1.0.0', 100, 200, 'a_name_2000', 'a_email_2000', 'a_href_2000', 'basef_2000', 1, 1, 1, 1, '1.0', 'tizenid201')";
     sqlite3 $WRT_DB "${INS_ALL_WIDGET} VALUES(2001, 'w_id_2001', '2.0.0', 100, 200, 'a_name_2001', 'a_email_2001', 'a_href_2001', 'basef_2001', 1, 1, 1, 1, '0.5', 'tizenid202')";
-    sqlite3 $WRT_DB "insert into WidgetInfo(app_id, back_supported, pkgname) VALUES(2002, 0, 'tizenid203')";
-    sqlite3 $WRT_DB "insert into WidgetInfo(app_id, back_supported, pkgname) VALUES(2003, 0, 'tizenid204')"; # for properties tests
+    sqlite3 $WRT_DB "insert into WidgetInfo(app_id, back_supported, tizen_appid) VALUES(2002, 0, 'tizenid203')";
+    sqlite3 $WRT_DB "insert into WidgetInfo(app_id, back_supported, tizen_appid) VALUES(2003, 0, 'tizenid204')"; # for properties tests
 
     sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(2000, 'share_href_2000', 0)";
     sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(2001, 'share_href_2001', 0)";
@@ -114,8 +114,8 @@ if [ "x$1" == "xstart" ]; then
     sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid203', 'key2_for_2002', 'value2_for_key_2002', 1)";
 
     #create if not exists and fix autoincrement value
-    sqlite3 $WRT_DB "INSERT INTO WidgetInfo(pkgname) VALUES('temp')";
-    sqlite3 $WRT_DB "DELETE FROM WidgetInfo WHERE pkgname = 'temp'";
+    sqlite3 $WRT_DB "INSERT INTO WidgetInfo(tizen_appid) VALUES('temp')";
+    sqlite3 $WRT_DB "DELETE FROM WidgetInfo WHERE tizen_appid = 'temp'";
     sqlite3 $WRT_DB "UPDATE sqlite_sequence SET seq = 2004 WHERE name = 'WidgetInfo'";
 
     exit $?

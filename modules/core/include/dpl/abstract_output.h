@@ -25,22 +25,21 @@
 #include <dpl/exception.h>
 #include <memory>
 
-namespace DPL
-{
+namespace DPL {
 class BinaryQueue;
 typedef std::auto_ptr<BinaryQueue> BinaryQueueAutoPtr;
 
 class AbstractOutput
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, WriteFailed)
     };
 
-public:
+  public:
     virtual ~AbstractOutput() {}
 
     /**
@@ -50,7 +49,8 @@ public:
      *
      * @param[in] buffer Input buffer with data to be written
      * @param[in] bufferSize Maximum number of bytes to write from buffer
-     * @return Number of bytes success successfuly written or zero if output is blocked
+     * @return Number of bytes success successfuly written or zero if output is
+     * blocked
      * @throw WriteFailed
      */
     virtual size_t Write(const BinaryQueue &buffer, size_t bufferSize) = 0;

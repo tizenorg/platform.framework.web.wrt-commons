@@ -39,7 +39,8 @@ DPL::String::value_type LEADING_ZERO_CHAR = L'0';
 
 //
 // [ABNF]
-// Augmented BNF for Syntax Specifications: ABNF. RFC5234. D. Crocker and P. Overell. January 2008.
+// Augmented BNF for Syntax Specifications: ABNF. RFC5234. D. Crocker and P.
+// Overell. January 2008.
 //
 // ALPHA          =  %x41-5A / %x61-7A
 inline bool IsAlpha(int c)
@@ -79,7 +80,7 @@ DPL::String RemoveLeadingZeroes(const DPL::String &str)
 
 // operator <
 bool NumberLessOperator(const DPL::String &left,
-        const DPL::String &right)
+                        const DPL::String &right)
 {
     // Assume: No leading zeroes
     if (left.size() < right.size()) {
@@ -161,7 +162,8 @@ WidgetVersion::WidgetVersion(const DPL::String &str) :
     LogDebug("Tokenized mandatory parts: " << parts.size());
 
     if (parts.size() != WAC_CERTIFY_MANDATORY_PART_LOW_COUNT &&
-        parts.size() != WAC_CERTIFY_MANDATORY_PART_HIGH_COUNT) {
+        parts.size() != WAC_CERTIFY_MANDATORY_PART_HIGH_COUNT)
+    {
         return;
     }
 
@@ -181,9 +183,9 @@ WidgetVersion::WidgetVersion(const DPL::String &str) :
 }
 
 WidgetVersion::WidgetVersion(const DPL::String &major,
-        const DPL::String &minor,
-        const DPL::Optional<DPL::String> &micro,
-        const DPL::Optional<DPL::String> &optional) :
+                             const DPL::String &minor,
+                             const DPL::Optional<DPL::String> &micro,
+                             const DPL::Optional<DPL::String> &optional) :
     m_isWac(false)
 {
     // Create Raw version
@@ -206,9 +208,9 @@ WidgetVersion::WidgetVersion(const DPL::String &major,
 }
 
 void WidgetVersion::WacCertify(const DPL::String &major,
-        const DPL::String &minor,
-        const DPL::Optional<DPL::String> &micro,
-        const DPL::Optional<DPL::String> &optional)
+                               const DPL::String &minor,
+                               const DPL::Optional<DPL::String> &micro,
+                               const DPL::Optional<DPL::String> &optional)
 {
     LogDebug("Certyfing...");
 
@@ -234,7 +236,8 @@ void WidgetVersion::WacCertify(const DPL::String &major,
     }
 
     if (!!optional &&
-        (optional->empty() || !WacCertifyAlphaNumberStringSpace(*optional))) {
+        (optional->empty() || !WacCertifyAlphaNumberStringSpace(*optional)))
+    {
         LogDebug("Optional version not certified!");
         return;
     }
@@ -281,32 +284,49 @@ const DPL::Optional<DPL::String> &WidgetVersion::Optional() const
 }
 
 bool operator<(const WidgetVersion &left,
-        const WidgetVersion &right)
+               const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
         "Only WAC version strings are comparable!");
 
     if (NumberLessOperator(RemoveLeadingZeroes(left.Major()),
-                           RemoveLeadingZeroes(right.Major()))) { return true; }
+                           RemoveLeadingZeroes(right.Major())))
+    {
+        return true;
+    }
     if (NumberLessOperator(RemoveLeadingZeroes(right.Major()),
-                           RemoveLeadingZeroes(left.Major()))) { return false; }
+                           RemoveLeadingZeroes(left.Major())))
+    {
+        return false;
+    }
 
     if (NumberLessOperator(RemoveLeadingZeroes(left.Minor()),
-                           RemoveLeadingZeroes(right.Minor()))) { return true; }
+                           RemoveLeadingZeroes(right.Minor())))
+    {
+        return true;
+    }
     if (NumberLessOperator(RemoveLeadingZeroes(right.Minor()),
-                           RemoveLeadingZeroes(left.Minor()))) { return false; }
+                           RemoveLeadingZeroes(left.Minor())))
+    {
+        return false;
+    }
 
     if (!!left.Micro() && !!right.Micro() &&
         NumberLessOperator(RemoveLeadingZeroes(*left.Micro()),
-                           RemoveLeadingZeroes(*right.Micro()))) { return true; }
-    if (!left.Micro() && !!right.Micro()) { return true; }
+                           RemoveLeadingZeroes(*right.Micro())))
+    {
+        return true;
+    }
+    if (!left.Micro() && !!right.Micro()) {
+        return true;
+    }
 
     return false;
 }
 
 bool operator<=(const WidgetVersion &left,
-        const WidgetVersion &right)
+                const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
@@ -316,7 +336,7 @@ bool operator<=(const WidgetVersion &left,
 }
 
 bool operator>(const WidgetVersion &left,
-        const WidgetVersion &right)
+               const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
@@ -326,7 +346,7 @@ bool operator>(const WidgetVersion &left,
 }
 
 bool operator>=(const WidgetVersion &left,
-        const WidgetVersion &right)
+                const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
@@ -336,26 +356,32 @@ bool operator>=(const WidgetVersion &left,
 }
 
 bool operator==(const WidgetVersion &left,
-        const WidgetVersion &right)
+                const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
         "Only WAC version strings are comparable!");
 
+    //Major are equal
+    //and
+    //Minor are equal
+    //and
+    //Both Micro exist and are equal
+    //or both Micro do not exist
     return RemoveLeadingZeroes(left.Major()) ==
-           RemoveLeadingZeroes(right.Major()) &&                                       // Major are equal
+           RemoveLeadingZeroes(right.Major()) &&
            RemoveLeadingZeroes(left.Minor()) ==
-           RemoveLeadingZeroes(right.Minor()) &&                                       // and Minor are equal
-           (                                                                           // and ...
+           RemoveLeadingZeroes(right.Minor()) &&
+           (
                (!!left.Micro() && !!right.Micro() &&
                 RemoveLeadingZeroes(*left.Micro()) ==
-                RemoveLeadingZeroes(*right.Micro())) ||                                                                              // Both Micro exist and are equal
-               (!left.Micro() && !right.Micro())                                                                                     // or both Micro do not exist
+                RemoveLeadingZeroes(*right.Micro())) ||
+               (!left.Micro() && !right.Micro())
            );
 }
 
 bool operator!=(const WidgetVersion &left,
-        const WidgetVersion &right)
+                const WidgetVersion &right)
 {
     Assert(
         left.IsWac() && right.IsWac() &&
@@ -365,7 +391,7 @@ bool operator!=(const WidgetVersion &left,
 }
 
 std::ostream & operator<<(std::ostream& stream,
-        const WidgetVersion& version)
+                          const WidgetVersion& version)
 {
     stream << version.Raw();
     return stream;

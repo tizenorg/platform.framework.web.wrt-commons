@@ -29,7 +29,6 @@ namespace WrtDB {
 bool IsSpace(const xmlChar* str);
 bool CopyChar(xmlChar* out, xmlChar* in);
 
-
 bool IsSpace(const xmlChar* str)
 {
     int charlen = xmlUTF8Size(str);
@@ -121,7 +120,7 @@ bool IsSpace(const xmlChar* str)
 }
 
 bool CopyChar(xmlChar* out,
-        xmlChar* in)
+              xmlChar* in)
 {
     int size = xmlUTF8Size(in);
     switch (size) {
@@ -152,7 +151,7 @@ void NormalizeString(DPL::String& str)
     str = *opt;
 }
 
-void NormalizeString (DPL::Optional<DPL::String>& txt)
+void NormalizeString (DPL::Optional<DPL::String>& txt, bool isTrimSpace)
 {
     if (!!txt) {
         std::string tmp = DPL::ToUTF8String(*txt);
@@ -182,7 +181,7 @@ void NormalizeString (DPL::Optional<DPL::String>& txt)
                 if (c[0] == 0x0) {
                     break;
                 }
-                if (first) {
+                if (first && !isTrimSpace) {
                     xmlChar space[6] = { 0x20 };
                     CopyChar(s, space);
                     s += xmlUTF8Size(s);
@@ -197,6 +196,11 @@ void NormalizeString (DPL::Optional<DPL::String>& txt)
         txt = DPL::FromUTF8String(reinterpret_cast<char*>(tmpnew));
         xmlFree(tmpnew);
     }
+}
+
+void NormalizeAndTrimSpaceString(DPL::OptionalString& txt)
+{
+    NormalizeString(txt, true);
 }
 
 bool ConfigParserData::Param::operator==(const Param& other) const
@@ -413,13 +417,13 @@ bool ConfigParserData::AccessInfo::operator <(const AccessInfo& info) const
 bool ConfigParserData::Setting::operator==(const Setting& other) const
 {
     return m_name == other.m_name &&
-        m_value == other.m_value;
+           m_value == other.m_value;
 }
 
 bool ConfigParserData::Setting::operator!=(const Setting& other) const
 {
     return m_name != other.m_name ||
-        m_value != other.m_value;
+           m_value != other.m_value;
 }
 
 bool ConfigParserData::Setting::operator >(const Setting& other) const
@@ -445,37 +449,38 @@ bool ConfigParserData::Setting::operator<=(const Setting& other) const
 bool ConfigParserData::ServiceInfo::operator== (const ServiceInfo& info) const
 {
     return m_src == info.m_src &&
-    m_operation == info.m_operation &&
-    m_scheme == info.m_scheme &&
-    m_mime == info.m_mime;
+           m_operation == info.m_operation &&
+           m_scheme == info.m_scheme &&
+           m_mime == info.m_mime &&
+           m_disposition == info.m_disposition;
 }
 
 bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
 {
     return m_src != info.m_src &&
-    m_operation != info.m_operation &&
-    m_scheme != info.m_scheme &&
-    m_mime != info.m_mime;
+           m_operation != info.m_operation &&
+           m_scheme != info.m_scheme &&
+           m_mime != info.m_mime &&
+           m_disposition != info.m_disposition;
 }
 
 bool ConfigParserData::LiveboxInfo::operator==(const LiveboxInfo& other) const
 {
     return m_liveboxId == other.m_liveboxId &&
-        m_autoLaunch == other.m_autoLaunch &&
-        m_updatePeriod == other.m_updatePeriod &&
-        m_primary == other.m_primary &&
-        m_label == other.m_label &&
-        m_icon == other.m_icon;
+           m_autoLaunch == other.m_autoLaunch &&
+           m_updatePeriod == other.m_updatePeriod &&
+           m_primary == other.m_primary &&
+           m_label == other.m_label &&
+           m_icon == other.m_icon;
 }
 
 bool ConfigParserData::LiveboxInfo::operator!=(const LiveboxInfo& other) const
 {
     return m_liveboxId != other.m_liveboxId &&
-	 m_autoLaunch != other.m_autoLaunch &&
-        m_updatePeriod != other.m_updatePeriod &&
-        m_primary != other.m_primary &&
-        m_label != other.m_label &&
-        m_icon != other.m_icon;
+           m_autoLaunch != other.m_autoLaunch &&
+           m_updatePeriod != other.m_updatePeriod &&
+           m_primary != other.m_primary &&
+           m_label != other.m_label &&
+           m_icon != other.m_icon;
 }
-
 } // namespace WrtDB

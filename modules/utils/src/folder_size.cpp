@@ -34,74 +34,69 @@
 #include <dpl/utils/folder_size.h>
 
 namespace Utils {
-
 size_t getFolderSize(const std::string& path)
 {
     size_t size = 0;
     FTS *fts;
     FTSENT *ftsent;
-    char * const paths[] = {const_cast<char * const>(path.c_str()), NULL};
+    char * const paths[] = { const_cast<char * const>(path.c_str()), NULL };
 
-    if ((fts = fts_open(paths, FTS_PHYSICAL|FTS_NOCHDIR, NULL)) == NULL) {
+    if ((fts = fts_open(paths, FTS_PHYSICAL | FTS_NOCHDIR, NULL)) == NULL) {
         //ERROR
         int error = errno;
         LogWarning(__PRETTY_FUNCTION__ << ": fts_open failed with error: "
-                << strerror(error));
+                                       << strerror(error));
         return 0;
     }
 
     while ((ftsent = fts_read(fts)) != NULL) {
         switch (ftsent->fts_info) {
-            case FTS_DP:
-            case FTS_DC:
-                //directory in postorder and directory causing a loop
-                break;
-            case FTS_F:
-            case FTS_D:
-            case FTS_NSOK:
-            case FTS_SL:
-            case FTS_SLNONE:
-            case FTS_DEFAULT:
-                //regular files and other objects that can be counted
-                size += ftsent->fts_statp->st_size;
-                break;
-            case FTS_NS:
-            case FTS_DOT:
-            case FTS_DNR:
-            case FTS_ERR:
-            default:
-                LogWarning(__PRETTY_FUNCTION__
-                        << ": traversal failed on file: "
-                        << ftsent->fts_path
-                        << " with error: "
-                        << strerror(ftsent->fts_errno));
-                return 0;
+        case FTS_DP:
+        case FTS_DC:
+            //directory in postorder and directory causing a loop
+            break;
+        case FTS_F:
+        case FTS_D:
+        case FTS_NSOK:
+        case FTS_SL:
+        case FTS_SLNONE:
+        case FTS_DEFAULT:
+            //regular files and other objects that can be counted
+            size += ftsent->fts_statp->st_size;
+            break;
+        case FTS_NS:
+        case FTS_DOT:
+        case FTS_DNR:
+        case FTS_ERR:
+        default:
+            LogWarning(__PRETTY_FUNCTION__
+                       << ": traversal failed on file: "
+                       << ftsent->fts_path
+                       << " with error: "
+                       << strerror(ftsent->fts_errno));
+            return 0;
         }
     }
 
     if (fts_close(fts) == -1) {
         int error = errno;
         LogWarning(__PRETTY_FUNCTION__ << ": fts_close failed with error: "
-                << strerror(error));
+                                       << strerror(error));
         return 0;
     }
 
     return size;
 }
 
-
-
-
-
 namespace {
 #define DECLARE_PREFIX_STRUCT(name)     \
-struct Prefix##name                     \
-{                                       \
-  static std::string get()              \
-  {                                     \
-        return std::string(#name);      \
-  }                                     \
-};                                      \
+    struct Prefix##name                     \
+    {                                       \
+        static std::string get()              \
+        {                                     \
+            return std::string(#name);      \
+        }                                     \
+    };                                      \
 
 DECLARE_PREFIX_STRUCT(B)
 DECLARE_PREFIX_STRUCT(KB)
@@ -110,59 +105,51 @@ DECLARE_PREFIX_STRUCT(GB)
 
 #undef DECLARE_PREFIX_STRUCT
 
-
 const int stepSize = 1024;
-template<typename... Rest>
+template<typename ... Rest>
 struct Pre;
 
-
-template<typename Postfix, typename... Rest>
-struct Pre<Postfix, Rest...>
+template<typename Postfix, typename ... Rest>
+struct Pre<Postfix, Rest ...>
 {
     static const double value;
     static std::string printSize(double fileSize)
     {
-        if(fileSize >= Pre<Rest...>::value) {
-            double now = fileSize / Pre<Rest...>::value;
+        if (fileSize >= Pre<Rest ...>::value) {
+            double now = fileSize / Pre<Rest ...>::value;
             std::ostringstream outputStream;
             outputStream.setf(std::ios::fixed, std::ios::floatfield);
             outputStream.precision(2);
             outputStream << now << Postfix::get();
             return outputStream.str();
         } else {
-            return Pre<Rest...>::printSize(fileSize);
+            return Pre<Rest ...>::printSize(fileSize);
         }
-
     }
 };
 
 template<>
 struct Pre<>
 {
-        static const double value;
-        static std::string printSize(double /*fileSize*/)
-        {
-                return "0B";
-        }
-
+    static const double value;
+    static std::string printSize(double /*fileSize*/)
+    {
+        return "0B";
+    }
 };
 
 const double Pre<>::value = 1.0;
-template<typename Postfix, typename... Params> const double Pre<Postfix, Params...>::value(Pre<>::value * stepSize);
-
+template<typename Postfix, typename ... Params> const double Pre<Postfix,
+                                                                 Params ...>::
+    value(Pre<>::value * stepSize);
 
 typedef Pre<PrefixGB, PrefixMB, PrefixKB, PrefixB> FolderSizeToStringType;
-
-
 } //anonymous namespace
-
 
 DPL::String fromFileSizeString(size_t fileSize)
 {
-
     std::string output =
         FolderSizeToStringType::printSize(static_cast<double>(fileSize));
     return DPL::FromUTF8String(output);
 }
-
 } // end of namespace Utils

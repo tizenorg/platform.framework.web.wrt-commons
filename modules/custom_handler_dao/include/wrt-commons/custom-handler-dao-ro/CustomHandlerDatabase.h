@@ -23,44 +23,42 @@
 
 namespace CustomHandlerDB {
 namespace Interface {
-
 void attachDatabaseRO();
 void attachDatabaseRW();
 void detachDatabase();
 
 extern DPL::Mutex g_dbQueriesMutex;
 extern DPL::DB::ThreadDatabaseSupport g_dbInterface;
-
 } // namespace Interface
 } // namespace CustomHandlerDB
 
 #define CUSTOM_HANDLER_DB_INTERNAL(tlsCommand, InternalType)                   \
-    static DPL::ThreadLocalVariable<InternalType> *tlsCommand ## Ptr = NULL;   \
+    static DPL::ThreadLocalVariable<InternalType> *tlsCommand##Ptr = NULL;   \
     {                                                                          \
         DPL::Mutex::ScopedLock lock(                                           \
-                &CustomHandlerDB::Interface::g_dbQueriesMutex);                \
-        if (!tlsCommand ## Ptr) {                                              \
+            &CustomHandlerDB::Interface::g_dbQueriesMutex);                \
+        if (!tlsCommand##Ptr) {                                              \
             static DPL::ThreadLocalVariable<InternalType> tmp;                 \
-            tlsCommand ## Ptr = &tmp;                                          \
+            tlsCommand##Ptr = &tmp;                                          \
         }                                                                      \
     }                                                                          \
-    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand ## Ptr;   \
+    DPL::ThreadLocalVariable<InternalType> &tlsCommand = *tlsCommand##Ptr;   \
     if (tlsCommand.IsNull())                                                   \
     {                                                                          \
         tlsCommand = InternalType(&CustomHandlerDB::Interface::g_dbInterface); \
     }
 
 #define CUSTOM_HANDLER_DB_SELECT(name, type) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Select)
+    CUSTOM_HANDLER_DB_INTERNAL(name, type::Select)
 
 #define CUSTOM_HANDLER_DB_INSERT(name, type) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Insert)
+    CUSTOM_HANDLER_DB_INTERNAL(name, type::Insert)
 
 #define CUSTOM_HANDLER_DB_UPDATE(name, type) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Update)
+    CUSTOM_HANDLER_DB_INTERNAL(name, type::Update)
 
 #define CUSTOM_HANDLER_DB_DELETE(name, type) \
-        CUSTOM_HANDLER_DB_INTERNAL(name, type::Delete)
+    CUSTOM_HANDLER_DB_INTERNAL(name, type::Delete)
 
 #endif /* _CUSTOM_HANDLER_DATABASE_H_ */
 

@@ -24,11 +24,10 @@
 
 #include <dpl/noncopyable.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename ClassPolicy>
-class ScopedResource
-    : private Noncopyable
+class ScopedResource :
+    private Noncopyable
 {
   public:
     typedef typename ClassPolicy::Type ValueType;
@@ -45,7 +44,10 @@ class ScopedResource
         ClassPolicy::Destroy(m_value);
     }
 
-    ValueType Get() const { return m_value; }
+    ValueType Get() const
+    {
+        return m_value;
+    }
 
     void Reset(ValueType value = ClassPolicy::NullValue())
     {
@@ -72,7 +74,6 @@ class ScopedResource
     {
         return m_value == ClassPolicy::NullValue();
     }
-
 };
 } // namespace DPL
 

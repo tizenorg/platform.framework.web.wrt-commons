@@ -27,24 +27,29 @@
 #include <errno.h>
 #include <errno.h>
 
-namespace DPL
-{
+namespace DPL {
 WaitableEvent::WaitableEvent()
 {
-    if (pipe(m_pipe) == -1)
+    if (pipe(m_pipe) == -1) {
         Throw(Exception::CreateFailed);
+    }
 
-    if (fcntl(m_pipe[0], F_SETFL, O_NONBLOCK | fcntl(m_pipe[0], F_GETFL)) == -1)
+    if (fcntl(m_pipe[0], F_SETFL, O_NONBLOCK |
+              fcntl(m_pipe[0], F_GETFL)) == -1)
+    {
         Throw(Exception::CreateFailed);
+    }
 }
 
 WaitableEvent::~WaitableEvent()
 {
-    if (TEMP_FAILURE_RETRY(close(m_pipe[0])) == -1)
+    if (TEMP_FAILURE_RETRY(close(m_pipe[0])) == -1) {
         Throw(Exception::DestroyFailed);
+    }
 
-    if (TEMP_FAILURE_RETRY(close(m_pipe[1])) == -1)
+    if (TEMP_FAILURE_RETRY(close(m_pipe[1])) == -1) {
         Throw(Exception::DestroyFailed);
+    }
 }
 
 WaitableHandle WaitableEvent::GetHandle() const
@@ -56,15 +61,17 @@ void WaitableEvent::Signal() const
 {
     char data = 0;
 
-    if (TEMP_FAILURE_RETRY(write(m_pipe[1], &data, 1)) != 1)
+    if (TEMP_FAILURE_RETRY(write(m_pipe[1], &data, 1)) != 1) {
         Throw(Exception::SignalFailed);
+    }
 }
 
 void WaitableEvent::Reset() const
 {
     char data;
 
-    if (TEMP_FAILURE_RETRY(read(m_pipe[0], &data, 1)) != 1)
+    if (TEMP_FAILURE_RETRY(read(m_pipe[0], &data, 1)) != 1) {
         Throw(Exception::ResetFailed);
+    }
 }
 } // namespace DPL

@@ -26,8 +26,7 @@
 #include <dpl/abstract_waitable_output.h>
 #include <dpl/exception.h>
 
-namespace DPL
-{
+namespace DPL {
 /**
  * Copy failed exception
  */
@@ -38,18 +37,23 @@ DECLARE_EXCEPTION_TYPE(Exception, CopyFailed)
  *
  * @param[in] input Abstract waitable input to copy from
  * @param[in] output Abstract waitable output to copy to
- * @throw CopyFailed An error occurred while copying. Look into exception trace for details.
+ * @throw CopyFailed An error occurred while copying. Look into exception trace
+ * for details.
  */
 void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output);
 
 /**
- * Copy exactly totalBytes bytes abstract waitable input to abstract waitable output
+ * Copy exactly totalBytes bytes abstract waitable input to abstract waitable
+ * output
  *
  * @param[in] input Abstract waitable input to copy from
  * @param[in] output Abstract waitable output to copy to
- * @throw CopyFailed An error occurred while copying. Look into exception trace for details.
+ * @throw CopyFailed An error occurred while copying. Look into exception trace
+ * for details.
  */
-void Copy(AbstractWaitableInput *input, AbstractWaitableOutput *output, size_t totalBytes);
+void Copy(AbstractWaitableInput *input,
+          AbstractWaitableOutput *output,
+          size_t totalBytes);
 } // namespace DPL
 
 #endif // DPL_COPY_H

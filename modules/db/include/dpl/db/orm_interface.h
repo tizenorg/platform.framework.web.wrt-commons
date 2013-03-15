@@ -25,25 +25,22 @@
 #ifndef DPL_ORM_INTERFACE_H
 #define DPL_ORM_INTERFACE_H
 
-namespace DPL
-{
-namespace DB
-{
-namespace ORM
-{
-
+namespace DPL {
+namespace DB {
+namespace ORM {
 class IOrmInterface
 {
   public:
     virtual ~IOrmInterface() {}
-    virtual DPL::DB::SqlConnection::DataCommand *AllocDataCommand(const std::string &statement) = 0;
-    virtual void FreeDataCommand(DPL::DB::SqlConnection::DataCommand *command) = 0;
+    virtual DPL::DB::SqlConnection::DataCommand *AllocDataCommand(
+        const std::string &statement) = 0;
+    virtual void FreeDataCommand(DPL::DB::SqlConnection::DataCommand *command)
+        = 0;
     virtual void TransactionBegin() = 0;
     virtual void TransactionCommit() = 0;
     virtual void TransactionRollback() = 0;
     virtual DPL::DB::SqlConnection::RowID GetLastInsertRowID() = 0;
 };
-
 }
 }
 }

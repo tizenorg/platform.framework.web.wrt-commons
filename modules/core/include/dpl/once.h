@@ -27,17 +27,16 @@
 #include <dpl/atomic.h>
 #include <dpl/mutex.h>
 
-namespace DPL
+namespace DPL {
+class Once :
+    private Noncopyable
 {
-class Once
-    : private Noncopyable
-{
-public:
+  public:
     typedef FastDelegate<void ()> Delegate;
 
     void Call(Delegate delegate);
 
-private:
+  private:
     Atomic m_atomic;
     Mutex m_mutex;
 };

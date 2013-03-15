@@ -30,8 +30,7 @@
 #include <dpl/3rdparty/fastdelegate/FastDelegate.h>
 #include <dpl/3rdparty/fastdelegate/FastDelegateBind.h>
 
-namespace DPL
-{
+namespace DPL {
 using namespace fastdelegate;
 } // namespace DPL
 

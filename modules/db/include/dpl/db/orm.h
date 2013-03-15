@@ -86,6 +86,38 @@ public:
 
 typedef std::shared_ptr<Expression> ExpressionPtr;
 
+namespace OrderingUtils {
+
+template<typename CompoundType> inline std::string OrderByInternal()
+{
+    std::string order = OrderByInternal<typename CompoundType::Tail>();
+    if(!order.empty()) return CompoundType::Head::GetString() + ", " + order;
+    else return CompoundType::Head::GetString();
+}
+
+template<> inline std::string OrderByInternal<TypeListGuard>()
+{
+    return std::string();
+}
+
+}
+
+template<typename ColumnType>
+class __attribute__ ((visibility("hidden"))) OrderingExpression {
+protected:
+    static std::string GetSchemaAndName()
+    {
+        std::string statement;
+        statement += ColumnType::GetTableName();
+        statement += ".";
+        statement += ColumnType::GetColumnName();
+        statement += " ";
+        return statement;
+    }
+public:
+    virtual ~OrderingExpression() {}
+};
+
 template<const char* Operator, typename LeftExpression, typename RightExpression>
 class __attribute__ ((visibility("hidden"))) BinaryExpression : public Expression {
 protected:
@@ -186,6 +218,22 @@ public:
 
 ORM_DEFINE_COMPARE_EXPRESSION(Equals, Equal)
 ORM_DEFINE_COMPARE_EXPRESSION(Is, Is)
+
+#define ORM_DEFINE_ORDERING_EXPRESSION(name, value)                                     \
+    template<typename ColumnType>                                                       \
+    class __attribute__ ((visibility("hidden"))) name                                   \
+        : OrderingExpression<ColumnType> {                                              \
+    public:                                                                             \
+        static std::string GetString()                                                  \
+        {                                                                               \
+            std::string statement = OrderingExpression<ColumnType>::GetSchemaAndName(); \
+            statement += value;                                                         \
+            return statement;                                                           \
+        }                                                                               \
+    };
+
+ORM_DEFINE_ORDERING_EXPRESSION(OrderingAscending, "ASC")
+ORM_DEFINE_ORDERING_EXPRESSION(OrderingDescending, "DESC")
 
 template<typename ColumnData1, typename ColumnData2>
 class __attribute__ ((visibility("hidden"))) CompareBinaryColumn {
@@ -844,9 +892,20 @@ public:
         m_distinctResults = true;
     }
 
-    void OrderBy(const std::string& orderBy)
+    template<typename CompoundType>
+    void OrderBy(const CompoundType&)
+    {
+        m_orderBy = OrderingUtils::OrderByInternal<typename CompoundType::Type>();
+    }
+
+    void OrderBy(const std::string & orderBy) //backward compatibility
     {
         m_orderBy = orderBy;
+    }
+
+    void OrderBy(const char * orderBy) //backward compatibility
+    {
+        m_orderBy = std::string(orderBy);
     }
 
     template<typename ColumnList, typename Expression>

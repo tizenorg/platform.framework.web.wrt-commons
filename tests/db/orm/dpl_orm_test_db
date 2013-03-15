@@ -1,0 +1,88 @@
+
+CREATE_TABLE(TestTableInsert)
+    COLUMN(ColumnOptInt,            INT,)
+    COLUMN(ColumnOptText,           TEXT,)
+    COLUMN_NOT_NULL(ColumnInt,      INT, DEFAULT 99)
+    COLUMN_NOT_NULL(ColumnInt2,     INT,)
+    COLUMN_NOT_NULL(ColumnText,     TEXT,)
+CREATE_TABLE_END()
+
+CREATE_TABLE(TestTableDelete)
+    COLUMN(ColumnOptInt,            INT,)
+    COLUMN(ColumnOptText,           TEXT,)
+    COLUMN_NOT_NULL(ColumnInt,      INT, DEFAULT 99)
+    COLUMN_NOT_NULL(ColumnInt2,     INT,)
+    COLUMN_NOT_NULL(ColumnText,     TEXT,)
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO TestTableDelete VALUES(1, "two", 3, 4, "five");
+    INSERT INTO TestTableDelete VALUES(6, "seven", 8, 9, "ten");
+    INSERT INTO TestTableDelete (ColumnInt2, ColumnText) VALUES(11, "twelve");
+    INSERT INTO TestTableDelete (ColumnInt2, ColumnText) VALUES(13, "fourteen");
+)
+
+CREATE_TABLE(TestTable)
+    COLUMN(ColumnOptInt,            INT,)
+    COLUMN(ColumnOptText,           TEXT,)
+    COLUMN_NOT_NULL(ColumnInt,      INT, DEFAULT 99)
+    COLUMN_NOT_NULL(ColumnInt2,     INT,)
+    COLUMN_NOT_NULL(ColumnText,     TEXT,)
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO TestTable VALUES(1, "two", 3, 4, "five");
+    INSERT INTO TestTable VALUES(6, "seven", 8, 9, "ten");
+    INSERT INTO TestTable (ColumnInt2, ColumnText) VALUES(11, "twelve");
+    INSERT INTO TestTable (ColumnInt2, ColumnText) VALUES(13, "fourteen");
+)
+
+CREATE_TABLE(TestTableJoin1)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN_NOT_NULL(TestText, TEXT,)
+    COLUMN(TestNumber,      INT,)
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(TestID)
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(TestTableJoin2)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN_NOT_NULL(TestText1,       TEXT,)
+    COLUMN_NOT_NULL(TestText2,       TEXT,)
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(TestID)
+    )
+CREATE_TABLE_END()
+
+CREATE_TABLE(TestTableJoin3)
+    COLUMN_NOT_NULL(TestID, INT,)
+    COLUMN(Value3,          INT,)
+    COLUMN(TestText33,      TEXT,)
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(TestID)
+    )
+CREATE_TABLE_END()
+
+SQL(
+    INSERT INTO TestTableJoin1 VALUES(1, "text val 1", 111);
+    INSERT INTO TestTableJoin1 VALUES(2, "text val 2", 222);
+    INSERT INTO TestTableJoin1 VALUES(3, "text val 3", 333);
+    INSERT INTO TestTableJoin1 VALUES(4, "text val 4", 444);
+    INSERT INTO TestTableJoin1 VALUES(5, "text val 5", 555);
+    INSERT INTO TestTableJoin1 VALUES(6, "text val 6", 666);
+
+    INSERT INTO TestTableJoin2 VALUES(1, "01", "text2 1");
+    INSERT INTO TestTableJoin2 VALUES(2, "02", "text2 2");
+    INSERT INTO TestTableJoin2 VALUES(3, "03", "text2 3");
+    INSERT INTO TestTableJoin2 VALUES(4, " 4 ", "text2 4");
+    INSERT INTO TestTableJoin2 VALUES(5, "*5*", "text2 5");
+    INSERT INTO TestTableJoin2 VALUES(10, "6", "text2 6");
+
+    INSERT INTO TestTableJoin3 VALUES(1, 111, "test 1");
+    INSERT INTO TestTableJoin3 VALUES(2, 111, "test 2");
+    INSERT INTO TestTableJoin3 VALUES(3, 222, "test 3");
+    INSERT INTO TestTableJoin3 VALUES(6, 222, "test 4");
+    INSERT INTO TestTableJoin3 (TestID, TestText33) VALUES(7, "test 5");
+    INSERT INTO TestTableJoin3 (TestID, TestText33) VALUES(10, "test 6");
+)

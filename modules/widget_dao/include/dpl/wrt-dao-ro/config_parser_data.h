@@ -31,10 +31,10 @@
 #include <ctype.h>
 
 namespace WrtDB {
-
-void NormalizeString(DPL::OptionalString& txt);
+void NormalizeString(DPL::OptionalString& txt, bool isTrimSpace = false);
 void NormalizeString(DPL::String& str);
 DPL::String GetSingleAttributeValue(const DPL::String value);
+void NormalizeAndTrimSpaceString(DPL::OptionalString& txt);
 
 class WidgetConfigurationManager;
 
@@ -44,8 +44,7 @@ class ConfigParserData
     struct Param
     {
         Param(const DPL::String& _name) : name(_name)
-        {
-        }
+        {}
         DPL::String name;
         DPL::String value;
         bool operator==(const Param&) const;
@@ -62,8 +61,7 @@ class ConfigParserData
         Feature(const DPL::String& _name,
                 bool _required = true) : name(_name),
             required(_required)
-        {
-        }
+        {}
         DPL::String name;
         bool required;
         ParamsList paramsList;
@@ -80,8 +78,7 @@ class ConfigParserData
     struct Privilege
     {
         Privilege(const DPL::String& _name) : name(_name)
-        {
-        }
+        {}
         DPL::String name;
 
         bool operator==(const Privilege&) const;
@@ -96,8 +93,7 @@ class ConfigParserData
     struct Icon
     {
         Icon(const DPL::String& _src) : src(_src)
-        {
-        }
+        {}
         DPL::String src;
         DPL::OptionalInt width;
         DPL::OptionalInt height;
@@ -126,12 +122,11 @@ class ConfigParserData
     struct Preference
     {
         Preference(const DPL::String& _name,
-                bool _readonly = false) :
+                   bool _readonly = false) :
             name(_name),
             value(),
             readonly(_readonly)
-        {
-        }
+        {}
         DPL::String name;
         DPL::OptionalString value;
         bool readonly;
@@ -148,10 +143,9 @@ class ConfigParserData
     struct AccessInfo
     {
         AccessInfo(const DPL::String& strIRI,
-                bool bSubdomainAccess) : m_strIRI(strIRI),
+                   bool bSubdomainAccess) : m_strIRI(strIRI),
             m_bSubDomainAccess(bSubdomainAccess)
-        {
-        }
+        {}
 
         bool operator==(const AccessInfo&) const;
         bool operator!=(const AccessInfo&) const;
@@ -166,10 +160,9 @@ class ConfigParserData
     {
         Setting(const DPL::String& name,
                 const DPL::String& value) :
-                m_name(name),
-                m_value(value)
-        {
-        }
+            m_name(name),
+            m_value(value)
+        {}
         DPL::String m_name;
         DPL::String m_value;
 
@@ -188,21 +181,27 @@ class ConfigParserData
      */
     struct ServiceInfo
     {
+        enum class Disposition {
+            WINDOW = 0,
+            INLINE
+        };
         ServiceInfo(
             const DPL::String& src,
             const DPL::String& operation,
             const DPL::String& scheme,
-            const DPL::String& mime) :
+            const DPL::String& mime,
+            const Disposition dispos) :
             m_src(src),
             m_operation(operation),
             m_scheme(scheme),
-            m_mime(mime)
-        {
-        }
+            m_mime(mime),
+            m_disposition(dispos)
+        {}
         DPL::String m_src;
         DPL::String m_operation;
         DPL::String m_scheme;
         DPL::String m_mime;
+        Disposition m_disposition;
 
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;
@@ -213,8 +212,7 @@ class ConfigParserData
         AppControlInfo(
             const DPL::String& operation) :
             m_operation(operation)
-        {
-        }
+        {}
         DPL::String m_src;
         DPL::String m_operation;
         std::set <DPL::String> m_uriList;
@@ -227,7 +225,7 @@ class ConfigParserData
     typedef std::list<ServiceInfo> ServiceInfoList; // It will be removed.
     typedef std::list<AppControlInfo> AppControlInfoList;
 
-    typedef std::list<std::pair<DPL::String, DPL::String>> BoxSizeList;
+    typedef std::list<std::pair<DPL::String, DPL::String> > BoxSizeList;
 
     struct LiveboxInfo
     {
@@ -236,16 +234,19 @@ class ConfigParserData
         struct BoxContent
         {
             DPL::String m_boxSrc;
-            BoxSizeList m_boxSize ;
+            DPL::String m_boxMouseEvent;
+            BoxSizeList m_boxSize;
             DPL::String m_pdSrc;
             DPL::String m_pdWidth;
             DPL::String m_pdHeight;
-        }; typedef BoxContent BoxContentInfo;
+        };
+        typedef BoxContent BoxContentInfo;
 
         DPL::String m_label;
         DPL::String m_icon;
         DPL::String m_liveboxId;
         DPL::String m_primary;
+        DPL::String m_type;
         DPL::String m_autoLaunch;
         DPL::String m_updatePeriod;
         BoxContentInfo m_boxInfo;
@@ -257,7 +258,7 @@ class ConfigParserData
         bool operator <(const LiveboxInfo&) const;
         bool operator<=(const LiveboxInfo&) const;
     };
-    typedef std::list<DPL::Optional<LiveboxInfo>> LiveboxList;
+    typedef std::list<DPL::Optional<LiveboxInfo> > LiveboxList;
     LiveboxList m_livebox;
 
     typedef std::list<DPL::OptionalString> DependsPkgList;
@@ -305,8 +306,13 @@ class ConfigParserData
     IconsList iconsList;
 
     // tizen id / required platform min version for TIZEN webapp
-    DPL::OptionalString tizenId;
     DPL::OptionalString tizenMinVersionRequired;
+    DPL::OptionalString tizenPkgId;
+    DPL::OptionalString tizenAppId;
+
+    //csp polic for widget
+    DPL::OptionalString cspPolicy;
+    DPL::OptionalString cspPolicyReportOnly;
 
     //Application service model list
     ServiceInfoList appServiceList; //It will be removed.
@@ -327,10 +333,8 @@ class ConfigParserData
         backSupported(false),
         accessNetwork(false),
         startFileEncountered(false)
-    {
-    }
+    {}
 };
-
 } // namespace WrtDB
 
 #endif  //CONFIG_PARSER_DATA_H_

@@ -30,7 +30,6 @@ using namespace DPL::DB::ORM::autosave;
 using namespace AutoSaveDB::Interface;
 
 namespace AutoSaveDB {
-
 #define SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN          Try
 
 #define SQL_CONNECTION_EXCEPTION_HANDLER_END(message)   \
@@ -42,12 +41,10 @@ namespace AutoSaveDB {
 
 AutoSaveDAO::AutoSaveDAO() :
     AutoSaveDAOReadOnly()
-{
-}
+{}
 
 AutoSaveDAO::~AutoSaveDAO()
-{
-}
+{}
 
 void AutoSaveDAO::attachDatabaseRW(void)
 {
@@ -60,8 +57,10 @@ void AutoSaveDAO::detachDatabase(void)
     m_autoSavedbInterface.DetachFromThread();
 }
 
-void AutoSaveDAO::setAutoSaveSubmitFormData(const DPL::String &url,
-                                      const SubmitFormData &submitFormData)
+void AutoSaveDAO::setAutoSaveSubmitFormData(
+    const DPL::String &url,
+    const SubmitFormData &
+    submitFormData)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
@@ -95,5 +94,4 @@ void AutoSaveDAO::setAutoSaveSubmitFormData(const DPL::String &url,
 }
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
-
 } // namespace AutoSaveDB

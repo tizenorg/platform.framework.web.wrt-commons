@@ -31,7 +31,6 @@
 #include <wrt-commons/auto-save-dao/common_dao_types.h>
 
 namespace AutoSaveDB {
-
 class AutoSaveDAOReadOnly
 {
   public:
@@ -57,10 +56,8 @@ class AutoSaveDAOReadOnly
      * This method gets Autofill for Webkit
      */
     static SubmitFormData getAutoSaveSubmitFormData(
-            const DPL::String &url);
-
+        const DPL::String &url);
 };
-
 } // namespace AutoSaveDB
 
 #endif // _AUTO_SAVE_DAO_READ_ONLY_H_

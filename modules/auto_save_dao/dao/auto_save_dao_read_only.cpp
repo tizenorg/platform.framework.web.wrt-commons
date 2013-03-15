@@ -31,9 +31,7 @@ using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::autosave;
 using namespace AutoSaveDB::Interface;
 
-
 namespace AutoSaveDB {
-
 #define SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN          Try
 
 #define SQL_CONNECTION_EXCEPTION_HANDLER_END(message)   \
@@ -44,12 +42,10 @@ namespace AutoSaveDB {
     }
 
 AutoSaveDAOReadOnly::AutoSaveDAOReadOnly()
-{
-}
+{}
 
 AutoSaveDAOReadOnly::~AutoSaveDAOReadOnly()
-{
-}
+{}
 
 void AutoSaveDAOReadOnly::attachDatabaseRO(void)
 {
@@ -67,7 +63,9 @@ SubmitFormData AutoSaveDAOReadOnly::getAutoSaveSubmitFormData(
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        AUTOSAVE_DB_SELECT(select, AutoSaveSubmitFormElement, &m_autoSavedbInterface);
+        AUTOSAVE_DB_SELECT(select,
+                           AutoSaveSubmitFormElement,
+                           &m_autoSavedbInterface);
         select->Where(Equals<AutoSaveSubmitFormElement::address>(url));
         AutoSaveSubmitFormElement::Select::RowList rows = select->GetRowList();
 
@@ -85,5 +83,4 @@ SubmitFormData AutoSaveDAOReadOnly::getAutoSaveSubmitFormData(
 
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
-
 } // namespace AutoSaveDB

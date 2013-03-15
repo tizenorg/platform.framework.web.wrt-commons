@@ -39,16 +39,15 @@
 #include <list>
 #include <map>
 
-namespace DPL
+namespace DPL {
+class Thread :
+    private Noncopyable,
+    public WaitableHandleWatchSupport
 {
-class Thread
-    : private Noncopyable,
-      public WaitableHandleWatchSupport
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, DestroyFailed)
@@ -60,7 +59,7 @@ public:
     typedef void (*EventDeleteProc)(void *event, void *userParam);
     typedef void (*EventDispatchProc)(void *event, void *userParam);
 
-protected:
+  protected:
     /**
      * Main thread entry
      * The method is intended to be overloaded with custom code.
@@ -74,7 +73,7 @@ protected:
      */
     int Exec();
 
-private:
+  private:
     struct InternalEvent
     {
         void *event;
@@ -85,17 +84,16 @@ private:
         InternalEvent(void *eventArg,
                       void *userParamArg,
                       EventDispatchProc eventDispatchProcArg,
-                      EventDeleteProc eventDeleteProcArg)
-            : event(eventArg),
-              userParam(userParamArg),
-              eventDispatchProc(eventDispatchProcArg),
-              eventDeleteProc(eventDeleteProcArg)
-        {
-        }
+                      EventDeleteProc eventDeleteProcArg) :
+            event(eventArg),
+            userParam(userParamArg),
+            eventDispatchProc(eventDispatchProcArg),
+            eventDeleteProc(eventDeleteProcArg)
+        {}
     };
 
-    struct InternalTimedEvent
-        : InternalEvent
+    struct InternalTimedEvent :
+        InternalEvent
     {
         unsigned long dueTimeMiliseconds;
         unsigned long registerTimeMiliseconds;
@@ -105,19 +103,19 @@ private:
                            unsigned long dueTimeMilisecondsArg,
                            unsigned long registerTimeMilisecondsArg,
                            EventDispatchProc eventDispatchProcArg,
-                           EventDeleteProc eventDeleteProcArg)
-            : InternalEvent(eventArg,
-                            userParamArg,
-                            eventDispatchProcArg,
-                            eventDeleteProcArg),
-              dueTimeMiliseconds(dueTimeMilisecondsArg),
-              registerTimeMiliseconds(registerTimeMilisecondsArg)
-        {
-        }
+                           EventDeleteProc eventDeleteProcArg) :
+            InternalEvent(eventArg,
+                          userParamArg,
+                          eventDispatchProcArg,
+                          eventDeleteProcArg),
+            dueTimeMiliseconds(dueTimeMilisecondsArg),
+            registerTimeMiliseconds(registerTimeMilisecondsArg)
+        {}
 
         bool operator<(const InternalTimedEvent &other)
         {
-            return registerTimeMiliseconds + dueTimeMiliseconds > other.registerTimeMiliseconds + other.dueTimeMiliseconds;
+            return registerTimeMiliseconds + dueTimeMiliseconds >
+                   other.registerTimeMiliseconds + other.dueTimeMiliseconds;
         }
     };
 
@@ -156,7 +154,7 @@ private:
 
     static void *StaticThreadEntry(void *param);
 
-public:
+  public:
     explicit Thread();
     virtual ~Thread();
 
@@ -186,12 +184,19 @@ public:
     /**
      * Low-level event push, usually used only by EventSupport
      */
-    void PushEvent(void *event, EventDispatchProc eventDispatchProc, EventDeleteProc eventDeleteProc, void *userParam);
+    void PushEvent(void *event,
+                   EventDispatchProc eventDispatchProc,
+                   EventDeleteProc eventDeleteProc,
+                   void *userParam);
 
     /**
      * Low-level timed event push, usually used only by EventSupport
      */
-    void PushTimedEvent(void *event, double dueTimeSeconds, EventDispatchProc eventDispatchProc, EventDeleteProc eventDeleteProc, void *userParam);
+    void PushTimedEvent(void *event,
+                        double dueTimeSeconds,
+                        EventDispatchProc eventDispatchProc,
+                        EventDeleteProc eventDeleteProc,
+                        void *userParam);
 
     /**
      * Sleep for a number of seconds
@@ -223,21 +228,21 @@ extern bool g_TLSforMainCreated;
 // (process can become non-responsive)
 // TODO further investigation is required.
 template<typename Type>
-class ThreadLocalVariable
-    : public Noncopyable
+class ThreadLocalVariable :
+    public Noncopyable
 {
-public:
+  public:
     typedef Type ValueType;
 
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, NullReference)
         DECLARE_EXCEPTION_TYPE(Base, KeyCreateFailed)
     };
 
-private:
+  private:
     pthread_key_t m_key;
 
     struct ManagedValue
@@ -260,12 +265,9 @@ private:
     {
         // Destroy underlying type
         ManagedValue *instance = static_cast<ManagedValue *>(specific);
-        if(instance->guardKey.IsNull())
-        {
+        if (instance->guardKey.IsNull()) {
             delete instance;
-        }
-        else
-        {
+        } else {
             int result = pthread_setspecific(*(instance->guardKey), instance);
 
             Assert(result == 0 &&
@@ -278,18 +280,16 @@ private:
         ManagedValue *instance =
             static_cast<ManagedValue *>(pthread_getspecific(m_key));
 
-        if (!instance)
-        {
+        if (!instance) {
             // Check if it is allowed to instantiate
-            if (!allowInstantiate)
+            if (!allowInstantiate) {
                 Throw(typename Exception::NullReference);
+            }
 
             // checking, if specific data is created for Main thread
             // If yes, pthread_exit(NULL) is required
-            if (!g_TLSforMainCreated)
-            {
-                if (Thread::IsMainThread())
-                {
+            if (!g_TLSforMainCreated) {
+                if (Thread::IsMainThread()) {
                     g_TLSforMainCreated = true;
                     atexit(&MainThreadExitClean);
                 }
@@ -307,13 +307,13 @@ private:
         return instance->value;
     }
 
-public:
+  public:
     ThreadLocalVariable()
     {
         int result = pthread_key_create(&m_key, &InternalDestroy);
         if (result != 0) {
             ThrowMsg(typename Exception::KeyCreateFailed,
-                    "Failed to allocate thread local variable: " << result);
+                     "Failed to allocate thread local variable: " << result);
         }
     }
 
@@ -364,8 +364,9 @@ public:
         ManagedValue *specific =
             static_cast<ManagedValue *>(pthread_getspecific(m_key));
 
-        if (!specific)
+        if (!specific) {
             return;
+        }
 
         // TODO Should be an assert? is it developers fault to Reset Guarded
         // value?

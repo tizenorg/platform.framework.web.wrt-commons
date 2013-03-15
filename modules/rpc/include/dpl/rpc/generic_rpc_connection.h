@@ -27,16 +27,13 @@
 #include <dpl/socket/waitable_input_output_execution_context_support.h>
 #include <memory>
 
-namespace DPL
+namespace DPL {
+namespace RPC {
+class GenericRPCConnection :
+    public AbstractRPCConnection,
+    private DPL::Socket::WaitableInputOutputExecutionContextSupport
 {
-namespace RPC
-{
-
-class GenericRPCConnection
-    : public AbstractRPCConnection,
-      private DPL::Socket::WaitableInputOutputExecutionContextSupport
-{
-private:
+  private:
     // WaitableInputOutputExecutionContextSupport
     virtual void OnInputStreamRead();
     virtual void OnInputStreamClosed();
@@ -44,11 +41,12 @@ private:
 
     std::unique_ptr<AbstractWaitableInputOutput> m_inputOutput;
 
-public:
+  public:
     /**
      * Costructor
      *
-     * Abstract waitable input/outobject is acquired by class and destroyed upon desctructor
+     * Abstract waitable input/outobject is acquired by class and destroyed upon
+     * destructor
      */
     explicit GenericRPCConnection(AbstractWaitableInputOutput *inputOutput);
     virtual ~GenericRPCConnection();
@@ -56,7 +54,6 @@ public:
     virtual void AsyncCall(const RPCFunction &function);
     virtual void Ping();
 };
-
 }
 } // namespace DPL
 

@@ -24,7 +24,6 @@
 #define WRT_COMMON_GLOBAL_SETTINGS_H_
 
 namespace GlobalSettings {
-
 // Methods for getting test mode environment flag
 bool TestModeEnabled();
 bool PopupsTestModeEnabled();
@@ -34,7 +33,6 @@ bool OCSPTestModeEnabled();
 bool CrlTestModeEnabled();
 bool MakeScreenTestModeEnabled();
 bool IsEmulator();
-
 }
 
 #endif /* WRT_COMMON_GLOBAL_SETTINGS_H_ */

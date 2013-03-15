@@ -69,15 +69,17 @@
 
 namespace DPL {
 namespace Event {
-
 //forward declaration
 template <typename ... ArgTypesList>
 class ICDelegate;
 
-namespace ICD{
+namespace ICD {
 // This Type defines whether ICDelegate should be destroyed after the call, or
 // could be reused later.
-enum class Reuse{ Yes, No };
+enum class Reuse
+{
+    Yes, No
+};
 }
 
 namespace ICDPrivate {
@@ -95,19 +97,16 @@ class ICDSharedDataBase
       public:
         explicit ScopedLock(ICDSharedDataBasePtr helperBase) :
             m_scopedLock(&helperBase->m_mutex)
-        {
-        }
+        {}
 
       private:
         DPL::RecursiveMutex::ScopedLock m_scopedLock;
     };
 
     ICDSharedDataBase() : m_disabled(false)
-    {
-    }
+    {}
     virtual ~ICDSharedDataBase()
-    {
-    }
+    {}
 
     bool isDisabled() const
     {
@@ -139,10 +138,9 @@ class DeleteICDSharedDataBaseEventCall : public DPL::Event::AbstractEventCall
 {
   public:
     DeleteICDSharedDataBaseEventCall(
-            ICDSharedDataBase::ICDSharedDataBasePtr helperBase) :
+        ICDSharedDataBase::ICDSharedDataBasePtr helperBase) :
         m_helperBase(helperBase)
-    {
-    }
+    {}
     virtual void Call()
     {
         m_helperBase.reset();
@@ -152,17 +150,16 @@ class DeleteICDSharedDataBaseEventCall : public DPL::Event::AbstractEventCall
     ICDSharedDataBase::ICDSharedDataBasePtr m_helperBase;
 };
 
-
 class ICDelegateSupportInterface
 {
   protected:
     virtual ~ICDelegateSupportInterface()
-    {
-    }
+    {}
     virtual void unregisterICDSharedData(
-            ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper) = 0;
+        ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper) = 0;
     virtual void registerICDSharedData(
-            ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper) = 0;
+        ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper) = 0;
+
   private:
     template <typename ... ArgTypesList>
     friend class DPL::Event::ICDelegate;
@@ -173,7 +170,7 @@ class ICDelegateSupportInterface
 template<typename ThisType, typename ... ArgTypesList>
 FastDelegate<void (ArgTypesList ...)>
 makeDelegate(ThisType* This,
-        void (ThisType::*Func)(ArgTypesList ...))
+             void (ThisType::*Func)(ArgTypesList ...))
 {
     return FastDelegate<void (ArgTypesList ...)>(This, Func);
 }
@@ -186,8 +183,7 @@ class ICDelegate
 {
   public:
     ICDelegate()
-    {
-    }
+    {}
     ICDelegate(ICDPrivate::ICDelegateSupportInterface* base,
                DPL::FastDelegate<void (ArgTypesList ...)> outerDelegate,
                ICD::Reuse reuse)
@@ -231,11 +227,10 @@ class ICDelegate
     struct PrivateEvent
     {
         PrivateEvent(ICDSharedDataPtr a_helper,
-                ArgTypesList ... arguments) :
+                     ArgTypesList ... arguments) :
             helper(a_helper),
             args(std::make_tuple(arguments ...))
-        {
-        }
+        {}
 
         ICDSharedDataPtr helper;
         std::tuple<ArgTypesList ...> args;
@@ -307,8 +302,9 @@ class ICDelegate
             } else {
                 DPL::Apply(m_outerDelegate, event.args);
 
-                if(m_reuse == ICD::Reuse::Yes)
+                if (m_reuse == ICD::Reuse::Yes) {
                     return;
+                }
 
                 disable();
                 deleteICDSharedDataBase(ptr);
@@ -317,12 +313,13 @@ class ICDelegate
     };
 
     // Schedules helper removal.
-    static void deleteICDSharedDataBase(ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
+    static void deleteICDSharedDataBase(
+        ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
     {
         using namespace ICDPrivate;
         ICDSharedDataBase::ScopedLock lock(helper);
         DeleteICDSharedDataBaseEventCall* event =
-          new DeleteICDSharedDataBaseEventCall(helper);
+            new DeleteICDSharedDataBaseEventCall(helper);
         if (DPL::Thread::GetCurrentThread() == NULL) {
             DPL::Event::GetMainEventDispatcherInstance().AddEventCall(event);
         } else {
@@ -341,8 +338,8 @@ class ICDelegateSupport : public ICDPrivate::ICDelegateSupportInterface
   protected:
     template<typename ... ArgTypesList>
     ICDelegate<ArgTypesList ...> makeICDelegate(
-            void (ThisType::*Func)(ArgTypesList ...),
-            ICD::Reuse reuse = ICD::Reuse::No)
+        void (ThisType::*Func)(ArgTypesList ...),
+        ICD::Reuse reuse = ICD::Reuse::No)
     {
         ThisType* This = static_cast<ThisType*>(this);
         ICDelegate<ArgTypesList ...> icdelegate(
@@ -354,8 +351,7 @@ class ICDelegateSupport : public ICDPrivate::ICDelegateSupportInterface
     }
 
     ICDelegateSupport()
-    {
-    }
+    {}
 
     ~ICDelegateSupport()
     {
@@ -371,13 +367,13 @@ class ICDelegateSupport : public ICDPrivate::ICDelegateSupportInterface
 
   private:
     virtual void unregisterICDSharedData(
-            ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
+        ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
     {
         m_ICDSharedDatas.erase(helper->getIterator());
     }
 
     virtual void registerICDSharedData(
-            ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
+        ICDPrivate::ICDSharedDataBase::ICDSharedDataBasePtr helper)
     {
         helper->setIterator(
             m_ICDSharedDatas.insert(m_ICDSharedDatas.begin(),
@@ -387,7 +383,6 @@ class ICDelegateSupport : public ICDPrivate::ICDelegateSupportInterface
   private:
     ICDPrivate::ICDSharedDataBase::ICDSharedDataBaseList m_ICDSharedDatas;
 };
-
 }
 } //namespace
 

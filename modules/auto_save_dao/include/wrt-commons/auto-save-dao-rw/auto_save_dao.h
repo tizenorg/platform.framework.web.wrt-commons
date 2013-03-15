@@ -27,7 +27,6 @@
 #include <wrt-commons/auto-save-dao-ro/auto_save_dao_read_only.h>
 
 namespace AutoSaveDB {
-
 class AutoSaveDAO : public AutoSaveDAOReadOnly
 {
   public:
@@ -42,9 +41,8 @@ class AutoSaveDAO : public AutoSaveDAOReadOnly
      * This method sets Autofill for Webkit
      */
     static void setAutoSaveSubmitFormData(
-            const DPL::String& url, const SubmitFormData &submitFormData);
+        const DPL::String& url, const SubmitFormData &submitFormData);
 };
-
 } // namespace AutoSaveDB
 
 #endif // _AUTO_SAVE_DAO_H_

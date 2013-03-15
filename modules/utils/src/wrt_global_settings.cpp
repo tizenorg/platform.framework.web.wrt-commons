@@ -29,10 +29,9 @@
 #include <dpl/utils/wrt_global_settings.h>
 
 namespace GlobalSettings {
-
 namespace {
 const int ROAMING_TEST = 0x00000001;
-const int POPUPS_TEST =  0x00000002;
+const int POPUPS_TEST = 0x00000002;
 const int OCSP_TEST = 0x00000004;
 const int WARP_TEST = 0x00000008;
 const int CRL_TEST = 0x00000010;
@@ -52,8 +51,8 @@ struct Settings {
     bool isEmulator;
     int testModes;
 
-    Settings()
-    : isEmulator(false), testModes(0)
+    Settings() :
+        isEmulator(false), testModes(0)
     {}
 };
 
@@ -92,26 +91,26 @@ bool initializeGlobalSettings()
     // ignore environment variables if this flag is not set
 #ifdef GLOBAL_SETTINGS_CONTROL
     char * envStr = getenv(WRT_TEST_MODE);
-    int testMode = 0;
     if (NULL != envStr) {
         std::string env = envStr;
+        int testMode = 0;
         if ("1" == env) {
             testMode = ALL_TEST;
         } else {
             std::istringstream str(envStr);
             while (std::getline(str, env, '|')) {
                 if ("popups" == env) {
-                        testMode |= POPUPS_TEST;
+                    testMode |= POPUPS_TEST;
                 } else if ("roaming" == env) {
-                        testMode |= ROAMING_TEST;;
+                    testMode |= ROAMING_TEST;
                 } else if ("ocsp" == env) {
-                        testMode |= OCSP_TEST;;
+                    testMode |= OCSP_TEST;
                 } else if ("warp" == env) {
-                        testMode |= WARP_TEST;;
+                    testMode |= WARP_TEST;
                 } else if ("crl" == env) {
-                        testMode |= CRL_TEST;
+                    testMode |= CRL_TEST;
                 } else if ("screen" == env) {
-                        testMode |= SCREEN_SHOT_TEST;;
+                    testMode |= SCREEN_SHOT_TEST;
                 }
             }
         }
@@ -130,22 +129,28 @@ bool TestModeEnabled()
     return ((gSettings.testModes & ALL_TEST) == ALL_TEST);
 }
 
-bool PopupsTestModeEnabled() {
+bool PopupsTestModeEnabled()
+{
     return (gSettings.testModes & POPUPS_TEST);
 }
-bool WarpTestModeEnabled() {
+bool WarpTestModeEnabled()
+{
     return (gSettings.testModes & WARP_TEST);
 }
-bool RoamingTestModeEnabled() {
+bool RoamingTestModeEnabled()
+{
     return (gSettings.testModes & ROAMING_TEST);
 }
-bool OCSPTestModeEnabled() {
+bool OCSPTestModeEnabled()
+{
     return (gSettings.testModes & OCSP_TEST);
 }
-bool CrlTestModeEnabled() {
+bool CrlTestModeEnabled()
+{
     return (gSettings.testModes & CRL_TEST);
 }
-bool MakeScreenTestModeEnabled() {
+bool MakeScreenTestModeEnabled()
+{
     return (gSettings.testModes & SCREEN_SHOT_TEST);
 }
 
@@ -153,5 +158,4 @@ bool IsEmulator()
 {
     return gSettings.isEmulator;
 }
-
 } // GlobalSettings

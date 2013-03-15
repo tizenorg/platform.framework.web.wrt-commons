@@ -26,37 +26,36 @@
 #include <dpl/exception.h>
 #include <pthread.h>
 
-namespace DPL
+namespace DPL {
+class ReadWriteMutex :
+    private Noncopyable
 {
-class ReadWriteMutex
-    : private Noncopyable
-{
-public:
-    class ScopedReadLock
-        : private Noncopyable
+  public:
+    class ScopedReadLock :
+        private Noncopyable
     {
-    private:
+      private:
         ReadWriteMutex *m_mutex;
 
-    public:
+      public:
         ScopedReadLock(ReadWriteMutex *mutex);
         virtual ~ScopedReadLock();
     };
 
-    class ScopedWriteLock
-        : private Noncopyable
+    class ScopedWriteLock :
+        private Noncopyable
     {
-    private:
+      private:
         ReadWriteMutex *m_mutex;
 
-    public:
+      public:
         ScopedWriteLock(ReadWriteMutex *mutex);
         virtual ~ScopedWriteLock();
     };
 
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, DestroyFailed)
@@ -65,18 +64,17 @@ public:
         DECLARE_EXCEPTION_TYPE(Base, UnlockFailed)
     };
 
-private:
+  private:
     mutable pthread_rwlock_t m_rwlock;
 
     void ReadLock() const;
     void WriteLock() const;
     void Unlock() const;
 
-public:
+  public:
     explicit ReadWriteMutex();
     virtual ~ReadWriteMutex();
 };
-
 } // namespace DPL
 
 #endif // DPL_READ_WRITE_MUTEX_H

@@ -26,9 +26,7 @@
 #include <dpl/exception.h>
 #include <vector>
 
-namespace DPL
-{
-
+namespace DPL {
 /**
  * Waitable unix wait handle definition
  */
@@ -44,7 +42,7 @@ typedef std::vector<WaitableHandle> WaitableHandleList;
  */
 class WaitMode
 {
-public:
+  public:
     enum Type
     {
         Read,  ///< Wait for readability state changes
@@ -55,7 +53,8 @@ public:
 /**
  * Waitable handle list ex
  */
-typedef std::vector<std::pair<WaitableHandle, WaitMode::Type> > WaitableHandleListEx;
+typedef std::vector<std::pair<WaitableHandle,
+                              WaitMode::Type> > WaitableHandleListEx;
 
 /**
  * Waitable handle index list
@@ -74,7 +73,10 @@ DECLARE_EXCEPTION_TYPE(DPL::Exception, WaitFailed)
  * @return Signaled waitable handle index list
  * @throw WaitFailed Fatal error occurred while waiting for signal
  */
-WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, unsigned long miliseconds = 0xFFFFFFFF);
+WaitableHandleIndexList WaitForSingleHandle(
+    WaitableHandle handle,
+    unsigned long miliseconds =
+        0xFFFFFFFF);
 
 /**
  * Wait for single handle
@@ -83,7 +85,11 @@ WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, unsigned long
  * @return Signaled waitable handle index list
  * @throw WaitFailed Fatal error occurred while waiting for signal
  */
-WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, WaitMode::Type mode, unsigned long miliseconds = 0xFFFFFFFF);
+WaitableHandleIndexList WaitForSingleHandle(
+    WaitableHandle handle,
+    WaitMode::Type mode,
+    unsigned long miliseconds =
+        0xFFFFFFFF);
 
 /**
  * Wait for multiple handles readability
@@ -91,7 +97,9 @@ WaitableHandleIndexList WaitForSingleHandle(WaitableHandle handle, WaitMode::Typ
  * @return Signaled waitable handle index list
  * @throw WaitFailed Fatal error occurred while waiting for signal
  */
-WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleList &handleList, unsigned long miliseconds = 0xFFFFFFFF);
+WaitableHandleIndexList WaitForMultipleHandles(
+    const WaitableHandleList &handleList,
+    unsigned long miliseconds = 0xFFFFFFFF);
 
 /**
  * Wait for multiple handles readability
@@ -99,8 +107,9 @@ WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleList &handleL
  * @return Signaled waitable handle index list
  * @throw WaitFailed Fatal error occurred while waiting for signal
  */
-WaitableHandleIndexList WaitForMultipleHandles(const WaitableHandleListEx &handleListEx, unsigned long miliseconds = 0xFFFFFFFF);
-
+WaitableHandleIndexList WaitForMultipleHandles(
+    const WaitableHandleListEx &handleListEx,
+    unsigned long miliseconds = 0xFFFFFFFF);
 } // namespace DPL
 
 #endif // DPL_WAITABLE_HANDLE_H

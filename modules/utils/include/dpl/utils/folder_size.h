@@ -29,11 +29,9 @@
 #include <dpl/string.h>
 
 namespace Utils {
-
 size_t getFolderSize(const std::string& path);
 
 DPL::String fromFileSizeString(size_t fileSize);
-
 }
 
 #endif /* SRC_COMMON_FOLDER_SIZE_H_ */

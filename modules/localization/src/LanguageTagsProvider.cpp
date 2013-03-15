@@ -43,8 +43,9 @@ void LanguageTagsProvider::setLanguageTags(const LanguageTags& taglist)
      * In case of empty list given as parameter only default value
      * will exist on m_languageTagsList. */
     DPL::String tofind = L"";
-    if(std::find(m_languageTagsList.begin(), m_languageTagsList.end(),
-            tofind) == m_languageTagsList.end()) {
+    if (std::find(m_languageTagsList.begin(), m_languageTagsList.end(),
+                  tofind) == m_languageTagsList.end())
+    {
         m_languageTagsList.push_back(L"");
     }
 }
@@ -60,17 +61,19 @@ void LanguageTagsProvider::resetLanguageTags()
     this->loadSystemTags();
 }
 
-void LanguageTagsProvider::addWidgetDefaultLocales(const DPL::String& defaultLocale){
+void LanguageTagsProvider::addWidgetDefaultLocales(
+    const DPL::String& defaultLocale)
+{
     if (defaultLocale.size() > 0 &&
-        std::find(m_languageTagsList.begin(), m_languageTagsList.end(), defaultLocale) == m_languageTagsList.end())
+        std::find(m_languageTagsList.begin(), m_languageTagsList.end(),
+                  defaultLocale) == m_languageTagsList.end())
     {
         if (m_languageTagsList.size() < 2) {
             m_languageTagsList.push_front(defaultLocale);
         } else {
             LanguageTags::iterator placeToInsert = m_languageTagsList.end();
             --placeToInsert;
-            if (*placeToInsert != L"")
-            {
+            if (*placeToInsert != L"") {
                 ++placeToInsert;
             }
             m_languageTagsList.insert(placeToInsert, defaultLocale);
@@ -78,7 +81,8 @@ void LanguageTagsProvider::addWidgetDefaultLocales(const DPL::String& defaultLoc
     }
 }
 
-DPL::String LanguageTagsProvider::BCP47LanguageTagToLocale(const DPL::String& inLanguageTag)
+DPL::String LanguageTagsProvider::BCP47LanguageTagToLocale(
+    const DPL::String& inLanguageTag)
 {
     DPL::String languageTag(inLanguageTag);
     /* Replace all */
@@ -86,7 +90,8 @@ DPL::String LanguageTagsProvider::BCP47LanguageTagToLocale(const DPL::String& in
     return languageTag;
 }
 
-DPL::String LanguageTagsProvider::LocaleToBCP47LanguageTag(const DPL::String& inLocaleString)
+DPL::String LanguageTagsProvider::LocaleToBCP47LanguageTag(
+    const DPL::String& inLocaleString)
 {
     /* Cut off codepage information from given string (if any exists)
      * i.e. change en_US.UTF-8 into en_US */
@@ -105,16 +110,14 @@ LanguageTagsProvider::LanguageTagsProvider()
 }
 
 LanguageTagsProvider::~LanguageTagsProvider()
-{
-}
+{}
 
 void LanguageTagsProvider::loadSystemTags()
 {
     char* language = vconf_get_str(VCONFKEY_LANGSET);
-    if(!language) {
+    if (!language) {
         LogError("Failed to get language from vconf");
-    }
-    else {
+    } else {
         LogDebug("Language fetched from vconf: " << language);
     }
     createTagsFromLocales(language);
@@ -124,7 +127,7 @@ void LanguageTagsProvider::loadSystemTags()
 void LanguageTagsProvider::createTagsFromLocales(const char* language)
 {
     m_languageTagsList.clear();
-    if(!language) {
+    if (!language) {
         LogDebug("Setting default language tags");
         /* If NULL language given than set default language tags
          * and return. */
@@ -133,15 +136,15 @@ void LanguageTagsProvider::createTagsFromLocales(const char* language)
     }
 
     LogDebug("Setting tags for language: " << language);
-    DPL::String langdescr = LocaleToBCP47LanguageTag(DPL::FromUTF8String(language));
+    DPL::String langdescr =
+        LocaleToBCP47LanguageTag(DPL::FromUTF8String(language));
 
-    size_t position;
-    if(langdescr.empty()) {
+    if (langdescr.empty()) {
         LogError("Empty language description while correct value needed");
-    }
-    else {
+    } else {
         /* Language tags list should not be cleared before this place to
          * avoid losing current data when new data are invalid */
+        size_t position;
         while (true) {
             LogDebug("Processing language description: " << langdescr);
             m_languageTagsList.push_back(langdescr);

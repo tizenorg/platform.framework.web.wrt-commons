@@ -26,17 +26,15 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <gio/gio.h>
 #include <dpl/generic_event.h>
 #include <dpl/event/event_support.h>
 #include <dpl/dbus/object.h>
 #include <dpl/dbus/object_proxy.h>
+#include <dpl/dbus/glib_util.h>
 
 namespace DPL {
 namespace DBus {
-
-namespace ConnectionEvents
-{
+namespace ConnectionEvents {
 /**
  * Emitted when service name is acquired.
  *
@@ -74,12 +72,12 @@ typedef std::shared_ptr<Connection> ConnectionPtr;
 typedef std::shared_ptr<ObjectProxy> ObjectProxyPtr;
 
 class Connection :
-        public DPL::Event::EventSupport<ConnectionEvents::ServiceNameAcquiredEvent>,
-        public DPL::Event::EventSupport<ConnectionEvents::ServiceNameLostEvent>,
-        public DPL::Event::EventSupport<ConnectionEvents::ConnectionBrokenEvent>,
-        public DPL::Event::EventSupport<ConnectionEvents::ConnectionInvalidEvent>
+    public DPL::Event::EventSupport<ConnectionEvents::ServiceNameAcquiredEvent>,
+    public DPL::Event::EventSupport<ConnectionEvents::ServiceNameLostEvent>,
+    public DPL::Event::EventSupport<ConnectionEvents::ConnectionBrokenEvent>,
+    public DPL::Event::EventSupport<ConnectionEvents::ConnectionInvalidEvent>
 {
-public:
+  public:
     /**
      * Acquires connection to session bus.
      *
@@ -165,18 +163,17 @@ public:
     ObjectProxyPtr createObjectProxy(const std::string& serviceName,
                                      const std::string& objectPath);
 
-private:
+  private:
     friend class Server;
 
     typedef std::map<std::string, guint> RegisteredServices;
 
     struct ObjectRegistration
     {
-        ObjectRegistration(guint _registrationId, const ObjectPtr& _object)
-            : registrationId(_registrationId),
-              object(_object)
-        {
-        }
+        ObjectRegistration(guint _registrationId, const ObjectPtr& _object) :
+            registrationId(_registrationId),
+            object(_object)
+        {}
 
         guint registrationId;
         ObjectPtr object;
@@ -204,7 +201,6 @@ private:
 
     RegisteredObjects m_registeredObjects;
 };
-
 }
 }
 

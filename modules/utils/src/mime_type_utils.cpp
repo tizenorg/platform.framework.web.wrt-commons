@@ -94,7 +94,7 @@ DPL::String MimeTypeUtils::stripMimeParameters(const DPL::String& mimeType)
 }
 
 MimeTypeUtils::MimeAttributes MimeTypeUtils::getMimeAttributes(
-        const DPL::String& mimeType)
+    const DPL::String& mimeType)
 {
     MimeAttributes attributes;
     std::vector<DPL::String> tokens;
@@ -110,8 +110,10 @@ bool MimeTypeUtils::isValidIcon(const DPL::String& path)
     return getMimeTypesSupportedForIcon().count(identifyFileMimeType(path)) > 0;
 }
 
-bool MimeTypeUtils::isValidStartFile(const DPL::String& path,
-        const DPL::OptionalString& providedMimeType)
+bool MimeTypeUtils::isValidStartFile(
+    const DPL::String& path,
+    const DPL::OptionalString&
+    providedMimeType)
 {
     DPL::String mimeType = (!!providedMimeType) ? stripMimeParameters(
             *providedMimeType) : identifyFileMimeType(path);

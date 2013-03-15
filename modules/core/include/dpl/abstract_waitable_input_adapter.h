@@ -26,24 +26,21 @@
 #include <dpl/waitable_event.h>
 #include <dpl/abstract_input.h>
 
-namespace DPL
+namespace DPL {
+class AbstractWaitableInputAdapter :
+    public AbstractWaitableInput
 {
-
-class AbstractWaitableInputAdapter
-    : public AbstractWaitableInput
-{
-private:
+  private:
     AbstractInput *m_input;
     WaitableEvent m_waitableEvent;
 
-public:
+  public:
     explicit AbstractWaitableInputAdapter(AbstractInput *input);
 
     virtual BinaryQueueAutoPtr Read(size_t size);
 
     virtual WaitableHandle WaitableReadHandle() const;
 };
-
 } // namespace DPL
 
 #endif // DPL_ABSTRACT_WAITABLE_INPUT_ADAPTER_H

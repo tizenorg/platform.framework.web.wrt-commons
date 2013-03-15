@@ -20,17 +20,13 @@
  * @brief       This is implementation of EFL version of loop control
  */
 
+#include <glib_interface.h>
 #include <loop_control.h>
 #include <dpl/log/log.h>
 
 #include <dpl/framework_efl.h>
 
-#include <glib.h>
-#include <glib-object.h>
-
-
-namespace LoopControl
-{
+namespace LoopControl {
 void init_loop(int argc, char *argv[])
 {
     (void)argc;
@@ -71,5 +67,4 @@ void *abstract_window()
 {
     return elm_win_add(NULL, "hello", ELM_WIN_BASIC);
 }
-
-}//end of LoopControl namespace
+} //end of LoopControl namespace

@@ -24,13 +24,14 @@
 class WarpIRI
 {
     static const unsigned int UNKNOWN_PORT = 0;
+
   public:
     WarpIRI();
 
     void set(const char *iri,
-            bool domain);
+             bool domain);
     void set(const DPL::String &iristring,
-            bool domain);
+             bool domain);
 
     /* It also checks port and schema */
     bool isSubDomain(const WarpIRI &second) const;

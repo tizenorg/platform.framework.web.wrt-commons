@@ -17,7 +17,6 @@
 
 namespace CustomHandlerDB {
 namespace Interface {
-
 namespace {
 const char* CustomHandler_DB_DATABASE = "/opt/dbspace/.wrt_custom_handler.db";
 DPL::DB::SqlConnection::Flag::Type CustomHandler_DB_FLAGS =
@@ -42,6 +41,5 @@ void detachDatabase()
 {
     g_dbInterface.DetachFromThread();
 }
-
 } //namespace Interface
 } //namespace CustomHandlerDB

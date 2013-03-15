@@ -1,0 +1,5 @@
+DATABASE_START(certificate)
+
+#include "certificate_db"
+
+DATABASE_END()

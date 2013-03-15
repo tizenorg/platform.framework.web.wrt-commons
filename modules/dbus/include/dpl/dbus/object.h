@@ -30,13 +30,12 @@
 
 namespace DPL {
 namespace DBus {
-
 class Object;
 typedef std::shared_ptr<Object> ObjectPtr;
 
 class Object
 {
-public:
+  public:
     /**
      * Creates an object.
      *
@@ -61,13 +60,12 @@ public:
      */
     InterfacePtr getInterface() const;
 
-private:
+  private:
     Object(const std::string& path, const InterfacePtr& interface);
 
     std::string m_path;
     InterfacePtr m_interface;
 };
-
 }
 }
 

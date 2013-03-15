@@ -32,7 +32,6 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-
 class FeatureDAOReadOnly
 {
   public:
@@ -58,7 +57,7 @@ class FeatureDAOReadOnly
     FeatureDAOReadOnly(const std::string &featureName);
 
     static FeatureHandleListPtr GetFeatureHandleListForPlugin(
-            DbPluginHandle pluginHandle);
+        DbPluginHandle pluginHandle);
 
     static bool isFeatureInstalled(const std::string &featureName);
     static bool isFeatureInstalled(FeatureHandle handle);
@@ -79,7 +78,6 @@ class FeatureDAOReadOnly
   protected:
     FeatureHandle m_featureHandle;
 };
-
 } // namespace WrtDB
 
 #endif /* WRT_SRC_CONFIGURATION_FEATURE_DAO_READ_ONLY_H_ */

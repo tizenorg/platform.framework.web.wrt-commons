@@ -28,18 +28,16 @@
 #include <stddef.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 struct StaticPointerCastTag {};
 struct ConstPointerCastTag {};
 struct DynamicPointerCastTag {};
 
 struct SharedCounter
 {
-    SharedCounter()
-        : ref(1)
-    {
-    }
+    SharedCounter() :
+        ref(1)
+    {}
 
     Atomic ref;
 };
@@ -48,7 +46,9 @@ template<typename Class>
 class EnableSharedFromThis;
 
 template<typename Other>
-inline void _Internal_AcceptSharedPtr(SharedCounter *counter, Other *other, EnableSharedFromThis<Other> *otherBase)
+inline void _Internal_AcceptSharedPtr(SharedCounter *counter,
+                                      Other *other,
+                                      EnableSharedFromThis<Other> *otherBase)
 {
     otherBase->_Internal_AcceptSharedPtr(counter, other);
 }
@@ -57,22 +57,20 @@ struct AnyPointer
 {
     template<typename Other>
     AnyPointer(Other *)
-    {        
-    }
+    {}
 };
 
 inline void _Internal_AcceptSharedPtr(SharedCounter *, AnyPointer, AnyPointer)
-{
-}
+{}
 
 template<typename Class>
 class SharedPtr
 {
-public:
+  public:
     typedef Class ValueType;
     typedef SharedPtr<Class> ThisType;
 
-private:
+  private:
     SharedCounter *m_counter;
     Class *m_ptr;
 
@@ -81,16 +79,15 @@ private:
         // Attention: R-Value const cast
         m_counter = const_cast<SharedCounter *>(counter);
 
-        if (m_counter != NULL)
+        if (m_counter != NULL) {
             ++m_counter->ref;
+        }
     }
 
     void DetachCounter()
     {
-        if (m_counter)
-        {
-            if (!--m_counter->ref)
-            {
+        if (m_counter) {
+            if (!--m_counter->ref) {
                 delete m_ptr;
                 delete m_counter;
             }
@@ -100,34 +97,32 @@ private:
         }
     }
 
-public:
-    SharedPtr()
-        : m_counter(NULL),
-          m_ptr(NULL)
-    {
-    }
+  public:
+    SharedPtr() :
+        m_counter(NULL),
+        m_ptr(NULL)
+    {}
 
-    explicit SharedPtr(Class *ptr)
-        : m_counter(NULL),
-          m_ptr(ptr)
+    explicit SharedPtr(Class *ptr) :
+        m_counter(NULL),
+        m_ptr(ptr)
     {
-        if (m_ptr != NULL)
-        {
+        if (m_ptr != NULL) {
             m_counter = new SharedCounter();
             _Internal_AcceptSharedPtr(m_counter, m_ptr, m_ptr);
         }
     }
 
-    SharedPtr(const SharedPtr &other)
-        : m_counter(NULL),
-          m_ptr(other.m_ptr)
+    SharedPtr(const SharedPtr &other) :
+        m_counter(NULL),
+        m_ptr(other.m_ptr)
     {
         AttachCounter(other.m_counter);
     }
 
-    SharedPtr(SharedCounter *counter, Class *ptr)
-        : m_counter(NULL),
-          m_ptr(ptr)
+    SharedPtr(SharedCounter *counter, Class *ptr) :
+        m_counter(NULL),
+        m_ptr(ptr)
     {
         AttachCounter(counter);
     }
@@ -136,32 +131,33 @@ public:
     friend class SharedPtr;
 
     template<typename Other>
-    SharedPtr(const SharedPtr<Other> &other, const StaticPointerCastTag &)
-        : m_counter(NULL),
-          m_ptr(NULL)
+    SharedPtr(const SharedPtr<Other> &other, const StaticPointerCastTag &) :
+        m_counter(NULL),
+        m_ptr(NULL)
     {
         m_ptr = static_cast<Class *>(other.m_ptr);
         AttachCounter(other.m_counter);
     }
 
     template<typename Other>
-    SharedPtr(const SharedPtr<Other> &other, const ConstPointerCastTag &)
-        : m_counter(NULL),
-          m_ptr(NULL)
+    SharedPtr(const SharedPtr<Other> &other, const ConstPointerCastTag &) :
+        m_counter(NULL),
+        m_ptr(NULL)
     {
         m_ptr = const_cast<Class *>(other.m_ptr);
         AttachCounter(other.m_counter);
     }
 
     template<typename Other>
-    SharedPtr(const SharedPtr<Other> &other, const DynamicPointerCastTag &)
-        : m_counter(NULL),
-          m_ptr(NULL)
+    SharedPtr(const SharedPtr<Other> &other, const DynamicPointerCastTag &) :
+        m_counter(NULL),
+        m_ptr(NULL)
     {
         Class *ptr = dynamic_cast<Class *>(other.Get());
 
-        if (ptr == NULL)
+        if (ptr == NULL) {
             return;
+        }
 
         m_ptr = ptr;
         AttachCounter(other.m_counter);
@@ -193,8 +189,7 @@ public:
     {
         DetachCounter();
 
-        if (ptr != NULL)
-        {
+        if (ptr != NULL) {
             m_ptr = ptr;
             m_counter = new SharedCounter();
             _Internal_AcceptSharedPtr(m_counter, m_ptr, m_ptr);
@@ -203,8 +198,7 @@ public:
 
     SharedPtr &operator=(const SharedPtr &other)
     {
-        if (this != &other)
-        {
+        if (this != &other) {
             DetachCounter();
             m_ptr = other.m_ptr;
             AttachCounter(other.m_counter);
@@ -215,8 +209,9 @@ public:
 
     Atomic::ValueType GetUseCount() const
     {
-        if (m_counter == NULL)
+        if (m_counter == NULL) {
             return Atomic::ValueType(0);
+        }
 
         return m_counter->ref;
     }
@@ -243,40 +238,45 @@ SharedPtr<Target> DynamicPointerCast(const SharedPtr<Source> &ptr)
 }
 
 template<typename First, typename Second>
-inline bool operator ==(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator ==(const SharedPtr<First> &first,
+                        const SharedPtr<Second> &second)
 {
     return first.Get() == second.Get();
 }
 
 template<typename First, typename Second>
-inline bool operator !=(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator !=(const SharedPtr<First> &first,
+                        const SharedPtr<Second> &second)
 {
     return first.Get() != second.Get();
 }
 
 template<typename First, typename Second>
-inline bool operator <(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator <(const SharedPtr<First> &first,
+                       const SharedPtr<Second> &second)
 {
     return first.Get() < second.Get();
 }
 template<typename First, typename Second>
-inline bool operator >(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator >(const SharedPtr<First> &first,
+                       const SharedPtr<Second> &second)
 {
     return first.Get() > second.Get();
 }
 
 template<typename First, typename Second>
-inline bool operator <=(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator <=(const SharedPtr<First> &first,
+                        const SharedPtr<Second> &second)
 {
     return first.Get() <= second.Get();
 }
 
 template<typename First, typename Second>
-inline bool operator >=(const SharedPtr<First> &first, const SharedPtr<Second> &second)
+inline bool operator >=(const SharedPtr<First> &first,
+                        const SharedPtr<Second> &second)
 {
     return first.Get() >= second.Get();
 }
-
 } // namespace DPL
 
 #endif // DPL_SHARED_PTR_H

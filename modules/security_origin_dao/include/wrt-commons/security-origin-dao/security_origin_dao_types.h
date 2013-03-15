@@ -26,18 +26,17 @@
 
 #include <list>
 #include <memory>
+#include <map>
 #include <dpl/string.h>
 
 namespace SecurityOriginDB {
-
 enum Feature
 {
     FEATURE_START = 0,
     FEATURE_GEOLOCATION = 0,
     FEATURE_WEB_NOTIFICATION,
-    FEATURE_WEB_DATABASE,
-    FEATURE_FILE_SYSTEM_ACCESS,
-    FEATURE_END = FEATURE_FILE_SYSTEM_ACCESS
+    FEATURE_USER_MEDIA,
+    FEATURE_END = FEATURE_USER_MEDIA
 };
 
 enum Result
@@ -48,6 +47,8 @@ enum Result
     RESULT_ALLOW_ALWAYS,
     RESULT_DENY_ALWAYS
 };
+
+extern const std::map<std::string, Feature> g_W3CPrivilegeTextMap;
 
 struct Origin
 {
@@ -61,14 +62,13 @@ struct Origin
         scheme(Scheme),
         host(Host),
         port(Port)
-    {
-    }
+    {}
 
-     bool operator== (const Origin& other) const
+    bool operator== (const Origin& other) const
     {
         return (!DPL::StringCompare(scheme, other.scheme) &&
-               !DPL::StringCompare(host, other.host) &&
-               port == other.port);
+                !DPL::StringCompare(host, other.host) &&
+                port == other.port);
     }
 
     bool operator!= (const Origin& other) const
@@ -85,8 +85,7 @@ struct SecurityOriginData
     SecurityOriginData(const Feature features, const Origin& ori) :
         feature(features),
         origin(ori)
-    {
-    }
+    {}
 
     bool operator== (const SecurityOriginData& other) const
     {
@@ -102,7 +101,6 @@ struct SecurityOriginData
 
 typedef std::shared_ptr<SecurityOriginData> SecurityOriginDataPtr;
 typedef std::list<SecurityOriginDataPtr> SecurityOriginDataList;
-
 } // namespace SecurityOriginDB
 
 #endif // _SECURITY_ORIGIN_DAO_TYPES_H_

@@ -26,4 +26,9 @@
 #include <dpl/log/log.h>
 
 namespace SecurityOriginDB {
+const std::map<std::string, Feature> g_W3CPrivilegeTextMap = {
+    {"http://tizen.org/privilege/location",     FEATURE_GEOLOCATION},
+    {"http://tizen.org/privilege/notification", FEATURE_WEB_NOTIFICATION},
+    {"http://tizen.org/privilege/mediacapture", FEATURE_USER_MEDIA}
+};
 } // namespace SecurityOriginDB

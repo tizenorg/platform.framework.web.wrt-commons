@@ -17,7 +17,8 @@
  * @file        generic_socket_rpc_client.cpp
  * @author      Przemyslaw Dobrowolski (p.dobrowolsk@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of generic socket RPC client
+ * @brief       This file is the implementation file of generic socket RPC
+ * client
  */
 #include <stddef.h>
 #include <dpl/rpc/generic_socket_rpc_client.h>

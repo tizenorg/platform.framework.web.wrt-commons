@@ -31,14 +31,14 @@
 
 namespace WrtDB {
 namespace FeatureDAO {
-
 FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
                               const DbPluginHandle pluginHandle)
 {
     Try
     {
         LogDebug("Registering Feature " << feature.m_name);
-        DPL::DB::ORM::wrt::ScopedTransaction transaction(&WrtDatabase::interface());
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
 
         if (FeatureDAOReadOnly::isFeatureInstalled(feature.m_name)) {
             LogError(" >> Feature " << feature.m_name <<
@@ -64,7 +64,7 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
         }
 
         FeatureHandle featureHandle =
-                FeatureDAOReadOnly(feature.m_name).GetFeatureHandle();
+            FeatureDAOReadOnly(feature.m_name).GetFeatureHandle();
 
         //register device capabilities
         // Device Capabilities is unused in current version
@@ -76,7 +76,9 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
                 LogInfo("    |    |--DeviceCap " << *itdev <<
                         " already installed!");
 
-                WRT_DB_SELECT(select, DeviceCapabilities, &WrtDatabase::interface())
+                WRT_DB_SELECT(select,
+                              DeviceCapabilities,
+                              &WrtDatabase::interface())
 
                 select->Where(Equals<DeviceCapabilities::DeviceCapName>(
                                   DPL::FromUTF8String(*itdev)));
@@ -89,16 +91,20 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
                 DeviceCapabilities::Row row;
                 row.Set_DeviceCapName(DPL::FromUTF8String(*itdev));
 
-                WRT_DB_INSERT(insert, DeviceCapabilities, &WrtDatabase::interface())
+                WRT_DB_INSERT(insert,
+                              DeviceCapabilities,
+                              &WrtDatabase::interface())
                 insert->Values(row);
-                deviceCapID = insert->Execute();
+                deviceCapID = static_cast<int>(insert->Execute());
             }
 
             FeatureDeviceCapProxy::Row row;
             row.Set_FeatureUUID(featureHandle);
             row.Set_DeviceCapID(deviceCapID);
 
-            WRT_DB_INSERT(insert, FeatureDeviceCapProxy, &WrtDatabase::interface())
+            WRT_DB_INSERT(insert,
+                          FeatureDeviceCapProxy,
+                          &WrtDatabase::interface())
             insert->Values(row);
             insert->Execute();
         }
@@ -119,7 +125,7 @@ void UnregisterFeature(FeatureHandle featureHandle)
     {
         LogDebug("Unregistering Feature " << featureHandle);
         DPL::DB::ORM::wrt::ScopedTransaction transaction(
-                &WrtDatabase::interface());
+            &WrtDatabase::interface());
 
         if (FeatureDAOReadOnly::isFeatureInstalled(featureHandle)) {
             LogError("Feature handle is invalid");
@@ -154,7 +160,5 @@ void UnregisterFeature(FeatureHandle featureHandle)
                    "Fail to unregister Feature");
     }
 }
-
-
 } // namespace FeatureDAO
 } // namespace WrtDB

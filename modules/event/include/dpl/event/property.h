@@ -30,11 +30,8 @@
 #include <dpl/fast_delegate.h>
 #include <dpl/once.h>
 
-namespace DPL
-{
-namespace Event
-{
-
+namespace DPL {
+namespace Event {
 /**
  * Property is a class that encapsulates model's property fields.
  * Its main purpose is to automate things related to model's properties
@@ -205,15 +202,13 @@ struct PropertyStorageDynamicCached {}; ///< Use dynamic then cache
 struct PropertyReadOnly {};  ///< Read only, not setter available
 struct PropertyReadWrite {}; ///< Read and write
 
-
 template<typename Type>
 struct PropertyEvent
 {
-    PropertyEvent(const Type &v, Model *s)
-        : value(v),
-          sender(s)
-    {
-    }
+    PropertyEvent(const Type &v, Model *s) :
+        value(v),
+        sender(s)
+    {}
 
     Type value;
     Model *sender;
@@ -222,36 +217,33 @@ struct PropertyEvent
 template<typename ReadDelegateType, typename WriteDelegateType>
 class PropertyStorageMethodDynamicBase
 {
-protected:
+  protected:
     ReadDelegateType m_readValue;
     WriteDelegateType m_writeValue;
 
     PropertyStorageMethodDynamicBase(ReadDelegateType readValue,
-                                     WriteDelegateType writeValue)
-        : m_readValue(readValue),
-          m_writeValue(writeValue)
-    {
-    }
+                                     WriteDelegateType writeValue) :
+        m_readValue(readValue),
+        m_writeValue(writeValue)
+    {}
 };
 
 template<typename Type>
 class PropertyStorageMethodCachedBase
 {
-protected:
+  protected:
     mutable Type m_value;
 
     PropertyStorageMethodCachedBase()
-    {
-    }
+    {}
 };
 
 class PropertyStorageMethodBase
 {
-protected:
-    explicit PropertyStorageMethodBase(Model *model)
-        : m_model(model)
-    {
-    }
+  protected:
+    explicit PropertyStorageMethodBase(Model *model) :
+        m_model(model)
+    {}
 
     Model *m_model;
 };
@@ -268,17 +260,16 @@ template<typename Type,
 class PropertyStorageMethod<Type,
                             PropertyStorageCached,
                             ReadDelegateType,
-                            WriteDelegateType>
-    : protected PropertyStorageMethodBase,
-      protected PropertyStorageMethodCachedBase<Type>
+                            WriteDelegateType>:
+    protected PropertyStorageMethodBase,
+    protected PropertyStorageMethodCachedBase<Type>
 {
-public:
+  public:
     PropertyStorageMethod(Model *model,
                           ReadDelegateType /*readValue*/,
-                          WriteDelegateType /*writeValue*/)
-        : PropertyStorageMethodBase(model)
-    {
-    }
+                          WriteDelegateType /*writeValue*/) :
+        PropertyStorageMethodBase(model)
+    {}
 
     Type Get() const
     {
@@ -295,21 +286,20 @@ template<typename Type, typename ReadDelegateType, typename WriteDelegateType>
 class PropertyStorageMethod<Type,
                             PropertyStorageDynamic,
                             ReadDelegateType,
-                            WriteDelegateType>
-    : protected PropertyStorageMethodBase,
-      protected PropertyStorageMethodDynamicBase<ReadDelegateType,
-                                                 WriteDelegateType>
+                            WriteDelegateType>:
+    protected PropertyStorageMethodBase,
+    protected PropertyStorageMethodDynamicBase<ReadDelegateType,
+                                               WriteDelegateType>
 {
-public:
+  public:
     PropertyStorageMethod(Model *model,
                           ReadDelegateType readValue,
-                          WriteDelegateType writeValue)
-        : PropertyStorageMethodBase(model),
-          PropertyStorageMethodDynamicBase<ReadDelegateType, WriteDelegateType>(
-              readValue,
-              writeValue)
-    {
-    }
+                          WriteDelegateType writeValue) :
+        PropertyStorageMethodBase(model),
+        PropertyStorageMethodDynamicBase<ReadDelegateType, WriteDelegateType>(
+            readValue,
+            writeValue)
+    {}
 
     Type Get() const
     {
@@ -328,13 +318,13 @@ template<typename Type, typename ReadDelegateType, typename WriteDelegateType>
 class PropertyStorageMethod<Type,
                             PropertyStorageDynamicCached,
                             ReadDelegateType,
-                            WriteDelegateType>
-    : protected PropertyStorageMethodBase,
-      protected PropertyStorageMethodDynamicBase<ReadDelegateType,
-                                                 WriteDelegateType>,
-      protected PropertyStorageMethodCachedBase<Type>
+                            WriteDelegateType>:
+    protected PropertyStorageMethodBase,
+    protected PropertyStorageMethodDynamicBase<ReadDelegateType,
+                                               WriteDelegateType>,
+    protected PropertyStorageMethodCachedBase<Type>
 {
-private:
+  private:
     typedef PropertyStorageMethod<Type,
                                   PropertyStorageDynamicCached,
                                   ReadDelegateType,
@@ -347,21 +337,19 @@ private:
     }
 
     void OnceDisable() const
-    {
-    }
+    {}
 
-protected:
+  protected:
     mutable Once m_once;
 
-public:
+  public:
     PropertyStorageMethod(Model *model,
                           ReadDelegateType readValue,
-                          WriteDelegateType writeValue)
-        : PropertyStorageMethodBase(model),
-          PropertyStorageMethodDynamicBase<ReadDelegateType, WriteDelegateType>(
-              readValue, writeValue)
-    {
-    }
+                          WriteDelegateType writeValue) :
+        PropertyStorageMethodBase(model),
+        PropertyStorageMethodDynamicBase<ReadDelegateType, WriteDelegateType>(
+            readValue, writeValue)
+    {}
 
     Type Get() const
     {
@@ -381,23 +369,23 @@ public:
 };
 
 template<typename Type, typename StorageMethod>
-class PropertyBase
-    : protected EventSupport<PropertyEvent<Type> >
+class PropertyBase :
+    protected EventSupport<PropertyEvent<Type> >
 {
-public:
+  public:
     typedef typename EventSupport<PropertyEvent<Type> >::EventListenerType
-        EventListenerType;
+    EventListenerType;
 
     typedef typename EventSupport<PropertyEvent<Type> >::DelegateType
-        DelegateType;
+    DelegateType;
 
-    typedef FastDelegate<Type (Model *)>
-        ReadDelegateType;
+    typedef FastDelegate<Type(Model *)>
+    ReadDelegateType;
 
     typedef FastDelegate<void (const Type &, Model *)>
-        WriteDelegateType;
+    WriteDelegateType;
 
-protected:
+  protected:
     PropertyStorageMethod<Type,
                           StorageMethod,
                           ReadDelegateType,
@@ -406,13 +394,12 @@ protected:
 
     PropertyBase(Model *model,
                  ReadDelegateType readValue,
-                 WriteDelegateType writeValue)
-        : m_storage(model, readValue, writeValue),
-          m_model(model)
-    {
-    }
+                 WriteDelegateType writeValue) :
+        m_storage(model, readValue, writeValue),
+        m_model(model)
+    {}
 
-public:
+  public:
     virtual Type Get() const
     {
         ReadWriteMutex::ScopedReadLock lock(&m_model->m_mutex);
@@ -436,68 +423,66 @@ template<typename Type,
 class Property;
 
 template<typename Type, typename StorageMethod>
-class Property<Type, PropertyReadOnly, StorageMethod>
-    : public PropertyBase<Type, StorageMethod>
+class Property<Type, PropertyReadOnly, StorageMethod>:
+    public PropertyBase<Type, StorageMethod>
 {
-public:
+  public:
     typedef typename PropertyBase<Type, StorageMethod>::EventListenerType
-        EventListenerType;
+    EventListenerType;
 
     typedef typename PropertyBase<Type, StorageMethod>::DelegateType
-        DelegateType;
+    DelegateType;
 
     typedef typename PropertyBase<Type, StorageMethod>::ReadDelegateType
-        ReadDelegateType;
+    ReadDelegateType;
 
     typedef typename PropertyBase<Type, StorageMethod>::WriteDelegateType
-        WriteDelegateType;
+    WriteDelegateType;
 
-public:
+  public:
     explicit Property(Model *model,
-             ReadDelegateType readValue = NULL)
-        : PropertyBase<Type, StorageMethod>(model, readValue, NULL)
-    {
-    }
+                      ReadDelegateType readValue = NULL) :
+        PropertyBase<Type, StorageMethod>(model, readValue, NULL)
+    {}
 
     Property(Model *model,
              const Type &value,
-             ReadDelegateType readValue = NULL)
-        : PropertyBase<Type, StorageMethod>(model, readValue, NULL)
+             ReadDelegateType readValue = NULL) :
+        PropertyBase<Type, StorageMethod>(model, readValue, NULL)
     {
         this->m_storage.Set(value);
     }
 };
 
 template<typename Type, typename StorageMethod>
-class Property<Type, PropertyReadWrite, StorageMethod>
-    : public PropertyBase<Type, StorageMethod>
+class Property<Type, PropertyReadWrite, StorageMethod>:
+    public PropertyBase<Type, StorageMethod>
 {
-public:
+  public:
     typedef typename PropertyBase<Type, StorageMethod>::EventListenerType
-        EventListenerType;
+    EventListenerType;
 
     typedef typename PropertyBase<Type, StorageMethod>::DelegateType
-        DelegateType;
+    DelegateType;
 
     typedef typename PropertyBase<Type, StorageMethod>::ReadDelegateType
-        ReadDelegateType;
+    ReadDelegateType;
 
     typedef typename PropertyBase<Type, StorageMethod>::WriteDelegateType
-        WriteDelegateType;
+    WriteDelegateType;
 
-public:
+  public:
     explicit Property(Model *model,
-             ReadDelegateType readValue = NULL,
-             WriteDelegateType writeValue = NULL)
-        : PropertyBase<Type, StorageMethod>(model, readValue, writeValue)
-    {
-    }
+                      ReadDelegateType readValue = NULL,
+                      WriteDelegateType writeValue = NULL) :
+        PropertyBase<Type, StorageMethod>(model, readValue, writeValue)
+    {}
 
     Property(Model *model,
              const Type &value,
              ReadDelegateType readValue = NULL,
-             WriteDelegateType writeValue = NULL)
-        : PropertyBase<Type, StorageMethod>(model, readValue, writeValue)
+             WriteDelegateType writeValue = NULL) :
+        PropertyBase<Type, StorageMethod>(model, readValue, writeValue)
     {
         this->m_storage.Set(value);
     }
@@ -506,24 +491,25 @@ public:
     {
         ReadWriteMutex::ScopedWriteLock lock(&this->m_model->m_mutex);
 
-        if (this->m_storage.Get() == value)
+        if (this->m_storage.Get() == value) {
             return;
+        }
 
         this->m_storage.Set(value);
 
-        EmitEvent(PropertyEvent<Type>(value, this->m_model),
-                  EmitMode::Auto);
+        this->EmitEvent(PropertyEvent<Type>(value, this->m_model),
+                        EmitMode::Auto);
     }
 
     void SetWithoutLock(const Type &value)
     {
-        if (this->m_storage.Get() == value)
+        if (this->m_storage.Get() == value) {
             return;
+        }
 
         this->m_storage.Set(value);
     }
 };
-
 }
 } // namespace DPL
 

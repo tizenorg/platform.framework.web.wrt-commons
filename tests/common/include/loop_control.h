@@ -20,13 +20,10 @@
  * @brief       This file is the definitions of loop controlling utilities
  */
 
-
 #ifndef LOOP_CONTROL_H_
 #define LOOP_CONTROL_H_
 
-namespace LoopControl
-{
-
+namespace LoopControl {
 void init_loop(int argc, char *argv[]);
 void wait_for_wrt_init();
 void finish_wait_for_wrt_init();
@@ -36,7 +33,6 @@ void wrt_start_loop();
 void wrt_end_loop();
 
 void *abstract_window();
-
 }
 
 #endif /* LOOP_CONTROL_H_ */

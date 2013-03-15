@@ -27,16 +27,14 @@
 #include <dpl/exception.h>
 #include <vector>
 
-namespace DPL
+namespace DPL {
+class WaitableEvent :
+    private Noncopyable
 {
-
-class WaitableEvent
-    : private Noncopyable
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
         DECLARE_EXCEPTION_TYPE(Base, DestroyFailed)
@@ -44,10 +42,10 @@ public:
         DECLARE_EXCEPTION_TYPE(Base, ResetFailed)
     };
 
-private:
+  private:
     int m_pipe[2];
 
-public:
+  public:
     WaitableEvent();
     virtual ~WaitableEvent();
 
@@ -56,7 +54,6 @@ public:
     void Signal() const;
     void Reset() const;
 };
-
 } // namespace DPL
 
 #endif // DPL_WAITABLE_EVENT_H

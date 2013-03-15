@@ -25,16 +25,16 @@
 #include <dpl/char_traits.h>
 #include <string>
 #include <ostream>
+#include <numeric>
 
-namespace DPL
-{
+namespace DPL {
 // @brief DPL string
 typedef std::basic_string<wchar_t, CharTraits> String;
 
 // @brief String exception class
 class StringException
 {
-public:
+  public:
     DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
 
     // @brief Invalid init for UTF8 to UTF32 converter
@@ -76,31 +76,61 @@ int StringCompare(const String &left,
 
 //@brief Splits the string into substrings.
 //@param[in] str Input string
-//@param[in] delimiters array or string containing a sequence of substring delimiters. Can be also a single delimiter character.
+//@param[in] delimiters array or string containing a sequence of substring
+// delimiters. Can be also a single delimiter character.
 //@param[in] it InserterIterator that is used to save the generated substrings.
 template<typename StringType, typename Delimiters, typename InserterIterator>
-void Tokenize(const StringType& str, const Delimiters& delimiters, InserterIterator it, bool ignoreEmpty = false)
+void Tokenize(const StringType& str,
+              const Delimiters& delimiters,
+              InserterIterator it,
+              bool ignoreEmpty = false)
 {
     typename StringType::size_type nextSearchStart = 0;
     typename StringType::size_type pos;
     typename StringType::size_type length;
 
-    while ( true )
-    {
+    while (true) {
         pos = str.find_first_of(delimiters, nextSearchStart);
-        length = ((pos == StringType::npos) ? str.length() : pos) - nextSearchStart;
+        length =
+            ((pos == StringType::npos) ? str.length() : pos) - nextSearchStart;
 
-        if ( !ignoreEmpty || length > 0 )
-        {
+        if (!ignoreEmpty || length > 0) {
             *it = str.substr(nextSearchStart, length);
             it++;
         }
 
-        if ( pos == StringType::npos )
+        if (pos == StringType::npos) {
             return;
+        }
 
         nextSearchStart = pos + 1;
     }
+}
+
+namespace Utils {
+
+template<typename T> class ConcatFunc : public std::binary_function<T, T, T>
+{
+public:
+    explicit ConcatFunc(const T & val) : m_delim(val) {}
+    T operator()(const T & arg1, const T & arg2) const
+    {
+        return arg1 + m_delim + arg2;
+    }
+private:
+    T m_delim;
+};
+
+}
+
+template<typename ForwardIterator>
+typename ForwardIterator::value_type Join(ForwardIterator begin, ForwardIterator end, typename ForwardIterator::value_type delim)
+{
+    typedef typename ForwardIterator::value_type value;
+    if(begin == end) return value();
+    Utils::ConcatFunc<value> func(delim);
+    ForwardIterator init = begin;
+    return std::accumulate(++begin, end, *init, func);
 }
 
 } //namespace DPL

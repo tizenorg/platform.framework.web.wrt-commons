@@ -27,14 +27,19 @@
 #include <dpl/scoped_resource.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 template<typename Class>
 struct ScopedPtrPolicy
 {
     typedef Class* Type;
-    static Type NullValue() { return NULL; }
-    static void Destroy(Type ptr) { delete ptr; }
+    static Type NullValue()
+    {
+        return NULL;
+    }
+    static void Destroy(Type ptr)
+    {
+        delete ptr;
+    }
 };
 
 template<typename Class, typename ClassPolicy = ScopedPtrPolicy<Class> >

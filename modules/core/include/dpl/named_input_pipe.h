@@ -26,11 +26,10 @@
 #include <dpl/named_base_pipe.h>
 #include <dpl/file_input.h>
 
-namespace DPL
-{
-class NamedInputPipe
-    : public NamedBasePipe,
-      public FileInput
+namespace DPL {
+class NamedInputPipe :
+    public NamedBasePipe,
+    public FileInput
 {};
 } // namespace DPL
 

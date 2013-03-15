@@ -19,14 +19,11 @@
 #include <dpl/string.h>
 #include <dpl/optional.h>
 
-namespace DPL
-{
-
+namespace DPL {
 typedef Optional<String> OptionalString;
 typedef Optional<int> OptionalInt;
 typedef Optional<bool> OptionalBool;
 typedef Optional<float> OptionalFloat;
-
 } //namespace DPL
 
 #endif /* DPL_OPTIONAL_TYPEDEFS_H */

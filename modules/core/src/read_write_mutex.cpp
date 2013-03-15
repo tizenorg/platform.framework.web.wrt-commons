@@ -23,40 +23,44 @@
 #include <dpl/read_write_mutex.h>
 #include <dpl/assert.h>
 
-namespace DPL
-{
+namespace DPL {
 ReadWriteMutex::ReadWriteMutex()
 {
-    if (pthread_rwlock_init(&m_rwlock, NULL) != 0)
+    if (pthread_rwlock_init(&m_rwlock, NULL) != 0) {
         Throw(Exception::CreateFailed);
+    }
 }
 
 ReadWriteMutex::~ReadWriteMutex()
 {
-    if (pthread_rwlock_destroy(&m_rwlock) != 0)
+    if (pthread_rwlock_destroy(&m_rwlock) != 0) {
         Throw(Exception::DestroyFailed);
+    }
 }
 
 void ReadWriteMutex::ReadLock() const
 {
-    if (pthread_rwlock_rdlock(&m_rwlock) != 0)
+    if (pthread_rwlock_rdlock(&m_rwlock) != 0) {
         Throw(Exception::ReadLockFailed);
+    }
 }
 
 void ReadWriteMutex::WriteLock() const
 {
-    if (pthread_rwlock_wrlock(&m_rwlock) != 0)
+    if (pthread_rwlock_wrlock(&m_rwlock) != 0) {
         Throw(Exception::WriteLockFailed);
+    }
 }
 
 void ReadWriteMutex::Unlock() const
 {
-    if (pthread_rwlock_unlock(&m_rwlock) != 0)
+    if (pthread_rwlock_unlock(&m_rwlock) != 0) {
         Throw(Exception::UnlockFailed);
+    }
 }
 
-ReadWriteMutex::ScopedReadLock::ScopedReadLock(ReadWriteMutex *mutex)
-    : m_mutex(mutex)
+ReadWriteMutex::ScopedReadLock::ScopedReadLock(ReadWriteMutex *mutex) :
+    m_mutex(mutex)
 {
     Assert(mutex != NULL);
     m_mutex->ReadLock();
@@ -67,8 +71,8 @@ ReadWriteMutex::ScopedReadLock::~ScopedReadLock()
     m_mutex->Unlock();
 }
 
-ReadWriteMutex::ScopedWriteLock::ScopedWriteLock(ReadWriteMutex *mutex)
-    : m_mutex(mutex)
+ReadWriteMutex::ScopedWriteLock::ScopedWriteLock(ReadWriteMutex *mutex) :
+    m_mutex(mutex)
 {
     Assert(mutex != NULL);
     m_mutex->WriteLock();

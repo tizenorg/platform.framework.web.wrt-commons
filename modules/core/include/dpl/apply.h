@@ -29,8 +29,7 @@
 #include <tuple>
 #include <utility>
 
-namespace DPL
-{
+namespace DPL {
 enum class ExtraArgsInsertPolicy
 {
     /**
@@ -59,7 +58,7 @@ Result Apply(Operation op,
              ArgsE && ... extra)
 {
     return _ApplyDispatchByPolicy<insertPolicy>::
-            template Apply<Result>(op, t, std::forward<ArgsE>(extra) ...);
+               template Apply<Result>(op, t, std::forward<ArgsE>(extra) ...);
 }
 
 template<size_t N, size_t M>
@@ -76,11 +75,11 @@ struct _ApplyTuple
                         Args && ... args)
     {
         return _ApplyTuple<N - 1, M>::
-                template Apply<Result>(op,
-                                       t1,
-                                       t2,
-                                       std::get<N - 1>(t1),
-                                       std::forward<Args>(args) ...);
+                   template Apply<Result>(op,
+                                          t1,
+                                          t2,
+                                          std::get<N - 1>(t1),
+                                          std::forward<Args>(args) ...);
     }
 };
 
@@ -98,11 +97,11 @@ struct _ApplyTuple<0, M>
                         Args && ... args)
     {
         return _ApplyTuple<0, M - 1>::
-                template Apply<Result>(op,
-                                       t1,
-                                       t2,
-                                       std::get<M - 1>(t2),
-                                       std::forward<Args>(args) ...);
+                   template Apply<Result>(op,
+                                          t1,
+                                          t2,
+                                          std::get<M - 1>(t2),
+                                          std::forward<Args>(args) ...);
     }
 };
 
@@ -131,14 +130,14 @@ struct _ApplyArgs
              typename ... ArgsT,
              typename ... Args>
     static Result Apply(Operation op,
-            const std::tuple<ArgsT ...>& t,
-            Args && ... args)
+                        const std::tuple<ArgsT ...>& t,
+                        Args && ... args)
     {
         return _ApplyArgs<N - 1>::
-                       template Apply<Result>(op,
-                                              t,
-                                              std::get<N - 1>(t),
-                                              std::forward<Args>(args) ...);
+                   template Apply<Result>(op,
+                                          t,
+                                          std::get<N - 1>(t),
+                                          std::forward<Args>(args) ...);
     }
 };
 
@@ -169,9 +168,9 @@ struct _ApplyDispatchByPolicy<ExtraArgsInsertPolicy::Append>
                         ArgsE && ... extra)
     {
         return _ApplyArgs<sizeof ... (ArgsT)>::
-                       template Apply<Result>(op,
-                                              t,
-                                              std::forward<ArgsE>(extra) ...);
+                   template Apply<Result>(op,
+                                          t,
+                                          std::forward<ArgsE>(extra) ...);
     }
 };
 
@@ -187,9 +186,10 @@ struct _ApplyDispatchByPolicy<ExtraArgsInsertPolicy::Prepend>
                         ArgsE && ... extra)
     {
         return _ApplyTuple<sizeof ... (ArgsT), sizeof ... (ArgsE)>::
-                       template Apply<Result>(op,
-                               t,
-                               std::make_tuple(std::forward<ArgsE>(extra) ...));
+                   template Apply<Result>(op,
+                                          t,
+                                          std::make_tuple(std::forward<ArgsE>(
+                                                              extra) ...));
     }
 };
 } // namespace DPL

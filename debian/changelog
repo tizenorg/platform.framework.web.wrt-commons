@@ -1,8 +1,119 @@
+wrt-commons (0.2.105) unstable; urgency=low
+
+  * Update unmerged source code
+  * app uri passing by localization
+  * Implement privilege for usermedia permission
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 14 Mar 2013 11:24:56 +0900
+
+wrt-commons (0.2.104) unstable; urgency=low
+
+  * Revert "Add encrypt/decrypt API from trust zone"
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Mon, 11 Mar 2013 19:46:44 +0900
+
+wrt-commons (0.2.103) unstable; urgency=low
+
+  * Update tizen version to 2.1
+  * Replaced VARCHAR with TEXT in databases
+  * Path class for DPL + tests
+  * Implement certificate confirm popup
+  * Add encrypt/decrypt API from trust zone
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Fri, 08 Mar 2013 17:17:26 +0900
+
+wrt-commons (0.2.102) unstable; urgency=low
+
+  * DPL path join for class Path to be introduced
+  * tests - Return value not used
+  * Fix App-control Supports : Registration routine was added
+  * Remove web storage & filesystem usage code
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Thu, 07 Mar 2013 09:03:04 +0900
+
+wrt-commons (0.2.101) unstable; urgency=low
+
+  * CSP report only support
+
+ -- Jihoon Chung <jihoon.chung@samsung.com>  Wed, 06 Mar 2013 19:22:11 +0900
+
+wrt-commons (0.2.100) unstable; urgency=low
+
+  * Prepare database for additional appservice parameter
+  * Enable DPL::Localization tests
+  * Fix warnings shown by cppcheck for wrt-commons
+
+ -- leerang <leerang.song@samsung.com>  Thu, 28 Feb 2013 12:53:01 +0900
+
+wrt-commons (0.2.99) unstable; urgency=low
+
+  * Unused fields in WidgetRegisterInfo
+  * Implement tizen privilege for w3c API 
+  * Renaming tests binaries
+  * Fixed buildrequires dukgenerator to dukgenerator-devel
+  * Modify to get encryption key requested by osp security team
+  * Localization tests move
+  * Compilation Warnings - Part 3  
+
+ -- leerang <leerang.song@samsung.com>  Fri, 22 Feb 2013 14:54:21 +0900
+
+wrt-commons (0.2.98) unstable; urgency=low
+
+  * wrt_commons_reset.sh fix
+  * User agent database update
+  * Compilation warnings. Deprecated code. Part 1
+  * Add function get appid from pkgid
+  * Source code formating unification
+  * Compilation warnings. Part 2
+  * Fix to test framework.
+  * DPL testcase description moved from wrt-extra
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Fri, 08 Feb 2013 18:18:31 +0900
+
+wrt-commons (0.2.97) unstable; urgency=low
+
+  * Support for "process per testcase" framework.
+  * Prepare database to support CSP policy for whole widget.
+  * minizip prevent issues fixes
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Wed, 06 Feb 2013 21:32:00 +0900
+
+wrt-commons (0.2.96) unstable; urgency=low
+
+  * Add specific fields to config parser struct for livebox
+
+  * Git : framework/web/wrt-commons
+  * Tag : wrt-commons_0.2.96
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Wed, 30 Jan 2013 17:09:01 +0900
+
+wrt-commons (0.2.95) unstable; urgency=low
+
+  * Change pkgname to appid and add package id PART 1.
+  * change pkgname to appid PART 2.
+  * Change pkgname to appid Part 3.
+
+ -- Soyoung Kim <sy037.kim@samsung.com>  Mon, 28 Jan 2013 17:41:56 +0900
+
+wrt-commons (0.2.94) unstable; urgency=low
+
+  * Revert "Change pkgname to appid and add package id PART 1."
+  * Revert "change pkgname to appid PART 2."
+  * Fix build break in tests after API has been changed.
+
+ -- Tae-Jeong Lee <taejeong.lee@samsung.com>  Fri, 25 Jan 2013 22:32:36 +0900
+
 wrt-commons (0.2.93) unstable; urgency=low
 
-  * Change DPL::WaitableHandleWatchSupport's destructor not to call DPL:Aassert explicitly. 
+  * Changed PkgName type from Optional<String> to String PART 5
+  * Support for GCC 4.7
+  * Removing hard-coding in ORDER BY statement
+  * Fixing saving locale for each icon
+  * Singleton guard thread removal
+  * Change pkgname to appid and add package id PART 1.
+  * change pkgname to appid PART 2.
 
- -- Yunchan Cho <yunchan.cho@samsung.com>  Sat, 02 Feb 2013 17:25:09 +0900
+ -- Soyoung Kim <sy037.kim@samsung.com>  Thu, 24 Jan 2013 15:53:03 +0900
 
 wrt-commons (0.2.92) unstable; urgency=low
 

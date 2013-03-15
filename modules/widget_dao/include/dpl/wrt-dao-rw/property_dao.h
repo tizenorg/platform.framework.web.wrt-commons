@@ -26,17 +26,10 @@
 #include <dpl/wrt-dao-ro/property_dao_read_only.h>
 
 namespace WrtDB {
-
 struct WidgetRegisterInfo; //forward declaration
 
 namespace PropertyDAO {
-
-//deprecated
-void RemoveProperty(DbWidgetHandle widgetHandle,
-                    const PropertyDAOReadOnly::WidgetPropertyKey &key)
-                                        __attribute__((deprecated));
-
-void RemoveProperty(WidgetPkgName pkgName,
+void RemoveProperty(TizenAppId tzAppid,
                     const PropertyDAOReadOnly::WidgetPropertyKey &key);
 
 //deprecated
@@ -46,29 +39,20 @@ void SetProperty(DbWidgetHandle widgetHandle,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly = false)
-                                        __attribute__((deprecated));
+__attribute__((deprecated));
 
 /* This method sets widget property
  */
-void SetProperty(WidgetPkgName pkgName,
+void SetProperty(TizenAppId tzAppid,
                  const PropertyDAOReadOnly::WidgetPropertyKey &key,
                  const PropertyDAOReadOnly::WidgetPropertyValue &value,
                  bool readOnly = false);
 
-//deprecated
 /* This method registers properties for widget.
  * Properties unregistering is done via "delete cascade" mechanism in SQL
  */
-void RegisterProperties(DbWidgetHandle widgetHandle,
-                        const WidgetRegisterInfo &regInfo)
-                                        __attribute__((deprecated));
-
-/* This method registers properties for widget.
- * Properties unregistering is done via "delete cascade" mechanism in SQL
- */
-void RegisterProperties(WidgetPkgName pkgName,
+void RegisterProperties(TizenAppId tzAppid,
                         const WidgetRegisterInfo &regInfo);
-
 } // namespace PropertyDAO
 } // namespace WrtDB
 

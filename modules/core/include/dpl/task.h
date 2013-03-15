@@ -29,14 +29,13 @@
 #include <algorithm>
 #include <list>
 
-namespace DPL
-{
+namespace DPL {
 class TaskList;
 
-class Task
-    : private Noncopyable
+class Task :
+    private Noncopyable
 {
-public:
+  public:
     virtual ~Task() {}
 
     virtual bool NextStep() = 0;
@@ -45,13 +44,13 @@ public:
 };
 
 template<typename Impl>
-class TaskDecl
-    : public Task
+class TaskDecl :
+    public Task
 {
-protected:
+  protected:
     typedef void (Impl::*Step)();
 
-private:
+  private:
     typedef std::list<Step> StepList;
 
     StepList m_steps;
@@ -63,26 +62,36 @@ private:
     Impl *m_impl;
     bool m_running;
 
-protected:
+  protected:
     void AddStep(Step step)
     {
         Assert(!m_running && "AddStep is not allowed after calling NextStep!");
-        Assert(m_steps.end() == std::find(m_steps.begin(), m_steps.end(), step) && "The same step started twice is not supported");
+        Assert(m_steps.end() == std::find(m_steps.begin(),
+                                          m_steps.end(),
+                                          step) &&
+               "The same step started twice is not supported");
         m_steps.push_back(step);
         m_nextStep = m_steps.begin();
     }
 
     void AddAbortStep(Step step)
     {
-        Assert(!m_running && "AddAbortStep is not allowed after calling NextStep!");
-        Assert(m_abortSteps.end() == std::find(m_abortSteps.begin(), m_abortSteps.end(), step) && "The same step started twice is not supported");
+        Assert(
+            !m_running && "AddAbortStep is not allowed after calling NextStep!");
+        Assert(m_abortSteps.end() ==
+               std::find(m_abortSteps.begin(),
+                         m_abortSteps.end(),
+                         step) &&
+               "The same step started twice is not supported");
         m_abortSteps.push_front(step);
     }
 
     void SwitchToStep(Step step)
     {
-        /// @TODO There can be problem here if user sets the same method two times in task list.
-        typename StepList::iterator i = std::find(m_steps.begin(), m_steps.end(), step);
+        /// @TODO There can be problem here if user sets the same method two
+        // times in task list.
+        typename StepList::iterator i = std::find(m_steps.begin(),
+                                                  m_steps.end(), step);
         Assert(i != m_steps.end());
         m_nextStep = i;
         m_switched = true;
@@ -90,17 +99,18 @@ protected:
 
     Step GetCurrentStep() const
     {
-        if(m_currentStep == m_steps.end())
+        if (m_currentStep == m_steps.end()) {
             return NULL;
+        }
 
         return *m_currentStep;
     }
 
-public:
-    TaskDecl(Impl *impl)
-        : m_switched(false),
-          m_impl(impl),
-          m_running(false)
+  public:
+    TaskDecl(Impl *impl) :
+        m_switched(false),
+        m_impl(impl),
+        m_running(false)
     {
         Assert(this == m_impl);
         m_currentStep = m_steps.end();
@@ -111,7 +121,9 @@ public:
     {
         m_running = true;
 
-        Assert(m_nextStep != m_steps.end() && "Step list is empty or all steps done");
+        Assert(
+            m_nextStep != m_steps.end() &&
+            "Step list is empty or all steps done");
 
         m_switched = false;
 
@@ -120,10 +132,11 @@ public:
 
         m_currentStep = m_nextStep;
 
-        if (m_switched)
+        if (m_switched) {
             return true;
-        else
+        } else {
             return ++m_nextStep != m_steps.end();
+        }
     }
 
     bool Abort()
@@ -132,11 +145,12 @@ public:
 
         m_steps.clear();
 
-        if (m_abortSteps.empty())
+        if (m_abortSteps.empty()) {
             return false;
+        }
 
-        FOREACH (it, m_abortSteps)
-            m_steps.push_back(*it);
+        FOREACH(it, m_abortSteps)
+        m_steps.push_back(*it);
 
         m_nextStep = m_steps.begin();
 

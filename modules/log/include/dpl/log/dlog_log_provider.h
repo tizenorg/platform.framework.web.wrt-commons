@@ -26,32 +26,47 @@
 #include <dpl/scoped_free.h>
 #include <string>
 
-namespace DPL
+namespace DPL {
+namespace Log {
+class DLOGLogProvider :
+    public AbstractLogProvider
 {
-namespace Log
-{
-
-class DLOGLogProvider
-    : public AbstractLogProvider
-{
-private:
+  private:
     DPL::ScopedFree<char> m_tag;
 
-    static std::string FormatMessage(const char *message, const char *filename, int line, const char *function);
-public:
+    static std::string FormatMessage(const char *message,
+                                     const char *filename,
+                                     int line,
+                                     const char *function);
+
+  public:
     DLOGLogProvider();
     virtual ~DLOGLogProvider();
 
-    virtual void Debug(const char *message, const char *fileName, int line, const char *function);
-    virtual void Info(const char *message, const char *fileName, int line, const char *function);
-    virtual void Warning(const char *message, const char *fileName, int line, const char *function);
-    virtual void Error(const char *message, const char *fileName, int line, const char *function);
-    virtual void Pedantic(const char *message, const char *fileName, int line, const char *function);
+    virtual void Debug(const char *message,
+                       const char *fileName,
+                       int line,
+                       const char *function);
+    virtual void Info(const char *message,
+                      const char *fileName,
+                      int line,
+                      const char *function);
+    virtual void Warning(const char *message,
+                         const char *fileName,
+                         int line,
+                         const char *function);
+    virtual void Error(const char *message,
+                       const char *fileName,
+                       int line,
+                       const char *function);
+    virtual void Pedantic(const char *message,
+                          const char *fileName,
+                          int line,
+                          const char *function);
 
     // Set global Tag according to DLOG
     void SetTag(const char *tag);
 };
-
 }
 } // namespace DPL
 

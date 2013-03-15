@@ -26,74 +26,77 @@
 #include <dpl/socket/abstract_socket.h>
 #include <set>
 
-namespace DPL
-{
-namespace RPC
-{
-
+namespace DPL {
+namespace RPC {
 template<typename SocketType>
-class GenericSocketRPCServer
-    : public AbstractRPCConnector,
-      private DPL::Event::EventListener<DPL::Socket::AbstractSocketEvents::AcceptEvent>
+class GenericSocketRPCServer :
+    public AbstractRPCConnector,
+    private DPL::Event::EventListener<DPL::Socket::AbstractSocketEvents::
+                                          AcceptEvent>
 {
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, OpenFailed)
         DECLARE_EXCEPTION_TYPE(Base, CloseFailed)
     };
 
-protected:
+  protected:
     // Derived class implementations for connection managment
-    virtual AbstractRPCConnection *OpenSpecificConnection(SocketType *socket) = 0;
+    virtual AbstractRPCConnection *OpenSpecificConnection(SocketType *socket) =
+        0;
 
-private:
+  private:
     typedef std::set<SocketType *> InternalInterfaceSet;
     InternalInterfaceSet m_internalInterfacesSet;
 
-    virtual void OnEventReceived(const DPL::Socket::AbstractSocketEvents::AcceptEvent &event)
+    virtual void OnEventReceived(
+        const DPL::Socket::AbstractSocketEvents::AcceptEvent &event)
     {
         // Retrieve socket sender
         SocketType *server = static_cast<SocketType *>(event.GetSender());
 
         // Is this interface still tracked ?
         // It might have disappeared on close
-        typename InternalInterfaceSet::iterator iterator = m_internalInterfacesSet.find(server);
+        typename InternalInterfaceSet::iterator iterator =
+            m_internalInterfacesSet.find(server);
 
-        if (iterator == m_internalInterfacesSet.end())
-        {
+        if (iterator == m_internalInterfacesSet.end()) {
             LogPedantic("RPC server interface socket disappeared");
             return;
         }
 
         // Accept incoming client
         SocketType *client = static_cast<SocketType *>(server->Accept());
-        if(client == NULL)
-        {
+        if (client == NULL) {
             LogPedantic("Spontaneous accept on socket occurred");
             return;
         }
 
-        LogPedantic("Client connected to server: " << client->GetRemoteAddress().ToString());
+        LogPedantic(
+            "Client connected to server: " <<
+            client->GetRemoteAddress().ToString());
 
         // Open specific connection implementation
         AbstractRPCConnection *connection = OpenSpecificConnection(client);
 
         // Retrieve ID once again
-        AbstractRPCConnectionID connectionID = static_cast<AbstractRPCConnectionID>(server);
+        AbstractRPCConnectionID connectionID =
+            static_cast<AbstractRPCConnectionID>(server);
 
         // Inform listeners
-        DPL::Event::EventSupport<AbstractRPCConnectorEvents::ConnectionEstablishedEvent>::
+        DPL::Event::EventSupport<AbstractRPCConnectorEvents::
+                                     ConnectionEstablishedEvent>::
             EmitEvent(AbstractRPCConnectorEvents::ConnectionEstablishedEvent(
-                connectionID, connection, EventSender(this)), DPL::Event::EmitMode::Queued);
+                          connectionID, connection, EventSender(
+                              this)), DPL::Event::EmitMode::Queued);
     }
 
-public:
+  public:
     explicit GenericSocketRPCServer()
-    {
-    }
+    {}
 
     virtual ~GenericSocketRPCServer()
     {
@@ -109,7 +112,8 @@ public:
         SocketType *socket = new SocketType();
 
         // Add socket listener
-        socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>::AddListener(this);
+        socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>::
+            AddListener(this);
 
         Try
         {
@@ -122,10 +126,11 @@ public:
             // Start listening
             socket->Listen(8);
         }
-        Catch (DPL::Socket::AbstractSocket::Exception::Base)
+        Catch(DPL::Socket::AbstractSocket::Exception::Base)
         {
             // Remove back socket listener
-            socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>::RemoveListener(this);
+            socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>
+                ::RemoveListener(this);
 
             // Log debug
             LogPedantic("Cannot start server: " << socketAddress.ToString());
@@ -138,7 +143,9 @@ public:
         m_internalInterfacesSet.insert(socket);
 
         // Debug info
-        LogPedantic("Server started on interface: " << socket->GetLocalAddress().ToString());
+        LogPedantic(
+            "Server started on interface: " <<
+            socket->GetLocalAddress().ToString());
 
         // Return unique identifier
         return static_cast<AbstractRPCConnectionID>(socket);
@@ -152,16 +159,19 @@ public:
         SocketType *socket = static_cast<SocketType *>(connectionID);
 
         // Find corresponding internal connection
-        typename InternalInterfaceSet::iterator iterator = m_internalInterfacesSet.find(socket);
+        typename InternalInterfaceSet::iterator iterator =
+            m_internalInterfacesSet.find(socket);
 
-        if (iterator == m_internalInterfacesSet.end())
+        if (iterator == m_internalInterfacesSet.end()) {
             return;
+        }
 
         // Close socket
         socket->Close();
 
         // Remove socket listeners
-        socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>::RemoveListener(this);
+        socket->EventSupport<DPL::Socket::AbstractSocketEvents::AcceptEvent>::
+            RemoveListener(this);
         delete socket;
 
         m_internalInterfacesSet.erase(iterator);
@@ -172,11 +182,12 @@ public:
 
     void CloseAll()
     {
-        while (!m_internalInterfacesSet.empty())
-            Close(static_cast<AbstractRPCConnectionID>(*m_internalInterfacesSet.begin()));
+        while (!m_internalInterfacesSet.empty()) {
+            Close(static_cast<AbstractRPCConnectionID>(*m_internalInterfacesSet
+                                                           .begin()));
+        }
     }
 };
-
 }
 } // namespace DPL
 

@@ -25,9 +25,7 @@
 #include <sstream>
 #include <dpl/string.h>
 
-namespace DPL
-{
-
+namespace DPL {
 // @brief DPL IStringStream
 typedef std::basic_istringstream<CharTraits::char_type,
                                  CharTraits> IStringStream;
@@ -35,8 +33,6 @@ typedef std::basic_istringstream<CharTraits::char_type,
 // @brief DPL OStringStream
 typedef std::basic_ostringstream<CharTraits::char_type,
                                  CharTraits> OStringStream;
-
 } //namespace DPL
-
 
 #endif // DPL_CORE_INCLUDE_SSTREAM_H_

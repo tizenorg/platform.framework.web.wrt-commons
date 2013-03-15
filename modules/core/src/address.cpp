@@ -24,28 +24,23 @@
 #include <sstream>
 #include <dpl/assert.h>
 
-namespace DPL
-{
-Address::Address()
-    : m_port(0)
-{
-}
+namespace DPL {
+Address::Address() :
+    m_port(0)
+{}
 
-Address::Address(const std::string &address)
-    : m_address(address),
-      m_port(0)
-{
-}
+Address::Address(const std::string &address) :
+    m_address(address),
+    m_port(0)
+{}
 
-Address::Address(const std::string &address, unsigned short port)
-    : m_address(address),
-      m_port(port)
-{
-}
+Address::Address(const std::string &address, unsigned short port) :
+    m_address(address),
+    m_port(port)
+{}
 
 Address::~Address()
-{
-}
+{}
 
 std::string Address::GetAddress() const
 {
@@ -68,5 +63,4 @@ bool Address::operator<(const Address &addr) const
 {
     return ToString() < addr.ToString();
 }
-
 } // namespace DPL

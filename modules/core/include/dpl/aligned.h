@@ -17,7 +17,8 @@
  * @file        aligned.h
  * @author      Lukasz Wrzosek (l.wrzosek@samsung.com)
  * @version     1.0
- * @brief       This file is the implementation file of aligned attribute from gcc
+ * @brief       This file is the implementation file of aligned attribute from
+ * gcc
  */
 #ifndef DPL_ALIGNED_H
 #define DPL_ALIGNED_H

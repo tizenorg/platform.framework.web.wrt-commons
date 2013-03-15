@@ -65,7 +65,10 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetUserPreloadedWidgetPath()
 {
-    return "/usr/apps";
+    // temp
+    // return "/usr/apps";
+
+    return "/opt/usr/apps";
 }
 
 /**
@@ -272,7 +275,7 @@ inline const char* GetWACVersion()
 
 inline const char* GetTizenVersion()
 {
-    return "1.0";
+    return "2.1";
 }
 
 inline const char* GetShareDirectoryPath()
@@ -319,7 +322,6 @@ inline const char* GetVconfKeyMemorySavingModePath()
 {
     return "/memory_saving_mode";
 }
-
 } // namespace GlobalConfig
 } // namespace WrtDB
 

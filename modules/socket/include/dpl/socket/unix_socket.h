@@ -25,32 +25,31 @@
 #include <dpl/socket/generic_socket.h>
 #include <dpl/exception.h>
 
-namespace DPL
+namespace DPL {
+namespace Socket {
+class UnixSocket :
+    public GenericSocket<UnixSocket>
 {
-namespace Socket
-{
-
-class UnixSocket
-    : public GenericSocket<UnixSocket>
-{
-public:
+  public:
     class Exception
     {
-    public:
+      public:
         DECLARE_EXCEPTION_TYPE(DPL::Exception, Base)
         DECLARE_EXCEPTION_TYPE(Base, CreateFailed)
     };
 
-protected:
-     /**
-      * Translate generic Address to specific socket kernel structure
-      */
-    virtual std::pair<sockaddr *, socklen_t> TranslateAddressGenericToSpecific(const Address &address) const;
+  protected:
+    /**
+     * Translate generic Address to specific socket kernel structure
+     */
+    virtual std::pair<sockaddr *, socklen_t> TranslateAddressGenericToSpecific(
+        const Address &address) const;
 
     /**
      * Translate specific socket kernel structure to generic Address
      */
-    virtual Address TranslateAddressSpecificToGeneric(sockaddr *, socklen_t) const;
+    virtual Address TranslateAddressSpecificToGeneric(sockaddr *,
+                                                      socklen_t) const;
 
     /**
      * Get specific socket kernel structure size
@@ -67,12 +66,11 @@ protected:
      */
     virtual int AllocSpecificDescriptor() const;
 
-public:
+  public:
     UnixSocket();
 
     virtual void Bind(const Address &address);
 };
-
 }
 } // namespace DPL
 

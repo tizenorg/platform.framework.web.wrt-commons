@@ -32,11 +32,9 @@
 
 namespace DPL {
 namespace DBus {
-
 struct ServerDeserialization {
-
-    template<typename T, typename ...Args>
-    static bool deserialize(GVariant* g, T* arg1, Args... args)
+    template<typename T, typename ... Args>
+    static bool deserialize(GVariant* g, T* arg1, Args ... args)
     {
         Assert(NULL != g);
         Assert(NULL != arg1);
@@ -48,7 +46,7 @@ struct ServerDeserialization {
             g_variant_iter_free(iterator);
             return false;
         }
-        if (!deserializeIterator(iterator, args...)) {
+        if (!deserializeIterator(iterator, args ...)) {
             g_variant_iter_free(iterator);
             return false;
         }
@@ -74,8 +72,8 @@ struct ServerDeserialization {
     }
 
     // deserialization from GVariant tuple iterator
-    template<typename T, typename ...Args>
-    static bool deserializeIterator(GVariantIter* g, T* arg1, Args... args)
+    template<typename T, typename ... Args>
+    static bool deserializeIterator(GVariantIter* g, T* arg1, Args ... args)
     {
         Assert(NULL != g);
         Assert(NULL != arg1);
@@ -86,7 +84,7 @@ struct ServerDeserialization {
         if (!deserializeElem(elem, arg1)) {
             return false;
         }
-        if (!deserializeIterator(g, args...)) {
+        if (!deserializeIterator(g, args ...)) {
             return false;
         }
         return true;
@@ -145,7 +143,7 @@ struct ServerDeserialization {
     }
 
     static bool deserializeElem(GVariant* parameters,
-                            std::vector<std::string>* outArray)
+                                std::vector<std::string>* outArray)
     {
         unsigned int i = 0;
         gsize length = 0;
@@ -174,7 +172,6 @@ struct ServerDeserialization {
         return true;
     }
 };
-
 } // namespace DBus
 } // namespace DPL
 

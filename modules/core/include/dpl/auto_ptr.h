@@ -38,7 +38,7 @@ struct UniversalFree {};
 #define DECLARE_DELETER(type, function)           \
     template <> \
     struct UniversalFree <type> {           \
-        void universal_free(type *ptr){                  \
+        void universal_free(type * ptr){                  \
             if (ptr) {                                      \
                 function(ptr); }                           \
         }                                                \
@@ -50,8 +50,7 @@ class AutoPtr
   public:
     AutoPtr(T *ptr) :
         m_data(ptr)
-    {
-    }
+    {}
 
     AutoPtr(const AutoPtr<T> &second)
     {
