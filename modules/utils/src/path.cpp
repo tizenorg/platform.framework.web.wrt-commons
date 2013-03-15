@@ -250,16 +250,19 @@ Path Path::operator/(const char * part) const
 Path & Path::operator/=(const DPL::String& part)
 {
     Append(ToUTF8String(part));
+    return *this;
 }
 
 Path & Path::operator/=(const std::string& part)
 {
     Append(part);
+    return *this;
 }
 
 Path & Path::operator/=(const char * part)
 {
     Append(std::string(part));
+    return *this;
 }
 
 void Path::Append(const std::string& part)
