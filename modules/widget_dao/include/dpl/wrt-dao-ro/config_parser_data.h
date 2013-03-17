@@ -235,6 +235,7 @@ class ConfigParserData
         {
             DPL::String m_boxSrc;
             DPL::String m_boxMouseEvent;
+            DPL::String m_boxTouchEffect;
             BoxSizeList m_boxSize;
             DPL::String m_pdSrc;
             DPL::String m_pdWidth;
