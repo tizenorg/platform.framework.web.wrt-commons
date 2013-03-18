@@ -1,3 +1,9 @@
+wrt-commons (0.2.106) unstable; urgency=low
+
+  * Add one field for new attribute 'touch-effect' of <tizen:box-content>
+
+ -- Yunchan Cho <yunchan.cho@samsung.com>  Mon, 18 Mar 2013 15:34:10 +0900
+
 wrt-commons (0.2.105) unstable; urgency=low
 
   * Update unmerged source code
