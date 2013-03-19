@@ -340,10 +340,13 @@ class ConfigParserData
     CategoryList categoryList;
     // For Account
     AccountProvider accountProvider;
+<<<<<<< HEAD
     // security model version
     SecurityModelVersion securityModelVersion;
     // security model version
     MetadataList metadataList;
+=======
+>>>>>>> cbb1e3b... Add Account parser.
 
     ConfigParserData() :
         flashNeeded(false),
