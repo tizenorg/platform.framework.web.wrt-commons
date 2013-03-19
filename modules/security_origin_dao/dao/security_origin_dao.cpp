@@ -32,6 +32,7 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <unistd.h>
 
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::security_origin;

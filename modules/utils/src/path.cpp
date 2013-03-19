@@ -28,7 +28,7 @@
 #include <dpl/file_input.h>
 #include <dpl/file_output.h>
 #include <dpl/copy.h>
-
+#include <unistd.h>
 #include <sys/stat.h>
 
 namespace DPL {
