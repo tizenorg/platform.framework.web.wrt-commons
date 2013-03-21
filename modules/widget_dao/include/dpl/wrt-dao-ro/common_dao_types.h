@@ -157,6 +157,8 @@ typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
 
 typedef std::list<DPL::String> WindowModeList;
 
+typedef std::list<DPL::String> PrivilegeList;
+
 typedef std::set<EncryptedFileInfo> EncryptedFileList;
 
 /**

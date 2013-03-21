@@ -52,6 +52,7 @@ set(WRT_DAO_RO_SOURCES
     dao/widget_dao_read_only.cpp
     dao/webruntime_database.cpp
     dao/WrtDatabase.cpp
+    dao/widget_dao_types.cpp
 )
 
 set(WRT_DAO_RW_SOURCES
@@ -130,6 +131,7 @@ INSTALL(FILES
     include/dpl/wrt-dao-ro/widget_dao_read_only.h
     include/dpl/wrt-dao-ro/wrt_db_types.h
     include/dpl/wrt-dao-ro/WrtDatabase.h
+    include/dpl/wrt-dao-ro/widget_dao_types.h
     DESTINATION include/dpl-efl/dpl/wrt-dao-ro
     )
 

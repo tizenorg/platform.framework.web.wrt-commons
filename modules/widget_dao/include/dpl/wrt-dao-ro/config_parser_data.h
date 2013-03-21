@@ -260,6 +260,29 @@ class ConfigParserData
         bool operator<=(const LiveboxInfo&) const;
     };
     typedef std::list<DPL::Optional<LiveboxInfo> > LiveboxList;
+
+    enum IconSectionType
+    {
+        DefaultIcon =0,
+        SmallIcon,
+    };
+
+    typedef std::set<std::pair<IconSectionType, DPL::String>> IconSet;
+    typedef std::list<DPL::String> CapabilityList;
+    typedef std::set<std::pair<DPL::String, DPL::String>> DisplayNameSet;
+
+    struct AccountProvider
+    {
+        AccountProvider() :
+            m_multiAccountSupport(false)
+        { }
+
+        bool m_multiAccountSupport;
+        IconSet m_iconSet;
+        DisplayNameSet m_displayNameSet;
+        CapabilityList m_capabilityList;
+    };
+
     LiveboxList m_livebox;
 
     typedef std::list<DPL::OptionalString> DependsPkgList;
@@ -327,6 +350,8 @@ class ConfigParserData
     DPL::OptionalString backgroundPage;
     // For category
     CategoryList categoryList;
+    // For Account
+    AccountProvider accountProvider;
 
     ConfigParserData() :
         flashNeeded(false),

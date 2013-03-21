@@ -28,17 +28,9 @@
 #include <memory>
 #include <map>
 #include <dpl/string.h>
+#include <dpl/wrt-dao-ro/widget_dao_types.h>
 
 namespace SecurityOriginDB {
-enum Feature
-{
-    FEATURE_START = 0,
-    FEATURE_GEOLOCATION = 0,
-    FEATURE_WEB_NOTIFICATION,
-    FEATURE_USER_MEDIA,
-    FEATURE_END = FEATURE_USER_MEDIA
-};
-
 enum Result
 {
     RESULT_UNKNOWN = 0,
@@ -47,8 +39,6 @@ enum Result
     RESULT_ALLOW_ALWAYS,
     RESULT_DENY_ALWAYS
 };
-
-extern const std::map<std::string, Feature> g_W3CPrivilegeTextMap;
 
 struct Origin
 {
@@ -79,10 +69,10 @@ struct Origin
 
 struct SecurityOriginData
 {
-    Feature feature;
+    WrtDB::Feature feature;
     Origin origin;
 
-    SecurityOriginData(const Feature features, const Origin& ori) :
+    SecurityOriginData(const WrtDB::Feature features, const Origin& ori) :
         feature(features),
         origin(ori)
     {}

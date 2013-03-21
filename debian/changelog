@@ -1,3 +1,10 @@
+wrt-commons (0.2.107) unstable; urgency=low
+
+  * Add Account parser
+  * Get plivilege feature for auto W3C fullsceen mode
+
+ -- leerang <leerang.song@samsung.com>  Thu, 21 Mar 2013 10:56:01 +0900
+
 wrt-commons (0.2.106) unstable; urgency=low
 
   * Add one field for new attribute 'touch-effect' of <tizen:box-content>

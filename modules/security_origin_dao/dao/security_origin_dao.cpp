@@ -37,6 +37,7 @@ using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::security_origin;
 
 namespace SecurityOriginDB {
+using namespace WrtDB;
 #define SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN          Try
 
 #define SQL_CONNECTION_EXCEPTION_HANDLER_END(message)   \

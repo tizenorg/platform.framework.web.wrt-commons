@@ -1268,6 +1268,19 @@ TizenPkgId WidgetDAOReadOnly::getTizenPkgId() const
     return row.Get_tizen_pkgid();
 }
 
+PrivilegeList WidgetDAOReadOnly::getWidgetPrivilege() const
+{
+    //TODO check widget existance
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetPrivilege, &WrtDatabase::interface())
+        select->Where(Equals<WidgetPrivilege::app_id>(m_widgetHandle));
+
+        return select->GetValueList<WidgetPrivilege::name>();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get PrivilegeList")
+}
+
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE
