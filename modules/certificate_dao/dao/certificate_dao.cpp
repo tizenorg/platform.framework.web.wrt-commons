@@ -32,6 +32,10 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 #include <sys/stat.h>
 #include <fstream>
+/* GCC versions 4.7 had changes to the C++ standard. It 
+ * no longer includes <unistd.h> to remove namespace pollution.
+ */
+#include <unistd.h>
 
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::certificate;
