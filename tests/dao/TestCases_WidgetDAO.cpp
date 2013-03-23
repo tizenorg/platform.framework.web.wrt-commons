@@ -215,8 +215,7 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     regInfo.configInfo.preferencesList.insert(pref);
 
     //widget feature
-    ConfigParserData::Feature feat(DPL::FromUTF8String(""), false);
-    ConfigParserData::Param par(DPL::FromUTF8String(("")));
+    ConfigParserData::Feature feat(DPL::FromUTF8String(""));
     par.value = DPL::FromUTF8String("");
     feat.paramsList.insert(par);
     regInfo.configInfo.featuresList.insert(feat);

@@ -339,9 +339,7 @@ DbWidgetFeatureSet WidgetDAOReadOnly::getFeaturesList() const
         for (RowList::iterator i = list.begin(); i != list.end(); ++i) {
             DbWidgetFeature feature;
             feature.name = i->Get_name();
-            feature.required = i->Get_required();
             feature.rejected = i->Get_rejected();
-            feature.params = getFeatureParams(i->Get_widget_feature_id());
             FeatureDAOReadOnly featureDao(DPL::ToUTF8String(i->Get_name()));
             feature.pluginId = featureDao.GetPluginHandle();
             resultSet.insert(feature);
@@ -350,28 +348,6 @@ DbWidgetFeatureSet WidgetDAOReadOnly::getFeaturesList() const
         return resultSet;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get features list")
-}
-
-WidgetParamMap WidgetDAOReadOnly::getFeatureParams(int id)
-{
-    WidgetFeatureId widgetFeatureId(id);
-    LogDebug("Getting feature Params. featureId: " << widgetFeatureId);
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        WRT_DB_SELECT(select, FeatureParam, &WrtDatabase::interface())
-        select->Where(Equals<FeatureParam::widget_feature_id>(
-                          widgetFeatureId));
-
-        WidgetParamMap resultMap;
-        typedef std::list<FeatureParam::Row> RowList;
-        RowList list = select->GetRowList();
-
-        FOREACH(i, list)
-        resultMap.insert(std::make_pair(i->Get_name(), i->Get_value()));
-
-        return resultMap;
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get feature params")
 }
 
 bool WidgetDAOReadOnly::hasFeature(const std::string& featureName) const
@@ -991,26 +967,6 @@ WidgetCertificateCNList WidgetDAOReadOnly::getKeyCommonNameList(
         return out;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get key common name")
-}
-
-ResourceAttributeList WidgetDAOReadOnly::getResourceAttribute(
-    const std::string &resourceId) const
-{
-    WRT_DB_SELECT(select, WidgetFeature, &WrtDatabase::interface())
-    select->Where(And(Equals<WidgetFeature::app_id>(m_widgetHandle),
-                      Equals<WidgetFeature::name>(
-                          DPL::FromUTF8String(resourceId))));
-
-    std::list<WidgetFeature::Row> list = select->GetRowList();
-    ResourceAttributeList result;
-    if (!list.empty()) {
-        int widgetFeatureId = list.begin()->Get_widget_feature_id();
-        WidgetParamMap map = getFeatureParams(widgetFeatureId);
-
-        FOREACH(i, map)
-        result.push_back(DPL::ToUTF8String(i->first));
-    }
-    return result;
 }
 
 void WidgetDAOReadOnly::getWidgetAccessInfo(

@@ -549,7 +549,6 @@ class WidgetDAOReadOnly
      */
     DbWidgetFeatureSet getFeaturesList() const;
 
-    static WidgetParamMap getFeatureParams(int widgetFeatureId);
     /**
      * This method checks whether widget has specified feature.
      *
@@ -702,11 +701,6 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     std::string getBaseFolder() const;
-
-    /* This method gets the parameter list for resource.
-     */
-    ResourceAttributeList getResourceAttribute(
-        const std::string &resourceId) const;
 
     /* This method checks read only flag for given property
      */

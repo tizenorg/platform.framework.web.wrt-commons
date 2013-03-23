@@ -531,27 +531,9 @@ void WidgetDAO::registerWidgetFeatures(DbWidgetHandle widgetHandle,
         wrt::WidgetFeature::Row widgetFeature;
         widgetFeature.Set_app_id(widgetHandle);
         widgetFeature.Set_name(pWidgetFeature->name);
-        widgetFeature.Set_required(pWidgetFeature->required);
         widgetFeature.Set_rejected(false);
 
-        wrt::WidgetFeature::widget_feature_id::ColumnType widgetFeatureID;
-        {
-            WRT_DB_INSERT(insert, wrt::WidgetFeature, &WrtDatabase::interface())
-            insert->Values(widgetFeature);
-            widgetFeatureID = static_cast<int>(insert->Execute());
-        }
-
-        // Insert into table FeatureParam
-        wrt::FeatureParam::Row featureParam;
-        featureParam.Set_widget_feature_id(widgetFeatureID);
-
-        FOREACH(iter, pWidgetFeature->paramsList)
-        {
-            featureParam.Set_name(iter->name);
-            featureParam.Set_value(iter->value);
-
-            DO_INSERT(featureParam, wrt::FeatureParam)
-        }
+        DO_INSERT(widgetFeature, wrt::WidgetFeature)
     }
 }
 

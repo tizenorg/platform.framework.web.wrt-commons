@@ -203,104 +203,34 @@ void NormalizeAndTrimSpaceString(DPL::OptionalString& txt)
     NormalizeString(txt, true);
 }
 
-bool ConfigParserData::Param::operator==(const Param& other) const
-{
-    return name == other.name && value == other.value;
-}
-
-bool ConfigParserData::Param::operator!=(const Param& other) const
-{
-    return name != other.name || value != other.value;
-}
-
-bool ConfigParserData::Param::operator >(const Param& other) const
-{
-    if (name == other.name) {
-        return value > other.value;
-    } else {
-        return name > other.name;
-    }
-}
-
-bool ConfigParserData::Param::operator>=(const Param& other) const
-{
-    if (name >= other.name) {
-        return true;
-    } else {
-        return value >= other.value;
-    }
-}
-
-bool ConfigParserData::Param::operator <(const Param& other) const
-{
-    if (name == other.name) {
-        return value < other.value;
-    } else {
-        return name < other.name;
-    }
-}
-
-bool ConfigParserData::Param::operator<=(const Param& other) const
-{
-    if (name <= other.name) {
-        return true;
-    } else {
-        return value <= other.value;
-    }
-}
-
 bool ConfigParserData::Feature::operator==(const Feature& other) const
 {
-    return name == other.name && paramsList == other.paramsList;
+    return name == other.name;
 }
 
 bool ConfigParserData::Feature::operator!=(const Feature& other) const
 {
-    return name != other.name || paramsList != other.paramsList;
+    return name != other.name;
 }
 
 bool ConfigParserData::Feature::operator >(const Feature& other) const
 {
-    if (name > other.name) {
-        return true;
-    }
-    if (name < other.name) {
-        return false;
-    }
-    return paramsList > other.paramsList;
+    return name > other.name;
 }
 
 bool ConfigParserData::Feature::operator>=(const Feature& other) const
 {
-    if (name > other.name) {
-        return true;
-    }
-    if (name < other.name) {
-        return false;
-    }
-    return paramsList >= other.paramsList;
+    return name >= other.name;
 }
 
 bool ConfigParserData::Feature::operator <(const Feature& other) const
 {
-    if (name < other.name) {
-        return true;
-    }
-    if (name > other.name) {
-        return false;
-    }
-    return paramsList < other.paramsList;
+    return name < other.name;
 }
 
 bool ConfigParserData::Feature::operator<=(const Feature& other) const
 {
-    if (name < other.name) {
-        return true;
-    }
-    if (name > other.name) {
-        return false;
-    }
-    return paramsList <= other.paramsList;
+    return name <= other.name;
 }
 
 bool ConfigParserData::Privilege::operator==(const Privilege& other) const

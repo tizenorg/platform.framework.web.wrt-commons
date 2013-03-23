@@ -41,30 +41,11 @@ class WidgetConfigurationManager;
 class ConfigParserData
 {
   public:
-    struct Param
-    {
-        Param(const DPL::String& _name) : name(_name)
-        {}
-        DPL::String name;
-        DPL::String value;
-        bool operator==(const Param&) const;
-        bool operator!=(const Param&) const;
-        bool operator >(const Param&) const;
-        bool operator>=(const Param&) const;
-        bool operator <(const Param&) const;
-        bool operator<=(const Param&) const;
-    };
-    typedef std::set<Param> ParamsList;
-
     struct Feature
     {
-        Feature(const DPL::String& _name,
-                bool _required = true) : name(_name),
-            required(_required)
+        Feature(const DPL::String& _name) : name(_name)
         {}
         DPL::String name;
-        bool required;
-        ParamsList paramsList;
 
         bool operator==(const Feature&) const;
         bool operator!=(const Feature&) const;
@@ -264,7 +245,7 @@ class ConfigParserData
     enum IconSectionType
     {
         DefaultIcon =0,
-        SmallIcon,
+        SmallIcon
     };
 
     typedef std::set<std::pair<IconSectionType, DPL::String>> IconSet;
