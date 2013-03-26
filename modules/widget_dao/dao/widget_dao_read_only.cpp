@@ -1080,8 +1080,8 @@ std::string WidgetDAOReadOnly::getCookieDatabasePath() const
 std::string WidgetDAOReadOnly::getPrivateLocalStoragePath() const
 {
     std::ostringstream path;
-    TizenAppId tzAppId = getTzAppId();
-    path << WidgetConfig::GetWidgetWebLocalStoragePath(tzAppId);
+    TizenAppId tzPkgId = getTizenPkgId();
+    path << WidgetConfig::GetWidgetWebLocalStoragePath(tzPkgId);
     path << "/";
 
     return path.str();
