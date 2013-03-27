@@ -30,7 +30,7 @@ ADD_DEFINITIONS("-DAPI_VERSION=\"$(API_VERSION)\"")
 
 # Comment this to disable control of global settings with environment variable
 ADD_DEFINITIONS("-DGLOBAL_SETTINGS_CONTROL")
-
+ADD_DEFINITIONS("-DLIBDIR_PREFIX=\"${LIB_INSTALL_DIR}\"")
 # Build type
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE "Release")
@@ -193,7 +193,7 @@ SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
 
 macro(configure_and_install_pkg PKG_FILE)
     CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_FILE} DESTINATION lib/pkgconfig)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_FILE} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 endmacro(configure_and_install_pkg)
 
 ADD_SUBDIRECTORY(modules)

@@ -51,7 +51,7 @@ Wrt common library development headers
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
-cmake . -DVERSION=%{version} \
+%cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
@@ -71,7 +71,7 @@ mkdir -p /opt/share/widget/system
 mkdir -p /opt/share/widget/user
 mkdir -p /opt/share/widget/exec
 mkdir -p /opt/share/widget/data/Public
-mkdir -p /usr/lib/wrt-plugins
+mkdir -p %{_libdir}/wrt-plugins
 
 if [ -z ${2} ]; then
     echo "This is new install of wrt-commons"
