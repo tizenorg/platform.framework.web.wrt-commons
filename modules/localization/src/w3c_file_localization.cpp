@@ -41,6 +41,7 @@ using namespace WrtDB;
 namespace {
 const DPL::String FILE_URI_BEGIN = L"file://";
 const DPL::String WIDGET_URI_BEGIN = L"widget://";
+const DPL::String APP_URI_BEGIN = L"app://";
 const DPL::String LOCALE_PREFIX = L"locales/";
 
 DPL::Optional<std::string> GetFilePathInWidgetPackageInternal(
@@ -140,7 +141,9 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 {
     DPL::String req = url;
 
-    if (req.find(FILE_URI_BEGIN) == 0) {
+    if (req.find(WIDGET_URI_BEGIN) == 0) {
+        req.erase(0, WIDGET_URI_BEGIN.length());
+    } else if (req.find(FILE_URI_BEGIN) == 0) {
         req.erase(0, FILE_URI_BEGIN.length());
         if (req.find(dao->getPath()) == 0) {
             req.erase(0, dao->getPath().length());
@@ -154,8 +157,8 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
                 req.erase(0, position + 1);
             }
         }
-    } else if(req.find(WIDGET_URI_BEGIN) == 0) {
-        req.erase(0, WIDGET_URI_BEGIN.length());
+    } else if(req.find(APP_URI_BEGIN) == 0) {
+        req.erase(0, APP_URI_BEGIN.length());
         DPL::String id = *dao->getTizenAppId();
         if(req.substr(0, id.size()) != id)
         {
