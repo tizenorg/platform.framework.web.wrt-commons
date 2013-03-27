@@ -49,7 +49,7 @@ inline const char* GetWrtWidgetInterfaceDatabaseFilePath()
  */
 inline const char* GetDevicePluginPath()
 {
-    return "/usr/lib/wrt-plugins";
+    return LIBDIR_PREFIX "/wrt-plugins";
 }
 
 /**

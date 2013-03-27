@@ -66,7 +66,7 @@ mkdir -p /opt/share/widget/system
 mkdir -p /opt/share/widget/user
 mkdir -p /opt/share/widget/exec
 mkdir -p /opt/share/widget/data/Public
-mkdir -p /usr/lib/wrt-plugins
+mkdir -p %{_libdir}/wrt-plugins
 
 if [ -z ${2} ]; then
     echo "This is new install of wrt-commons"

@@ -1,7 +1,7 @@
 prefix=/usr
 exec_prefix=${prefix}
 
-libdir=${prefix}/lib
+libdir=@LIB_INSTALL_DIR@
 includedir=${prefix}/include
 Name: wrt-commons-auto-save-dao-rw
 Description: wrt-commons-auto-save-dao-rw
