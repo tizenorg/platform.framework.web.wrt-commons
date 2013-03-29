@@ -70,6 +70,16 @@ struct Serialization {
     {
         stream.Write(sizeof(*value), value);
     }
+     
+    // long int
+    static void Serialize(IStream& stream, const long unsigned int value)
+    {
+        stream.Write(sizeof(value), &value);
+    }
+    static void Serialize(IStream& stream, const long unsigned int* const value)
+    {
+        stream.Write(sizeof(*value), value);
+    }
 
     // int
     static void Serialize(IStream& stream, const int value)
@@ -200,6 +210,17 @@ struct Deserialization {
     static void Deserialize(IStream& stream, unsigned*& value)
     {
         value = new unsigned;
+        stream.Read(sizeof(*value), value);
+    }
+
+   // long int
+     static void Deserialize(IStream& stream, long unsigned  int& value)
+    {
+        stream.Read(sizeof(value), &value);
+    }
+    static void Deserialize(IStream& stream, long unsigned  int*& value)
+    {
+        value = new  long unsigned int;
         stream.Read(sizeof(*value), value);
     }
 
