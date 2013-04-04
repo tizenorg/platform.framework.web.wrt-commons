@@ -365,7 +365,6 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_app_id(widgetHandle);
     //    row.Set_share_href    (DPL::FromUTF8String(regInfo.shareHref));
     row.Set_signature_type(regInfo.signatureType);
-    row.Set_test_widget(regInfo.isTestWidget);
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
     row.Set_background_page(regInfo.configInfo.backgroundPage);
@@ -407,7 +406,6 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_base_folder(DPL::FromUTF8String(regInfo.baseFolder));
     row.Set_webkit_plugins_required(widgetConfigurationInfo.flashNeeded);
     row.Set_recognized(wacSecurity.isRecognized());
-    row.Set_wac_signed(wacSecurity.isWacSigned());
     row.Set_distributor_signed(wacSecurity.isDistributorSigned());
     row.Set_tizen_appid(tzAppId);
     row.Set_tizen_pkgid(regInfo.tzPkgid);
