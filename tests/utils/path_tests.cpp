@@ -28,6 +28,9 @@
 #include <dpl/utils/path.h>
 #include <dpl/foreach.h>
 #include <dpl/log/log.h>
+#include <dpl/binary_queue.h>
+#include <dpl/file_input.h>
+#include <dpl/file_output.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -38,6 +41,17 @@ namespace {
 //do not used path here we test it
 std::string rootTest = "/tmp/wrttest/";
 }
+
+#define ROOTGUARD_TESTMETHOD(FUNC)                                                         \
+{                                                                                          \
+    bool catched = false;                                                                  \
+    Try {                                                                                  \
+        FUNC;                                                                              \
+    } Catch(Path::RootDirectoryError) {                                                    \
+        catched = true;                                                                    \
+    }                                                                                      \
+    RUNNER_ASSERT_MSG(catched, "Use of method should be protected against root diretory"); \
+}                                                                                          \
 
 RUNNER_TEST_GROUP_INIT(DPL_Path)
 
@@ -51,6 +65,7 @@ RUNNER_TEST(path_mkfile)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "touch.txt";
     RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "File should not be created");
     RUNNER_ASSERT(!path.Exists());
@@ -118,6 +133,7 @@ RUNNER_TEST(path_mkdir)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "touchDir";
     RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "Directory should not be created");
     RUNNER_ASSERT(!path.Exists());
@@ -139,6 +155,7 @@ RUNNER_TEST(path_symlink)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "symlink";
     RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "Symlink should not be created");
     RUNNER_ASSERT(!path.Exists());
@@ -178,7 +195,7 @@ RUNNER_TEST(path_construction_root)
 {
     Path path1(std::string("/"));
     RUNNER_ASSERT(path1.Fullpath() == "/");
-    RUNNER_ASSERT(path1.Basename() == "");
+    RUNNER_ASSERT(path1.Filename() == "");
     bool passed = false;
     Try
     {
@@ -202,7 +219,7 @@ RUNNER_TEST(path_construction_1)
 
     Path path1(std::string("/test/bin/file"));
     RUNNER_ASSERT(path1.Fullpath() == "/test/bin/file");
-    RUNNER_ASSERT(path1.Basename() == "file");
+    RUNNER_ASSERT(path1.Filename() == "file");
     RUNNER_ASSERT(path1.DirectoryName() == "/test/bin");
 }
 
@@ -218,7 +235,7 @@ RUNNER_TEST(path_construction_2)
 
     Path path2(std::string("test/bin/file.eas"));
     RUNNER_ASSERT(path2.Fullpath() == cwd + "/test/bin/file.eas");
-    RUNNER_ASSERT(path2.Basename() == "file.eas");
+    RUNNER_ASSERT(path2.Filename() == "file.eas");
     RUNNER_ASSERT(path2.DirectoryName() == cwd + "/test/bin");
 }
 
@@ -234,7 +251,7 @@ RUNNER_TEST(path_construction_3)
 
     Path path3("test/23/abc");
     RUNNER_ASSERT(path3.Fullpath() == cwd + "/test/23/abc");
-    RUNNER_ASSERT(path3.Basename() == "abc");
+    RUNNER_ASSERT(path3.Filename() == "abc");
     RUNNER_ASSERT(path3.DirectoryName() == cwd + "/test/23");
 }
 
@@ -249,7 +266,7 @@ RUNNER_TEST(path_construction_4)
 
     Path path4("/test/bin/abc");
     RUNNER_ASSERT(path4.Fullpath() == "/test/bin/abc");
-    RUNNER_ASSERT(path4.Basename() == "abc");
+    RUNNER_ASSERT(path4.Filename() == "abc");
     RUNNER_ASSERT(path4.DirectoryName() == "/test/bin");
 }
 
@@ -265,7 +282,7 @@ RUNNER_TEST(path_construction_5)
 
     Path path5(DPL::String(L"test/bin/file.st.exe"));
     RUNNER_ASSERT(path5.Fullpath() == cwd + "/test/bin/file.st.exe");
-    RUNNER_ASSERT(path5.Basename() == "file.st.exe");
+    RUNNER_ASSERT(path5.Filename() == "file.st.exe");
     RUNNER_ASSERT(path5.DirectoryName() == cwd + "/test/bin");
 }
 
@@ -280,7 +297,7 @@ RUNNER_TEST(path_construction_6)
 
     Path path6(DPL::String(L"/test/bin/file"));
     RUNNER_ASSERT(path6.Fullpath() == "/test/bin/file");
-    RUNNER_ASSERT(path6.Basename() == "file");
+    RUNNER_ASSERT(path6.Filename() == "file");
     RUNNER_ASSERT(path6.DirectoryName() == "/test/bin");
 }
 
@@ -296,7 +313,7 @@ RUNNER_TEST(path_construction_7)
 
     Path path7 = Path("test") / "a///23/lol";
     RUNNER_ASSERT(path7.Fullpath() == cwd + "/test/a/23/lol");
-    RUNNER_ASSERT(path7.Basename() == "lol");
+    RUNNER_ASSERT(path7.Filename() == "lol");
     RUNNER_ASSERT(path7.DirectoryName() == cwd + "/test/a/23");
 }
 
@@ -311,7 +328,7 @@ RUNNER_TEST(path_construction_8)
 
     Path path8 = Path("/test/bin/") / "123" / "dir1.dll";
     RUNNER_ASSERT(path8.Fullpath() == "/test/bin/123/dir1.dll");
-    RUNNER_ASSERT(path8.Basename() == "dir1.dll");
+    RUNNER_ASSERT(path8.Filename() == "dir1.dll");
     RUNNER_ASSERT(path8.DirectoryName() ==  "/test/bin/123");
 }
 
@@ -326,7 +343,7 @@ RUNNER_TEST(path_construction_9)
 
     Path path9 = Path("/test/bin/file.txt//");
     RUNNER_ASSERT(path9.Fullpath() == "/test/bin/file.txt");
-    RUNNER_ASSERT(path9.Basename() == "file.txt");
+    RUNNER_ASSERT(path9.Filename() == "file.txt");
     RUNNER_ASSERT(path9.DirectoryName() ==  "/test/bin");
 }
 
@@ -342,7 +359,7 @@ RUNNER_TEST(path_construction_10)
     path10 /= std::string("two");
     path10 /= DPL::String(L"three");
     RUNNER_ASSERT(path10.Fullpath() == "/test/one/two/three");
-    RUNNER_ASSERT(path10.Basename() == "three");
+    RUNNER_ASSERT(path10.Filename() == "three");
     RUNNER_ASSERT(path10.DirectoryName() ==  "/test/one/two");
 }
 
@@ -356,6 +373,7 @@ RUNNER_TEST(path_remove_valid)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "touchDir";
     RUNNER_ASSERT(!path.Exists());
 
@@ -372,6 +390,39 @@ RUNNER_TEST(path_remove_valid)
     RUNNER_ASSERT(path.Exists());
 
     Remove(path);
+    RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "File should not be created");
+    RUNNER_ASSERT(!path.Exists());
+}
+
+/*
+Name: path_try_remove
+Description: tests removing paths
+Expected: successfull path remove once
+*/
+RUNNER_TEST(path_try_remove_valid)
+{
+    DPL::ScopedDir sd(rootTest);
+
+    struct stat st;
+    memset(&st, 0, sizeof(struct stat));
+    Path path = Path(rootTest) / "touchDir";
+    RUNNER_ASSERT(!path.Exists());
+
+    MakeDir(path);
+    RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) == 0, "Directory should be created");
+    RUNNER_ASSERT(path.Exists());
+
+    RUNNER_ASSERT(TryRemove(path));
+    RUNNER_ASSERT(!TryRemove(path));
+    RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "Directory should not be created");
+    RUNNER_ASSERT(!path.Exists());
+
+    MakeEmptyFile(path);
+    RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) == 0, "File should be created");
+    RUNNER_ASSERT(path.Exists());
+
+    RUNNER_ASSERT(TryRemove(path));
+    RUNNER_ASSERT(!TryRemove(path));
     RUNNER_ASSERT_MSG(lstat(path.Fullpath().c_str(), &st) != 0, "File should not be created");
     RUNNER_ASSERT(!path.Exists());
 }
@@ -409,6 +460,7 @@ RUNNER_TEST(path_rename)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "touchDir";
     Path dirpath = Path(rootTest) / "directory";
     Path path2 = dirpath / "touchDir2";
@@ -427,8 +479,220 @@ RUNNER_TEST(path_rename)
     Rename(path2, path);
     RUNNER_ASSERT(path.Exists());
     RUNNER_ASSERT(!path2.Exists());
+}
 
-    //TODO: test for different devices
+/*
+Name: path_rename_xdev
+Description: tests path renaming between devices
+Expected: path is successfully renamed
+*/
+RUNNER_TEST(path_rename_xdev)
+{
+    //assuming /opt/usr and /usr is normally on other partitions on device
+    //TODO: better
+    Path path = Path("/opt/usr") / "touchDir";
+    Path dirpath = path / "directory";
+    Path filepath = path / "file.txt";
+
+    Path path2 = Path("/usr") / "touchDir2";
+    Path dirpath2 = path2 / "directory";
+    Path filepath2 = path2 / "file.txt";
+
+    TryRemove(path);
+
+    MakeDir(path);
+    MakeDir(dirpath);
+    MakeEmptyFile(filepath);
+
+    RUNNER_ASSERT(path.Exists());
+    RUNNER_ASSERT(dirpath.Exists());
+    RUNNER_ASSERT(filepath.Exists());
+    RUNNER_ASSERT(!path2.Exists());
+    RUNNER_ASSERT(!dirpath2.Exists());
+    RUNNER_ASSERT(!filepath2.Exists());
+
+    Rename(path, path2);
+    RUNNER_ASSERT(!path.Exists());
+    RUNNER_ASSERT(!dirpath.Exists());
+    RUNNER_ASSERT(!filepath.Exists());
+    RUNNER_ASSERT(path2.Exists());
+    RUNNER_ASSERT(dirpath2.Exists());
+    RUNNER_ASSERT(filepath2.Exists());
+
+    Rename(path2, path);
+    RUNNER_ASSERT(path.Exists());
+    RUNNER_ASSERT(dirpath.Exists());
+    RUNNER_ASSERT(filepath.Exists());
+    RUNNER_ASSERT(!path2.Exists());
+    RUNNER_ASSERT(!dirpath2.Exists());
+    RUNNER_ASSERT(!filepath2.Exists());
+
+    Remove(path);
+}
+
+/**
+ * Name: path_basename
+ * Description: check basename equivalents
+ * Expected: failure
+ */
+RUNNER_TEST(path_basename)
+{
+    DPL::ScopedDir sd(rootTest);
+    Path path = Path(rootTest) / "directory" / "touch.txt";
+    RUNNER_ASSERT(path.DirectoryName() == path.DirectoryPath().Fullpath());
+    RUNNER_ASSERT(path.DirectoryPath().DirectoryName() == path.DirectoryPath().DirectoryPath().Fullpath());
+}
+
+/**
+ * Name: path_safe
+ * Description: check if operations cannot be executed on root directory
+ *
+ * This is check because of default path is root and it should not be used usually
+ * Default constructor is unfortnatelly easier to use
+ *
+ * Expected: failure
+ */
+RUNNER_TEST(path_safe)
+{
+    DPL::ScopedDir sd(rootTest);
+    Path normal = Path(rootTest) / "directory" / "touch.txt";
+    Path root("/");
+    ROOTGUARD_TESTMETHOD( Rename(normal, root) );
+    ROOTGUARD_TESTMETHOD( Rename(root, root) );
+    ROOTGUARD_TESTMETHOD( Rename(root, normal) );
+    ROOTGUARD_TESTMETHOD( CopyDir(normal, root) );
+    ROOTGUARD_TESTMETHOD( CopyDir(root, root) );
+    ROOTGUARD_TESTMETHOD( CopyDir(root, normal) );
+    ROOTGUARD_TESTMETHOD( CopyFile(normal, root) );
+    ROOTGUARD_TESTMETHOD( CopyFile(root, root) );
+    ROOTGUARD_TESTMETHOD( CopyFile(root, normal) );
+    ROOTGUARD_TESTMETHOD( Remove(root) );
+    ROOTGUARD_TESTMETHOD( MakeEmptyFile(root) );
+    ROOTGUARD_TESTMETHOD( MakeDir(root) );
+}
+
+/**
+ * Name: path_size
+ * Description: check testing size of file
+ * Expected: correct size
+ */
+RUNNER_TEST(path_size)
+{
+    DPL::ScopedDir sd(rootTest);
+    Path path = Path(rootTest) / "touch.txt";
+    DPL::Utils::MakeEmptyFile(path);
+    RUNNER_ASSERT(path.Size() == 0);
+
+    {
+        DPL::FileOutput out(path.Fullpath());
+        DPL::BinaryQueue bq;
+        bq.AppendCopy("123456789", 9);
+        out.Write(bq, bq.Size());
+        out.Close();
+        RUNNER_ASSERT(path.Size() == 9);
+    }
+
+    {
+        DPL::FileOutput out(path.Fullpath());
+        DPL::BinaryQueue bq;
+        bq.AppendCopy("123456789", 4);
+        out.Write(bq, bq.Size());
+        out.Close();
+        RUNNER_ASSERT(path.Size() == 4);
+    }
+}
+
+/**
+Name: path_copy
+Description: tests path coping directory andfiles
+Expected: coping should be done
+*/
+RUNNER_TEST(path_copy_directory)
+{
+    DPL::ScopedDir sd(rootTest);
+
+    Path path = Path(rootTest) / "sourceDir";
+    Path innerPath = Path(rootTest) / "sourceDir" / "level1" ;
+    Path innerPath2 = Path(rootTest) / "sourceDir" / "level1" / "level2";
+    Path file1 = Path(rootTest) / "sourceDir" / "level1" / "level2" / "file1.txt";
+    Path file2 = Path(rootTest) / "sourceDir" / "level1" / "level2" / "file2.txt";
+    Path file3 = Path(rootTest) / "sourceDir" / "level1" / "file3.txt";
+    Path file4 = Path(rootTest) / "sourceDir" /  "file4.txt";
+
+    Path tfile1 = Path(rootTest) / "targetDir" / "level1" / "level2" / "file1.txt";
+    Path tfile2 = Path(rootTest) / "targetDir" / "level1" / "level2" / "file2.txt";
+    Path tfile3 = Path(rootTest) / "targetDir" / "level1" / "file3.txt";
+    Path tfile4 = Path(rootTest) / "targetDir" /  "file4.txt";
+
+    Path target = Path(rootTest) / "targetDir";
+
+    DPL::Utils::MakeDir(path);
+    DPL::Utils::MakeDir(innerPath);
+    DPL::Utils::MakeDir(innerPath2);
+    DPL::Utils::MakeEmptyFile(file1);
+    DPL::Utils::MakeEmptyFile(file2);
+    DPL::Utils::MakeEmptyFile(file3);
+    DPL::Utils::MakeEmptyFile(file4);
+
+    DPL::Utils::CopyDir(path, target);
+
+    RUNNER_ASSERT_MSG(tfile1.Exists(), tfile1.Fullpath() + " not exists");
+    RUNNER_ASSERT_MSG(tfile1.IsFile(), tfile1.Fullpath() + " is not file");
+    RUNNER_ASSERT_MSG(tfile2.Exists(), tfile2.Fullpath() + " not exists");
+    RUNNER_ASSERT_MSG(tfile2.IsFile(), tfile2.Fullpath() + " is not file");
+    RUNNER_ASSERT_MSG(tfile3.Exists(), tfile3.Fullpath() + " not exists");
+    RUNNER_ASSERT_MSG(tfile3.IsFile(), tfile3.Fullpath() + " is not file");
+    RUNNER_ASSERT_MSG(tfile4.Exists(), tfile4.Fullpath() + " not exists");
+    RUNNER_ASSERT_MSG(tfile4.IsFile(), tfile4.Fullpath() + " is not file");
+}
+
+/*
+Name: path_copy_inner
+Description: tests path coping to subdirectory
+Expected: coping shoudl fail
+*/
+RUNNER_TEST(path_copy_inner)
+{
+    DPL::ScopedDir sd(rootTest);
+
+    Path path = Path(rootTest) / "touchDir";
+    Path inner = Path(rootTest) / "touchDir" / "innerDirectory";
+
+    bool exceptionCatched = false;
+    Try
+    {
+        DPL::Utils::CopyDir(path, inner);
+    }
+    Catch(DPL::Utils::Path::CannotCopy)
+    {
+        exceptionCatched = true;
+    }
+    RUNNER_ASSERT_MSG(exceptionCatched, "Copy should fail");
+}
+
+/*
+Name: issubpath
+Description: tests method compare if one path is subpath of another
+Expected: correct results
+*/
+RUNNER_TEST(path_issubpath)
+{
+    Path path1 = Path(rootTest) / "touchDir/asd/sdf";
+    Path path2 = Path(rootTest) / "touchDir/asd/sdf/123";
+    Path path3 = Path(rootTest) / "touchDir/asd/sdno";
+    Path path4 = Path("/");
+
+    RUNNER_ASSERT(path1.isSubPath(path2));
+    RUNNER_ASSERT(!path1.isSubPath(path3));
+    RUNNER_ASSERT(!path1.isSubPath(path4));
+
+    RUNNER_ASSERT(!path2.isSubPath(path1));
+    RUNNER_ASSERT(!path2.isSubPath(path3));
+    RUNNER_ASSERT(!path2.isSubPath(path4));
+
+    RUNNER_ASSERT(path4.isSubPath(path1));
+    RUNNER_ASSERT(path4.isSubPath(path2));
+    RUNNER_ASSERT(path4.isSubPath(path3));
 }
 
 /*
@@ -441,6 +705,7 @@ RUNNER_TEST(path_rename_same)
     DPL::ScopedDir sd(rootTest);
 
     struct stat st;
+    memset(&st, 0, sizeof(struct stat));
     Path path = Path(rootTest) / "touchDir";
 
     MakeDir(path);
