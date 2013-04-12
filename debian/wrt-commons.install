@@ -1,4 +1,0 @@
-usr/lib/*.so*
-/usr/share/wrt-engine/*
-/usr/bin/wrt_commons_reset_db.sh
-/usr/bin/wrt_commons_create_clean_db.sh
