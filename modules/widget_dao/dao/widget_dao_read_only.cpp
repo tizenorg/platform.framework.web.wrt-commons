@@ -155,6 +155,27 @@ TizenAppId getTizenAppIdByPkgId(const TizenPkgId tzPkgid)
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
+
+WidgetPkgName getTizenPkgIdByHandle(const DbWidgetHandle handle)
+{
+    LogDebug("Getting TizenPkgId by DbWidgetHandle: " << handle);
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::app_id>(handle));
+        WidgetInfo::Select::RowList rowList = select->GetRowList();
+
+        if (rowList.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Failed to get widget by handle");
+        }
+        WidgetPkgName tzPkgid = rowList.front().Get_tizen_pkgid();
+
+        return tzPkgid;
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
+}
 } // namespace
 
 IWacSecurity::~IWacSecurity()
@@ -220,17 +241,17 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String tzAppId)
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName() const
 {
-    return getTzAppId();
+    return getTizenPkgIdByHandle(m_widgetHandle);
 }
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName(const WidgetGUID GUID)
 {
-    return getTzAppId(GUID);
+    return getTizenPkgIdByHandle(getHandle(GUID));
 }
 
 WidgetPkgName WidgetDAOReadOnly::getPkgName(const DbWidgetHandle handle)
 {
-    return getTzAppId(handle);
+    return getTizenPkgIdByHandle(handle);
 }
 
 TizenAppId WidgetDAOReadOnly::getTzAppId() const
