@@ -16,8 +16,22 @@
 
 for name in wrt wrt_autosave wrt_custom_handler
 do
+    # extract smack label before removal
+    DB_LABEL=""
+    if [ -f /opt/dbspace/.$name.db ]
+    then
+        DB_LABEL=`chsmack /opt/dbspace/.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+    fi
     rm -f /opt/dbspace/.$name.db
+
+    # extract smack label before removal
+    JOURNAL_LABEL=""
+    if [ -f /opt/dbspace/.$name.db-journal ]
+    then
+        JOURNAL_LABEL=`chsmack /opt/dbspace/.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+    fi
     rm -f /opt/dbspace/.$name.db-journal
+
     SQL="PRAGMA journal_mode = PERSIST;"
     sqlite3 /opt/dbspace/.$name.db "$SQL"
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
@@ -27,7 +41,20 @@ do
     chown 0:6026 /opt/dbspace/.$name.db-journal
     chmod 660 /opt/dbspace/.$name.db
     chmod 660 /opt/dbspace/.$name.db-journal
+
     pkill -9 security-serv
+
+    # restore smack label
+    if [ -n "$DB_LABEL" ]
+    then
+        chsmack -a $DB_LABEL /opt/dbspace/.$name.db
+    fi
+
+    # restore smack label
+    if [ -n "$JOURNAL_LABEL" ]
+    then
+        chsmack -a $JOURNAL_LABEL /opt/dbspace/.$name.db-journal
+    fi
 done
 
 

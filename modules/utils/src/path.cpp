@@ -28,7 +28,9 @@
 #include <dpl/file_input.h>
 #include <dpl/file_output.h>
 #include <dpl/copy.h>
-
+#include <dpl/log/log.h>
+#include <dpl/foreach.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 namespace DPL {
@@ -138,7 +140,7 @@ void Path::Construct(const std::string & src)
     Tokenize(src, "\\/", std::inserter(m_parts, m_parts.end()), true);
 }
 
-Path::Path() //for private usage
+Path::Path()
 {
 }
 
@@ -149,7 +151,7 @@ std::string Path::DirectoryName() const
     return std::string("/") + ret;
 }
 
-std::string Path::Basename() const
+std::string Path::Filename() const
 {
     if(m_parts.empty()) return "";
     else return m_parts.back();
@@ -179,16 +181,22 @@ Path::Iterator Path::end() const
     return Iterator();
 }
 
+void Path::RootGuard() const
+{
+    if(m_parts.empty()) Throw(RootDirectoryError);
+}
 
 bool Path::Exists() const
 {
     struct stat tmp;
+    memset(&tmp, 0, sizeof(struct stat));
     return (0 == lstat(Fullpath().c_str(), &tmp));
 }
 
 bool Path::IsDir() const
 {
     struct stat tmp;
+    memset(&tmp, 0, sizeof(struct stat));
     if (-1 == lstat(Fullpath().c_str(), &tmp))
     {
         ThrowMsg(NotExists, DPL::GetErrnoString());
@@ -199,6 +207,7 @@ bool Path::IsDir() const
 bool Path::IsFile() const
 {
     struct stat tmp;
+    memset(&tmp, 0, sizeof(struct stat));
     if (-1 == lstat(Fullpath().c_str(), &tmp))
     {
         ThrowMsg(NotExists, DPL::GetErrnoString());
@@ -209,6 +218,7 @@ bool Path::IsFile() const
 bool Path::IsSymlink() const
 {
     struct stat tmp;
+    memset(&tmp, 0, sizeof(struct stat));
     if (-1 == lstat(Fullpath().c_str(), &tmp))
     {
         ThrowMsg(NotExists, DPL::GetErrnoString());
@@ -228,14 +238,14 @@ bool Path::operator!=(const Path & other) const
 
 Path Path::operator/(const DPL::String& part) const
 {
-    Path newOne;
+    Path newOne(*this);
     newOne.Append(ToUTF8String(part));
     return newOne;
 }
 
 Path Path::operator/(const std::string& part) const
 {
-    Path newOne;
+    Path newOne(*this);
     newOne.Append(part);
     return newOne;
 }
@@ -250,16 +260,19 @@ Path Path::operator/(const char * part) const
 Path & Path::operator/=(const DPL::String& part)
 {
     Append(ToUTF8String(part));
+    return *this;
 }
 
 Path & Path::operator/=(const std::string& part)
 {
     Append(part);
+    return *this;
 }
 
 Path & Path::operator/=(const char * part)
 {
     Append(std::string(part));
+    return *this;
 }
 
 void Path::Append(const std::string& part)
@@ -269,18 +282,53 @@ void Path::Append(const std::string& part)
     std::copy(tokens.begin(), tokens.end(), std::inserter(m_parts, m_parts.end()));
 }
 
+Path Path::DirectoryPath() const
+{
+    Path npath;
+    if(m_parts.empty()) ThrowMsg(InternalError, "Asking DirectoryPath for root directory");
+    std::copy(m_parts.begin(), --m_parts.end(), std::back_inserter(npath.m_parts));
+    return npath;
+}
+
+std::size_t Path::Size() const
+{
+    struct stat tmp;
+    memset(&tmp, 0, sizeof(struct stat));
+    if (-1 == lstat(Fullpath().c_str(), &tmp))
+    {
+        ThrowMsg(NotExists, DPL::GetErrnoString());
+    }
+    return tmp.st_size;
+}
+
+bool Path::isSubPath(const Path & other) const
+{
+    typedef std::vector<std::string>::const_iterator Iter;
+    Iter otherIter = other.m_parts.begin();
+    for(Iter iter = m_parts.begin(); iter != m_parts.end(); iter++)
+    {
+        if(otherIter == other.m_parts.end()) return false;
+        if(*iter != *otherIter) return false;
+        otherIter++;
+    }
+    return true;
+}
+
 void MakeDir(const Path & path, mode_t mode)
 {
+    path.RootGuard();
     if(!WrtUtilMakeDir(path.Fullpath(), mode)) ThrowMsg(Path::OperationFailed, "Cannot make directory");
 }
 
 void MakeEmptyFile(const Path & path)
 {
+    path.RootGuard();
     std::string fp = path.Fullpath();
     FILE* fd = fopen(fp.c_str(), "wx");
     if(!fd)
     {
         struct stat st;
+        memset(&st, 0, sizeof(struct stat));
         if(lstat(fp.c_str(), &st) == 0)
         {
             ThrowMsg(Path::AlreadyExists, "File already exists");
@@ -295,38 +343,100 @@ void MakeEmptyFile(const Path & path)
 
 void Remove(const Path & path)
 {
+    path.RootGuard();
     if(!WrtUtilRemove(path.Fullpath())) ThrowMsg(Path::OperationFailed, "Cannot remove path");
+}
+
+bool TryRemove(const Path & path)
+{
+    path.RootGuard();
+    if(!WrtUtilRemove(path.Fullpath())) return false;
+    return true;
 }
 
 void Rename(const Path & from, const Path & to)
 {
+    from.RootGuard();
+    to.RootGuard();
     if(from == to)
     {
         return;
     }
-    int code = 0;
-    if( (code = rename(from.Fullpath().c_str(), to.Fullpath().c_str())) )
+    if(0 != rename(from.Fullpath().c_str(), to.Fullpath().c_str()))
     {
-        if(code == EXDEV)
+        if(errno == EXDEV)
         {
-            Try
+            if(from.IsDir())
             {
-                DPL::FileInput in(from.Fullpath());
-                DPL::FileOutput out(to.Fullpath());
-                DPL::Copy(&in, &out);
+                CopyDir(from, to);
+                Remove(from);
             }
-            Catch(DPL::FileInput::Exception::Base)
+            else if(from.IsFile() || from.IsSymlink())
             {
-                ThrowMsg(Path::OperationFailed, "Cannot open input file " << from.Fullpath());
+                CopyFile(from, to);
+                Remove(from);
             }
-            Catch(DPL::FileOutput::Exception::Base)
+            else
             {
-                ThrowMsg(Path::OperationFailed, "Cannot open output file " << to.Fullpath());
+                 ThrowMsg(Path::OperationFailed, DPL::GetErrnoString());
             }
         }
         else
         {
             ThrowMsg(Path::OperationFailed, DPL::GetErrnoString());
+        }
+    }
+}
+
+void CopyFile(const Path & from, const Path & to)
+{
+    from.RootGuard();
+    to.RootGuard();
+    Try
+    {
+        DPL::FileInput input(from.Fullpath());
+        DPL::FileOutput output(to.Fullpath());
+        DPL::Copy(&input, &output);
+    }
+    Catch(DPL::FileInput::Exception::Base)
+    {
+        LogError("File input error");
+        ReThrowMsg(DPL::CopyFailed, std::string("File input error") + from.Fullpath());
+    }
+    Catch(DPL::FileOutput::Exception::Base)
+    {
+        LogError("File output error");
+        ReThrowMsg(DPL::CopyFailed, std::string("File output error") + to.Fullpath());
+    }
+    Catch(DPL::CopyFailed)
+    {
+        LogError("File copy error");
+        ReThrowMsg(DPL::CopyFailed, std::string("File copy error") + from.Fullpath());
+    }
+}
+
+void CopyDir(const Path & from, const Path & to)
+{
+    from.RootGuard();
+    to.RootGuard();
+    if(from.isSubPath(to))
+    {
+        ThrowMsg(Path::CannotCopy, "Cannot copy content of directory to it's sub directory");
+    }
+    MakeDir(to);
+    FOREACH(item, from)
+    {
+        if(item->IsDir())
+        {
+            CopyDir(*item, to / item->Filename());
+        }
+        else if(item->IsFile() || item->IsSymlink())
+        {
+            CopyFile(*item, to / item->Filename());
+        }
+        else
+        {
+            Throw(Path::OperationFailed);
         }
     }
 }

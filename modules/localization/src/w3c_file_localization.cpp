@@ -141,6 +141,18 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 {
     DPL::String req = url;
 
+    DPL::String::size_type pos = req.find_first_of('#');
+    if(pos != DPL::String::npos)
+    {
+        req.resize(pos); //truncate fragment identifier
+    }
+
+    pos = req.find_first_of('?');
+    if(pos != DPL::String::npos)
+    {
+        req.resize(pos); //truncate query string
+    }
+
     if (req.find(WIDGET_URI_BEGIN) == 0) {
         req.erase(0, WIDGET_URI_BEGIN.length());
     } else if (req.find(FILE_URI_BEGIN) == 0) {

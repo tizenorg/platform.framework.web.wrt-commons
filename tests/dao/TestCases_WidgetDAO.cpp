@@ -215,10 +215,7 @@ RUNNER_TEST(widget_dao_test_register_widget_empty_strings)
     regInfo.configInfo.preferencesList.insert(pref);
 
     //widget feature
-    ConfigParserData::Feature feat(DPL::FromUTF8String(""), false);
-    ConfigParserData::Param par(DPL::FromUTF8String(("")));
-    par.value = DPL::FromUTF8String("");
-    feat.paramsList.insert(par);
+    ConfigParserData::Feature feat(DPL::FromUTF8String(""));
     regInfo.configInfo.featuresList.insert(feat);
 
     //win modes
@@ -525,10 +522,9 @@ RUNNER_TEST(widget_dao_test_register_widget_features)
 {
     WacSecurityMock sec;
     ConfigParserData::FeaturesList features;
-    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f1"), true));
+    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f1")));
     features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f2")));
-    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f3"),
-                                              false));
+    features.insert(ConfigParserData::Feature(DPL::FromUTF8String("f3")));
 
     WidgetRegisterInfo regInfo;
     FOREACH(it, features)

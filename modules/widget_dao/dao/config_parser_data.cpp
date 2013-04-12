@@ -203,104 +203,34 @@ void NormalizeAndTrimSpaceString(DPL::OptionalString& txt)
     NormalizeString(txt, true);
 }
 
-bool ConfigParserData::Param::operator==(const Param& other) const
-{
-    return name == other.name && value == other.value;
-}
-
-bool ConfigParserData::Param::operator!=(const Param& other) const
-{
-    return name != other.name || value != other.value;
-}
-
-bool ConfigParserData::Param::operator >(const Param& other) const
-{
-    if (name == other.name) {
-        return value > other.value;
-    } else {
-        return name > other.name;
-    }
-}
-
-bool ConfigParserData::Param::operator>=(const Param& other) const
-{
-    if (name >= other.name) {
-        return true;
-    } else {
-        return value >= other.value;
-    }
-}
-
-bool ConfigParserData::Param::operator <(const Param& other) const
-{
-    if (name == other.name) {
-        return value < other.value;
-    } else {
-        return name < other.name;
-    }
-}
-
-bool ConfigParserData::Param::operator<=(const Param& other) const
-{
-    if (name <= other.name) {
-        return true;
-    } else {
-        return value <= other.value;
-    }
-}
-
 bool ConfigParserData::Feature::operator==(const Feature& other) const
 {
-    return name == other.name && paramsList == other.paramsList;
+    return name == other.name;
 }
 
 bool ConfigParserData::Feature::operator!=(const Feature& other) const
 {
-    return name != other.name || paramsList != other.paramsList;
+    return name != other.name;
 }
 
 bool ConfigParserData::Feature::operator >(const Feature& other) const
 {
-    if (name > other.name) {
-        return true;
-    }
-    if (name < other.name) {
-        return false;
-    }
-    return paramsList > other.paramsList;
+    return name > other.name;
 }
 
 bool ConfigParserData::Feature::operator>=(const Feature& other) const
 {
-    if (name > other.name) {
-        return true;
-    }
-    if (name < other.name) {
-        return false;
-    }
-    return paramsList >= other.paramsList;
+    return name >= other.name;
 }
 
 bool ConfigParserData::Feature::operator <(const Feature& other) const
 {
-    if (name < other.name) {
-        return true;
-    }
-    if (name > other.name) {
-        return false;
-    }
-    return paramsList < other.paramsList;
+    return name < other.name;
 }
 
 bool ConfigParserData::Feature::operator<=(const Feature& other) const
 {
-    if (name < other.name) {
-        return true;
-    }
-    if (name > other.name) {
-        return false;
-    }
-    return paramsList <= other.paramsList;
+    return name <= other.name;
 }
 
 bool ConfigParserData::Privilege::operator==(const Privilege& other) const
@@ -457,10 +387,28 @@ bool ConfigParserData::ServiceInfo::operator== (const ServiceInfo& info) const
 
 bool ConfigParserData::ServiceInfo::operator!= (const ServiceInfo& info) const
 {
-    return m_src != info.m_src &&
-           m_operation != info.m_operation &&
-           m_scheme != info.m_scheme &&
-           m_mime != info.m_mime &&
+    return m_src != info.m_src ||
+           m_operation != info.m_operation ||
+           m_scheme != info.m_scheme ||
+           m_mime != info.m_mime ||
+           m_disposition != info.m_disposition;
+}
+
+bool ConfigParserData::AppControlInfo::operator== (const AppControlInfo& info) const
+{
+    return m_src == info.m_src &&
+           m_operation == info.m_operation &&
+           m_uriList == info.m_uriList &&
+           m_mimeList == info.m_mimeList &&
+           m_disposition == info.m_disposition;
+}
+
+bool ConfigParserData::AppControlInfo::operator!= (const AppControlInfo& info) const
+{
+    return m_src != info.m_src ||
+           m_operation != info.m_operation ||
+           m_uriList != info.m_uriList ||
+           m_mimeList != info.m_mimeList ||
            m_disposition != info.m_disposition;
 }
 

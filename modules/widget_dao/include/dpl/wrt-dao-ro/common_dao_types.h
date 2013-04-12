@@ -162,24 +162,6 @@ typedef std::list<DPL::String> PrivilegeList;
 typedef std::set<EncryptedFileInfo> EncryptedFileList;
 
 /**
- * @brief Widget configuration parameter key
- */
-typedef DPL::String WidgetParamKey;
-
-/**
- * @brief Widget configuration parameter value
- */
-typedef DPL::String WidgetParamValue;
-
-/**
- * @brief A map of widget configuration parameters.
- *
- * Widget configuration parameters are read from database and are stored
- * along with feature that they describe.
- */
-typedef std::multimap<WidgetParamKey, WidgetParamValue> WidgetParamMap;
-
-/**
  * @brief Widget feature host information about possible javascript extensions
  *        that widget may use
  *
@@ -201,13 +183,10 @@ typedef int DbPluginHandle;
 struct DbWidgetFeature
 {
     DPL::String name;        /// Feature name
-    bool required;           /// Whether feature is required
     bool rejected;           /// Api feature was rejected by ace
     DbPluginHandle pluginId; /// Plugin id that implement this feature
-    WidgetParamMap params;   /// Widget's params
 
     DbWidgetFeature() :
-        required(false),
         pluginId(INVALID_PLUGIN_HANDLE)
     {}
 };
@@ -222,7 +201,6 @@ inline bool operator==(const DbWidgetFeature &featureA,
                        const DbWidgetFeature &featureB)
 {
     return featureA.name == featureB.name &&
-           featureA.required == featureB.required &&
            featureA.pluginId == featureB.pluginId;
 }
 
@@ -390,6 +368,7 @@ struct WidgetApplicationService
     DPL::String scheme;    /* scheme type*/
     DPL::String mime;      /* mime type */
     Disposition disposition;
+    unsigned index;
 
     bool operator== (const WidgetApplicationService& other) const
     {

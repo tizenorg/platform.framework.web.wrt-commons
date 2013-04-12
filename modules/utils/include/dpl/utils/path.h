@@ -48,17 +48,29 @@ namespace Utils {
  *
  * Class for expressing paths not limited not existing ones.
  * It's possible to check if path exists, remove it or iterate it if it's directory
+ *
+ * Created Path object allways contains absolute path, never relative path.
+ * Simplifies common usage cases:
+ * - path construction (with /= and / operators)
+ * - directory iterator (begin(), end(), iterator construction)
+ * - receiving filenames and directory names of given paths
+ * - checking what is pointed by path (Exists(), IsFile(), IsDir())
+ *
+             * Check tests for details of usage.
  */
 class Path
 {
 public:
     DECLARE_EXCEPTION_TYPE(DPL::Exception, BaseException)
-    DECLARE_EXCEPTION_TYPE(BaseException, AlreadyExists)
-    DECLARE_EXCEPTION_TYPE(BaseException, NotExists)
-    DECLARE_EXCEPTION_TYPE(BaseException, NotDirectory)
-    DECLARE_EXCEPTION_TYPE(BaseException, OperationFailed)
-    DECLARE_EXCEPTION_TYPE(BaseException, EmptyPath)
-    DECLARE_EXCEPTION_TYPE(BaseException, InternalError)
+    DECLARE_EXCEPTION_TYPE(BaseException, AlreadyExists)            //path already exists
+    DECLARE_EXCEPTION_TYPE(BaseException, NotPrefix)                //given path is not prefix of this path
+    DECLARE_EXCEPTION_TYPE(BaseException, NotExists)                //file not exists
+    DECLARE_EXCEPTION_TYPE(BaseException, NotDirectory)             //directory nto exists
+    DECLARE_EXCEPTION_TYPE(BaseException, OperationFailed)          //operation failed due to system error(permission etc..)
+    DECLARE_EXCEPTION_TYPE(BaseException, EmptyPath)                //object cannot be constructed with empty path
+    DECLARE_EXCEPTION_TYPE(BaseException, InternalError)            //internal error / wrong path usage
+    DECLARE_EXCEPTION_TYPE(BaseException, CannotCopy)               //cannot make copy
+    DECLARE_EXCEPTION_TYPE(BaseException, RootDirectoryError)       //operation cannot be done with root diretory
 
     class Iterator : public std::iterator<std::input_iterator_tag, Path>
     {
@@ -82,7 +94,13 @@ public:
     explicit Path(const DPL::String & str);
     explicit Path(const std::string & str);
     explicit Path(const char * str);
+    Path();
 
+    /**
+     * @brief DirectoryPath shell's dirname equivalent as path
+     * @return directory path
+     */
+    Path DirectoryPath() const;
     /**
      * @brief DirectoryName shell's dirname equivalent
      * @return directory name of given path
@@ -92,7 +110,7 @@ public:
      * @brief Basename shell's basename equivalent
      * @return base name of given path
      */
-    std::string Basename() const;
+    std::string Filename() const;
     /**
      * @brief Fullpath fullpath based on current working diretory
      * @return full path
@@ -103,6 +121,15 @@ public:
     bool IsDir() const;
     bool IsFile() const;
     bool IsSymlink() const;
+    std::size_t Size() const;
+    /**
+     * @brief isSubPath Returns relative path to given base
+     * @param prefix base path
+     * @return reltive path
+     *
+     * @throws If prefix does not match to this path object
+     */
+    bool isSubPath(const Path & other) const;
 
     bool operator==(const Path & other) const;
     bool operator!=(const Path & other) const;
@@ -120,8 +147,10 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
+    //root error - throws error on root directory
+    void RootGuard() const;
+
 private:
-    Path();
 
     void Append(const std::string& part);
     void Construct(const std::string & src);
@@ -151,6 +180,12 @@ void MakeEmptyFile(const Path & path);
 void Remove(const Path & path);
 
 /**
+ * @brief TryRemove tries to remvoe path
+ * @param path returns status of removal
+ */
+bool TryRemove(const Path & path);
+
+/**
  * @brief Rename renames(moves) current path
  *
  * If you uses this method string to path is internally change
@@ -166,6 +201,22 @@ void Rename(const Path & from, const Path & to);
  * @return true if path exists
  */
 bool Exists(const Path & path);
+
+/**
+ * @brief Copy file
+ *
+ * @param from source path
+ * @param to target path
+ */
+void CopyFile(const Path & from, const Path & to);
+
+/**
+ * @brief Copy directory recursively
+ *
+ * @param from source directory path
+ * @param to target directory path
+ */
+void CopyDir(const Path & from, const Path & to);
 
 }
 

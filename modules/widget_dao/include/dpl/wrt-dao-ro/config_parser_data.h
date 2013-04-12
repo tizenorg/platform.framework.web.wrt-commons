@@ -41,30 +41,11 @@ class WidgetConfigurationManager;
 class ConfigParserData
 {
   public:
-    struct Param
-    {
-        Param(const DPL::String& _name) : name(_name)
-        {}
-        DPL::String name;
-        DPL::String value;
-        bool operator==(const Param&) const;
-        bool operator!=(const Param&) const;
-        bool operator >(const Param&) const;
-        bool operator>=(const Param&) const;
-        bool operator <(const Param&) const;
-        bool operator<=(const Param&) const;
-    };
-    typedef std::set<Param> ParamsList;
-
     struct Feature
     {
-        Feature(const DPL::String& _name,
-                bool _required = true) : name(_name),
-            required(_required)
+        Feature(const DPL::String& _name) : name(_name)
         {}
         DPL::String name;
-        bool required;
-        ParamsList paramsList;
 
         bool operator==(const Feature&) const;
         bool operator!=(const Feature&) const;
@@ -195,13 +176,15 @@ class ConfigParserData
             m_operation(operation),
             m_scheme(scheme),
             m_mime(mime),
-            m_disposition(dispos)
+            m_disposition(dispos),
+            m_index(0)
         {}
         DPL::String m_src;
         DPL::String m_operation;
         DPL::String m_scheme;
         DPL::String m_mime;
         Disposition m_disposition;
+        unsigned m_index;
 
         bool operator==(const ServiceInfo&) const;
         bool operator!=(const ServiceInfo&) const;
@@ -209,14 +192,20 @@ class ConfigParserData
 
     struct AppControlInfo
     {
-        AppControlInfo(
-            const DPL::String& operation) :
-            m_operation(operation)
+        enum class Disposition {
+            WINDOW = 0,
+            INLINE
+        };
+        AppControlInfo(const DPL::String& operation) :
+            m_operation(operation),
+            m_index(0)
         {}
         DPL::String m_src;
         DPL::String m_operation;
         std::set <DPL::String> m_uriList;
         std::set <DPL::String> m_mimeList;
+        Disposition m_disposition;
+        unsigned m_index;
 
         bool operator==(const AppControlInfo&) const;
         bool operator!=(const AppControlInfo&) const;
@@ -264,7 +253,7 @@ class ConfigParserData
     enum IconSectionType
     {
         DefaultIcon =0,
-        SmallIcon,
+        SmallIcon
     };
 
     typedef std::set<std::pair<IconSectionType, DPL::String>> IconSet;
