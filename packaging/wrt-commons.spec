@@ -23,8 +23,8 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  libcryptsvc-devel
-BuildRequires:  dukgenerator-devel
+BuildRequires:  pkgconfig(cryptsvc)
+BuildRequires:  pkgconfig(dukgenerator)
 Requires: libcryptsvc
 
 %description
