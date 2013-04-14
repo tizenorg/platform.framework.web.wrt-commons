@@ -36,8 +36,6 @@ function create_db {
     fi
     rm -f $dbpath.$name.db-journal
 
-    SQL="PRAGMA journal_mode = PERSIST;"
-    sqlite3 $dbpath.$name.db "$SQL"
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
     sqlite3 $dbpath.$name.db "$SQL"
     touch $dbpath.$name.db-journal

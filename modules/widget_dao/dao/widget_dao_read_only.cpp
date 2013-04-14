@@ -55,10 +55,9 @@ namespace WrtDB {
                    message);                                    \
     }
 
-#define CHECK_WIDGET_EXISTENCE(macro_transaction, macro_handle)          \
+#define CHECK_WIDGET_EXISTENCE(macro_handle)          \
     if (!WidgetDAOReadOnly::isWidgetInstalled(macro_handle))             \
     {                                                                    \
-        macro_transaction.Commit();                                      \
         LogWarning("Cannot find widget. Handle: " << macro_handle);      \
         ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,           \
                  "Cannot find widget. Handle: " << macro_handle);        \
@@ -310,8 +309,7 @@ const
     LogDebug("Getting Localized Info. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
+        CHECK_WIDGET_EXISTENCE(m_widgetHandle)
 
         WRT_DB_SELECT(select, LocalizedWidgetInfo, &WrtDatabase::interface())
         select->Where(
@@ -326,7 +324,6 @@ const
         result.license = info.Get_widget_license();
         result.licenseHref = info.Get_widget_license_href();
 
-        transaction.Commit();
         return result;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get localized info")
@@ -337,8 +334,7 @@ DbWidgetFeatureSet WidgetDAOReadOnly::getFeaturesList() const
     LogDebug("Getting FeaturesList. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
+        CHECK_WIDGET_EXISTENCE(m_widgetHandle)
 
         WRT_DB_SELECT(select, WidgetFeature, &WrtDatabase::interface())
         select->Where(Equals<WidgetFeature::app_id>(m_widgetHandle));
@@ -355,7 +351,6 @@ DbWidgetFeatureSet WidgetDAOReadOnly::getFeaturesList() const
             feature.pluginId = featureDao.GetPluginHandle();
             resultSet.insert(feature);
         }
-        transaction.Commit();
         return resultSet;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get features list")
@@ -368,8 +363,7 @@ bool WidgetDAOReadOnly::hasFeature(const std::string& featureName) const
         m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
+        CHECK_WIDGET_EXISTENCE(m_widgetHandle)
 
         WRT_DB_SELECT(select, wrt::WidgetFeature, &WrtDatabase::interface())
         select->Where(And(Equals<wrt::WidgetFeature::app_id>(m_widgetHandle),
@@ -377,7 +371,6 @@ bool WidgetDAOReadOnly::hasFeature(const std::string& featureName) const
                               DPL::FromUTF8String(featureName))));
 
         wrt::WidgetFeature::Select::RowList rows = select->GetRowList();
-        transaction.Commit();
         return !rows.empty();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to check for feature")
@@ -388,8 +381,7 @@ HostList WidgetDAOReadOnly::getAccessHostList() const
     LogDebug("Getting AccessHostList. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
+        CHECK_WIDGET_EXISTENCE(m_widgetHandle)
 
         WRT_DB_SELECT(select, WidgetAccessHost, &WrtDatabase::interface())
         select->Where(Equals<WidgetAccessHost::app_id>(m_widgetHandle));
@@ -399,7 +391,6 @@ HostList WidgetDAOReadOnly::getAccessHostList() const
         FOREACH(it, values)
         ret.push_back(DPL::ToUTF8String(*it));
 
-        transaction.Commit();
         return ret;
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get access host list")
@@ -506,47 +497,68 @@ ExternalLocationList WidgetDAOReadOnly::getWidgetExternalLocations() const
 CertificateChainList WidgetDAOReadOnly::getWidgetCertificate(
     CertificateSource source) const
 {
-    WRT_DB_SELECT(select, WidgetCertificate, &WrtDatabase::interface())
-    select->Where(
-        And(
+    CertificateChainList result;
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+
+		WRT_DB_SELECT(select, WidgetCertificate, &WrtDatabase::interface())
+		select->Where(
+			And(
             Equals<WidgetCertificate::app_id>(m_widgetHandle),
             Equals<WidgetCertificate::cert_source>(source)));
 
     std::list<WidgetCertificate::Row> chainList = select->GetRowList();
 
-    CertificateChainList result;
 
     FOREACH(iter, chainList)
     result.push_back(DPL::ToUTF8String(iter->Get_encoded_chain()));
+   }
+   SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to getWidgetCertificate")
+
     return result;
 }
 
 DbWidgetSize WidgetDAOReadOnly::getPreferredSize() const
 {
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+        DbWidgetSize size;
+	SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {   WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
 
-    DbWidgetSize size;
     size.width = row.Get_widget_width();
     size.height = row.Get_widget_height();
 
     LogDebug("Return size wxh = " <<
              (!!size.width ? *size.width : -1) << " x " <<
              (!!size.height ? *size.height : -1));
+   }
+   SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to getPreferredSize")
 
     return size;
 }
 
 WidgetType WidgetDAOReadOnly::getWidgetType() const
 {
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    DPL::OptionalInt result = row.Get_widget_type();
+	DPL::OptionalInt result;
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+		WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    	result = row.Get_widget_type();
+	
+	} SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to getWidgetType")
+
     return WidgetType(static_cast<AppType>(*result));
 }
 
 WidgetGUID WidgetDAOReadOnly::getGUID() const
 {
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    return row.Get_widget_id();
+	WidgetInfoRow row;
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+		row = getWidgetInfoRow(m_widgetHandle);
+    
+    } SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to getGUID")
+	return row.Get_widget_id();
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getTizenAppId() const
@@ -1102,8 +1114,7 @@ void WidgetDAOReadOnly::getAppControlList(
     LogDebug("Getting getAppControlList. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
+        CHECK_WIDGET_EXISTENCE(m_widgetHandle)
 
         WRT_DB_SELECT(select, AppControlInfo, &WrtDatabase::interface())
         select->Where(Equals<AppControlInfo::app_id>(m_widgetHandle));
@@ -1126,7 +1137,6 @@ void WidgetDAOReadOnly::getAppControlList(
             outAppControlList.push_back(ret);
         }
 
-        transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get AppControl list")
 }
