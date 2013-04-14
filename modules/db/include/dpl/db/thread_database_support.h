@@ -253,7 +253,7 @@ class ThreadDatabaseSupport :
             LogPedantic("Transaction is initialized");
 
             TransactionCancel() = false;
-            (*Connection())->ExecCommand("BEGIN;");
+            (*Connection())->ExecCommand("BEGIN IMMEDIATE;");
         }
     }
 
