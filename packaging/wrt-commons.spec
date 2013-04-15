@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.108
+#git:framework/web/wrt-commons wrt-commons 0.2.109
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.108
+Version:    0.2.109
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -23,8 +23,8 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  libcryptsvc-devel
-BuildRequires:  dukgenerator-devel
+BuildRequires:  pkgconfig(cryptsvc)
+BuildRequires:  pkgconfig(dukgenerator)
 Requires: libcryptsvc
 
 %description
@@ -123,8 +123,6 @@ fi
 # Set Smack label for db files
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
-chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db
-chsmack -a 'wrt-commons::db_wrt_autosave' /opt/dbspace/.wrt_autosave.db-journal
 chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db
 chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db-journal
 

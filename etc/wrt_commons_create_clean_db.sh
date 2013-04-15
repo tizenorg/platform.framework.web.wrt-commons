@@ -14,7 +14,7 @@
 #    limitations under the License.
 #
 
-for name in wrt wrt_autosave wrt_custom_handler
+for name in wrt wrt_custom_handler
 do
     # extract smack label before removal
     DB_LABEL=""
