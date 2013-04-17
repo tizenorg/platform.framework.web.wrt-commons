@@ -14,47 +14,59 @@
 #    limitations under the License.
 #
 
-for name in wrt wrt_custom_handler
-do
+DB_PATH=/opt/dbspace/
+DB_USER_PATH=/opt/usr/dbspace/
+
+function create_db {
+    name=$1
+    dbpath=$2
     # extract smack label before removal
     DB_LABEL=""
-    if [ -f /opt/dbspace/.$name.db ]
+    if [ -f $dbpath.$name.db ]
     then
-        DB_LABEL=`chsmack /opt/dbspace/.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+        DB_LABEL=`chsmack $dbpath.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
     fi
-    rm -f /opt/dbspace/.$name.db
+    rm -f $dbpath.$name.db
 
     # extract smack label before removal
     JOURNAL_LABEL=""
-    if [ -f /opt/dbspace/.$name.db-journal ]
+    if [ -f $dbpath.$name.db-journal ]
     then
-        JOURNAL_LABEL=`chsmack /opt/dbspace/.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+        JOURNAL_LABEL=`chsmack $dbpath.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
     fi
-    rm -f /opt/dbspace/.$name.db-journal
+    rm -f $dbpath.$name.db-journal
 
     SQL="PRAGMA journal_mode = PERSIST;"
-    sqlite3 /opt/dbspace/.$name.db "$SQL"
+    sqlite3 $dbpath.$name.db "$SQL"
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
-    sqlite3 /opt/dbspace/.$name.db "$SQL"
-    touch /opt/dbspace/.$name.db-journal
-    chown 0:6026 /opt/dbspace/.$name.db
-    chown 0:6026 /opt/dbspace/.$name.db-journal
-    chmod 660 /opt/dbspace/.$name.db
-    chmod 660 /opt/dbspace/.$name.db-journal
+    sqlite3 $dbpath.$name.db "$SQL"
+    touch $dbpath.$name.db-journal
+    chown 0:6026 $dbpath.$name.db
+    chown 0:6026 $dbpath.$name.db-journal
+    chmod 660 $dbpath.$name.db
+    chmod 660 $dbpath.$name.db-journal
 
     pkill -9 security-serv
 
     # restore smack label
     if [ -n "$DB_LABEL" ]
     then
-        chsmack -a $DB_LABEL /opt/dbspace/.$name.db
+        chsmack -a $DB_LABEL $dbpath.$name.db
     fi
 
     # restore smack label
     if [ -n "$JOURNAL_LABEL" ]
     then
-        chsmack -a $JOURNAL_LABEL /opt/dbspace/.$name.db-journal
+        chsmack -a $JOURNAL_LABEL $dbpath.$name.db-journal
     fi
+}
+
+for name in wrt
+do
+    create_db $name $DB_PATH
 done
 
-
+for name in wrt_custom_handler
+do
+    create_db $name $DB_USER_PATH
+done
