@@ -111,8 +111,6 @@ void WarpIRI::set(const char *p_iri,
         }
     }
 
-    DPL::String str = DPL::FromASCIIString(std::string(iri->host));
-
     std::string utf8host = iri->host;
     std::list<std::string> hostTokenList;
     DPL::Tokenize(utf8host, ".", std::front_inserter(hostTokenList));
