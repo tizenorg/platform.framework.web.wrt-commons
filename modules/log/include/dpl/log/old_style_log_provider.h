@@ -36,6 +36,7 @@ class OldStyleLogProvider :
     bool m_showWarning;
     bool m_showError;
     bool m_showPedantic;
+    bool m_printStdErr;
 
     static std::string FormatMessage(const char *message,
                                      const char *filename,
@@ -48,6 +49,12 @@ class OldStyleLogProvider :
                         bool showWarning,
                         bool showError,
                         bool showPedantic);
+    OldStyleLogProvider(bool showDebug,
+                        bool showInfo,
+                        bool showWarning,
+                        bool showError,
+                        bool showPedantic,
+                        bool printStdErr);
     virtual ~OldStyleLogProvider() {}
 
     virtual void Debug(const char *message,
