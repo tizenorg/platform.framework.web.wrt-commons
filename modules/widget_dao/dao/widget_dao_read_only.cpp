@@ -156,7 +156,7 @@ TizenAppId getTizenAppIdByPkgId(const TizenPkgId tzPkgid)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
 
-WidgetPkgName getTizenPkgIdByHandle(const DbWidgetHandle handle)
+TizenPkgId getTizenPkgIdByHandle(const DbWidgetHandle handle)
 {
     LogDebug("Getting TizenPkgId by DbWidgetHandle: " << handle);
 
@@ -170,7 +170,7 @@ WidgetPkgName getTizenPkgIdByHandle(const DbWidgetHandle handle)
             ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
                      "Failed to get widget by handle");
         }
-        WidgetPkgName tzPkgid = rowList.front().Get_tizen_pkgid();
+        TizenPkgId tzPkgid = rowList.front().Get_tizen_pkgid();
 
         return tzPkgid;
     }
@@ -189,7 +189,7 @@ WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::OptionalString widgetGUID) :
     m_widgetHandle(WidgetDAOReadOnly::getHandle(widgetGUID))
 {}
 
-WidgetDAOReadOnly::WidgetDAOReadOnly(DPL::String tzAppid) :
+WidgetDAOReadOnly::WidgetDAOReadOnly(TizenAppId tzAppid) :
     m_widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid))
 {}
 
@@ -239,21 +239,6 @@ DbWidgetHandle WidgetDAOReadOnly::getHandle(const DPL::String tzAppId)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
 
-WidgetPkgName WidgetDAOReadOnly::getPkgName() const
-{
-    return getTizenPkgIdByHandle(m_widgetHandle);
-}
-
-WidgetPkgName WidgetDAOReadOnly::getPkgName(const WidgetGUID GUID)
-{
-    return getTizenPkgIdByHandle(getHandle(GUID));
-}
-
-WidgetPkgName WidgetDAOReadOnly::getPkgName(const DbWidgetHandle handle)
-{
-    return getTizenPkgIdByHandle(handle);
-}
-
 TizenAppId WidgetDAOReadOnly::getTzAppId() const
 {
     return getTizenAppIdByHandle(m_widgetHandle);
@@ -272,6 +257,11 @@ TizenAppId WidgetDAOReadOnly::getTzAppId(const DbWidgetHandle handle)
 TizenAppId WidgetDAOReadOnly::getTzAppId(const TizenPkgId tzPkgid)
 {
     return getTizenAppIdByPkgId(tzPkgid);
+}
+
+TizenPkgId WidgetDAOReadOnly::getTzPkgId() const
+{
+    return getTizenPkgIdByHandle(m_widgetHandle);
 }
 
 PropertyDAOReadOnly::WidgetPropertyKeyList
@@ -431,17 +421,6 @@ DbWidgetHandleList WidgetDAOReadOnly::getHandleList()
         return select->GetValueList<WidgetInfo::app_id>();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get handle list")
-}
-
-WidgetPkgNameList WidgetDAOReadOnly::getPkgnameList()
-{
-    LogDebug("Getting Pkgname List ");
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
-        return select->GetValueList<WidgetInfo::tizen_appid>();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
 }
 
 TizenAppIdList WidgetDAOReadOnly::getTizenAppidList()

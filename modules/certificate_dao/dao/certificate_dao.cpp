@@ -32,7 +32,7 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 #include <sys/stat.h>
 #include <fstream>
-/* GCC versions 4.7 had changes to the C++ standard. It 
+/* GCC versions 4.7 had changes to the C++ standard. It
  * no longer includes <unistd.h> to remove namespace pollution.
  */
 #include <unistd.h>
@@ -63,7 +63,7 @@ const char* const CERTIFICATE_DATABASE_JOURNAL_FILENAME = "-journal";
 const int WEB_APPLICATION_UID = 5000;
 const int WEB_APPLICATION_GUID = 5000;
 
-std::string createDatabasePath(const WrtDB::WidgetPkgName &pkgName)
+std::string createDatabasePath(const WrtDB::TizenPkgId &pkgName)
 {
     std::stringstream filename;
 
@@ -71,24 +71,6 @@ std::string createDatabasePath(const WrtDB::WidgetPkgName &pkgName)
              << "/"
              << CERTIFICATE_DB_NAME;
     return filename.str();
-}
-
-std::string createDatabasePath(int widgetHandle)
-{
-    using namespace DPL::DB::ORM;
-    using namespace WrtDB::WidgetConfig;
-    using namespace WrtDB::GlobalConfig;
-
-    WrtDB::TizenAppId appid;
-
-    Try
-    {
-        appid = WrtDB::WidgetDAOReadOnly::getTzAppId(widgetHandle);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base) {
-        LogError("Failed to get database Path");
-    }
-    return createDatabasePath(appid);
 }
 
 void checkDatabase(std::string databasePath)
@@ -144,7 +126,7 @@ void checkDatabase(std::string databasePath)
 }
 }
 
-CertificateDAO::CertificateDAO(const WrtDB::WidgetPkgName &pkgName) :
+CertificateDAO::CertificateDAO(const WrtDB::TizenPkgId &pkgName) :
     m_certificateDBPath(createDatabasePath(pkgName)),
     m_certificateDBInterface(m_certificateDBPath, CERTIFICATE_DB_TYPE)
 {

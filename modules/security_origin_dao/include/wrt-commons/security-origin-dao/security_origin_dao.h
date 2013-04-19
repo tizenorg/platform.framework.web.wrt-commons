@@ -39,8 +39,7 @@ class SecurityOriginDAO
         DECLARE_EXCEPTION_TYPE(Base, DataNotExist)
     };
 
-    explicit SecurityOriginDAO(int handle) __attribute__((deprecated));
-    explicit SecurityOriginDAO(const WrtDB::WidgetPkgName &pkgName);
+    explicit SecurityOriginDAO(const WrtDB::TizenPkgId &pkgName);
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
     Result getResult(const SecurityOriginData &securityOriginData);

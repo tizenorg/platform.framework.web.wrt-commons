@@ -295,7 +295,7 @@ class WidgetDAOReadOnly
      */
     WidgetDAOReadOnly(DbWidgetHandle widgetHandle);
     WidgetDAOReadOnly(DPL::OptionalString widgetGUID);
-    WidgetDAOReadOnly(DPL::String tzAppid);
+    WidgetDAOReadOnly(WrtDB::TizenAppId tzAppid);
 
     /**
      * Destructor
@@ -329,17 +329,15 @@ class WidgetDAOReadOnly
     static TizenAppId getTzAppId(const TizenPkgId tzPkgid);
 
     /**
-     * Returns WidgetPkgName for the specified widget
+     * Returns TizenPkgId for the specified widget
      *
-     * @return pkgName;
+     * @return TizenPkgId;
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      * @exception WRT_CONF_ERR_EMDB_NO_RECORD - Can not find matching records in
      * DB table.
      */
 
-    WidgetPkgName getPkgName() const;
-    static WidgetPkgName getPkgName(const WidgetGUID GUID);
-    static WidgetPkgName getPkgName(const DbWidgetHandle handle);
+    TizenPkgId getTzPkgId() const;
 
     /**
      * This method returns the root directory of widget resource.
@@ -597,11 +595,10 @@ class WidgetDAOReadOnly
     static DbWidgetHandleList getHandleList();
 
     /**
-     * This method returns list of pkgname of installed packages
-     * @return list of pkgname of installed packages
+     * This method returns list of tizen application list of installed packages
+     * @return list of TizenAppIdList of installed packages
      */
     static TizenAppIdList getTizenAppidList();
-    static WidgetPkgNameList getPkgnameList();
 
     /**
      * This method returns a list of all the installed widgets.

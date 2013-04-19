@@ -127,11 +127,11 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-    const WrtDB::WidgetPkgName &pkgname,
+    const WrtDB::TizenAppId &tzAppId,
     const DPL::String &url)
 {
     return getFilePathInWidgetPackageFromUrl(
-               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)),
                url);
 }
 
@@ -197,11 +197,11 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
 }
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-    const WrtDB::WidgetPkgName &pkgname,
+    const WrtDB::TizenAppId &tzAppId,
     const DPL::String& file)
 {
     return getFilePathInWidgetPackage(
-               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)),
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)),
                file);
 }
 
@@ -212,9 +212,9 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
     return GetFilePathInWidgetPackageInternal(dao->getPath(), file);
 }
 
-DPL::OptionalString getStartFile(const WrtDB::WidgetPkgName & pkgname)
+DPL::OptionalString getStartFile(const WrtDB::TizenAppId & tzAppId)
 {
-    return getStartFile(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+    return getStartFile(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)));
 }
 
 DPL::OptionalString getStartFile(const WrtDB::DbWidgetHandle handle)
@@ -253,9 +253,9 @@ DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao)
     return DPL::OptionalString::Null;
 }
 
-OptionalWidgetIcon getIcon(const WrtDB::WidgetPkgName & pkgname)
+OptionalWidgetIcon getIcon(const WrtDB::TizenAppId & tzAppId)
 {
-    return getIcon(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+    return getIcon(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)));
 }
 
 OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle)
@@ -304,10 +304,10 @@ WidgetIconList getValidIconsList(WrtDB::DbWidgetHandle widgetHandle)
                WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(widgetHandle)));
 }
 
-WidgetIconList getValidIconsList(const WrtDB::WidgetPkgName &pkgname)
+WidgetIconList getValidIconsList(const WrtDB::TizenAppId &tzAppId)
 {
     return getValidIconsList(
-               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)));
 }
 
 WidgetIconList getValidIconsList(WrtDB::WidgetDAOReadOnlyPtr dao)
@@ -339,10 +339,10 @@ OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::DbWidgetHandle widgetHandle)
 }
 
 OptionalWidgetStartFileInfo getStartFileInfo(
-    const WrtDB::WidgetPkgName &pkgname)
+    const WrtDB::TizenAppId &tzAppId)
 {
     return getStartFileInfo(
-               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+               WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)));
 }
 
 OptionalWidgetStartFileInfo getStartFileInfo(WrtDB::WidgetDAOReadOnlyPtr dao)
@@ -389,9 +389,9 @@ WidgetLocalizedInfo getLocalizedInfo(const WrtDB::DbWidgetHandle handle)
     return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(handle)));
 }
 
-WidgetLocalizedInfo getLocalizedInfo(const WrtDB::WidgetPkgName & pkgname)
+WidgetLocalizedInfo getLocalizedInfo(const WrtDB::TizenAppId & tzAppId)
 {
-    return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(pkgname)));
+    return getLocalizedInfo(WidgetDAOReadOnlyPtr(new WidgetDAOReadOnly(tzAppId)));
 }
 
 WidgetLocalizedInfo getLocalizedInfo(WidgetDAOReadOnlyPtr dao)

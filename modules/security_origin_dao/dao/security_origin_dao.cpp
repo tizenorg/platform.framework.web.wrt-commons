@@ -61,7 +61,7 @@ const char* const SECURITY_DATABASE_JOURNAL_FILENAME = "-journal";
 const int WEB_APPLICATION_UID = 5000;
 const int WEB_APPLICATION_GUID = 5000;
 
-std::string createDatabasePath(const WrtDB::WidgetPkgName &pkgName)
+std::string createDatabasePath(const WrtDB::TizenPkgId &pkgName)
 {
     std::stringstream filename;
 
@@ -69,24 +69,6 @@ std::string createDatabasePath(const WrtDB::WidgetPkgName &pkgName)
              << "/"
              << SECURITY_ORIGIN_DB_NAME;
     return filename.str();
-}
-
-std::string createDatabasePath(int widgetHandle)
-{
-    using namespace DPL::DB::ORM;
-    using namespace WrtDB::WidgetConfig;
-    using namespace WrtDB::GlobalConfig;
-
-    WrtDB::TizenAppId appid;
-
-    Try
-    {
-        appid = WrtDB::WidgetDAOReadOnly::getTzAppId(widgetHandle);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base) {
-        LogError("Failed to get database Path");
-    }
-    return createDatabasePath(appid);
 }
 
 void checkDatabase(std::string databasePath)
@@ -142,15 +124,7 @@ void checkDatabase(std::string databasePath)
 }
 }
 
-SecurityOriginDAO::SecurityOriginDAO(int handle) :
-    m_securityOriginDBPath(createDatabasePath(handle)),
-    m_securityOriginDBInterface(m_securityOriginDBPath, SECURITY_ORIGIN_DB_TYPE)
-{
-    checkDatabase(m_securityOriginDBPath);
-    m_securityOriginDBInterface.AttachToThread(SECURITY_ORIGIN_DB_OPTION);
-}
-
-SecurityOriginDAO::SecurityOriginDAO(const WrtDB::WidgetPkgName &pkgName) :
+SecurityOriginDAO::SecurityOriginDAO(const WrtDB::TizenPkgId &pkgName) :
     m_securityOriginDBPath(createDatabasePath(pkgName)),
     m_securityOriginDBInterface(m_securityOriginDBPath, SECURITY_ORIGIN_DB_TYPE)
 {
