@@ -81,7 +81,6 @@ class PluginObjectsDAO
 typedef int DbWidgetHandle;
 typedef DPL::String TizenPkgId;
 typedef DPL::String TizenAppId;
-typedef DPL::String WidgetPkgName;
 
 /**
  * Value of invalid widget handle
@@ -213,13 +212,7 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  * @brief Default container with DbWidgetHandle's
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
-
-typedef std::list<WidgetPkgName> WidgetPkgNameList; //TODO: this cannot be null
-                                                    // -> appropriate changes in
-                                                    // db schema needed
-typedef std::list<TizenAppId> TizenAppIdList; //TODO: this cannot be null ->
-                                              // appropriate changes in db
-                                              // schema needed
+typedef std::list<TizenAppId> TizenAppIdList;
 
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;

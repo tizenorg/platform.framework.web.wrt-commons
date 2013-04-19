@@ -39,7 +39,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
     WrtDB::DbWidgetHandle widgetHandle,
     const DPL::String &url);
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
-    const WrtDB::WidgetPkgName &pkgname,
+    const WrtDB::TizenAppId &tzAppId,
     const DPL::String &url);
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
     WrtDB::WidgetDAOReadOnlyPtr dao,
@@ -49,37 +49,37 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackage(
     WrtDB::DbWidgetHandle widgetHandle,
     const DPL::String& file);
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
-    const WrtDB::WidgetPkgName &pkgname,
+    const WrtDB::TizenAppId &tzAppId,
     const DPL::String& file);
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
     WrtDB::WidgetDAOReadOnlyPtr dao,
     const DPL::String& file);
 
 DPL::OptionalString getStartFile(WrtDB::DbWidgetHandle handle);
-DPL::OptionalString getStartFile(const WrtDB::WidgetPkgName & pkgname);
+DPL::OptionalString getStartFile(const WrtDB::TizenAppId & tzAppId);
 DPL::OptionalString getStartFile(WrtDB::WidgetDAOReadOnlyPtr dao);
 
 OptionalWidgetIcon getIcon(WrtDB::DbWidgetHandle widgetHandle);
-OptionalWidgetIcon getIcon(const WrtDB::WidgetPkgName & pkgname);
+OptionalWidgetIcon getIcon(const WrtDB::TizenAppId & tzAppId);
 OptionalWidgetIcon getIcon(WrtDB::WidgetDAOReadOnlyPtr dao);
 
 WidgetIconList getValidIconsList(
     WrtDB::DbWidgetHandle widgetHandle);
 WidgetIconList getValidIconsList(
-    const WrtDB::WidgetPkgName &pkgname);
+    const WrtDB::TizenAppId &tzAppId);
 WidgetIconList getValidIconsList(
     WrtDB::WidgetDAOReadOnlyPtr dao);
 
 OptionalWidgetStartFileInfo getStartFileInfo(
     WrtDB::DbWidgetHandle widgetHandle);
 OptionalWidgetStartFileInfo getStartFileInfo(
-    const WrtDB::WidgetPkgName &pkgname);
+    const WrtDB::TizenAppId &tzAppId);
 OptionalWidgetStartFileInfo getStartFileInfo(
     WrtDB::WidgetDAOReadOnlyPtr dao);
 
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::DbWidgetHandle widgetHandle);
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(
-    const WrtDB::WidgetPkgName & pkgname);
+    const WrtDB::TizenAppId & tzAppId);
 WrtDB::WidgetLocalizedInfo getLocalizedInfo(WrtDB::WidgetDAOReadOnlyPtr dao);
 }
 

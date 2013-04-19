@@ -38,7 +38,7 @@ class CertificateDAO
         DECLARE_EXCEPTION_TYPE(Base, DataNotExist)
     };
 
-    explicit CertificateDAO(const WrtDB::WidgetPkgName &pkgName);
+    explicit CertificateDAO(const WrtDB::TizenPkgId &pkgName);
     virtual ~CertificateDAO();
     CertificateDataList getCertificateDataList();
     Result getResult(const CertificateData &certificateData);

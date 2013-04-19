@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.109
+#git:framework/web/wrt-commons wrt-commons 0.2.110
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.109
+Version:    0.2.110
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -123,8 +123,8 @@ fi
 # Set Smack label for db files
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
-chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db
-chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/dbspace/.wrt_custom_handler.db-journal
+chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_handler.db
+chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_handler.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 
