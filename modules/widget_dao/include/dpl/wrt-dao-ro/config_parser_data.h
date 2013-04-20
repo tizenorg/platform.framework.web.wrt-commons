@@ -157,39 +157,6 @@ class ConfigParserData
 
     typedef std::set<Setting> SettingsList;
 
-    /* ServiceInfo will be removed.
-     * ServiceInfo will be changed AppControl
-     */
-    struct ServiceInfo
-    {
-        enum class Disposition {
-            WINDOW = 0,
-            INLINE
-        };
-        ServiceInfo(
-            const DPL::String& src,
-            const DPL::String& operation,
-            const DPL::String& scheme,
-            const DPL::String& mime,
-            const Disposition dispos) :
-            m_src(src),
-            m_operation(operation),
-            m_scheme(scheme),
-            m_mime(mime),
-            m_disposition(dispos),
-            m_index(0)
-        {}
-        DPL::String m_src;
-        DPL::String m_operation;
-        DPL::String m_scheme;
-        DPL::String m_mime;
-        Disposition m_disposition;
-        unsigned m_index;
-
-        bool operator==(const ServiceInfo&) const;
-        bool operator!=(const ServiceInfo&) const;
-    };
-
     struct AppControlInfo
     {
         enum class Disposition {
@@ -211,7 +178,6 @@ class ConfigParserData
         bool operator!=(const AppControlInfo&) const;
     };
 
-    typedef std::list<ServiceInfo> ServiceInfoList; // It will be removed.
     typedef std::list<AppControlInfo> AppControlInfoList;
 
     typedef std::list<std::pair<DPL::String, DPL::String> > BoxSizeList;
@@ -327,8 +293,7 @@ class ConfigParserData
     DPL::OptionalString cspPolicy;
     DPL::OptionalString cspPolicyReportOnly;
 
-    //Application service model list
-    ServiceInfoList appServiceList; //It will be removed.
+    //AppControl model list
     AppControlInfoList appControlList;
 
     // For link shared directory

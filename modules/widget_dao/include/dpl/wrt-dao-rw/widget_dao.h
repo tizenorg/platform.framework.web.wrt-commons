@@ -196,7 +196,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetSettings(
         DbWidgetHandle widgetHandle,
         const WidgetRegisterInfo &regInfo);
-    static void registerAppService(
+    static void registerAppControl(
         DbWidgetHandle widgetHandle,
         const WidgetRegisterInfo &regInfo);
     static void registerEncryptedResouceInfo(
@@ -222,10 +222,10 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void unregisterWidgetInternal(
         const TizenAppId & tzAppId);
 
-    static void insertApplicationServiceInfo(DbWidgetHandle handle,
+    static void insertAppControlInfo(DbWidgetHandle handle,
                                              DPL::String src,
                                              DPL::String operation,
-                                             DPL::String scheme,
+                                             DPL::String uri,
                                              DPL::String mime,
                                              unsigned index,
                                              unsigned disposition);

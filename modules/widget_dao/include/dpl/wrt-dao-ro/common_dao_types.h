@@ -343,12 +343,12 @@ struct WidgetSetting
 typedef std::list<WidgetSetting> WidgetSettings;
 
 /**
- * @brief Widget Application Service
+ * @brief Widget AppControl
  *
- * Application sercvice describes details of behaviour
+ * Application control describes details of behaviour
  * when widget receives aul bundle data.
  */
-struct WidgetApplicationService
+struct WidgetAppControl
 {
     enum class Disposition {
         WINDOW = 0,
@@ -357,21 +357,21 @@ struct WidgetApplicationService
 
     DPL::String src;       /* start uri */
     DPL::String operation; /* service name */
-    DPL::String scheme;    /* scheme type*/
+    DPL::String uri;    /* scheme type*/
     DPL::String mime;      /* mime type */
     Disposition disposition;
     unsigned index;
 
-    bool operator== (const WidgetApplicationService& other) const
+    bool operator== (const WidgetAppControl& other) const
     {
         return src == other.src &&
                operation == other.operation &&
-               scheme == other.scheme &&
+               uri == other.uri &&
                mime == other.mime &&
                disposition == other.disposition;
     }
 };
 
-typedef std::list<WidgetApplicationService> WidgetApplicationServiceList;
+typedef std::list<WidgetAppControl> WidgetAppControlList;
 } // namespace WrtDB
 #endif /* WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_ */

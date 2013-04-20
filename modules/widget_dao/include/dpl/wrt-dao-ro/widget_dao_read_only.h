@@ -748,13 +748,13 @@ class WidgetDAOReadOnly
     void getWidgetSettings(WidgetSettings& outWidgetSettings) const;
 
     /**
-     * This method gets application service list that define AUL value
+     * This method gets application control list that define AUL value
      *
      * @return See above comment
      * @exception WRT_CONF_ERR_EMDB_FAILURE - Fail to query DB table.
      */
-    void getAppServiceList(
-        WidgetApplicationServiceList& outAppServiceList) const;
+    void getAppControlList(
+        WidgetAppControlList& outAppControlList) const;
 
     /**
      * This method returns the type of the package.

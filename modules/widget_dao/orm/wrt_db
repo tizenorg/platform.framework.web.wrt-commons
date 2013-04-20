@@ -312,17 +312,17 @@ CREATE_TABLE(SettingsList)
     )
 CREATE_TABLE_END()
 
-CREATE_TABLE(ApplicationServiceInfo)
+CREATE_TABLE(AppControlInfo)
     COLUMN_NOT_NULL(app_id,         INT,)
-    COLUMN_NOT_NULL(service_index,  INT,)
+    COLUMN_NOT_NULL(execute_index,  INT,)
     COLUMN_NOT_NULL(src,            TEXT,)
     COLUMN_NOT_NULL(operation,      TEXT,)
-    COLUMN_NOT_NULL(scheme,         TEXT,)
+    COLUMN_NOT_NULL(uri,            TEXT,)
     COLUMN_NOT_NULL(mime,           TEXT,)
     COLUMN_NOT_NULL(disposition,    TINYINT, DEFAULT 0)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY(app_id, operation, scheme, mime)
+        PRIMARY KEY(app_id, operation, uri, mime)
         FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()

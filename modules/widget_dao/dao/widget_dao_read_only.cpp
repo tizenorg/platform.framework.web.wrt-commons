@@ -1066,39 +1066,39 @@ void WidgetDAOReadOnly::getWidgetSettings(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get settings list")
 }
 
-void WidgetDAOReadOnly::getAppServiceList(
-    WidgetApplicationServiceList& outAppServiceList) const
+void WidgetDAOReadOnly::getAppControlList(
+    WidgetAppControlList& outAppControlList) const
 {
-    LogDebug("Getting getAppServiceList. Handle: " << m_widgetHandle);
+    LogDebug("Getting getAppControlList. Handle: " << m_widgetHandle);
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         ScopedTransaction transaction(&WrtDatabase::interface());
         CHECK_WIDGET_EXISTENCE(transaction, m_widgetHandle)
 
-        WRT_DB_SELECT(select, ApplicationServiceInfo, &WrtDatabase::interface())
-        select->Where(Equals<ApplicationServiceInfo::app_id>(m_widgetHandle));
+        WRT_DB_SELECT(select, AppControlInfo, &WrtDatabase::interface())
+        select->Where(Equals<AppControlInfo::app_id>(m_widgetHandle));
 
-        ApplicationServiceInfo::Select::RowList rows = select->GetRowList();
+        AppControlInfo::Select::RowList rows = select->GetRowList();
 
         if (rows.empty()) {
-            LogDebug("Application Service list is empty. Handle: " <<
+            LogDebug("AppControl list is empty. Handle: " <<
                      m_widgetHandle);
         }
 
         FOREACH(it, rows) {
-            WidgetApplicationService ret;
+            WidgetAppControl ret;
             ret.src = it->Get_src();
             ret.operation = it->Get_operation();
-            ret.scheme = it->Get_scheme();
+            ret.uri = it->Get_uri();
             ret.mime = it->Get_mime();
-            ret.disposition = static_cast<WidgetApplicationService::Disposition>(it->Get_disposition());
-            ret.index = it->Get_service_index();
-            outAppServiceList.push_back(ret);
+            ret.disposition = static_cast<WidgetAppControl::Disposition>(it->Get_disposition());
+            ret.index = it->Get_execute_index();
+            outAppControlList.push_back(ret);
         }
 
         transaction.Commit();
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get access host list")
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get AppControl list")
 }
 
 PackagingType WidgetDAOReadOnly::getPackagingType() const
