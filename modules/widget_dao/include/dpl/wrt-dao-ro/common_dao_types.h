@@ -322,7 +322,6 @@ enum SettingsType
     SETTINGS_TYPE_ALWAYS_ASK,
     SETTINGS_TYPE_OFF
 };
-} // namespace WrtDB
 
 struct WidgetSetting
 {
@@ -374,5 +373,5 @@ struct WidgetApplicationService
 };
 
 typedef std::list<WidgetApplicationService> WidgetApplicationServiceList;
-
+} // namespace WrtDB
 #endif /* WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_ */
