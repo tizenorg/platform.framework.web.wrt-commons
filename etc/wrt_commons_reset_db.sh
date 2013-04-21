@@ -18,6 +18,7 @@ rm -rf /opt/share/widget/system/*
 
 #Removing of widget desktop icons
 WIDGET_EXEC_PATH=/opt/usr/apps/
+WIDGET_PRELOAD_EXEC_PATH=/usr/apps/
 WIDGET_DESKTOP_PATH=/opt/share/applications/
 WRT_DB=/opt/dbspace/.wrt.db
 PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/share/widget/
@@ -30,6 +31,7 @@ then
     do
         pkgId=`echo "$appid" | cut -f1 -d"."`
         rm -rf ${WIDGET_EXEC_PATH}${pkgId}
+        rm -rf ${WIDGET_PRELOAD_EXEC_PATH}${pkgId}
         widget_desktop_file="${WIDGET_DESKTOP_PATH}${appid}.desktop";
         if [ -f ${widget_desktop_file} ]; then
             rm -f $widget_desktop_file;
