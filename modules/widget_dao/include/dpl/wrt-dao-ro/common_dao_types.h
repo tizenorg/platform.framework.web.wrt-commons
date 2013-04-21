@@ -348,6 +348,9 @@ typedef std::list<WidgetSetting> WidgetSettings;
  * Application control describes details of behaviour
  * when widget receives aul bundle data.
  */
+namespace AppControlPrefix {
+    const char* const PROCESS_PREFIX = "-__CONTROL_PROCESS__";
+}
 struct WidgetAppControl
 {
     enum class Disposition {
