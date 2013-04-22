@@ -47,7 +47,7 @@ static const DPL::String widget2Path =
 } // anonymous namespace
 
 RUNNER_TEST(test01_getFilePathInWidgetPackageFromUrl){
-    WrtDB::WidgetPkgName name = L"tizenid201";
+    WrtDB::TizenAppId name = L"tizenid201"; //no difference if it is valid or invalid appId/pkgId, we fill database which has no intergrity constrainst
     WrtDB::WidgetDAOReadOnly dao(name);
 
     DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
@@ -61,7 +61,7 @@ RUNNER_TEST(test01_getFilePathInWidgetPackageFromUrl){
 }
 
 RUNNER_TEST(test02_getFilePathInWidgetPackageFromUrl){
-    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::TizenAppId name = L"tizenid202";
     WrtDB::WidgetDAOReadOnly dao(name);
 
     DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
@@ -75,7 +75,7 @@ RUNNER_TEST(test02_getFilePathInWidgetPackageFromUrl){
 }
 
 RUNNER_TEST(test03_getFilePathInWidgetPackageFromUrl){
-    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::TizenAppId name = L"tizenid202";
     WrtDB::WidgetDAOReadOnly dao(name);
 
     DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackageFromUrl(
@@ -89,7 +89,7 @@ RUNNER_TEST(test03_getFilePathInWidgetPackageFromUrl){
 }
 
 RUNNER_TEST(test04_getFilePathInWidgetPackage){
-    WrtDB::WidgetPkgName name = L"tizenid201";
+    WrtDB::TizenAppId name = L"tizenid201";
     WrtDB::WidgetDAOReadOnly dao(name);
 
     DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackage(
@@ -101,7 +101,7 @@ RUNNER_TEST(test04_getFilePathInWidgetPackage){
 }
 
 RUNNER_TEST(test05_getFilePathInWidgetPackage){
-    WrtDB::WidgetPkgName name = L"tizenid202";
+    WrtDB::TizenAppId name = L"tizenid202";
     WrtDB::WidgetDAOReadOnly dao(name);
 
     DPL::Optional<DPL::String> result = W3CFileLocalization::getFilePathInWidgetPackage(
