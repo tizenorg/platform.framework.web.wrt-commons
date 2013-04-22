@@ -89,7 +89,22 @@ OldStyleLogProvider::OldStyleLogProvider(bool showDebug,
     m_showInfo(showInfo),
     m_showWarning(showWarning),
     m_showError(showError),
-    m_showPedantic(showPedantic)
+    m_showPedantic(showPedantic),
+    m_printStdErr(false)
+{}
+
+OldStyleLogProvider::OldStyleLogProvider(bool showDebug,
+                                         bool showInfo,
+                                         bool showWarning,
+                                         bool showError,
+                                         bool showPedantic,
+                                         bool printStdErr) :
+    m_showDebug(showDebug),
+    m_showInfo(showInfo),
+    m_showWarning(showWarning),
+    m_showError(showError),
+    m_showPedantic(showPedantic),
+    m_printStdErr(printStdErr)
 {}
 
 void OldStyleLogProvider::Debug(const char *message,
@@ -98,9 +113,15 @@ void OldStyleLogProvider::Debug(const char *message,
                                 const char *function)
 {
     if (m_showDebug) {
-        fprintf(stdout, "%s%s%s\n", DEBUG_BEGIN,
-                FormatMessage(message, filename, line,
-                              function).c_str(), DEBUG_END);
+        if (m_printStdErr) {
+            fprintf(stderr, "%s%s%s\n", DEBUG_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), DEBUG_END);
+        } else {
+            fprintf(stdout, "%s%s%s\n", DEBUG_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), DEBUG_END);
+        }
     }
 }
 
@@ -110,9 +131,15 @@ void OldStyleLogProvider::Info(const char *message,
                                const char *function)
 {
     if (m_showInfo) {
-        fprintf(stdout, "%s%s%s\n", INFO_BEGIN,
-                FormatMessage(message, filename, line,
-                              function).c_str(), INFO_END);
+        if (m_printStdErr) {
+            fprintf(stderr, "%s%s%s\n", INFO_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), INFO_END);
+        } else {
+            fprintf(stdout, "%s%s%s\n", INFO_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), INFO_END);
+        }
     }
 }
 
@@ -122,9 +149,15 @@ void OldStyleLogProvider::Warning(const char *message,
                                   const char *function)
 {
     if (m_showWarning) {
-        fprintf(stdout, "%s%s%s\n", WARNING_BEGIN,
-                FormatMessage(message, filename, line,
-                              function).c_str(), WARNING_END);
+        if (m_printStdErr) {
+            fprintf(stderr, "%s%s%s\n", WARNING_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), WARNING_END);
+        } else {
+            fprintf(stdout, "%s%s%s\n", WARNING_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), WARNING_END);
+        }
     }
 }
 
@@ -134,9 +167,15 @@ void OldStyleLogProvider::Error(const char *message,
                                 const char *function)
 {
     if (m_showError) {
-        fprintf(stdout, "%s%s%s\n", ERROR_BEGIN,
-                FormatMessage(message, filename, line,
-                              function).c_str(), ERROR_END);
+        if (m_printStdErr) {
+            fprintf(stderr, "%s%s%s\n", ERROR_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), ERROR_END);
+        } else {
+            fprintf(stdout, "%s%s%s\n", ERROR_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), ERROR_END);
+        }
     }
 }
 
@@ -146,9 +185,15 @@ void OldStyleLogProvider::Pedantic(const char *message,
                                    const char *function)
 {
     if (m_showPedantic) {
-        fprintf(stdout, "%s%s%s\n", PEDANTIC_BEGIN,
-                FormatMessage(message, filename, line,
-                              function).c_str(), PEDANTIC_END);
+        if (m_printStdErr) {
+            fprintf(stderr, "%s%s%s\n", PEDANTIC_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), PEDANTIC_END);
+        } else {
+            fprintf(stdout, "%s%s%s\n", PEDANTIC_BEGIN,
+                    FormatMessage(message, filename, line,
+                        function).c_str(), PEDANTIC_END);
+        }
     }
 }
 }

@@ -22,6 +22,7 @@
 namespace DPL {
 typedef Optional<String> OptionalString;
 typedef Optional<int> OptionalInt;
+typedef Optional<unsigned int> OptionalUInt;
 typedef Optional<bool> OptionalBool;
 typedef Optional<float> OptionalFloat;
 } //namespace DPL
