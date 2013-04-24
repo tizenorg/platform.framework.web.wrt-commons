@@ -217,6 +217,17 @@ CREATE_TABLE(WidgetWARPInfo)
     )
 CREATE_TABLE_END()
 
+CREATE_TABLE(WidgetAllowNavigation)
+    COLUMN_NOT_NULL(app_id,     INT,)
+    COLUMN_NOT_NULL(scheme,     TEXT,)
+    COLUMN_NOT_NULL(host,       TEXT,)
+
+    TABLE_CONSTRAINTS(
+        PRIMARY KEY(app_id, scheme, host)
+        FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
+    )
+CREATE_TABLE_END()
+
 CREATE_TABLE(WidgetSecuritySettings)
     COLUMN_NOT_NULL(app_id,                 INT,)
     COLUMN_NOT_NULL(security_popup_usage,   INT, DEFAULT 1)

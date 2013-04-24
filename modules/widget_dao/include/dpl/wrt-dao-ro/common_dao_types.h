@@ -130,6 +130,14 @@ struct WidgetAccessInfo
                info.bSubDomains == bSubDomains;
     }
 };
+typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
+
+struct WidgetAllowNavigationInfo
+{
+    DPL::String scheme;
+    DPL::String host;
+};
+typedef std::list<WidgetAllowNavigationInfo> WidgetAllowNavigationInfoList;
 
 struct EncryptedFileInfo
 {
@@ -151,8 +159,6 @@ struct EncryptedFileInfo
         return fileName < info.fileName;
     }
 };
-
-typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
 
 typedef std::list<DPL::String> WindowModeList;
 

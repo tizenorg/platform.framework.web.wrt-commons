@@ -186,6 +186,9 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetWarpInfo(
         DbWidgetHandle widgetHandle,
         const WidgetRegisterInfo &regInfo);
+    static void registerWidgetAllowNavigationInfo(
+        DbWidgetHandle widgetHandle,
+        const WidgetRegisterInfo &regInfo);
     static void registerWidgetCertificates(
         DbWidgetHandle widgetHandle,
         const IWacSecurity &wacSecurity);

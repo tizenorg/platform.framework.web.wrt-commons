@@ -238,12 +238,22 @@ class ConfigParserData
         CapabilityList m_capabilityList;
     };
 
-    LiveboxList m_livebox;
-
     typedef std::list<DPL::OptionalString> DependsPkgList;
-
     typedef std::set<DPL::String> CategoryList;
 
+    struct AllowNavigationInfo
+    {
+        AllowNavigationInfo(DPL::String scheme,
+                            DPL::String host) :
+            m_scheme(scheme),
+            m_host(host)
+        { }
+        DPL::String m_scheme;
+        DPL::String m_host;
+    };
+    typedef std::list<AllowNavigationInfo> AllowNavigationInfoList;
+
+    LiveboxList m_livebox;
     StringsList nameSpaces;
 
     LocalizedDataSet localizedDataSet;
@@ -288,6 +298,9 @@ class ConfigParserData
     DPL::OptionalString tizenMinVersionRequired;
     DPL::OptionalString tizenPkgId;
     DPL::OptionalString tizenAppId;
+
+    // allow-navigation
+    AllowNavigationInfoList allowNavigationInfoList;
 
     //csp polic for widget
     DPL::OptionalString cspPolicy;

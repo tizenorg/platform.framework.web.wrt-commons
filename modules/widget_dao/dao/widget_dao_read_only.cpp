@@ -998,6 +998,25 @@ void WidgetDAOReadOnly::getWidgetAccessInfo(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get accessinfo list")
 }
 
+void WidgetDAOReadOnly::getWidgetAllowNavigationInfo(
+    WidgetAllowNavigationInfoList& allowNavigationList) const
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetAllowNavigation, &WrtDatabase::interface())
+        select->Where(Equals<WidgetAllowNavigation::app_id>(m_widgetHandle));
+        WidgetAllowNavigation::Select::RowList rows = select->GetRowList();
+
+        FOREACH(it, rows) {
+            WidgetAllowNavigationInfo info;
+            info.scheme = it->Get_scheme();
+            info.host = it->Get_host();
+            allowNavigationList.push_back(info);
+        }
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get allow-navigation info list")
+}
+
 LanguageTags WidgetDAOReadOnly::getLanguageTags() const
 {
     //TODO check widget existance
