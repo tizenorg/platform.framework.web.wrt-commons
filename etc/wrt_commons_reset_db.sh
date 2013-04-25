@@ -15,11 +15,17 @@
 #
 
 rm -rf /opt/share/widget/system/*
-
+uninstall_widgets=1
+if [ "$1" == "--old" ]
+then
+    echo "Uninstalling turned off"
+    uninstall_widgets=0
+fi
 #Removing of widget desktop icons
 WIDGET_EXEC_PATH=/opt/usr/apps/
 WIDGET_PRELOAD_EXEC_PATH=/usr/apps/
 WIDGET_DESKTOP_PATH=/opt/share/applications/
+SMACK_RULES_PATH=/etc/smack/accesses.d/
 WRT_DB=/opt/dbspace/.wrt.db
 PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/share/widget/
 PLUGINS_INSTALLATION_REQUIRED=plugin-installation-required
@@ -29,12 +35,20 @@ then
     PKG_NAME_SET=$(sqlite3 $WRT_DB 'select tizen_appid from WidgetInfo;')
     for appid in $PKG_NAME_SET
     do
+        if [ $uninstall_widgets -eq 1 ]
+        then
+            wrt-installer -un $appid 2&>1 >/dev/null
+        fi
         pkgId=`echo "$appid" | cut -f1 -d"."`
         rm -rf ${WIDGET_EXEC_PATH}${pkgId}
         rm -rf ${WIDGET_PRELOAD_EXEC_PATH}${pkgId}
         widget_desktop_file="${WIDGET_DESKTOP_PATH}${appid}.desktop";
         if [ -f ${widget_desktop_file} ]; then
             rm -f $widget_desktop_file;
+        fi
+        widget_smack_rule="${SMACK_RULES_PATH}${pkgId}"
+        if [ -f ${widget_smack_rule} ]; then
+            rm -f $widget_smack_rule;
         fi
     done
 else
