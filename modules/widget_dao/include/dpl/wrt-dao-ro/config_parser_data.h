@@ -195,6 +195,7 @@ class ConfigParserData
             DPL::String m_pdSrc;
             DPL::String m_pdWidth;
             DPL::String m_pdHeight;
+            DPL::String m_pdFastOpen;
         };
         typedef BoxContent BoxContentInfo;
 
