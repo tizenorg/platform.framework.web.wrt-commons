@@ -409,6 +409,8 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_back_supported(widgetConfigurationInfo.backSupported);
     row.Set_access_network(widgetConfigurationInfo.accessNetwork);
     row.Set_pkg_type(regInfo.packagingType.pkgType);
+    row.Set_security_model_version(
+        static_cast<int>(widgetConfigurationInfo.securityModelVersion));
 
     Try
     {

@@ -253,6 +253,11 @@ class ConfigParserData
     };
     typedef std::list<AllowNavigationInfo> AllowNavigationInfoList;
 
+    enum class SecurityModelVersion {
+        SECURITY_MODEL_V1 = 0, // WARP
+        SECURITY_MODEL_V2      // CSP, allow-navigation
+    };
+
     LiveboxList m_livebox;
     StringsList nameSpaces;
 
@@ -319,13 +324,16 @@ class ConfigParserData
     CategoryList categoryList;
     // For Account
     AccountProvider accountProvider;
+    // security model version
+    SecurityModelVersion securityModelVersion;
 
     ConfigParserData() :
         flashNeeded(false),
         minVersionRequired(),
         backSupported(false),
         accessNetwork(false),
-        startFileEncountered(false)
+        startFileEncountered(false),
+        securityModelVersion(SecurityModelVersion::SECURITY_MODEL_V1)
     {}
 };
 } // namespace WrtDB

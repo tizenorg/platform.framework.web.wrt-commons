@@ -382,5 +382,11 @@ struct WidgetAppControl
 };
 
 typedef std::list<WidgetAppControl> WidgetAppControlList;
+
+enum class WidgetSecurityModelVersion
+{
+    WIDGET_SECURITY_MODEL_V1 = 0, // WARP
+    WIDGET_SECURITY_MODEL_V2      // CSP, allow-navigation
+};
 } // namespace WrtDB
 #endif /* WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_ */

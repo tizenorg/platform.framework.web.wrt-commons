@@ -1257,6 +1257,13 @@ PrivilegeList WidgetDAOReadOnly::getWidgetPrivilege() const
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get PrivilegeList")
 }
 
+WidgetSecurityModelVersion WidgetDAOReadOnly::getSecurityModelVersion() const
+{
+    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
+    DPL::OptionalInt result = row.Get_security_model_version();
+    return static_cast<WidgetSecurityModelVersion>(*result);
+}
+
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 #undef CHECK_WIDGET_EXISTENCE
