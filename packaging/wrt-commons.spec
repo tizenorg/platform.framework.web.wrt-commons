@@ -70,8 +70,8 @@ mkdir -p %{_libdir}/wrt-plugins
 
 if [ -z ${2} ]; then
     echo "This is new install of wrt-commons"
-    echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-    /usr/bin/wrt_commons_reset_db.sh
+    echo "Calling /usr/bin/wrt_commons_create_clean_db.sh"
+    /usr/bin/wrt_commons_create_clean_db.sh
 else
     # Find out old and new version of databases
     WRT_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt.db ".tables" | grep "DB_VERSION_"`
