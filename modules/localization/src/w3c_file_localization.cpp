@@ -141,6 +141,21 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 {
     DPL::String req = url;
 
+    DPL::String suffix;
+    DPL::String::size_type pos = req.find_first_of('#');
+    if(pos != DPL::String::npos)
+    {
+        suffix = req.substr(pos) + suffix;
+        req.resize(pos); //truncate fragment identifier
+    }
+
+    pos = req.find_first_of('?');
+    if(pos != DPL::String::npos)
+    {
+        suffix = req.substr(pos) + suffix;
+        req.resize(pos); //truncate query string
+    }
+
     if (req.find(WIDGET_URI_BEGIN) == 0) {
         req.erase(0, WIDGET_URI_BEGIN.length());
     } else if (req.find(FILE_URI_BEGIN) == 0) {
@@ -182,7 +197,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
         return DPL::Optional<DPL::String>::Null;
     }
 
-    found = widgetPath + *found;
+    found = widgetPath + *found + suffix;
 
     return found;
 }

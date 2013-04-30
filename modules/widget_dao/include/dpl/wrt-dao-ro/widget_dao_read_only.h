@@ -443,6 +443,8 @@ class WidgetDAOReadOnly
      * @param[out] outAccessInfoList list filled with access info structures
      */
     void getWidgetAccessInfo(WidgetAccessInfoList& outAccessInfoList) const;
+    void getWidgetAllowNavigationInfo(
+        WidgetAllowNavigationInfoList& allowNavigationInfoList) const;
 
     /**
      * WAC 2.0 extension
@@ -819,6 +821,8 @@ class WidgetDAOReadOnly
      */
     TizenPkgId getTizenPkgId() const;
     PrivilegeList getWidgetPrivilege() const;
+    WidgetSecurityModelVersion getSecurityModelVersion() const;
+
 };
 } // namespace WrtDB
 

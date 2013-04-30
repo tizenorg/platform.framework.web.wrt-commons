@@ -130,6 +130,14 @@ struct WidgetAccessInfo
                info.bSubDomains == bSubDomains;
     }
 };
+typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
+
+struct WidgetAllowNavigationInfo
+{
+    DPL::String scheme;
+    DPL::String host;
+};
+typedef std::list<WidgetAllowNavigationInfo> WidgetAllowNavigationInfoList;
 
 struct EncryptedFileInfo
 {
@@ -151,8 +159,6 @@ struct EncryptedFileInfo
         return fileName < info.fileName;
     }
 };
-
-typedef std::list<WidgetAccessInfo> WidgetAccessInfoList;
 
 typedef std::list<DPL::String> WindowModeList;
 
@@ -376,5 +382,11 @@ struct WidgetAppControl
 };
 
 typedef std::list<WidgetAppControl> WidgetAppControlList;
+
+enum class WidgetSecurityModelVersion
+{
+    WIDGET_SECURITY_MODEL_V1 = 0, // WARP
+    WIDGET_SECURITY_MODEL_V2      // CSP, allow-navigation
+};
 } // namespace WrtDB
 #endif /* WRT_WIDGET_DAO_COMMON_DAO_TYPES_H_ */

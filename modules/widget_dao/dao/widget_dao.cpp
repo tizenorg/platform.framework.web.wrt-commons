@@ -296,6 +296,8 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetWarpInfo(widgetHandle, widgetRegInfo);
 
+    registerWidgetAllowNavigationInfo(widgetHandle, widgetRegInfo);
+
     registerWidgetCertificates(widgetHandle, wacSecurity);
 
     CertificateChainList list;
@@ -407,6 +409,8 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_back_supported(widgetConfigurationInfo.backSupported);
     row.Set_access_network(widgetConfigurationInfo.accessNetwork);
     row.Set_pkg_type(regInfo.packagingType.pkgType);
+    row.Set_security_model_version(
+        static_cast<int>(widgetConfigurationInfo.securityModelVersion));
 
     Try
     {
@@ -612,6 +616,23 @@ void WidgetDAO::registerWidgetWarpInfo(DbWidgetHandle widgetHandle,
                                      AccIt->m_bSubDomainAccess));
 
         DO_INSERT(row, WidgetWARPInfo)
+    }
+}
+
+void WidgetDAO::registerWidgetAllowNavigationInfo(DbWidgetHandle widgetHandle,
+                                                  const WidgetRegisterInfo &regInfo)
+{
+    using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
+    const ConfigParserData& widgetConfigurationInfo = regInfo.configInfo;
+
+    FOREACH(allowNaviIt, widgetConfigurationInfo.allowNavigationInfoList)
+    {
+        WidgetAllowNavigation::Row row;
+        row.Set_app_id(widgetHandle);
+        row.Set_scheme(allowNaviIt->m_scheme);
+        row.Set_host(allowNaviIt->m_host);
+        DO_INSERT(row, WidgetAllowNavigation)
     }
 }
 
