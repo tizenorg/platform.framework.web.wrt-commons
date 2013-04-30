@@ -7,6 +7,8 @@ Group:      Development/Libraries
 License:    Apache License, Version 2.0
 URL:        N/A
 Source0:    %{name}-%{version}.tar.gz
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(ecore)
 BuildRequires:  pkgconfig(appcore-efl)
@@ -67,6 +69,7 @@ cp %{name} %{buildroot}/usr/share/license/
 rm -rf %{buildroot}
 
 %post
+/sbin/ldconfig
 mkdir -p /opt/share/widget/system
 mkdir -p /opt/share/widget/user
 mkdir -p /opt/share/widget/exec
@@ -128,6 +131,10 @@ chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_han
 chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_handler.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
+
+ 
+%postun
+/sbin/ldconfig
 
 %files
 %manifest wrt-commons.manifest
