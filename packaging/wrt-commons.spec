@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
 BuildRequires:  pkgconfig(cryptsvc)
 BuildRequires:  pkgconfig(dukgenerator)
+BuildRequires:  pkgconfig(minizip)
 Requires: libcryptsvc
 
 %description
