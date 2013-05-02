@@ -57,8 +57,6 @@ class GlobalDAOReadOnly
 
     static bool IsValidSubTag(const DPL::String& tag, int type);
 
-    static bool GetDeveloperMode();
-
     static bool GetSecureByDefault();
 
     static bool getComplianceMode();
