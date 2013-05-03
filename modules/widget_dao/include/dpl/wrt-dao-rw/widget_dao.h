@@ -105,6 +105,19 @@ class WidgetDAO : public WidgetDAOReadOnly
         const WidgetRegisterInfo &widgetRegInfo,
         const IWacSecurity &wacSecurity);
 
+    /* This method backup widget information and update new widget information
+     * for restore widget information
+     */
+    static void backupAndUpdateWidget(
+        const TizenAppId & oldAppId,
+        const TizenAppId & newAppId,
+        const WidgetRegisterInfo &widgetRegInfo,
+        const IWacSecurity &wacSecurity);
+
+    static void restoreUpdateWidget(
+        const TizenAppId & oldAppId,
+        const TizenAppId & newAppId);
+
     /**
      * This method removes a widget's information from EmDB.
      *
@@ -224,6 +237,10 @@ class WidgetDAO : public WidgetDAOReadOnly
             DPL::Optional<DbWidgetHandle>());
     static void unregisterWidgetInternal(
         const TizenAppId & tzAppId);
+
+    static void updateWidgetAppIdInternal(
+        const TizenAppId & fromAppId,
+        const TizenAppId & toAppId);
 
     static void insertAppControlInfo(DbWidgetHandle handle,
                                              DPL::String src,
