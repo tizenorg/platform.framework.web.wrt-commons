@@ -38,7 +38,8 @@ enum Feature
     FEATURE_WEB_NOTIFICATION,
     FEATURE_USER_MEDIA,
     FEATURE_FULLSCREEN_MODE,
-    FEATURE_END = FEATURE_FULLSCREEN_MODE
+    FEATURE_WEB_DATABASE,
+    FEATURE_END = FEATURE_WEB_DATABASE
 };
 extern const std::map<std::string, Feature> g_W3CPrivilegeTextMap;
 } // namespace WrtDB
