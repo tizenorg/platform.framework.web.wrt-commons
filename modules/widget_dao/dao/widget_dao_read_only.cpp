@@ -434,6 +434,17 @@ TizenAppIdList WidgetDAOReadOnly::getTizenAppidList()
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgname list")
 }
 
+TizenPkgIdList WidgetDAOReadOnly::getTizenPkgidList()
+{
+    LogDebug("Getting Pkgid List ");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        return select->GetValueList<WidgetInfo::tizen_pkgid>();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get Pkgid list")
+}
+
 DbWidgetDAOReadOnlyList WidgetDAOReadOnly::getWidgetList()
 {
     LogDebug("Getting DbWidget List");

@@ -603,6 +603,12 @@ class WidgetDAOReadOnly
     static TizenAppIdList getTizenAppidList();
 
     /**
+     * This method returns list of tizen package list of installed packages
+     * @return list of TizenPkgIdList of installed packages
+     */
+    static TizenPkgIdList getTizenPkgidList();
+
+    /**
      * This method returns a list of all the installed widgets.
      *
      * @return list of installed widgets.

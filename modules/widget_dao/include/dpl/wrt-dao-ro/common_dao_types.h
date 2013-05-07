@@ -219,6 +219,7 @@ typedef std::multiset<DbWidgetFeature> DbWidgetFeatureSet;
  */
 typedef std::list<DbWidgetHandle> DbWidgetHandleList;
 typedef std::list<TizenAppId> TizenAppIdList;
+typedef std::list<TizenPkgId> TizenPkgIdList;
 
 class WidgetDAOReadOnly; //forward declaration
 typedef std::shared_ptr<WidgetDAOReadOnly> WidgetDAOReadOnlyPtr;
