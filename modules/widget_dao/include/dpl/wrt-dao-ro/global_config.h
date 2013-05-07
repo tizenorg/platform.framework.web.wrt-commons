@@ -310,11 +310,6 @@ inline const char* GetVconfKeyWebDatabaseUsagePath()
     return "/web_database_usage";
 }
 
-inline const char* GetVconfKeyFilesystemUsagePath()
-{
-    return "/filesystem_usage";
-}
-
 inline const char* GetVconfKeyMemorySavingModePath()
 {
     return "/memory_saving_mode";

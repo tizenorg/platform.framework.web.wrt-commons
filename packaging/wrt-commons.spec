@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.115
+#git:framework/web/wrt-commons wrt-commons 0.2.117
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.115
+Version:    0.2.117
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
 BuildRequires:  pkgconfig(cryptsvc)
 BuildRequires:  pkgconfig(dukgenerator)
+BuildRequires:  pkgconfig(minizip)
 Requires: libcryptsvc
 
 %description

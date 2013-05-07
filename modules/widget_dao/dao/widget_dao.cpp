@@ -337,6 +337,42 @@ void WidgetDAO::registerOrUpdateWidget(
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
 }
 
+void WidgetDAO::backupAndUpdateWidget(
+    const TizenAppId & oldAppId,
+    const TizenAppId & newAppId,
+    const WidgetRegisterInfo &widgetRegInfo,
+    const IWacSecurity &wacSecurity)
+{
+    LogDebug("Backup and Register widget");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
+
+        updateWidgetAppIdInternal(newAppId, oldAppId);
+        registerWidgetInternal(newAppId, widgetRegInfo, wacSecurity);
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
+}
+
+void WidgetDAO::restoreUpdateWidget(
+    const TizenAppId & oldAppId,
+    const TizenAppId & newAppId)
+{
+    LogDebug("restore widget");
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        DPL::DB::ORM::wrt::ScopedTransaction transaction(
+            &WrtDatabase::interface());
+
+        unregisterWidgetInternal(newAppId);
+        updateWidgetAppIdInternal(oldAppId, newAppId);
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
+}
+
 #define DO_INSERT(row, table)                              \
     {                                                      \
         WRT_DB_INSERT(insert, table, &WrtDatabase::interface()) \
@@ -894,6 +930,34 @@ void WidgetDAO::unregisterWidgetInternal(
     del->Execute();
 
     // Deleting in other tables is done via "delete cascade" in SQL
+}
+
+void WidgetDAO::updateWidgetAppIdInternal(
+    const TizenAppId & fromAppId,
+    const TizenAppId & toAppId)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(fromAppId)) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. tzAppId: " << fromAppId);
+        }
+
+        WidgetInfo::Row row;
+        row.Set_tizen_appid(toAppId);
+
+        WRT_DB_UPDATE(update, WidgetInfo, &WrtDatabase::interface())
+        update->Where(Equals<WidgetInfo::tizen_appid>(fromAppId));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to update appid")
 }
 
 #undef DO_INSERT

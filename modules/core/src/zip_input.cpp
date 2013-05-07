@@ -33,8 +33,8 @@
 #include <dpl/scoped_array.h>
 #include <dpl/foreach.h>
 #include <dpl/log/log.h>
-#include <minizip/framework_minizip.h>
 #include <new>
+#include <minizip/unzip.h>
 
 namespace DPL {
 namespace // anonymous

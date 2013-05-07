@@ -28,6 +28,7 @@ PKG_CHECK_MODULES(SYS_EFL
   vconf
   libpcrecpp
   icu-uc
+  minizip
   REQUIRED)
 
 # Add core include directories
@@ -51,11 +52,6 @@ ADD_LIBRARY(${TARGET_DPL_EFL} SHARED
 )
 
 TARGET_LINK_LIBRARIES(${TARGET_DPL_EFL} ${SYS_EFL_LIBRARIES} "-lrt")
-
-# Link with 3rd party libraries
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/3rdparty)
-
-TARGET_LINK_LIBRARIES(${TARGET_DPL_EFL} lib3rdparty)
 
 # Target library properties
 SET_TARGET_PROPERTIES(${TARGET_DPL_EFL} PROPERTIES

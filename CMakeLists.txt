@@ -110,9 +110,6 @@ MESSAGE(STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB})
 MESSAGE(STATUS "WITH_TESTS: " ${WITH_TESTS})
 MESSAGE(STATUS "========================================")
 
-# Build 3rd party libraries first
-ADD_SUBDIRECTORY(3rdparty)
-
 # Compiler flags
 ADD_DEFINITIONS("-fvisibility=default")         # mark all exported symbols as visible
 
