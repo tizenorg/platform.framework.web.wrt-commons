@@ -47,6 +47,11 @@ Wrt common library development headers
     %define with_tests 1
 %endif
 
+%define with_child 0
+%if "%{WITH_CHILD}" == "ON" || "%{WITH_CHILD}" == "Y" || "%{WITH_CHILD}" == "YES" || "%{WITH_CHILD}" == "TRUE" || "%{WITH_CHILD}" == "1"
+    %define with_child 1
+%endif
+
 %build
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
@@ -55,7 +60,8 @@ cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
-        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
+        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS} \
+        %{?WITH_CHILD:-DWITH_CHILD=%WITH_CHILD}
 make %{?jobs:-j%jobs}
 
 %install

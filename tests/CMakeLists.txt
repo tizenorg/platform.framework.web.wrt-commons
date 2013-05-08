@@ -19,7 +19,11 @@ ADD_SUBDIRECTORY(event)
 ADD_SUBDIRECTORY(files_localization)
 ADD_SUBDIRECTORY(localizationTagsProvider)
 ADD_SUBDIRECTORY(utils)
-ADD_SUBDIRECTORY(test)
+
+IF(WITH_CHILD)
+  MESSAGE(STATUS "Additional test subdirectory is being added")
+  ADD_SUBDIRECTORY(test)
+ENDIF(WITH_CHILD)
 
 # Rollback CXX flags
 #SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_BACKUP})
