@@ -254,6 +254,21 @@ class ConfigParserData
     };
     typedef std::list<AllowNavigationInfo> AllowNavigationInfoList;
 
+    struct Metadata
+    {
+        Metadata(const DPL::String& _key,
+                 const DPL::String& _value) :
+            key(_key),
+            value(_value)
+        {}
+        DPL::String key;
+        DPL::String value;
+
+        bool operator==(const Metadata&) const;
+        bool operator!=(const Metadata&) const;
+    };
+    typedef std::list<Metadata> MetadataList;
+
     enum class SecurityModelVersion {
         SECURITY_MODEL_V1 = 0, // WARP
         SECURITY_MODEL_V2      // CSP, allow-navigation
@@ -327,6 +342,8 @@ class ConfigParserData
     AccountProvider accountProvider;
     // security model version
     SecurityModelVersion securityModelVersion;
+    // security model version
+    MetadataList metadataList;
 
     ConfigParserData() :
         flashNeeded(false),
