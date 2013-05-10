@@ -413,4 +413,14 @@ bool ConfigParserData::LiveboxInfo::operator!=(const LiveboxInfo& other) const
            m_label != other.m_label &&
            m_icon != other.m_icon;
 }
+
+bool ConfigParserData::Metadata::operator== (const Metadata& other) const
+{
+    return key == other.key && value == other.value;
+}
+
+bool ConfigParserData::Metadata::operator!= (const Metadata& other) const
+{
+    return key != other.key || value != other.value;
+}
 } // namespace WrtDB
