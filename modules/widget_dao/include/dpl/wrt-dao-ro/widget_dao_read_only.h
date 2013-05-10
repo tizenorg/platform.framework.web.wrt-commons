@@ -811,7 +811,6 @@ class WidgetDAOReadOnly
     SettingsType getGeolocationUsage() const;
     SettingsType getWebNotificationUsage() const;
     SettingsType getWebDatabaseUsage() const;
-    SettingsType getFileSystemUsage() const;
 
     /**
      * This method returns widget's installed path

@@ -127,7 +127,6 @@ INSTALL(FILES
     include/dpl/wrt-dao-ro/plugin_dao_read_only.h
     include/dpl/wrt-dao-ro/property_dao_read_only.h
     include/dpl/wrt-dao-ro/widget_config.h
-    include/dpl/wrt-dao-ro/vconf_config.h
     include/dpl/wrt-dao-ro/widget_dao_read_only.h
     include/dpl/wrt-dao-ro/wrt_db_types.h
     include/dpl/wrt-dao-ro/WrtDatabase.h

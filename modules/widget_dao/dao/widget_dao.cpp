@@ -195,32 +195,6 @@ void WidgetDAO::setWebDatabaseUsage(const SettingsType value)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set web database usage")
 }
 
-void WidgetDAO::setFileSystemUsage(const SettingsType value)
-{
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        ScopedTransaction transaction(&WrtDatabase::interface());
-        if (!isWidgetInstalled(getHandle())) {
-            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Cannot find widget. Handle: " << getHandle());
-        }
-
-        WidgetSecuritySettings::Row row;
-        row.Set_file_system_usage(value);
-
-        WRT_DB_UPDATE(update, WidgetSecuritySettings, &WrtDatabase::interface())
-        update->Where(Equals<WidgetSecuritySettings::app_id>(getHandle()));
-        update->Values(row);
-        update->Execute();
-
-        transaction.Commit();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to set filesystem usage")
-}
-
 void WidgetDAO::registerWidget(
     const TizenAppId & tzAppId,
     const WidgetRegisterInfo &widgetRegInfo,
@@ -869,7 +843,6 @@ void WidgetDAO::registerWidgetSecuritySettings(DbWidgetHandle widgetHandle)
     row.Set_geolocation_usage(SETTINGS_TYPE_ON);
     row.Set_web_notification_usage(SETTINGS_TYPE_ON);
     row.Set_web_database_usage(SETTINGS_TYPE_ON);
-    row.Set_file_system_usage(SETTINGS_TYPE_ON);
 
     DO_INSERT(row, WidgetSecuritySettings)
 }
