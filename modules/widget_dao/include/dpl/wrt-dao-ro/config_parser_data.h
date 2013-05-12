@@ -313,6 +313,7 @@ class ConfigParserData
     DPL::OptionalString startFile;
     DPL::OptionalString startFileEncoding;
     DPL::OptionalString startFileContentType;
+    DPL::OptionalString startFileNamespace;
     IconsList iconsList;
 
     // tizen id / required platform min version for TIZEN webapp
