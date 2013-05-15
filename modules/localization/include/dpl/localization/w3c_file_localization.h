@@ -44,6 +44,7 @@ DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
     WrtDB::WidgetDAOReadOnlyPtr dao,
     const DPL::String &url);
+std::string getFilePathInWidgetPackageFromUrl(const std::string &tzAppId, const std::string &url);
 
 DPL::Optional<DPL::String> getFilePathInWidgetPackage(
     WrtDB::DbWidgetHandle widgetHandle,
