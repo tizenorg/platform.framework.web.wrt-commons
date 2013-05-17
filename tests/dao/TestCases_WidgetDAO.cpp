@@ -783,6 +783,92 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
 }
 
 /*
+ * Name: widget_dao_test_register_widget_privileges
+ * Description: Tests registration of widget privileges
+ */
+RUNNER_TEST(widget_dao_test_register_widget_privileges)
+{
+
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+
+    ConfigParserData::PrivilegeList& privilegeList =
+            regInfo.configInfo.privilegeList;
+    privilegeList.insert(DPL::FromUTF8String("name"));
+    privilegeList.insert(DPL::FromUTF8String("name2"));
+
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+    WidgetDAO dao(tizenAppId);
+
+    WrtDB::PrivilegeList privListFromDB;
+    privListFromDB = dao.getWidgetPrivilege();
+
+    RUNNER_ASSERT(privilegeList.size() == privListFromDB.size());
+
+    auto privListIt = privilegeList.begin();
+    auto privDBIt = privListFromDB.begin();
+    for(; privListIt != privilegeList.end() && privDBIt != privListFromDB.end();
+            ++privListIt, ++privDBIt)
+    {
+        RUNNER_ASSERT(*privDBIt == privListIt->name);
+    }
+}
+
+/*
+ * Name: widget_dao_test_register_app_control
+ * Description: Tests app control
+ */
+RUNNER_TEST(widget_dao_test_register_app_control)
+{
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+
+    ConfigParserData::AppControlInfo appControl(DPL::FromUTF8String("operation"));
+    appControl.m_disposition
+            = ConfigParserData::AppControlInfo::Disposition::WINDOW;
+    appControl.m_mimeList.insert(DPL::FromUTF8String("mime"));
+    appControl.m_src = DPL::FromUTF8String("src");
+    appControl.m_uriList.insert(DPL::FromUTF8String("uri"));
+
+    ConfigParserData::AppControlInfoList& appControlListRef
+            = regInfo.configInfo.appControlList;
+    appControlListRef.push_back(appControl);
+
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+
+    WidgetDAO dao(tizenAppId);
+
+    WrtDB::WidgetAppControlList appControlInfoListDB;
+    dao.getAppControlList(appControlInfoListDB);
+    RUNNER_ASSERT(appControlInfoListDB.size() == appControlListRef.size());
+    auto appDBIt = appControlInfoListDB.begin();
+    auto appRefIt = appControlListRef.begin();
+
+    for (;appDBIt != appControlInfoListDB.end()
+            && appRefIt != appControlListRef.end();
+            ++appDBIt, ++appRefIt)
+    {
+        RUNNER_ASSERT((WidgetAppControl::Disposition)
+                appRefIt->m_disposition == appDBIt->disposition);
+        RUNNER_ASSERT(appRefIt->m_index == appDBIt->index);
+        RUNNER_ASSERT(appRefIt->m_operation == appDBIt->operation);
+        RUNNER_ASSERT(appRefIt->m_src == appDBIt->src);
+        for(auto it = appRefIt->m_mimeList.begin();
+                it != appRefIt->m_mimeList.end();
+                ++it)
+        {
+            RUNNER_ASSERT((*it) == appDBIt->mime);
+        }
+        for(auto it = appRefIt->m_uriList.begin();
+                it != appRefIt->m_uriList.end();
+                ++it)
+        {
+            RUNNER_ASSERT((*it) == appDBIt->uri);
+        }
+    }
+}
+
+/*
  * Name: widget_dao_test_is_widget_installed
  * Description: Tests checking if widgets are installed
  * Expected: installed widgets should be stated as installed

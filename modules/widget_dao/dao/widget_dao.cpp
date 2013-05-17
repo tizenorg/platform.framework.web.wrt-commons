@@ -555,15 +555,16 @@ void WidgetDAO::registerWidgetPrivilege(DbWidgetHandle widgetHandle,
                                         const WidgetRegisterInfo &regInfo)
 {
     using namespace DPL::DB::ORM;
+    using namespace DPL::DB::ORM::wrt;
     const ConfigParserData& widgetConfigurationInfo = regInfo.configInfo;
 
     FOREACH(it, widgetConfigurationInfo.privilegeList)
     {
-        wrt::WidgetPrivilege::Row widgetPrivilege;
+        WidgetPrivilege::Row widgetPrivilege;
         widgetPrivilege.Set_app_id(widgetHandle);
         widgetPrivilege.Set_name(it->name);
 
-        DO_INSERT(widgetPrivilege, wrt::WidgetPrivilege)
+        DO_INSERT(widgetPrivilege, WidgetPrivilege)
     }
 }
 
