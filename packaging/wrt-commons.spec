@@ -129,7 +129,6 @@ echo "[WRT] wrt-commons postinst done ..."
 %license  LICENSE
 %{_libdir}/*.so.*
 %{_datadir}/wrt-engine/*
-%{_datadir}/license/%{name}
 %attr(755,root,root) %{_bindir}/wrt_commons_create_clean_db.sh
 %attr(755,root,root) %{_bindir}/wrt_commons_reset_db.sh
 %if %{with_tests}
