@@ -1,11 +1,9 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.119
 Name:       wrt-commons
 Summary:    Wrt common library
 Version:    0.2.119
 Release:    1
-Group:      Development/Libraries
-License:    Apache License, Version 2.0
-URL:        N/A
+Group:      System/Libraries
+License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(ecore)
@@ -26,6 +24,8 @@ BuildRequires:  pkgconfig(libidn)
 BuildRequires:  pkgconfig(cryptsvc)
 BuildRequires:  pkgconfig(dukgenerator)
 BuildRequires:  pkgconfig(minizip)
+BuildRequires:  libcryptsvc-devel
+BuildRequires:  dukgenerator
 Requires: libcryptsvc
 
 %description
@@ -48,25 +48,20 @@ Wrt common library development headers
 %endif
 
 %build
-
-export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
-
-cmake . -DVERSION=%{version} \
+%cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
-        -DCMAKE_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
         %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
 make %{?jobs:-j%jobs}
 
 %install
-mkdir -p %{buildroot}/usr/share/license
-cp %{name} %{buildroot}/usr/share/license/
 %make_install
 
-%clean
-rm -rf %{buildroot}
 
-%post
+%postun -p /sbin/ldconfig
+
+%post 
+/sbin/ldconfig
 mkdir -p /opt/share/widget/system
 mkdir -p /opt/share/widget/user
 mkdir -p /opt/share/widget/exec
@@ -131,7 +126,7 @@ echo "[WRT] wrt-commons postinst done ..."
 
 %files
 %manifest wrt-commons.manifest
-%{_libdir}/*.so
+%license  LICENSE
 %{_libdir}/*.so.*
 %{_datadir}/wrt-engine/*
 %{_datadir}/license/%{name}
@@ -147,5 +142,6 @@ echo "[WRT] wrt-commons postinst done ..."
 %endif
 
 %files devel
+%{_libdir}/*.so
 %{_includedir}/dpl-efl/*
 %{_libdir}/pkgconfig/*.pc
