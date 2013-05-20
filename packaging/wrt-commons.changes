@@ -1,0 +1,8 @@
+* Mon May 20 2013 Rusty Lynch <rusty.lynch@intel.com> submit/tizen/20130517.045648@d5c6dd1
+- Fix WRT Runtimes Change post section : call wrt_common_create_cleandb.sh
+- Fix WRT Runtime : SQL Issue , remove transaction around CHECK_WIDGET_EXISTENCE + Force transaction BEGIN IMEDIATE + Try catch
+- Fix RPMLINT Rules
+- Add Serialize/Deserialize function for unsigned long
+- Fix PC File
+- Fix x86-64 build issues
+
