@@ -1,0 +1,8 @@
+Change-Id: I11045770209cd36a3628862c15bda84c033ba8af
+Code-Review+2: Anas Nashif
+Verified+1: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-by: Anas Nashif
+Submitted-at: Thu, 23 May 2013 09:57:54 -0700
+Reviewed-on: https://review.tizen.org/gerrit/3601
+Project: platform/framework/web/wrt-commons
+Branch: refs/heads/tizen
