@@ -102,14 +102,15 @@ CREATE_TABLE(WidgetExtendedInfo)
 CREATE_TABLE_END()
 
 CREATE_TABLE(WidgetPreference)
+    COLUMN_NOT_NULL(app_id,     INTEGER,)
     COLUMN_NOT_NULL(tizen_appid,    TEXT,           DEFAULT 0)
     COLUMN_NOT_NULL(key_name,       TEXT,)
     COLUMN(key_value,               TEXT,           DEFAULT '')
     COLUMN(readonly,                INT,            DEFAULT 0)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY(tizen_appid, key_name),
-        FOREIGN KEY(tizen_appid) REFERENCES WidgetInfo (tizen_appid) ON DELETE CASCADE
+        PRIMARY KEY(app_id, key_name),
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 

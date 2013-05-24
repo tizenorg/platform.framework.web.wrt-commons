@@ -102,9 +102,11 @@ void SetProperty(TizenAppId tzAppid,
             ThrowMsg(PropertyDAOReadOnly::Exception::ReadOnlyProperty,
                      "Property is readonly");
         }
+        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid));
 
         if (readonly.IsNull()) {
             WidgetPreference::Row row;
+            row.Set_app_id(widgetHandle);
             row.Set_tizen_appid(tzAppid);
             row.Set_key_name(key);
             row.Set_key_value(value);
@@ -133,7 +135,7 @@ void SetProperty(TizenAppId tzAppid,
     }
 }
 
-void RegisterProperties(TizenAppId tzAppid,
+void RegisterProperties(DbWidgetHandle widgetHandle, TizenAppId tzAppid,
                         const WidgetRegisterInfo &regInfo)
 {
     LogDebug("Registering proferences for widget. appid: " << tzAppid);
@@ -148,6 +150,7 @@ void RegisterProperties(TizenAppId tzAppid,
     {
         { // Insert into table Widget Preferences
             WidgetPreference::Row row;
+            row.Set_app_id(widgetHandle);
             row.Set_tizen_appid(tzAppid);
             row.Set_key_name(it->name);
             row.Set_key_value(it->value);

@@ -260,7 +260,7 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetStartFile(widgetHandle, widgetRegInfo);
 
-    PropertyDAO::RegisterProperties(tzAppId, widgetRegInfo);
+    PropertyDAO::RegisterProperties(widgetHandle, tzAppId, widgetRegInfo);
 
     registerWidgetFeatures(widgetHandle, widgetRegInfo);
 
@@ -920,7 +920,12 @@ void WidgetDAO::updateWidgetAppIdInternal(
                      "Cannot find widget. tzAppId: " << fromAppId);
         }
 
-        WidgetInfo::Row row;
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::tizen_appid>(fromAppId));
+
+        WidgetInfo::Row row = select->GetSingleRow();
+
+        //WidgetInfo::Row row;
         row.Set_tizen_appid(toAppId);
 
         WRT_DB_UPDATE(update, WidgetInfo, &WrtDatabase::interface())

@@ -37,6 +37,7 @@ typedef DPL::OptionalString WidgetPropertyValue;
 typedef std::list<WidgetPropertyKey> WidgetPropertyKeyList;
 
 struct WidgetPreferenceRow {
+    int appId;
     TizenAppId tizen_appid;
     WidgetPropertyKey key_name;
     WidgetPropertyValue key_value;
