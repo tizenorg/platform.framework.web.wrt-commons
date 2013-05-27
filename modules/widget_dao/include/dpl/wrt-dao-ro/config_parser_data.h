@@ -181,6 +181,7 @@ class ConfigParserData
     typedef std::list<AppControlInfo> AppControlInfoList;
 
     typedef std::list<std::pair<DPL::String, DPL::String> > BoxSizeList;
+    typedef std::list<std::pair<DPL::String, DPL::String> > BoxLabelList;
 
     struct LiveboxInfo
     {
@@ -199,7 +200,7 @@ class ConfigParserData
         };
         typedef BoxContent BoxContentInfo;
 
-        DPL::String m_label;
+        BoxLabelList m_label;
         DPL::String m_icon;
         DPL::String m_liveboxId;
         DPL::String m_primary;
