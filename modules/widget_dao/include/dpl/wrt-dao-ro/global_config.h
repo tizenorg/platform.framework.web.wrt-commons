@@ -125,14 +125,6 @@ inline const char* GetWidgetPrivateStoragePath()
 }
 
 /**
- * widgets share directory path
- */
-inline const char* GetWidgetSharePath()
-{
-    return "share";
-}
-
-/**
  * widgets desktop files path
  */
 inline const char* GetUserWidgetDesktopPath()
@@ -283,6 +275,26 @@ inline const char* GetShareDirectoryPath()
 inline const char* GetTempInstallInfoPath()
 {
     return "/opt/share/widget/temp_info";
+}
+
+inline const char* GetWidgetSharedPath()
+{
+    return "/shared";
+}
+
+inline const char* GetWidgetDataPath()
+{
+    return "/data";
+}
+
+inline const char* GetWidgetTrustedPath()
+{
+    return "/trusted";
+}
+
+inline const char* GetWidgetResPath()
+{
+    return "/res";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB
