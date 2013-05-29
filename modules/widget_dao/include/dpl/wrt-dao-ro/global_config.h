@@ -125,6 +125,14 @@ inline const char* GetWidgetPrivateStoragePath()
 }
 
 /**
+ * widgets private temp data path
+ */
+inline const char* GetWidgetPrivateTempStoragePath()
+{
+    return "tmp";
+}
+
+/**
  * widgets desktop files path
  */
 inline const char* GetUserWidgetDesktopPath()

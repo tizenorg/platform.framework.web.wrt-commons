@@ -55,9 +55,8 @@ inline std::string GetWidgetPersistentStoragePath(DPL::String tzPkgId)
 
 inline std::string GetWidgetTemporaryStoragePath(DPL::String tzPkgId)
 {
-    return PathBuilder()
-               .Append(GlobalConfig::GetTmpDirPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+    return PathBuilder(GetWidgetBasePath(tzPkgId))
+               .Append(GlobalConfig::GetWidgetPrivateTempStoragePath())
                .GetFullPath();
 }
 
