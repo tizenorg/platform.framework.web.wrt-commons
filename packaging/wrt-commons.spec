@@ -1,7 +1,7 @@
-#git:framework/web/wrt-commons wrt-commons 0.2.119
+#git:framework/web/wrt-commons
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.119
+Version:    0.2.128
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -47,6 +47,11 @@ Wrt common library development headers
     %define with_tests 1
 %endif
 
+%define with_child 0
+%if "%{WITH_CHILD}" == "ON" || "%{WITH_CHILD}" == "Y" || "%{WITH_CHILD}" == "YES" || "%{WITH_CHILD}" == "TRUE" || "%{WITH_CHILD}" == "1"
+    %define with_child 1
+%endif
+
 %build
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
@@ -55,7 +60,8 @@ cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_INSTALL_PREFIX=%{_prefix} \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
-        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
+        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS} \
+        %{?WITH_CHILD:-DWITH_CHILD=%WITH_CHILD}
 make %{?jobs:-j%jobs}
 
 %install
@@ -124,8 +130,8 @@ fi
 # Set Smack label for db files
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
-chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_handler.db
-chsmack -a 'wrt-commons::db_wrt_custom_handler' /opt/usr/dbspace/.wrt_custom_handler.db-journal
+chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db
+chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 

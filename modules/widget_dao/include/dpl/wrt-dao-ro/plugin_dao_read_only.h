@@ -79,6 +79,7 @@ class PluginDAOReadOnly
     PluginDAOReadOnly(const std::string &libraryName);
 
     static PluginHandleList getPluginHandleList();
+    static PluginHandleList getRootPluginHandleList();
 
     static bool isPluginInstalled(const std::string &libraryName);
     static bool isPluginInstalled(DbPluginHandle pluginHandle);

@@ -57,6 +57,7 @@ void convertWidgetPreferenceRow(const ORMWidgetPreferenceList& ormWidgetPrefRow,
     FOREACH(it, ormWidgetPrefRow) {
         WidgetPreferenceRow row;
 
+        row.appId = it->Get_app_id();
         row.tizen_appid = it->Get_tizen_appid();
         row.key_name = it->Get_key_name();
         row.key_value = it->Get_key_value();
@@ -92,8 +93,11 @@ DPL::OptionalInt CheckPropertyReadFlag(TizenAppId tzAppid,
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
+
+        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid));
+
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
+        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
                           Equals<WidgetPreference::key_name>(key)));
 
         return select->GetSingleValue<WidgetPreference::readonly>();
@@ -110,9 +114,12 @@ WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
+
+        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid));
+
         ORMWidgetPropertyKeyList keyList;
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppid));
+        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
         keyList = select->GetValueList<WidgetPreference::key_name>();
 
         WidgetPropertyKeyList retKeyList;
@@ -144,8 +151,11 @@ WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
+
+        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppId));
+
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::tizen_appid>(tzAppId));
+        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
 
         ORMWidgetPreferenceList ormPrefList = select->GetRowList();
         WidgetPreferenceList prefList;
@@ -167,8 +177,11 @@ WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
     Try {
         using namespace DPL::DB::ORM;
         using namespace DPL::DB::ORM::wrt;
+
+        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppid));
+
         WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(And(Equals<WidgetPreference::tizen_appid>(tzAppid),
+        select->Where(And(Equals<WidgetPreference::app_id>(widgetHandle),
                           Equals<WidgetPreference::key_name>(key)));
 
         ORMWidgetPropertyValue ormPropValue =

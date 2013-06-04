@@ -39,22 +39,6 @@ const DPL::String widgetPackage5(L"widgetpackage5");
 RUNNER_TEST_GROUP_INIT(DAO)
 
 /*
- * Name: global_dao_developer_mode
- * Description: tests if developer mode is correctly set and get
- * Expected: received developer shoudl match the one was set
- */
-RUNNER_TEST(global_dao_developer_mode)
-{
-    bool prev_mode = GlobalDAO::GetDeveloperMode();
-    GlobalDAO::SetDeveloperMode(false);
-    RUNNER_ASSERT_MSG(!GlobalDAO::GetDeveloperMode(), "set false failed");
-
-    GlobalDAO::SetDeveloperMode(true);
-    RUNNER_ASSERT_MSG(GlobalDAO::GetDeveloperMode(), "set true failed");
-    GlobalDAO::SetDeveloperMode(prev_mode);
-}
-
-/*
  * Name: home_network_data_usage
  * Description: tests if HomeNetworkDataUsage is correctly set and get
  * Expected: received developer shoudl match the one was set

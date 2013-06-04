@@ -51,7 +51,7 @@ void SetProperty(TizenAppId tzAppid,
 /* This method registers properties for widget.
  * Properties unregistering is done via "delete cascade" mechanism in SQL
  */
-void RegisterProperties(TizenAppId tzAppid,
+void RegisterProperties(DbWidgetHandle widgetHandle, TizenAppId tzAppid,
                         const WidgetRegisterInfo &regInfo);
 } // namespace PropertyDAO
 } // namespace WrtDB

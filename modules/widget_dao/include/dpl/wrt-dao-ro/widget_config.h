@@ -55,9 +55,8 @@ inline std::string GetWidgetPersistentStoragePath(DPL::String tzPkgId)
 
 inline std::string GetWidgetTemporaryStoragePath(DPL::String tzPkgId)
 {
-    return PathBuilder()
-               .Append(GlobalConfig::GetTmpDirPath())
-               .Append(DPL::ToUTF8String(tzPkgId))
+    return PathBuilder(GetWidgetBasePath(tzPkgId))
+               .Append(GlobalConfig::GetWidgetPrivateTempStoragePath())
                .GetFullPath();
 }
 
@@ -67,6 +66,36 @@ inline std::string GetWidgetDesktopFilePath(DPL::String tzPkgId)
                .Append(GlobalConfig::GetUserWidgetDesktopPath())
                .Append(DPL::ToUTF8String(tzPkgId))
                .Concat(".desktop")
+               .GetFullPath();
+}
+
+inline std::string GetWidgetSharedStoragePath(DPL::String tzPkgId)
+{
+    return PathBuilder()
+               .Append(GlobalConfig::GetWidgetUserDataPath())
+               .Append(DPL::ToUTF8String(tzPkgId))
+               .Concat(GlobalConfig::GetWidgetSharedPath())
+               .GetFullPath();
+}
+
+inline std::string GetWidgetSharedDataStoragePath(DPL::String tzPkgId)
+{
+    return PathBuilder(GetWidgetSharedStoragePath(tzPkgId))
+               .Concat(GlobalConfig::GetWidgetDataPath())
+               .GetFullPath();
+}
+
+inline std::string GetWidgetSharedTrustedStoragePath(DPL::String tzPkgId)
+{
+    return PathBuilder(GetWidgetSharedStoragePath(tzPkgId))
+               .Concat(GlobalConfig::GetWidgetTrustedPath())
+               .GetFullPath();
+}
+
+inline std::string GetWidgetSharedResStoragePath(DPL::String tzPkgId)
+{
+    return PathBuilder(GetWidgetSharedStoragePath(tzPkgId))
+               .Concat(GlobalConfig::GetWidgetResPath())
                .GetFullPath();
 }
 } // namespace WidgetConfig
