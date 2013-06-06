@@ -125,11 +125,11 @@ inline const char* GetWidgetPrivateStoragePath()
 }
 
 /**
- * widgets share directory path
+ * widgets private temp data path
  */
-inline const char* GetWidgetSharePath()
+inline const char* GetWidgetPrivateTempStoragePath()
 {
-    return "share";
+    return "tmp";
 }
 
 /**
@@ -285,34 +285,24 @@ inline const char* GetTempInstallInfoPath()
     return "/opt/share/widget/temp_info";
 }
 
-inline const char* GetVconfKeyPrefixPath()
+inline const char* GetWidgetSharedPath()
 {
-    return "file/private";
+    return "/shared";
 }
 
-inline const char* GetVconfKeyPopupUsagePath()
+inline const char* GetWidgetDataPath()
 {
-    return "/popup_usage";
+    return "/data";
 }
 
-inline const char* GetVconfKeyGeolocationUsagePath()
+inline const char* GetWidgetTrustedPath()
 {
-    return "/geolocation_usage";
+    return "/trusted";
 }
 
-inline const char* GetVconfKeyWebNotificationUsagePath()
+inline const char* GetWidgetResPath()
 {
-    return "/web_notification_usage";
-}
-
-inline const char* GetVconfKeyWebDatabaseUsagePath()
-{
-    return "/web_database_usage";
-}
-
-inline const char* GetVconfKeyMemorySavingModePath()
-{
-    return "/memory_saving_mode";
+    return "/res";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB

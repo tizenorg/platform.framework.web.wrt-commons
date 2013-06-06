@@ -1221,14 +1221,6 @@ SettingsType WidgetDAOReadOnly::getWebDatabaseUsage(void) const
     return static_cast<SettingsType>(*result);
 }
 
-SettingsType WidgetDAOReadOnly::getFileSystemUsage(void) const
-{
-    WidgetSecuritySettingsRow row =
-        getWidgetSecuritySettingsRow(m_widgetHandle);
-    DPL::OptionalInt result = row.Get_file_system_usage();
-    return static_cast<SettingsType>(*result);
-}
-
 DPL::OptionalString WidgetDAOReadOnly::getWidgetInstalledPath() const
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN

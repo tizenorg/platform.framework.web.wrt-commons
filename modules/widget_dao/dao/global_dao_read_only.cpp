@@ -32,20 +32,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-bool GlobalDAOReadOnly::GetDeveloperMode()
-{
-    LogDebug("Getting Developer mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::developer_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get developer mode");
-    }
-}
 
 bool GlobalDAOReadOnly::GetSecureByDefault()
 {

@@ -29,8 +29,6 @@ namespace WrtDB {
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
-    static void SetDeveloperMode(bool mode);
-
     static void SetSecureByDefault(bool secureByDefault);
 
     static void setComplianceMode(bool mode);

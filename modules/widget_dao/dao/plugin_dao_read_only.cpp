@@ -154,6 +154,35 @@ PluginHandleList PluginDAOReadOnly::getPluginHandleList()
     }
 }
 
+PluginHandleList PluginDAOReadOnly::getRootPluginHandleList()
+{
+    LogDebug("Getting root plugin handle list.");
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        WRT_DB_SELECT(select, PluginProperties, &WrtDatabase::interface())
+        PluginHandleList handleList = select->GetValueList<PluginProperties::PluginPropertiesId>();
+
+        WRT_DB_SELECT(select_2nd, PluginDependencies, &WrtDatabase::interface())
+        PluginDependencies::Select::RowList dependenciesRows = select_2nd->GetRowList();
+
+        if (!dependenciesRows.empty())
+        {
+            FOREACH(it, dependenciesRows)
+            {
+                handleList.remove(it->Get_PluginPropertiesId());
+            }
+        }
+
+        return handleList;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(PluginDAOReadOnly::Exception::DatabaseError,
+                   "Failed in getRootPluginHandleList");
+    }
+}
+
 DbPluginHandle PluginDAOReadOnly::getPluginHandle() const
 {
     return m_pluginHandle;

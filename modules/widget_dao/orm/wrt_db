@@ -4,7 +4,6 @@ SQL(
 )
 /*TODO: secure_by_default should be 0 by default*/
 CREATE_TABLE(GlobalProperties)
-    COLUMN_NOT_NULL(developer_mode,          INT,          DEFAULT 0)
     COLUMN_NOT_NULL(secure_by_default,       INT,          DEFAULT 1)
     COLUMN_NOT_NULL(home_network_data_usage, TINYINT,      DEFAULT 1)
     COLUMN_NOT_NULL(roaming_data_usage,      TINYINT,      DEFAULT 1)
@@ -102,14 +101,15 @@ CREATE_TABLE(WidgetExtendedInfo)
 CREATE_TABLE_END()
 
 CREATE_TABLE(WidgetPreference)
+    COLUMN_NOT_NULL(app_id,     INTEGER,)
     COLUMN_NOT_NULL(tizen_appid,    TEXT,           DEFAULT 0)
     COLUMN_NOT_NULL(key_name,       TEXT,)
     COLUMN(key_value,               TEXT,           DEFAULT '')
     COLUMN(readonly,                INT,            DEFAULT 0)
 
     TABLE_CONSTRAINTS(
-        PRIMARY KEY(tizen_appid, key_name),
-        FOREIGN KEY(tizen_appid) REFERENCES WidgetInfo (tizen_appid) ON DELETE CASCADE
+        PRIMARY KEY(app_id, key_name),
+        FOREIGN KEY(app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
 
@@ -235,7 +235,6 @@ CREATE_TABLE(WidgetSecuritySettings)
     COLUMN_NOT_NULL(geolocation_usage,      INT, DEFAULT 1)
     COLUMN_NOT_NULL(web_notification_usage, INT, DEFAULT 1)
     COLUMN_NOT_NULL(web_database_usage,     INT, DEFAULT 1)
-    COLUMN_NOT_NULL(file_system_usage,      INT, DEFAULT 1)
     TABLE_CONSTRAINTS(
         FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )

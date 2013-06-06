@@ -162,7 +162,6 @@ class WidgetDAO : public WidgetDAOReadOnly
     void setGeolocationUsage(const SettingsType value);
     void setWebNotificationUsage(const SettingsType value);
     void setWebDatabaseUsage(const SettingsType value);
-    void setFileSystemUsage(const SettingsType value);
 
   private:
     //Methods used during widget registering
