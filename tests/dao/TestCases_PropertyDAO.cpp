@@ -27,6 +27,7 @@
 #include <dpl/exception.h>
 #include <dpl/wrt-dao-rw/property_dao.h>
 #include <dpl/wrt-dao-ro/wrt_db_types.h>
+#include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 
 using namespace WrtDB;
 using namespace WrtDB::PropertyDAOReadOnly;
@@ -46,6 +47,7 @@ using namespace WrtDB::PropertyDAOReadOnly;
 
 RUNNER_TEST_GROUP_INIT(DAO)
 
+
 /*
  * Name: property_dao_get_lists
  * Description: tests returning list of properties for given id
@@ -55,20 +57,35 @@ RUNNER_TEST_GROUP_INIT(DAO)
 RUNNER_TEST(property_dao_get_lists)
 {
     { //property list
-        std::map<WrtDB::TizenAppId, size_t> prefsMap;
-        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid201", 2));
-        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid202", 1));
-        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"tizenid203", 2));
-        //no widget
-        prefsMap.insert(std::pair<WrtDB::TizenAppId, size_t>(L"non_exists", 0));
+        struct three_field{
+            WrtDB::TizenAppId   tappid;
+            DbWidgetHandle      whandleid;
+            size_t              nrow;
+        };
 
-        FOREACH(it, prefsMap) {
-            PropertyDAOReadOnly::WidgetPreferenceList prefs =
-                PropertyDAOReadOnly::GetPropertyList(it->first);
-            RUNNER_ASSERT(prefs.size() == it->second);
+        three_field f3;
+        std::list<three_field> prefList;
+        std::list<three_field>::iterator it;
+
+        f3.tappid=L"tizenid201";f3.whandleid=2000;f3.nrow=2;
+        prefList.push_back(f3);
+        f3.tappid=L"tizenid202"; f3.whandleid=2001;f3.nrow=1;
+        prefList.push_back(f3);
+        f3.tappid=L"tizenid203"; f3.whandleid=2002;f3.nrow=2;
+        prefList.push_back(f3);
+        f3.tappid=L"tizenid204"; f3.whandleid=2003;f3.nrow=0;
+        prefList.push_back(f3);
+
+        for(it=prefList.begin();it!=prefList.end();++it)
+        {
+            PropertyDAOReadOnly::WidgetPreferenceList prefs_tid =
+                    PropertyDAOReadOnly::GetPropertyList(it->tappid);
+            RUNNER_ASSERT(prefs_tid.size() == it->nrow);
+            PropertyDAOReadOnly::WidgetPreferenceList prefs_aid =
+                    PropertyDAOReadOnly::GetPropertyList(it->whandleid);
+            RUNNER_ASSERT(prefs_aid.size() == it->nrow);
         }
     }
-
     { //property key list
         WidgetPropertyKeyList orig_2000;
         orig_2000.push_back(DPL::FromUTF8String("key1_for_2000"));
@@ -101,6 +118,46 @@ RUNNER_TEST(property_dao_get_lists)
         }
     }
 }
+
+
+/*
+ * Name: property_dao_get_list_exceptions
+ * Description: tests returning exception for given tizen_appid if is
+ * not inserted into WidgetInfo table
+ * Expected: procedure passes when is exception. Widget absent in the WidgetInfo
+ * table.
+ */
+RUNNER_TEST(property_dao_get_list_exceptions)
+{
+    {
+        bool assert_flag;
+        WrtDB::TizenAppId app_id_non_exists = L"non_exists";
+
+        assert_flag=true;
+        Try{
+            PropertyDAOReadOnly::WidgetPreferenceList prefs =
+                    PropertyDAOReadOnly::GetPropertyList(app_id_non_exists);
+        } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist)
+        {
+            assert_flag=false;
+        }
+        RUNNER_ASSERT_MSG(!(assert_flag),"Error, value doesn't make exception");
+    }
+    {
+        bool assert_flag;
+        DbWidgetHandle handle_non_exist(2010);
+        assert_flag=true;
+        Try{
+            PropertyDAOReadOnly::WidgetPreferenceList prefs =
+                    PropertyDAOReadOnly::GetPropertyList(handle_non_exist);
+        } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist)
+        {
+            assert_flag=false;
+        }
+        RUNNER_ASSERT_MSG(!(assert_flag),"Error, value doesn't make exception");
+    }
+}
+
 
 /*
  * Name: property_dao_set_update_remove

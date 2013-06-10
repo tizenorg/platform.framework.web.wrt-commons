@@ -133,41 +133,39 @@ WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
     }
 }
 
-//deprecated
-WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
+
+WidgetPreferenceList GetPropertyListRows(DbWidgetHandle widgetHandle)
 {
     Try {
-        TizenAppId tzAppid = WidgetDAOReadOnly::getTzAppId(widgetHandle);
-        return GetPropertyList(tzAppid);
-    } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist){
-        WidgetPreferenceList empty;
-        return empty;
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
+            select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        ORMWidgetPreferenceList ormPrefList = select->GetRowList();
+        WidgetPreferenceList prefList;
+        convertWidgetPreferenceRow(ormPrefList, prefList);
+        return prefList;
+    }Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(Exception::DatabaseError,
+                "Failure during getting property list");
     }
+}
+
+WidgetPreferenceList GetPropertyList(DbWidgetHandle widgetHandle)
+{
+    if(!(WidgetDAOReadOnly::isWidgetInstalled(widgetHandle)))
+        ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                "Failed to get widget");
+    return GetPropertyListRows(widgetHandle);
 }
 
 WidgetPreferenceList GetPropertyList(TizenAppId tzAppId)
 {
     LogDebug("Get Property list. tizenAppId: " << tzAppId);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppId));
-
-        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-        select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
-
-        ORMWidgetPreferenceList ormPrefList = select->GetRowList();
-        WidgetPreferenceList prefList;
-        convertWidgetPreferenceRow(ormPrefList, prefList);
-
-        return prefList;
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(Exception::DatabaseError,
-                   "Failure during getting property list");
-    }
+    DbWidgetHandle widgetHandle(WidgetDAOReadOnly::getHandle(tzAppId));
+    return GetPropertyListRows(widgetHandle);
 }
+
 
 WidgetPropertyValue GetPropertyValue(TizenAppId tzAppid,
                                      const WidgetPropertyKey &key)
