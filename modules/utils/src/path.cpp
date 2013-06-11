@@ -314,6 +314,27 @@ bool Path::isSubPath(const Path & other) const
     return true;
 }
 
+bool Path::hasExtension(const std::string& extension) const
+{
+    LogDebug("Looking for extension " << extension << " in: " << this->Filename());
+
+    size_t extLen = extension.length();
+
+    if(m_parts.empty()) return false;
+    if(extLen == 0) return false;
+
+    const std::string& last = *--m_parts.end();
+    size_t lastLen = last.length();
+
+    if(lastLen < (1 + extLen)) return false;
+
+    const char last_tmp = last[ lastLen - (1 + extLen) ];
+    if(last_tmp != '.') return false;
+
+    if(last.substr(lastLen - extLen) != extension) return false;
+    return true;
+}
+
 void MakeDir(const Path & path, mode_t mode)
 {
     path.RootGuard();

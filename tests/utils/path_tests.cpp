@@ -834,3 +834,46 @@ RUNNER_TEST(path_iterator_copy_constructor)
     RUNNER_ASSERT_MSG(*iter2 == dirTest.end(), "Iterator is in broken state");
     iter2.reset();
 }
+
+/*
+Name: path_extension_test
+Description: Tests if file extension is correct
+Expected: Proper recognition of extensions
+*/
+RUNNER_TEST(path_extension_test)
+{
+
+    Path dirTest = Path("extension");
+
+    Path path1 = dirTest / "file1.XML";
+    Path path2 = dirTest / "file2.JPG";
+    Path path3 = dirTest / "file3.";
+    Path path4 = dirTest / "file4";
+    Path path5 = dirTest / "file5.HTML";
+    Path path6 = dirTest / "file6.JS";
+    Path path7 = dirTest / "file7.VERY_VERY_LONG_EXTENSION";
+    Path path8 = dirTest / "file8.VERY.VERY.LONG.EXTENSION.WITH.DOTS";
+
+    RUNNER_ASSERT_MSG(path1.hasExtension("XML"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path2.hasExtension("JPG"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path5.hasExtension("HTML"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path6.hasExtension("JS"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path7.hasExtension("VERY_VERY_LONG_EXTENSION"),
+            "Problem with comparison");
+    RUNNER_ASSERT_MSG(path8.hasExtension("DOTS"), "Problem with comparison");
+
+    RUNNER_ASSERT_MSG(!path1.hasExtension(".XML"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path1.hasExtension("MXL"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path2.hasExtension(".JPG"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path5.hasExtension(".HTML"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path6.hasExtension(".JS"),
+            "Wrong argument in hasExtension() function");
+
+    RUNNER_ASSERT_MSG(!path3.hasExtension(""), "Extension length is 0");
+
+    RUNNER_ASSERT_MSG(!path4.hasExtension(""), "Not a directory");
+}
