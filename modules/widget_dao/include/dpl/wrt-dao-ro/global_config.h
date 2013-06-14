@@ -272,7 +272,7 @@ inline const char* GetWACVersion()
 
 inline const char* GetTizenVersion()
 {
-    return "2.1";
+    return "2.2";
 }
 
 inline const char* GetShareDirectoryPath()
