@@ -98,6 +98,14 @@ inline std::string GetWidgetSharedResStoragePath(DPL::String tzPkgId)
                .Concat(GlobalConfig::GetWidgetResPath())
                .GetFullPath();
 }
+
+inline std::string GetWidgetNPRuntimePluginsPath(const DPL::String& tzPkgId)
+{
+    return PathBuilder(GetWidgetBasePath(tzPkgId))
+                .Concat(GlobalConfig::GetWidgetSrcPath())
+                .Append(GlobalConfig::GetNPRuntimePluginsPath())
+                .GetFullPath();
+}
 } // namespace WidgetConfig
 } // namespace WrtDB
 
