@@ -138,7 +138,7 @@ typedef enum class_definition_iframe_behaviour_e
     //it is default one
     NONE,
     //object should be copied as reference to each iframe
-    REFERENCE,
+    REFERENCE, // deprecated
     //object should be created for each iframe and NOT inform plugin
     CREATE_INSTANCE
 } class_definition_iframe_behaviour_t;
@@ -153,9 +153,9 @@ typedef enum class_definition_iframe_notice_e
 typedef enum class_definition_iframe_overlay_e
 {
     IGNORED,
-    USE_OVERLAYED,
-    OVERLAYED_BEFORE_ORIGINAL
-} class_definition_iframe_overlay_t;
+    USE_OVERLAYED, //deprecated
+    OVERLAYED_BEFORE_ORIGINAL //deprecated
+} class_definition_iframe_overlay_t; //deprecated
 
 typedef void* js_object_instance_t;
 //global_context - id
@@ -170,7 +170,7 @@ typedef struct class_definition_options_s
     class_definition_type_t type;
     class_definition_iframe_behaviour_t iframe_option;
     class_definition_iframe_notice_t iframe_notice;
-    class_definition_iframe_overlay_t iframe_overlay;
+    class_definition_iframe_overlay_t iframe_overlay;   //deprecated
     iframe_loaded_cb cb;
     void * private_data;
     js_function_impl function;

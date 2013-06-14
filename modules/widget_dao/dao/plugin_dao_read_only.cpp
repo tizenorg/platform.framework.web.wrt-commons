@@ -275,6 +275,35 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
     }
 }
 
+ImplementedObjectsList PluginDAOReadOnly::getImplementedObjects()
+{
+    LogDebug("getImplementedObjects");
+
+    Try
+    {
+        ImplementedObjectsList objectList;
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        WRT_DB_SELECT(select, PluginImplementedObjects, &WrtDatabase::interface())
+        std::list<DPL::String> valueList = select->GetValueList<PluginImplementedObjects::PluginObject>();
+
+        if (!valueList.empty()) {
+            FOREACH(it, valueList)
+            {
+                objectList.push_back(DPL::ToUTF8String(*it));
+            }
+        } else {
+            LogWarning("PluginHandle for object not found");
+        }
+        return objectList;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(PluginDAOReadOnly::Exception::DatabaseError,
+                   "Failed in GetPluginHandleForImplementedObject");
+    }
+}
+
 ImplementedObjectsList PluginDAOReadOnly::getImplementedObjectsForPluginHandle(
     DbPluginHandle handle)
 {
