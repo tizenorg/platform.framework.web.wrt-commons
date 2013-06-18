@@ -257,13 +257,13 @@ class ConfigParserData
 
     struct Metadata
     {
-        Metadata(const DPL::String& _key,
-                 const DPL::String& _value) :
+        Metadata(const DPL::OptionalString& _key,
+                 const DPL::OptionalString& _value) :
             key(_key),
             value(_value)
         {}
-        DPL::String key;
-        DPL::String value;
+        DPL::OptionalString key;
+        DPL::OptionalString value;
 
         bool operator==(const Metadata&) const;
         bool operator!=(const Metadata&) const;
