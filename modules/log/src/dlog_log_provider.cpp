@@ -57,8 +57,13 @@ void DLOGLogProvider::Debug(const char *message,
                             int line,
                             const char *function)
 {
+#ifdef SECURE_LOG
+    SECURE_LOG(LOG_DEBUG, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
+#else
     LOG(LOG_DEBUG, m_tag.Get(), "%s",
         FormatMessage(message, filename, line, function).c_str());
+#endif
 }
 
 void DLOGLogProvider::Info(const char *message,
@@ -66,8 +71,13 @@ void DLOGLogProvider::Info(const char *message,
                            int line,
                            const char *function)
 {
+#ifdef SECURE_LOG
+    SECURE_LOG(LOG_INFO, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
+#else
     LOG(LOG_INFO, m_tag.Get(), "%s",
         FormatMessage(message, filename, line, function).c_str());
+#endif
 }
 
 void DLOGLogProvider::Warning(const char *message,
@@ -75,8 +85,13 @@ void DLOGLogProvider::Warning(const char *message,
                               int line,
                               const char *function)
 {
+#ifdef SECURE_LOG
+    SECURE_LOG(LOG_WARN, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
+#else
     LOG(LOG_WARN, m_tag.Get(), "%s",
         FormatMessage(message, filename, line, function).c_str());
+#endif
 }
 
 void DLOGLogProvider::Error(const char *message,
@@ -84,8 +99,13 @@ void DLOGLogProvider::Error(const char *message,
                             int line,
                             const char *function)
 {
+#ifdef SECURE_LOG
+    SECURE_LOG(LOG_ERROR, m_tag.Get(), "%s",
+        FormatMessage(message, filename, line, function).c_str());
+#else
     LOG(LOG_ERROR, m_tag.Get(), "%s",
         FormatMessage(message, filename, line, function).c_str());
+#endif
 }
 
 void DLOGLogProvider::Pedantic(const char *message,
@@ -93,10 +113,17 @@ void DLOGLogProvider::Pedantic(const char *message,
                                int line,
                                const char *function)
 {
+#ifdef SECURE_LOG
+    SECURE_LOG(LOG_DEBUG, "DPL", "%s", FormatMessage(message,
+                                              filename,
+                                              line,
+                                              function).c_str());
+#else
     LOG(LOG_DEBUG, "DPL", "%s", FormatMessage(message,
                                               filename,
                                               line,
                                               function).c_str());
+#endif
 }
 }
 } // namespace DPL

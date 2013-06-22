@@ -304,6 +304,15 @@ inline const char* GetWidgetResPath()
 {
     return "/res";
 }
+
+inline const char* GetNPRuntimePluginsPath()
+{
+#ifdef __arm__
+    return "plugins/arm";
+#else
+    return "plugins/x86";
+#endif
+}
 } // namespace GlobalConfig
 } // namespace WrtDB
 

@@ -180,12 +180,18 @@ class ConfigParserData
 
     typedef std::list<AppControlInfo> AppControlInfoList;
 
-    typedef std::list<std::pair<DPL::String, DPL::String> > BoxSizeList;
-    typedef std::list<std::pair<DPL::String, DPL::String> > BoxLabelList;
-
     struct LiveboxInfo
     {
         LiveboxInfo() { }
+
+        struct BoxSize
+        {
+            DPL::String m_size;
+            DPL::String m_preview;
+            DPL::String m_useDecoration;
+        };
+        typedef BoxSize BoxSizeInfo;
+        typedef std::list<BoxSizeInfo> BoxSizeList;
 
         struct BoxContent
         {
@@ -199,6 +205,8 @@ class ConfigParserData
             DPL::String m_pdFastOpen;
         };
         typedef BoxContent BoxContentInfo;
+
+        typedef std::list<std::pair<DPL::String, DPL::String> > BoxLabelList;
 
         BoxLabelList m_label;
         DPL::String m_icon;
@@ -257,13 +265,13 @@ class ConfigParserData
 
     struct Metadata
     {
-        Metadata(const DPL::String& _key,
-                 const DPL::String& _value) :
+        Metadata(const DPL::OptionalString& _key,
+                 const DPL::OptionalString& _value) :
             key(_key),
             value(_value)
         {}
-        DPL::String key;
-        DPL::String value;
+        DPL::OptionalString key;
+        DPL::OptionalString value;
 
         bool operator==(const Metadata&) const;
         bool operator!=(const Metadata&) const;
