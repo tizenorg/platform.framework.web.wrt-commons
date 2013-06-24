@@ -66,7 +66,7 @@ if [ "x$1" == "xstart" ]; then
     INS_ALL_WIDGET_STARTFILE="insert into WidgetStartFile(app_id, src)"
     INS_ALL_WIDGET_LOC_STARTFILE="insert into WidgetLocalizedStartFile(app_id, start_file_id, widget_locale, type, encoding)"
     INS_ALL_WIDGET_DEFPREF="insert into WidgetDefaultPreference(app_id, key_name, key_value, readonly)"
-    INS_ALL_WIDGET_PREF="insert into WidgetPreference(tizen_appid, key_name, key_value, readonly)"
+    INS_ALL_WIDGET_PREF="insert into WidgetPreference(app_id,tizen_appid, key_name, key_value, readonly)"
     INS_ALL_WIDGET_FEATURE="insert into WidgetFeature(app_id, name)"
     INS_ALL_WIDGET_WINMODES="insert into WidgetWindowModes(app_id, window_mode)"
     INS_ALL_WIDGET_WARP="insert into WidgetWARPInfo(app_id, iri, subdomain_access)"
@@ -106,11 +106,11 @@ if [ "x$1" == "xstart" ]; then
     sqlite3 $WRT_DB "${INS_ALL_WIDGET_LOC_STARTFILE} VALUES(2003, 4, 'en', '', '')";
 
     #widget properties
-    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid201', 'key1_for_2000', 'value_for_key1_2000', 0)";
-    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid201', 'key2_for_2000', 'value_for_key2_2000', 0)";
-    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid202', 'key1_for_2001', 'value1_for_key_2001', 1)";
-    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid203', 'key1_for_2002', 'value1_for_key_2002', 0)";
-    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES('tizenid203', 'key2_for_2002', 'value2_for_key_2002', 1)";
+    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES(2000,'tizenid201', 'key1_for_2000', 'value_for_key1_2000', 0)";
+    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES(2000,'tizenid201', 'key2_for_2000', 'value_for_key2_2000', 0)";
+    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES(2001,'tizenid202', 'key1_for_2001', 'value1_for_key_2001', 1)";
+    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES(2002,'tizenid203', 'key1_for_2002', 'value1_for_key_2002', 0)";
+    sqlite3 $WRT_DB "${INS_ALL_WIDGET_PREF} VALUES(2002,'tizenid203', 'key2_for_2002', 'value2_for_key_2002', 1)";
 
     #create if not exists and fix autoincrement value
     sqlite3 $WRT_DB "INSERT INTO WidgetInfo(tizen_appid) VALUES('temp')";

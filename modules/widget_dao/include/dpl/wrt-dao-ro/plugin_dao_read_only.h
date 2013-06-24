@@ -90,6 +90,7 @@ class PluginDAOReadOnly
     static DbPluginHandle getPluginHandleForImplementedObject(
         const std::string& objectName);
 
+    static ImplementedObjectsList getImplementedObjects();
     static ImplementedObjectsList getImplementedObjectsForPluginHandle(
         DbPluginHandle handle);
 
