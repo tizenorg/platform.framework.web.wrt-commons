@@ -39,8 +39,8 @@ function create_db {
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
     sqlite3 $dbpath.$name.db "$SQL"
     touch $dbpath.$name.db-journal
-    chown 0:6026 $dbpath.$name.db
-    chown 0:6026 $dbpath.$name.db-journal
+    chown 0:users $dbpath.$name.db
+    chown 0:users $dbpath.$name.db-journal
     chmod 660 $dbpath.$name.db
     chmod 660 $dbpath.$name.db-journal
 

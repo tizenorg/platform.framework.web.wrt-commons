@@ -1,3 +1,6 @@
+* Fri Jun 28 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20130523.172247@b74e1af
+- TIVI-1094: Start using correct user/group ID's on db files
+
 * Mon May 20 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20130520.103517@f203c87
 - Fix WRT Runtimes Change post section : call wrt_common_create_cleandb.sh
 - Fix WRT Runtime : SQL Issue , remove transaction around CHECK_WIDGET_EXISTENCE + Force transaction BEGIN IMEDIATE + Try catch
