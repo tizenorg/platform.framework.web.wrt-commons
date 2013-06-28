@@ -5,6 +5,7 @@ Release:    1
 Group:      System/Libraries
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
+Source1001: 	wrt-commons.manifest
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(ecore)
 BuildRequires:  pkgconfig(appcore-efl)
@@ -41,6 +42,7 @@ Wrt common library development headers
 
 %prep
 %setup -q
+cp %{SOURCE1001} .
 
 %define with_tests 0
 %if "%{WITH_TESTS}" == "ON" || "%{WITH_TESTS}" == "Y" || "%{WITH_TESTS}" == "YES" || "%{WITH_TESTS}" == "TRUE" || "%{WITH_TESTS}" == "1"
@@ -121,7 +123,7 @@ fi
 echo "[WRT] wrt-commons postinst done ..."
 
 %files
-%manifest wrt-commons.manifest
+%manifest %{name}.manifest
 %license  LICENSE
 %{_libdir}/*.so.*
 %{_datadir}/wrt-engine/*
@@ -137,6 +139,7 @@ echo "[WRT] wrt-commons postinst done ..."
 %endif
 
 %files devel
+%manifest %{name}.manifest
 %{_libdir}/*.so
 %{_includedir}/dpl-efl/*
 %{_libdir}/pkgconfig/*.pc
