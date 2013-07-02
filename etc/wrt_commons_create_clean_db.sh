@@ -24,7 +24,7 @@ function create_db {
     DB_LABEL=""
     if [ -f $dbpath.$name.db ]
     then
-        DB_LABEL=`chsmack $dbpath.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+#        DB_LABEL=`chsmack $dbpath.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
     fi
     rm -f $dbpath.$name.db
 
@@ -32,7 +32,7 @@ function create_db {
     JOURNAL_LABEL=""
     if [ -f $dbpath.$name.db-journal ]
     then
-        JOURNAL_LABEL=`chsmack $dbpath.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
+#        JOURNAL_LABEL=`chsmack $dbpath.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
     fi
     rm -f $dbpath.$name.db-journal
 
@@ -49,13 +49,13 @@ function create_db {
     # restore smack label
     if [ -n "$DB_LABEL" ]
     then
-        chsmack -a $DB_LABEL $dbpath.$name.db
+#        chsmack -a $DB_LABEL $dbpath.$name.db
     fi
 
     # restore smack label
     if [ -n "$JOURNAL_LABEL" ]
     then
-        chsmack -a $JOURNAL_LABEL $dbpath.$name.db-journal
+#        chsmack -a $JOURNAL_LABEL $dbpath.$name.db-journal
     fi
 }
 
