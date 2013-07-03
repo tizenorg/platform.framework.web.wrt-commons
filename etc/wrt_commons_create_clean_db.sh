@@ -22,19 +22,9 @@ function create_db {
     dbpath=$2
     # extract smack label before removal
     DB_LABEL=""
-    if [ -f $dbpath.$name.db ]
-    then
-        DB_LABEL=`chsmack $dbpath.$name.db | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
-    fi
-    rm -f $dbpath.$name.db
 
     # extract smack label before removal
     JOURNAL_LABEL=""
-    if [ -f $dbpath.$name.db-journal ]
-    then
-        JOURNAL_LABEL=`chsmack $dbpath.$name.db-journal | sed -r "s/.*access=\"([^\"]+)\"/\1/"`
-    fi
-    rm -f $dbpath.$name.db-journal
 
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
     sqlite3 $dbpath.$name.db "$SQL"
@@ -47,17 +37,7 @@ function create_db {
     pkill -9 security-serv
 
     # restore smack label
-    if [ -n "$DB_LABEL" ]
-    then
-        chsmack -a $DB_LABEL $dbpath.$name.db
-    fi
-
     # restore smack label
-    if [ -n "$JOURNAL_LABEL" ]
-    then
-        chsmack -a $JOURNAL_LABEL $dbpath.$name.db-journal
-    fi
-}
 
 for name in wrt
 do
