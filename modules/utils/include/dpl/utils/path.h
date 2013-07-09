@@ -130,6 +130,7 @@ public:
      * @throws If prefix does not match to this path object
      */
     bool isSubPath(const Path & other) const;
+    bool hasExtension(const std::string& extension) const;
 
     bool operator==(const Path & other) const;
     bool operator!=(const Path & other) const;
