@@ -59,12 +59,6 @@ class GlobalDAOReadOnly
 
     static bool GetSecureByDefault();
 
-    static bool getComplianceMode();
-
-    static std::string getComplianceFakeImei();
-
-    static std::string getComplianceFakeMeid();
-
     static WidgetAccessInfoList GetWhiteURIList();
 
     static bool GetCookieSharingMode();

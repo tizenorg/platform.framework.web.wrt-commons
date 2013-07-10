@@ -47,63 +47,6 @@ void GlobalDAO::SetSecureByDefault(bool secure)
     }
 }
 
-void GlobalDAO::setComplianceMode(bool mode)
-{
-    LogDebug("Updating compliance mode to:" << mode);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_compliance_mode(mode);
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update compliance mode");
-    }
-}
-
-void GlobalDAO::setComplianceFakeImei(const std::string &imei)
-{
-    LogDebug("Setting compliance fake IMEI: " << imei);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_compliance_fake_imei(DPL::FromASCIIString(imei));
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update compliance fake IMEI");
-    }
-}
-
-void GlobalDAO::setComplianceFakeMeid(const std::string &meid)
-{
-    LogDebug("Setting compliance fake MEID: " << meid);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_compliance_fake_meid(DPL::FromASCIIString(meid));
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update compliance fake MEID");
-    }
-}
-
 void GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::NetworkAccessMode newMode)
 {
     LogDebug("updating home network data usage to:" << newMode);

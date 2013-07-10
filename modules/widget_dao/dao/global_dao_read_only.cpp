@@ -41,61 +41,6 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
     return select->GetSingleValue<GlobalProperties::secure_by_default>();
 }
 
-bool GlobalDAOReadOnly::getComplianceMode()
-{
-    LogDebug("Getting compliance mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::compliance_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance mode");
-    }
-}
-
-std::string GlobalDAOReadOnly::getComplianceFakeImei()
-{
-    LogDebug("Getting compliance fake IMEI");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        DPL::Optional<DPL::String> result =
-            select->GetSingleValue<GlobalProperties::compliance_fake_imei>();
-        if (!result) {
-            return std::string();
-        }
-        return DPL::ToUTF8String(*result);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance fake IMEI");
-    }
-}
-
-std::string GlobalDAOReadOnly::getComplianceFakeMeid()
-{
-    LogDebug("Getting compliance fake MEID");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        DPL::Optional<DPL::String> result =
-            select->GetSingleValue<GlobalProperties::compliance_fake_meid>();
-        if (!result) {
-            return std::string();
-        }
-        return DPL::ToUTF8String(*result);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance fake MEID");
-    }
-}
-
 bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
 {
     using namespace DPL::DB::ORM;
