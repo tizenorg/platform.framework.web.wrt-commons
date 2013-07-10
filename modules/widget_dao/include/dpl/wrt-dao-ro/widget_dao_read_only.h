@@ -182,10 +182,10 @@ struct WidgetRegisterInfo
 };
 
 typedef std::list<std::string> CertificateChainList;
-class IWacSecurity
+class IWidgetSecurity
 {
   public:
-    virtual ~IWacSecurity();
+    virtual ~IWidgetSecurity();
 
     virtual const WidgetCertificateDataList& getCertificateList() const = 0;
 
@@ -196,6 +196,9 @@ class IWacSecurity
     virtual void getCertificateChainList(CertificateChainList& list,
                                          CertificateSource source) const = 0;
 };
+
+//TODO: remove this typedef after wrt-installer changes...
+typedef IWidgetSecurity IWacSecurity;
 
 /**
  * WidgetAuthorInfo.

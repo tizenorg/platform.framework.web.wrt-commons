@@ -36,7 +36,7 @@
 using namespace WrtDB;
 
 namespace {
-class WacSecurityMock : public WrtDB::IWacSecurity
+class WacSecurityMock : public WrtDB::IWidgetSecurity
 {
   public:
     WacSecurityMock() :
@@ -85,7 +85,7 @@ class WacSecurityMock : public WrtDB::IWacSecurity
 };
 
 TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
-                           const IWacSecurity& sec,
+                           const IWidgetSecurity& sec,
                            int line)
 {
     TizenAppId tizenAppId;

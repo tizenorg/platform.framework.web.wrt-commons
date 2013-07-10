@@ -178,7 +178,7 @@ TizenPkgId getTizenPkgIdByHandle(const DbWidgetHandle handle)
 }
 } // namespace
 
-IWacSecurity::~IWacSecurity()
+IWidgetSecurity::~IWidgetSecurity()
 {}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
