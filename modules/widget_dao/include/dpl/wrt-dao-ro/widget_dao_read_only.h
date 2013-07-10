@@ -197,9 +197,6 @@ class IWidgetSecurity
                                          CertificateSource source) const = 0;
 };
 
-//TODO: remove this typedef after wrt-installer changes...
-typedef IWidgetSecurity IWacSecurity;
-
 /**
  * WidgetAuthorInfo.
  * Structure to hold the information of widget's author.
