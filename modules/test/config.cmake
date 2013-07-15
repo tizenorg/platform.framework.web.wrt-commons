@@ -35,6 +35,9 @@ SET(DPL_TEST_ENGINE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/test_runner_child.h
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/test_runner_multiprocess.h
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/process_pipe.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_parser.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_reader.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_tokenizer.h
     PARENT_SCOPE
 )
 
