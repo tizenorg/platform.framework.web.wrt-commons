@@ -246,7 +246,7 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
 void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature,
                                                        bool isOnlyAllowedLocalOrigin)
 {
-    Origin origin(DPL::FromUTF8String("file"),
+    Origin origin(DPL::FromUTF8String("file"), //TODO: this breaks app:// scheme code -> no case for app scheme
                   DPL::FromUTF8String(""),
                   0);
     if (!isOnlyAllowedLocalOrigin) {
