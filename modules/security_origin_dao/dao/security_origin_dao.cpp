@@ -228,6 +228,10 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
             SECURITY_ORIGIN_DB_UPDATE(update,
                                       SecurityOriginInfo,
                                       &m_securityOriginDBInterface);
+            update->Where(And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.feature),
+                                    Equals<SecurityOriginInfo::scheme>(securityOriginData.origin.scheme)),
+                                    Equals<SecurityOriginInfo::host>(securityOriginData.origin.host)),
+                                    Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
             update->Values(row);
             update->Execute();
         } else {
