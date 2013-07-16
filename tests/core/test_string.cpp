@@ -440,3 +440,40 @@ RUNNER_TEST(String_Join)
     RUNNER_ASSERT(DPL::Join(strings.begin(), strings.end(), "delim") == "onedelimtwodelimthreedelimfour");
 }
 
+/*
+Name: String_Trim
+Description: tests trimming strings
+Expected: trim strings
+*/
+RUNNER_TEST(String_Trim)
+{
+    const std::string str = "  value   ";
+
+    std::string test1 = str;
+    DPL::Trim(test1, " ");
+    RUNNER_ASSERT_MSG(test1 == "value", "Full trim failed");
+
+    std::string test2 = str;
+    DPL::TrimLeft(test2, " ");
+    RUNNER_ASSERT_MSG(test2 == "value   ", "Left trim failed");
+
+    std::string test3 = str;
+    DPL::TrimRight(test3, " ");
+    RUNNER_ASSERT_MSG(test3 == "  value", "Right trim failed");
+
+    std::string test4 = str;
+    DPL::Trim(test4, " ea");
+    RUNNER_ASSERT_MSG(test4 == "valu", "Trim failed");
+
+    std::string test5 = str;
+    DPL::TrimRight(test5, " v");
+    RUNNER_ASSERT_MSG(test5 == "  value", "Trim failed");
+
+    DPL::String test6 = L"--aabbaabb--aa--bb--";
+    DPL::Trim(test6, L"-a");
+    RUNNER_ASSERT_MSG(test6 == L"bbaabb--aa--bb", "Trim failed");
+
+    DPL::String test7 = L"--aabbaabb--aa--bb--";
+    DPL::Trim(test7, L"-ab");
+    RUNNER_ASSERT_MSG(test7 == L"", "Trim to empty failed");
+}
