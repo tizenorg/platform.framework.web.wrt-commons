@@ -19,6 +19,7 @@ ADD_SUBDIRECTORY(event)
 ADD_SUBDIRECTORY(files_localization)
 ADD_SUBDIRECTORY(localizationTagsProvider)
 ADD_SUBDIRECTORY(utils)
+ADD_SUBDIRECTORY(i18n)
 
 IF(WITH_CHILD)
   MESSAGE(STATUS "Additional test subdirectory is being added")

@@ -12,27 +12,29 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-#
 # @file        CMakeLists.txt
-# @author      Lukasz Marek (l.marek@samsung.com)
+# @author      Zbigniew Kostrzewa (z.kostrzewa@samsung.com)
 # @version     1.0
 # @brief
 #
 
-include(core/config.cmake)
-include(dbus/config.cmake)
-include(db/config.cmake)
-include(event/config.cmake)
-include(socket/config.cmake)
-include(rpc/config.cmake)
-include(test/config.cmake)
-include(log/config.cmake)
-ADD_SUBDIRECTORY(widget_dao)
-ADD_SUBDIRECTORY(security_origin_dao)
-ADD_SUBDIRECTORY(custom_handler_dao)
-ADD_SUBDIRECTORY(certificate_dao)
-ADD_SUBDIRECTORY(i18n)
-include(utils/config.cmake)
-include(localization/config.cmake)
-include(support/config.cmake)
-include(encryption/config.cmake)
+#
+# Test files
+#
+# Define all DPL tests sources.
+# Runner is responsible for runnint it all and
+# generating proper output files
+#
+
+SET(TARGET_NAME "wrt-commons-tests-i18n")
+
+# Set DPL tests sources
+SET(DPL_TESTS_I18N_SOURCES
+    ${TESTS_DIR}/i18n/main.cpp
+    ${TESTS_DIR}/i18n/test_i18n_dao_read_only.cpp
+)
+
+#include subdirectory
+WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_I18N_DAO_RO_LIB})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_I18N_SOURCES})
+WRT_TEST_INSTALL(${TARGET_NAME})

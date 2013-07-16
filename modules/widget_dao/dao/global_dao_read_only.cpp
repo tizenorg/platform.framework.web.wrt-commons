@@ -41,20 +41,6 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
     return select->GetSingleValue<GlobalProperties::secure_by_default>();
 }
 
-bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, iana_records, &WrtDatabase::interface())
-    select->Where(Equals<iana_records::SUBTAG>(tag));
-    auto row = select->GetRowList();
-    if (row.empty() || row.front().Get_TYPE() != type) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 GlobalDAOReadOnly::NetworkAccessMode
 GlobalDAOReadOnly::GetHomeNetworkDataUsage()
 {
