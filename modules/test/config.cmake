@@ -25,6 +25,8 @@ SET(DPL_TEST_ENGINE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/test/src/test_runner_child.cpp
     ${PROJECT_SOURCE_DIR}/modules/test/src/test_runner_multiprocess.cpp
     ${PROJECT_SOURCE_DIR}/modules/test/src/process_pipe.cpp
+    ${PROJECT_SOURCE_DIR}/modules/test/src/value_separated_policies.cpp
+    ${PROJECT_SOURCE_DIR}/modules/test/src/value_separated_tokens.cpp
     PARENT_SCOPE
 )
 
@@ -38,6 +40,11 @@ SET(DPL_TEST_ENGINE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_parser.h
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_reader.h
     ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/abstract_input_tokenizer.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/value_separated_parser.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/value_separated_policies.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/value_separated_reader.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/value_separated_tokenizer.h
+    ${PROJECT_SOURCE_DIR}/modules/test/include/dpl/test/value_separated_tokens.h
     PARENT_SCOPE
 )
 

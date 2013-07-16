@@ -27,6 +27,7 @@ SET(DPL_TESTS_UTIL_SOURCES
     ${TESTS_DIR}/test/runner_child.cpp
     ${TESTS_DIR}/test/test_process_pipe.cpp
     ${TESTS_DIR}/test/test_abstract_input_reader.cpp
+    ${TESTS_DIR}/test/test_value_separated_reader.cpp
 )
 
 #WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_UTILS_EFL})
