@@ -149,6 +149,7 @@ std::string getFilePathInWidgetPackageFromUrl(const std::string &tzAppId, const 
     const std::string SCHEME_WIDGET = "widget://";
     const std::string SCHEM_APP     = "app://";
     const std::string LOCALE_PATH   = "locales/";
+    const std::string DOUBLE_ROOT   = "//";
 
     static std::string          lastTzAppId;
     static WidgetDAOReadOnlyPtr dao;
@@ -185,6 +186,13 @@ std::string getFilePathInWidgetPackageFromUrl(const std::string &tzAppId, const 
     {
         // remove "file://"
         workingUrl.erase(0, SCHEME_FILE.length());
+
+        // exception handling for "//"
+        if (workingUrl.compare(0, DOUBLE_ROOT.length(), DOUBLE_ROOT) == 0)
+        {
+            workingUrl.erase(0, 1);
+            LogDebug("workingUrl: " << workingUrl);
+        }
 
         // remove src path
         if (workingUrl.compare(0, srcPath.length(), srcPath) == 0)
