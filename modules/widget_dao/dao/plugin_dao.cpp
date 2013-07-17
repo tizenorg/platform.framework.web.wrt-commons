@@ -49,7 +49,7 @@ DbPluginHandle PluginDAO::registerPlugin(const PluginMetafileData& metafile,
 
         if (isPluginInstalled(metafile.m_libraryName)) {
             handle = PluginDAO(metafile.m_libraryName).getPluginHandle();
-            LogInfo(" >> Library " << metafile.m_libraryName <<
+            LogDebug(" >> Library " << metafile.m_libraryName <<
                     " is already registered. Handle: " << handle);
         } else {
             LogDebug("Register Plugin: " << metafile.m_libraryName);
@@ -219,7 +219,7 @@ void PluginDAO::unregisterPlugin(DbPluginHandle pluginHandle)
             &WrtDatabase::interface());
 
         if (!isPluginInstalled(pluginHandle)) {
-            LogInfo("PluginHandle is invalid. Handle: " << pluginHandle);
+            LogDebug("PluginHandle is invalid. Handle: " << pluginHandle);
             return;
         } else {
             using namespace DPL::DB::ORM;

@@ -39,13 +39,13 @@ protected:
     virtual void OnEventReceived(const FirstEvent &event)
     {
         (void)event;
-        LogInfo("First event occurred");
+        LogDebug("First event occurred");
     }
 
     virtual void OnEventReceived(const SecondEvent &event)
     {
         (void)event;
-        LogInfo("Second event occurred");
+        LogDebug("Second event occurred");
     }
 };
 

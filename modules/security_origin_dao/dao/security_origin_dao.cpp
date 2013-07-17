@@ -83,7 +83,7 @@ void checkDatabase(std::string databasePath)
         struct stat buffer;
         if (stat(databasePath.c_str(), &buffer) != 0) {
             //Create fresh database
-            LogInfo("Creating database " << databasePath);
+            LogDebug("Creating database " << databasePath);
 
             std::fstream file;
             file.open(SECURITY_ORIGIN_DB_SQL_PATH, std::ios_base::in);

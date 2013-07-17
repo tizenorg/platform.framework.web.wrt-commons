@@ -30,7 +30,7 @@ RUNNER_TEST_GROUP_INIT(LanguageTagsProvider)
 
 RUNNER_TEST(tagsFromSystemLocales)
 {
-    LogInfo("Generating tags from system locales");
+    LogDebug("Generating tags from system locales");
 
     char* currlocals = vconf_get_str(VCONFKEY_LANGSET);
     LogDebug("Locales fetched from system settings: " << currlocals);
@@ -62,7 +62,7 @@ RUNNER_TEST(tagsFromSystemLocales)
 
 RUNNER_TEST(tagsFromGivenLocales)
 {
-    LogInfo("Generating tags from given locales");
+    LogDebug("Generating tags from given locales");
 
     const char *locales1 = "it_IT.UTF-8", *locales2="en_GB";
 
@@ -89,7 +89,7 @@ RUNNER_TEST(tagsFromGivenLocales)
 
 RUNNER_TEST(tagsFromNullLocales)
 {
-    LogInfo("Generating tags when NULL locales given");
+    LogDebug("Generating tags when NULL locales given");
 
     LanguageTagsProviderSingleton::Instance().setLanguageTagsFromLocales(NULL);
     LanguageTags ltlist = LanguageTagsProviderSingleton::Instance().getLanguageTags();
@@ -102,7 +102,7 @@ RUNNER_TEST(tagsFromNullLocales)
 
 RUNNER_TEST(tagsFromGivenTagList)
 {
-    LogInfo("Copying given tags list");
+    LogDebug("Copying given tags list");
 
     LogDebug("Correct full list (with default values)");
     LanguageTags correct;
@@ -129,7 +129,7 @@ RUNNER_TEST(tagsFromGivenTagList)
 
 RUNNER_TEST(tagsFromEmptyList)
 {
-    LogInfo("Generating tags when empty tag list given");
+    LogDebug("Generating tags when empty tag list given");
 
     LanguageTags input;
     LanguageTagsProviderSingleton::Instance().setLanguageTags(input);
@@ -139,7 +139,7 @@ RUNNER_TEST(tagsFromEmptyList)
 
 RUNNER_TEST(defaultWidgetLocale)
 {
-    LogInfo("Adding default widget locales to language tags list");
+    LogDebug("Adding default widget locales to language tags list");
 
     LanguageTags input;
     input.push_back(L"de-DE");

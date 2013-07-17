@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    LogInfo("Hello world!");
+    LogDebug("Hello world!");
     return 0;
 }
 

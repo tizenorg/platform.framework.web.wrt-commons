@@ -112,7 +112,7 @@ void OnDelegateTest(const int &k);
 
 void OnDelegateTest(const int &k)
 {
-    LogInfo("Got delegate call");
+    LogDebug("Got delegate call");
     g_delegateTest = k;
 }
 

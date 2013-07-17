@@ -46,12 +46,12 @@ private:
     virtual void OnEventReceived(const DPL::AbstractSocketEvents::AcceptEvent &event)
     {
         (void)event;
-        LogInfo("Accept event occurred");
+        LogDebug("Accept event occurred");
 
         DPL::UnixSocket *client = static_cast<DPL::UnixSocket *>(m_socket.Accept());
 
-        LogInfo("Accepted client remote address: " << client->GetRemoteAddress().ToString());
-        LogInfo("Accepted client local address: " << client->GetLocalAddress().ToString());
+        LogDebug("Accepted client remote address: " << client->GetRemoteAddress().ToString());
+        LogDebug("Accepted client local address: " << client->GetLocalAddress().ToString());
      
         delete client;
     }
@@ -69,14 +69,14 @@ public:
         m_socket.DPL::EventSupport<DPL::AbstractSocketEvents::AcceptEvent>::AddListener(this);
 
         // Create server
-        LogInfo("Starting server...");
+        LogDebug("Starting server...");
 
         m_socket.Bind(DPL::Address(SOCKET_NAME));
         m_socket.Listen(5);
 
-        LogInfo("Server started");
+        LogDebug("Server started");
 
-        LogInfo("Server local address: " << m_socket.GetLocalAddress().ToString());
+        LogDebug("Server local address: " << m_socket.GetLocalAddress().ToString());
 
         int result = Exec();
 
@@ -112,7 +112,7 @@ private:
     virtual void OnEventReceived(const DPL::AbstractSocketEvents::ConnectedEvent &event)
     {
         (void)event;
-        LogInfo("Connected event occurred");
+        LogDebug("Connected event occurred");
     }
 
 public:
@@ -126,12 +126,12 @@ public:
         Touch();
 
         // Start threaded server
-        LogInfo("Running threaded server");
+        LogDebug("Running threaded server");
 
         // Run server in thread
         thread.Run();
 
-        LogInfo("Waiting for server to start...");
+        LogDebug("Waiting for server to start...");
         sleep(1);
 
         // Connect to server

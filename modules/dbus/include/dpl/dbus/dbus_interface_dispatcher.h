@@ -81,7 +81,7 @@ class InterfaceDispatcher : public DBus::Dispatcher
                                     const gchar* /*interfaceName*/,
                                     const gchar* propertyName)
     {
-        LogInfo("InterfaceDispatcher onPropertyGet: " << propertyName);
+        LogDebug("InterfaceDispatcher onPropertyGet: " << propertyName);
         return NULL;
     }
 
@@ -92,7 +92,7 @@ class InterfaceDispatcher : public DBus::Dispatcher
                                    const gchar* propertyName,
                                    GVariant* /*value*/)
     {
-        LogInfo("InterfaceDispatcher onPropertySet: " << propertyName);
+        LogDebug("InterfaceDispatcher onPropertySet: " << propertyName);
         return false;
     }
 

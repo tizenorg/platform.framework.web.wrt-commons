@@ -173,7 +173,7 @@ WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
             whiteURI.strIRI = i->Get_uri();
             whiteURI.bSubDomains = i->Get_subdomain_access();
             resultList.push_back(whiteURI);
-            LogInfo("[uri] : " << whiteURI.strIRI <<
+            LogDebug("[uri] : " << whiteURI.strIRI <<
                     ", [subdomain] : " << whiteURI.bSubDomains);
         }
         return resultList;

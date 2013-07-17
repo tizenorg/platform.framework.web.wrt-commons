@@ -69,13 +69,13 @@ class CopyThread :
         m_output(output),
         m_dataSize(dataSize)
     {
-        LogInfo("Thread created");
+        LogDebug("Thread created");
     }
 
   protected:
     virtual int ThreadEntry()
     {
-        LogInfo("Entering copy thread");
+        LogDebug("Entering copy thread");
 
         Try
         {
@@ -89,7 +89,7 @@ class CopyThread :
             return 0;
         }
 
-        LogInfo("Copy finished");
+        LogDebug("Copy finished");
         return 0;
     }
 };

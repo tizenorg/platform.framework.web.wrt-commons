@@ -80,7 +80,7 @@ void Server::start()
                      G_CALLBACK(onNewConnection),
                      this);
 
-    LogInfo("Server started at: "
+    LogDebug("Server started at: "
             << g_dbus_server_get_client_address(m_server));
 }
 
@@ -102,7 +102,7 @@ gboolean Server::onNewConnection(GDBusServer* /*server*/,
     ServerEvents::NewConnectionEvent event(
         ConnectionPtr(new Connection(connection)));
 
-    LogInfo("Emitting new connection event");
+    LogDebug("Emitting new connection event");
     // TODO Blocking to allow object registration before any DBus messages are
     //      processed.
     self->DPL::Event::EventSupport<ServerEvents::NewConnectionEvent>::

@@ -67,10 +67,10 @@ private:
 
     virtual void OnEventReceived(const AsyncCallEvent &event)
     {
-        LogInfo("CLIENT: AsyncCallEvent received");
+        LogDebug("CLIENT: AsyncCallEvent received");
 
         event.GetArg0().ConsumeArg(m_receivedData);
-        LogInfo("CLIENT: Result from server: " << m_receivedData);
+        LogDebug("CLIENT: Result from server: " << m_receivedData);
 
         if (m_receivedData != m_sentData)
             LogError("Wrong data Received!");
@@ -80,14 +80,14 @@ private:
     {
         if (dynamic_cast<DPL::FakeRpcConnection *>(event.GetArg1())){
             ++m_connections;
-            LogInfo("CLIENT: Acquiring new fake connection");
+            LogDebug("CLIENT: Acquiring new fake connection");
             m_rpcFakeConnection.reset(event.GetArg1());
             //this is not used on this side
 //            m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
         else{
             ++m_connections;
-            LogInfo("CLIENT: Acquiring new unix connection");
+            LogDebug("CLIENT: Acquiring new unix connection");
             m_rpcUnixConnection.reset(event.GetArg1());
             m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
@@ -96,7 +96,7 @@ private:
             // Emit RPC function call
             DPL::RPCFunction proc;
             proc.AppendArg(m_sentData);
-            LogInfo("CLIENT: Calling RPC function");
+            LogDebug("CLIENT: Calling RPC function");
             m_rpcFakeConnection->AsyncCall(proc);
         }
     }
@@ -120,41 +120,41 @@ public:
     {
         m_connections = 0;
         // Attach RPC listeners
-        LogInfo("CLIENT: Attaching connection established event");
+        LogDebug("CLIENT: Attaching connection established event");
         m_rpcUnixClient.DPL::EventSupport<ConnectionEstablishedEvent>::AddListener(this);
         m_rpcFakeClient.DPL::EventSupport<ConnectionEstablishedEvent>::AddListener(this);
 
         // Open connection to server
-        LogInfo("CLIENT: Opening connection to RPC");
+        LogDebug("CLIENT: Opening connection to RPC");
         m_rpcUnixClient.Open(UNIX_RPC_NAME);
         m_rpcFakeClient.Open(FAKE_RPC_NAME);
 
         // Start message loop
-        LogInfo("CLIENT: Starting thread event loop");
+        LogDebug("CLIENT: Starting thread event loop");
         int ret = Exec();
 
         if (m_rpcUnixConnection.get()){
-            LogInfo("CLIENT: Removing Unix connection");
+            LogDebug("CLIENT: Removing Unix connection");
             m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
             m_rpcUnixConnection.reset();
         }
 
-        LogInfo("CLIENT: Closing");
+        LogDebug("CLIENT: Closing");
 
         if (m_rpcFakeConnection.get()){
-            LogInfo("CLIENT: Removing Fake connection");
+            LogDebug("CLIENT: Removing Fake connection");
             //this is not used on this side
 //            m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::RemoveListener(this);
             m_rpcFakeConnection.reset();
         }
 
         // Detach RPC client listener
-        LogInfo("CLIENT: Detaching connection established event");
+        LogDebug("CLIENT: Detaching connection established event");
         m_rpcUnixClient.DPL::EventSupport<ConnectionEstablishedEvent>::RemoveListener(this);
         m_rpcFakeClient.DPL::EventSupport<ConnectionEstablishedEvent>::RemoveListener(this);
 
         // Close RPC
-        LogInfo("CLIENT: Closing RPC client");
+        LogDebug("CLIENT: Closing RPC client");
         m_rpcUnixClient.CloseAll();
         m_rpcFakeClient.Close();//not needed
 
@@ -185,7 +185,7 @@ private:
     // Quit application event occurred
     virtual void OnEventReceived(const QuitEvent &/*event*/){
         // Close RPC now
-        LogInfo("SERVER: Closing RPC connection...");
+        LogDebug("SERVER: Closing RPC connection...");
 
         // Detach RPC connection listeners
         if (m_rpcUnixConnection.get()) {
@@ -199,13 +199,13 @@ private:
             m_rpcFakeConnection.reset();
         }
 
-        LogInfo("SERVER: Closing Server");
+        LogDebug("SERVER: Closing Server");
         m_rpcUnixServer.CloseAll();
         m_rpcFakeServer.CloseAll();//not needed
         m_rpcUnixServer.DPL::EventSupport<ConnectionEstablishedEvent>::RemoveListener(this);
         m_rpcFakeServer.DPL::EventSupport<ConnectionEstablishedEvent>::RemoveListener(this);
 
-        LogInfo("SERVER: Server closed");
+        LogDebug("SERVER: Server closed");
 
         Quit();
     }
@@ -216,17 +216,17 @@ private:
 
     virtual void OnEventReceived(const AsyncCallEvent &event)
     {
-        LogInfo("SERVER: AsyncCallEvent received");
+        LogDebug("SERVER: AsyncCallEvent received");
 
         int value;
         event.GetArg0().ConsumeArg(value);
-        LogInfo("SERVER: Result from client: " << value);
+        LogDebug("SERVER: Result from client: " << value);
 
         // send back data to client (via fake)
         // Emit RPC function call
         DPL::RPCFunction proc;
         proc.AppendArg(value);
-        LogInfo("SERVER: Calling RPC function");
+        LogDebug("SERVER: Calling RPC function");
         m_rpcUnixConnection->AsyncCall(proc);
     }
 
@@ -234,12 +234,12 @@ private:
     {
         // Save connection pointer
         if (dynamic_cast<DPL::FakeRpcConnection *>(event.GetArg1())){
-            LogInfo("SERVER: Acquiring Fake RPC connection");
+            LogDebug("SERVER: Acquiring Fake RPC connection");
             m_rpcFakeConnection.reset(event.GetArg1());
             m_rpcFakeConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
         }
         else{
-            LogInfo("SERVER: Acquiring Unix RPC connection");
+            LogDebug("SERVER: Acquiring Unix RPC connection");
             m_rpcUnixConnection.reset(event.GetArg1());
             //this is not used on this side
 //            m_rpcUnixConnection->DPL::EventSupport<AsyncCallEvent>::AddListener(this);
@@ -251,25 +251,25 @@ public:
         : Application(argc, argv, "rpc")
     {
         // Attach RPC server listeners
-        LogInfo("SERVER: Attaching connection established event");
+        LogDebug("SERVER: Attaching connection established event");
         m_rpcUnixServer.DPL::EventSupport<ConnectionEstablishedEvent>::AddListener(this);
         m_rpcFakeServer.DPL::EventSupport<ConnectionEstablishedEvent>::AddListener(this);
 
         // Self touch
-        LogInfo("SERVER: Touching controller");
+        LogDebug("SERVER: Touching controller");
         Touch();
 
         // Open RPC server
-        LogInfo("SERVER: Opening server RPC");
+        LogDebug("SERVER: Opening server RPC");
         m_rpcUnixServer.Open(UNIX_RPC_NAME);
         m_rpcFakeServer.Open(FAKE_RPC_NAME);
 
         // Run RPC client in thread
-        LogInfo("SERVER: Starting RPC client thread");
+        LogDebug("SERVER: Starting RPC client thread");
         m_thread.Run();
 
         // Quit application automatically in few seconds
-        LogInfo("SERVER: Sending control timed events");
+        LogDebug("SERVER: Sending control timed events");
         DPL::ControllerEventHandler<CloseThreadEvent>::PostTimedEvent(CloseThreadEvent(), 2);
         DPL::ControllerEventHandler<QuitEvent>::PostTimedEvent(QuitEvent(), 3);
     }
@@ -277,13 +277,13 @@ public:
     virtual ~MyApplication()
     {
         // Quit thread
-        LogInfo("SERVER: Quitting thread");
+        LogDebug("SERVER: Quitting thread");
     }
 };
 
 int main(int argc, char *argv[])
 {
-    LogInfo("Starting");
+    LogDebug("Starting");
     MyApplication app(argc, argv);
     return app.Exec();
 }

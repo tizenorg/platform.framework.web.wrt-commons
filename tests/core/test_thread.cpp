@@ -33,18 +33,18 @@ class Foo
     int id;
     Foo(int i = 0) : id(i)
     {
-        LogInfo("Foo: ctor: " << id);
+        LogDebug("Foo: ctor: " << id);
     }
 
     ~Foo()
     {
-        LogInfo("Foo: dtor: " << id);
+        LogDebug("Foo: dtor: " << id);
         g_wasFooDeleted = true;
     }
 
     void Bar()
     {
-        LogInfo("Foo: bar");
+        LogDebug("Foo: bar");
     }
 };
 
@@ -57,7 +57,7 @@ class FooThread :
   protected:
     virtual int ThreadEntry()
     {
-        LogInfo("In thread");
+        LogDebug("In thread");
 
         RUNNER_ASSERT(!g_foo);
         RUNNER_ASSERT(g_foo.IsNull());

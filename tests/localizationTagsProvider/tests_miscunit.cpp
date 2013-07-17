@@ -26,7 +26,7 @@
 
 int main (int argc, char *argv[])
 {
-    LogInfo("Starting miscellaneous unit tests");
+    LogDebug("Starting miscellaneous unit tests");
     int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
 
     return status;
