@@ -272,6 +272,9 @@ void RunChildProc(TestRunner::TestCase procChild)
         if (code == 0) {
             throw TestRunner::TestFailed(message);
         }
+        if (code == 2) {
+            throw TestRunner::TestFailed("Ignored");
+        }
     } else {
         // child code
 
@@ -296,6 +299,9 @@ void RunChildProc(TestRunner::TestCase procChild)
         } catch (DPL::Test::TestRunner::TestFailed &e) {
             msg = e.GetMessage();
             code = 0;
+        } catch (DPL::Test::TestRunner::Ignored &e) {
+            msg = e.GetMessage();
+            code = 2;
         } catch (...) { // Pokemon Catch... cache them all...
             msg = "unhandled exeception";
             code = 0;
