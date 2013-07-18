@@ -51,6 +51,7 @@ SET(DPL_TESTS_CORE_SOURCES
     ${TESTS_DIR}/core/test_thread.cpp
     ${TESTS_DIR}/core/test_type_list.cpp
     ${TESTS_DIR}/core/test_zip_input.cpp
+    ${TESTS_DIR}/core/test_scope_guard.cpp
 )
 
 WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_DPL_EFL})
