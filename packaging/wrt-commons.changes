@@ -1,3 +1,6 @@
+* Thu Jul 18 2013 Patrick McCarty <patrick.mccarty@linux.intel.com> 485e00c
+- Fix the undefined variable in global_config.h
+
 * Mon May 20 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20130520.103517@f203c87
 - Fix WRT Runtimes Change post section : call wrt_common_create_cleandb.sh
 - Fix WRT Runtime : SQL Issue , remove transaction around CHECK_WIDGET_EXISTENCE + Force transaction BEGIN IMEDIATE + Try catch

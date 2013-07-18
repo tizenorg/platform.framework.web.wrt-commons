@@ -110,6 +110,8 @@ target_link_libraries(${TARGET_WRT_DAO_RW_LIB}
     ${TARGET_WRT_DAO_RO_LIB})
 ADD_DEPENDENCIES(${TARGET_WRT_DAO_RW_LIB} ${TARGET_WRT_DAO_DB})
 
+CONFIGURE_FILE(include/dpl/wrt-dao-ro/global_config.h.in include/dpl/wrt-dao-ro/global_config.h @ONLY)
+
 INSTALL(TARGETS ${TARGET_WRT_DAO_RO_LIB}
     DESTINATION ${LIB_INSTALL_DIR})
 
