@@ -30,6 +30,10 @@
 #define COLOR_END     "\e[0m"
 #define COLOR_TAG     "\e[0m"
 
+// default TAG
+#undef LOG_TAG
+#define LOG_TAG "WRT_UNDEFINED"
+
 #ifdef WRT_LOG
 #undef LOG_TAG
 #define LOG_TAG "WRT"
