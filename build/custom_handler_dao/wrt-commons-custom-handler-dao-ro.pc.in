@@ -9,4 +9,4 @@ Description: wrt-commons-custom-handler-dao-ro
 Version: @VERSION@
 Requires: dpl-efl
 Libs: -lwrt-commons-custom-handler-dao-ro -L${libdir}
-Cflags: -I${includedir}/dpl-efl -DLIBDIR_PREFIX=\"${libdir}\"
+Cflags: -I${includedir}/dpl-efl -DLIBDIR_PREFIX=\\\"${libdir}\\\"
