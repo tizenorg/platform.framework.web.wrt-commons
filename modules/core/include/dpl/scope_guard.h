@@ -81,7 +81,7 @@ class ScopeGuard
 };
 
 template<typename FunctionType>
-ScopeGuard<typename std::decay<FunctionType>::type>
+inline ScopeGuard<typename std::decay<FunctionType>::type>
 MakeScopeGuard(FunctionType&& function)
 {
   return ScopeGuard<typename std::decay<FunctionType>::type>(
@@ -92,7 +92,7 @@ namespace detail {
 enum class ScopeGuardOnExit {};
 
 template <typename FunctionType>
-ScopeGuard<typename std::decay<FunctionType>::type>
+inline ScopeGuard<typename std::decay<FunctionType>::type>
 operator+(detail::ScopeGuardOnExit, FunctionType&& function)
 {
   return ScopeGuard<typename std::decay<FunctionType>::type>(
@@ -101,7 +101,9 @@ operator+(detail::ScopeGuardOnExit, FunctionType&& function)
 }
 }
 
-// FIXME provide support for compilers not supporting variadic macros
+// FIXME provide support for compilers not supporting variadic macros;
+//       instead of using variadic macros (for compatibility) we could
+//       capture all by '&' (only referenced variables would be captured)
 #define DPL_SCOPE_EXIT(...) \
     auto DPL_ANONYMOUS_VARIABLE(DPL_SCOPE_EXIT_STATE) \
     = ::DPL::detail::ScopeGuardOnExit() + [__VA_ARGS__]()
