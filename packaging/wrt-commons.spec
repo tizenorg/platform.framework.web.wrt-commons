@@ -23,10 +23,7 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  pkgconfig(cryptsvc)
-BuildRequires:  pkgconfig(dukgenerator)
 BuildRequires:  pkgconfig(minizip)
-Requires: libcryptsvc
 
 %description
 Wrt common library

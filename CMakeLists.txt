@@ -191,7 +191,6 @@ SET(TARGET_CUSTOM_HANDLER_DAO_RO_LIB "wrt-commons-custom-handler-dao-ro")
 SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
 SET(TARGET_CERTIFICATE_DAO_LIB "wrt-commons-certificate-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
-SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
 SET(TARGET_I18N_DAO_RO_LIB "wrt-commons-i18n-dao-ro")
 
 macro(configure_and_install_pkg PKG_FILE)
