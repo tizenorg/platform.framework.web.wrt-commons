@@ -198,14 +198,14 @@ void WidgetDAO::setWebDatabaseUsage(const SettingsType value)
 void WidgetDAO::registerWidget(
     const TizenAppId & tzAppId,
     const WidgetRegisterInfo &widgetRegInfo,
-    const IWacSecurity &wacSecurity)
+    const IWidgetSecurity &widgetSecurity)
 {
     LogDebug("Registering widget");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         DPL::DB::ORM::wrt::ScopedTransaction transaction(
             &WrtDatabase::interface());
-        registerWidgetInternal(tzAppId, widgetRegInfo, wacSecurity);
+        registerWidgetInternal(tzAppId, widgetRegInfo, widgetSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to register widget")
@@ -213,7 +213,7 @@ void WidgetDAO::registerWidget(
 
 DbWidgetHandle WidgetDAO::registerWidget(
     const WidgetRegisterInfo &pWidgetRegisterInfo,
-    const IWacSecurity &wacSecurity)
+    const IWidgetSecurity &widgetSecurity)
 {
     //make it more precise due to very fast tests
     struct timeval tv;
@@ -226,30 +226,30 @@ DbWidgetHandle WidgetDAO::registerWidget(
 
     registerWidget(*pWidgetRegisterInfo.configInfo.tizenAppId,
                    pWidgetRegisterInfo,
-                   wacSecurity);
+                   widgetSecurity);
     return widgetHandle;
 }
 
 TizenAppId WidgetDAO::registerWidgetGeneratePkgId(
     const WidgetRegisterInfo &pWidgetRegisterInfo,
-    const IWacSecurity &wacSecurity)
+    const IWidgetSecurity &widgetSecurity)
 {
     TizenAppId tzAppId = generatePkgId();
-    registerWidget(tzAppId, pWidgetRegisterInfo, wacSecurity);
+    registerWidget(tzAppId, pWidgetRegisterInfo, widgetSecurity);
     return tzAppId;
 }
 
 void WidgetDAO::registerWidgetInternal(
     const TizenAppId & tzAppId,
     const WidgetRegisterInfo &widgetRegInfo,
-    const IWacSecurity &wacSecurity,
+    const IWidgetSecurity &widgetSecurity,
     const DPL::Optional<DbWidgetHandle> handle)
 {
     //Register into WidgetInfo has to be first
     //as all other tables depend upon that
     DbWidgetHandle widgetHandle = registerWidgetInfo(tzAppId,
                                                      widgetRegInfo,
-                                                     wacSecurity,
+                                                     widgetSecurity,
                                                      handle);
 
     registerWidgetExtendedInfo(widgetHandle, widgetRegInfo);
@@ -272,14 +272,14 @@ void WidgetDAO::registerWidgetInternal(
 
     registerWidgetAllowNavigationInfo(widgetHandle, widgetRegInfo);
 
-    registerWidgetCertificates(widgetHandle, wacSecurity);
+    registerWidgetCertificates(widgetHandle, widgetSecurity);
 
     CertificateChainList list;
-    wacSecurity.getCertificateChainList(list, SIGNATURE_DISTRIBUTOR);
+    widgetSecurity.getCertificateChainList(list, SIGNATURE_DISTRIBUTOR);
     registerCertificatesChains(widgetHandle, SIGNATURE_DISTRIBUTOR, list);
 
     list.clear();
-    wacSecurity.getCertificateChainList(list, SIGNATURE_AUTHOR);
+    widgetSecurity.getCertificateChainList(list, SIGNATURE_AUTHOR);
     registerCertificatesChains(widgetHandle, SIGNATURE_AUTHOR, list);
 
     registerWidgetSettings(widgetHandle, widgetRegInfo);
@@ -296,7 +296,7 @@ void WidgetDAO::registerWidgetInternal(
 void WidgetDAO::registerOrUpdateWidget(
     const TizenAppId & widgetName,
     const WidgetRegisterInfo &widgetRegInfo,
-    const IWacSecurity &wacSecurity)
+    const IWidgetSecurity &widgetSecurity)
 {
     LogDebug("Reregistering widget");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -305,7 +305,7 @@ void WidgetDAO::registerOrUpdateWidget(
             &WrtDatabase::interface());
 
         unregisterWidgetInternal(widgetName);
-        registerWidgetInternal(widgetName, widgetRegInfo, wacSecurity);
+        registerWidgetInternal(widgetName, widgetRegInfo, widgetSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
@@ -315,7 +315,7 @@ void WidgetDAO::backupAndUpdateWidget(
     const TizenAppId & oldAppId,
     const TizenAppId & newAppId,
     const WidgetRegisterInfo &widgetRegInfo,
-    const IWacSecurity &wacSecurity)
+    const IWidgetSecurity &widgetSecurity)
 {
     LogDebug("Backup and Register widget");
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
@@ -324,7 +324,7 @@ void WidgetDAO::backupAndUpdateWidget(
             &WrtDatabase::interface());
 
         updateWidgetAppIdInternal(newAppId, oldAppId);
-        registerWidgetInternal(newAppId, widgetRegInfo, wacSecurity);
+        registerWidgetInternal(newAppId, widgetRegInfo, widgetSecurity);
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to reregister widget")
@@ -365,7 +365,6 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
     row.Set_app_id(widgetHandle);
     //    row.Set_share_href    (DPL::FromUTF8String(regInfo.shareHref));
     row.Set_signature_type(regInfo.signatureType);
-    row.Set_test_widget(regInfo.isTestWidget);
     row.Set_install_time(regInfo.installedTime);
     row.Set_splash_img_src(regInfo.configInfo.splashImgSrc);
     row.Set_background_page(regInfo.configInfo.backgroundPage);
@@ -377,7 +376,7 @@ void WidgetDAO::registerWidgetExtendedInfo(DbWidgetHandle widgetHandle,
 DbWidgetHandle WidgetDAO::registerWidgetInfo(
     const TizenAppId & tzAppId,
     const WidgetRegisterInfo &regInfo,
-    const IWacSecurity &wacSecurity,
+    const IWidgetSecurity &widgetSecurity,
     const DPL::Optional<DbWidgetHandle> handle)
 {
     using namespace DPL::DB::ORM;
@@ -406,9 +405,8 @@ DbWidgetHandle WidgetDAO::registerWidgetInfo(
     row.Set_csp_policy_report_only(widgetConfigurationInfo.cspPolicyReportOnly);
     row.Set_base_folder(DPL::FromUTF8String(regInfo.baseFolder));
     row.Set_webkit_plugins_required(widgetConfigurationInfo.flashNeeded);
-    row.Set_recognized(wacSecurity.isRecognized());
-    row.Set_wac_signed(wacSecurity.isWacSigned());
-    row.Set_distributor_signed(wacSecurity.isDistributorSigned());
+    row.Set_recognized(widgetSecurity.isRecognized());
+    row.Set_distributor_signed(widgetSecurity.isDistributorSigned());
     row.Set_tizen_appid(tzAppId);
     row.Set_tizen_pkgid(regInfo.tzPkgid);
     {
@@ -648,12 +646,12 @@ void WidgetDAO::registerWidgetAllowNavigationInfo(DbWidgetHandle widgetHandle,
 }
 
 void WidgetDAO::registerWidgetCertificates(DbWidgetHandle widgetHandle,
-                                           const IWacSecurity &wacSecurity)
+                                           const IWidgetSecurity &widgetSecurity)
 {
     using namespace DPL::DB::ORM;
     using namespace DPL::DB::ORM::wrt;
 
-    FOREACH(it, wacSecurity.getCertificateList())
+    FOREACH(it, widgetSecurity.getCertificateList())
     {
         WidgetCertificateFingerprint::Row row;
         row.Set_app_id(widgetHandle);

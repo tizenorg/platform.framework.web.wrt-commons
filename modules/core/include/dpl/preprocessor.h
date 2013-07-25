@@ -26,4 +26,10 @@
 #define DPL_MACRO_CONCAT_IMPL(x, y) x##y
 #define DPL_MACRO_CONCAT(x, y) DPL_MACRO_CONCAT_IMPL(x, y)
 
+#ifdef __COUNTER__
+#define DPL_ANONYMOUS_VARIABLE(name) DPL_MACRO_CONCAT(name, __COUNTER__)
+#else
+#define DPL_ANONYMOUS_VARIABLE(name) DPL_MACRO_CONCAT(name, __LINE__)
+#endif
+
 #endif //DPL_PREPROCESSOR_H

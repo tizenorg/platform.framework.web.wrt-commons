@@ -236,7 +236,6 @@ typedef std::list<WidgetDAOReadOnlyPtr> DbWidgetDAOReadOnlyList;
 enum AppType
 {
     APP_TYPE_UNKNOWN = 0, // unknown
-    APP_TYPE_WAC20, // WAC 2.0
     APP_TYPE_TIZENWEBAPP // Tizen webapp
 };
 
@@ -262,7 +261,6 @@ class WidgetType
         switch (appType) {
 #define X(x) case x: return #x;
             X(APP_TYPE_UNKNOWN)
-            X(APP_TYPE_WAC20)
             X(APP_TYPE_TIZENWEBAPP)
 #undef X
         default:

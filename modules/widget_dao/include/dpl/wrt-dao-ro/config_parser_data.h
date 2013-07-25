@@ -331,6 +331,7 @@ class ConfigParserData
     DPL::OptionalString tizenAppId;
 
     // allow-navigation
+    bool allowNavigationEncountered;
     AllowNavigationInfoList allowNavigationInfoList;
 
     //csp polic for widget
@@ -361,6 +362,7 @@ class ConfigParserData
         backSupported(false),
         accessNetwork(false),
         startFileEncountered(false),
+        allowNavigationEncountered(false),
         securityModelVersion(SecurityModelVersion::SECURITY_MODEL_V1)
     {}
 };

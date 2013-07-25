@@ -48,17 +48,17 @@ class MyMultiTask :
 
     void StepOne()
     {
-        LogInfo("Step one");
+        LogDebug("Step one");
     }
 
     void StepTwo()
     {
-        LogInfo("Step two");
+        LogDebug("Step two");
     }
 
     void StepThree()
     {
-        LogInfo("Step three");
+        LogDebug("Step three");
     }
 
   public:

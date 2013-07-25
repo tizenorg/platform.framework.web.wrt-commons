@@ -97,7 +97,7 @@ class ThreadDatabaseSupport :
         }
 
         // Destroy connection
-        LogInfo("Destroying thread database connection: " << m_address);
+        LogDebug("Destroying thread database connection: " << m_address);
 
         delete *Connection();
 
@@ -157,7 +157,7 @@ class ThreadDatabaseSupport :
         }
 
         // Initialize SQL connection described in traits
-        LogInfo("Attaching thread database connection: " << m_address);
+        LogDebug("Attaching thread database connection: " << m_address);
 
         Connection() = new DPL::DB::SqlConnection(
                 m_address.c_str(), m_flags, options);
@@ -194,7 +194,7 @@ class ThreadDatabaseSupport :
         // It must not be in linger state yet
         Assert(*Linger() == false);
 
-        LogInfo("Detaching thread database connection: " << m_address);
+        LogDebug("Detaching thread database connection: " << m_address);
 
         // Enter linger state
         *Linger() = true;

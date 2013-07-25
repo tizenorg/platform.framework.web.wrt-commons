@@ -52,14 +52,14 @@ public:
                       GVariant *parameters,
                       GDBusMethodInvocation *invocation)
     {
-          LogInfo("On method call: " << methodName);
+          LogDebug("On method call: " << methodName);
 
           if (g_strcmp0(methodName, "echo") == 0)
           {
               const gchar* arg = NULL;
 
               g_variant_get(parameters, "(&s)", &arg);
-              LogInfo("Client said: " << arg);
+              LogDebug("Client said: " << arg);
 
               gchar* response = g_strdup_printf(arg);
               g_dbus_method_invocation_return_value(invocation,

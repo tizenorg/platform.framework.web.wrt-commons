@@ -178,7 +178,7 @@ TizenPkgId getTizenPkgIdByHandle(const DbWidgetHandle handle)
 }
 } // namespace
 
-IWacSecurity::~IWacSecurity()
+IWidgetSecurity::~IWidgetSecurity()
 {}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
@@ -629,16 +629,6 @@ bool WidgetDAOReadOnly::isRecognized() const
     return static_cast<bool>(*result);
 }
 
-bool WidgetDAOReadOnly::isWacSigned() const
-{
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    DPL::OptionalInt result = row.Get_wac_signed();
-    if (result.IsNull()) {
-        return false;
-    }
-    return static_cast<bool>(*result);
-}
-
 bool WidgetDAOReadOnly::isDistributorSigned() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
@@ -654,26 +644,6 @@ bool WidgetDAOReadOnly::isTrusted() const
     // SP-2100
     // widget with verified distributor signature is trusted
     return isDistributorSigned();
-}
-
-bool WidgetDAOReadOnly::isTestWidget() const
-{
-    Try {
-        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
-
-        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
-        if (rows.empty()) {
-            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Cannot find widget. Handle: " << m_widgetHandle);
-        }
-
-        return static_cast<bool>(rows.front().Get_test_widget());
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(WidgetDAOReadOnly::Exception::DatabaseError,
-                   "Failed to check IsTestWidget");
-    }
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getCspPolicy() const

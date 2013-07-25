@@ -55,15 +55,7 @@ class GlobalDAOReadOnly
 
   public:
 
-    static bool IsValidSubTag(const DPL::String& tag, int type);
-
     static bool GetSecureByDefault();
-
-    static bool getComplianceMode();
-
-    static std::string getComplianceFakeImei();
-
-    static std::string getComplianceFakeMeid();
 
     static WidgetAccessInfoList GetWhiteURIList();
 

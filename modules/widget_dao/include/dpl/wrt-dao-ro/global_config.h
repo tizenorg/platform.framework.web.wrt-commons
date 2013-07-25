@@ -170,11 +170,6 @@ inline const char* GetSignatureXmlSchema()
     return "/usr/share/wrt-engine/schema.xsd";
 }
 
-inline const char* GetWAC20TestRootCAFilePath()
-{
-    return "/usr/share/wrt-engine/WAC2.0TestRootCA.cert";
-}
-
 /**
  * Name of the w3c geolocation feature
  */
@@ -263,11 +258,6 @@ inline const char* GetWidgetInterfaceDatabaseFile()
 inline const char* GetTmpDirPath()
 {
     return "/tmp";
-}
-
-inline const char* GetWACVersion()
-{
-    return "2.0";
 }
 
 inline const char* GetTizenVersion()

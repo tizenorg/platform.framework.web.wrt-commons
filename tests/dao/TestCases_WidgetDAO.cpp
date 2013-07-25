@@ -36,13 +36,12 @@
 using namespace WrtDB;
 
 namespace {
-class WacSecurityMock : public WrtDB::IWacSecurity
+class WacSecurityMock : public WrtDB::IWidgetSecurity
 {
   public:
     WacSecurityMock() :
         mRecognized(false),
-        mDistributorSigned(false),
-        mWacSigned(false)
+        mDistributorSigned(false)
     {}
 
     virtual const WidgetCertificateDataList& getCertificateList() const
@@ -57,10 +56,6 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     virtual bool isDistributorSigned() const
     {
         return mDistributorSigned;
-    }
-    virtual bool isWacSigned() const
-    {
-        return mWacSigned;
     }
     virtual void getCertificateChainList(CertificateChainList& /*lst*/) const {}
     virtual void getCertificateChainList(CertificateChainList& /*lst*/,
@@ -79,10 +74,6 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     {
         mDistributorSigned = distributorSigned;
     }
-    void setWacSigned(bool wacSigned)
-    {
-        mWacSigned = wacSigned;
-    }
 
   private:
     WrtDB::WidgetCertificateDataList mList;
@@ -91,11 +82,10 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     // known distribuor
     bool mDistributorSigned;
     // distributor is wac
-    bool mWacSigned;
 };
 
 TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
-                           const IWacSecurity& sec,
+                           const IWidgetSecurity& sec,
                            int line)
 {
     TizenAppId tizenAppId;
@@ -1086,11 +1076,9 @@ RUNNER_TEST(widget_dao_test_wac_security)
 
         RUNNER_ASSERT(!dao.isDistributorSigned());
         RUNNER_ASSERT(!dao.isRecognized());
-        RUNNER_ASSERT(!dao.isWacSigned());
     }
     sec.setDistributorSigned(true);
     sec.setRecognized(true);
-    sec.setWacSigned(true);
     {
         // register widget
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
@@ -1098,7 +1086,6 @@ RUNNER_TEST(widget_dao_test_wac_security)
 
         RUNNER_ASSERT(dao.isDistributorSigned());
         RUNNER_ASSERT(dao.isRecognized());
-        RUNNER_ASSERT(dao.isWacSigned());
     }
 }
 

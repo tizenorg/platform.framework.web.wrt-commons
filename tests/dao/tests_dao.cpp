@@ -37,7 +37,7 @@ int main (int argc, char *argv[])
     WrtDB::WrtDatabase::attachToThreadRW();
     CustomHandlerDB::Interface::attachDatabaseRW();
 
-    LogInfo("Starting tests");
+    LogDebug("Starting tests");
     int status = DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc,
                                                                            argv);
 

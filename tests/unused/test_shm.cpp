@@ -1552,7 +1552,7 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
 
     // Create and wait for notification. Make sure that the thread/controller 0
     // is created first
-    LogInfo("Creating controllers");
+    LogDebug("Creating controllers");
     for (size_t i = 0; i < MAX_THREADS; ++i) {
         controller[i] = new ShmController4(&waitable[i]);
         Wait(waitable[i]);
@@ -1562,12 +1562,12 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
     MTSharedObjectPtr singleton = SharedObjectSingleton::Instance();
 
     for (size_t repeats = 0; repeats < SINGLETON_TEST_REPEATS; ++repeats) {
-        LogInfo("%%%%%%%%%%%%%%%%%%%%%");
-        LogInfo("Iteration " << repeats + 1 << " of " << SINGLETON_TEST_REPEATS);
+        LogDebug("%%%%%%%%%%%%%%%%%%%%%");
+        LogDebug("Iteration " << repeats + 1 << " of " << SINGLETON_TEST_REPEATS);
         singleton->Clear();
 
         // add listeners
-        LogInfo("Adding listeners");
+        LogDebug("Adding listeners");
         for (size_t i = 0; i < MAX_THREADS; ++i) {
             controller[i]->PostEvent(ShmController4::ADD_LISTENERS);
         }
@@ -1585,31 +1585,31 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
         RUNNER_ASSERT(checkArray[2] == 0);
 
         // change
-        LogInfo("Setting property 0");
+        LogDebug("Setting property 0");
         sho->SetProperty<0>(1);
         // wait for confirmations
         MultipleWait(waitable);
 
         // change
-        LogInfo("Setting property 1");
+        LogDebug("Setting property 1");
         sho->SetProperty<1>(11);
         // wait for confirmations
         MultipleWait(waitable);
 
         // change
-        LogInfo("Setting property 2");
+        LogDebug("Setting property 2");
         sho->SetProperty<2>('a');
         // wait for confirmations
         MultipleWait(waitable);
 
         // change
-        LogInfo("Setting property 3");
+        LogDebug("Setting property 3");
         sho->SetProperty<3>(array);
         // wait for confirmations
         MultipleWait(waitable);
 
         // remove listeners
-        LogInfo("Removing listeners");
+        LogDebug("Removing listeners");
         for (size_t i = 0; i < MAX_THREADS; ++i) {
             controller[i]->PostEvent(ShmController4::REMOVE_LISTENERS);
         }
@@ -1617,7 +1617,7 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
         MultipleWait(waitable);
 
         // check if listeners array is empty
-        LogInfo("Checking listeners");
+        LogDebug("Checking listeners");
         for (size_t i = 0; i < MAX_THREADS; ++i) {
             LISTENER_ASSERT(0);
             LISTENER_ASSERT(1);
@@ -1638,7 +1638,7 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
 
     // Destroy controllers and wait for confirmation. Make sure that
     // thread/controller 0 is destroyed in the end
-    LogInfo("Destroying controllers");
+    LogDebug("Destroying controllers");
     for (int i = MAX_THREADS - 1; i >= 0; --i) {
         controller[i]->PostEvent(DESTROY_EVENT);
         Wait(waitable[i]);
@@ -1648,7 +1648,7 @@ RUNNER_TEST(SharedMemory_130_SharedObjectSingleton)
              * This is to properly close all waitable handles opened by
              * SharedObject in thread 0.
              */
-            LogInfo("Destroying singleton");
+            LogDebug("Destroying singleton");
             controller[i]->PostEvent(ShmController4::DESTROY_SINGLETON);
             Wait(waitable[i]);
         }

@@ -110,6 +110,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/preprocessor.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/read_write_mutex.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/recursive_mutex.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scope_guard.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_resource.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_array.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_close.h

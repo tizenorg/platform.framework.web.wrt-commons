@@ -32,6 +32,7 @@ SET(DPL_LOG_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/log/include/dpl/log/dlog_log_provider.h
     ${PROJECT_SOURCE_DIR}/modules/log/include/dpl/log/log.h
     ${PROJECT_SOURCE_DIR}/modules/log/include/dpl/log/old_style_log_provider.h
+    ${PROJECT_SOURCE_DIR}/modules/log/include/dpl/log/secure_log.h
     PARENT_SCOPE
 )
 

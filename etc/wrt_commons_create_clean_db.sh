@@ -66,7 +66,7 @@ do
     create_db $name $DB_PATH
 done
 
-for name in wrt_custom_handler
+for name in wrt_custom_handler wrt_i18n
 do
     create_db $name $DB_USER_PATH
 done

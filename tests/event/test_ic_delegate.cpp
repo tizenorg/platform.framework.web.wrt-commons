@@ -511,7 +511,7 @@ class ICReuseTestController :
     {
         event.GetArg0() (); //calling intercontext delegate
         if (++m_reuseCount < ReuseCount) {
-            LogInfo("[Send] Reuse: " << m_reuseCount);
+            LogDebug("[Send] Reuse: " << m_reuseCount);
             DPL::Event::ControllerEventHandler<ReuseCountEvent>::PostEvent(
                 event);
         }

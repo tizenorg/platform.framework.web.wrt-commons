@@ -34,7 +34,7 @@ void init_loop(int argc, char *argv[])
     g_type_init();
     g_thread_init(NULL);
 
-    LogInfo("Starting");
+    LogDebug("Starting");
     elm_init(argc, argv);
 }
 

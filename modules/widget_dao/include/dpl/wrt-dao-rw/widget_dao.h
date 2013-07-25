@@ -61,16 +61,16 @@ class WidgetDAO : public WidgetDAOReadOnly
      * @param[in] TizenAppId Widget app id that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information
      * needed to be registered.
-     * @param[in] wacSecurity   Widget's security certificates.
+     * @param[in] widgetSecurity   Widget's security certificates.
      */
     static void registerWidget(
         const TizenAppId& tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
     static DbWidgetHandle registerWidget(
         const WidgetRegisterInfo &pWidgetRegisterInfo,
-        const IWacSecurity &wacSecurity) __attribute__((deprecated));
+        const IWidgetSecurity &widgetSecurity) __attribute__((deprecated));
 
     /**
      * @brief registerWidgetGenerateTizenId Registers widget with auto-generated
@@ -80,12 +80,12 @@ class WidgetDAO : public WidgetDAOReadOnly
      * Function is not thread-safe.
      *
      * @param pWidgetRegisterInfo registeration information
-     * @param wacSecurity Widget's security certificates.
+     * @param widgetSecurity Widget's security certificates.
      * @return tzAppId generated
      */
     static TizenAppId registerWidgetGeneratePkgId(
         const WidgetRegisterInfo &pWidgetRegisterInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
     /**
      * This method re-registers the widget information to the DB when it is
@@ -98,12 +98,12 @@ class WidgetDAO : public WidgetDAOReadOnly
      * @param[in] tzAppId  Widget tizen app id that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information
      * needed to be registered.
-     * @param[in] wacSecurity   Widget's security certificates.
+     * @param[in] widgetSecurity   Widget's security certificates.
      */
     static void registerOrUpdateWidget(
         const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
     /* This method backup widget information and update new widget information
      * for restore widget information
@@ -112,7 +112,7 @@ class WidgetDAO : public WidgetDAOReadOnly
         const TizenAppId & oldAppId,
         const TizenAppId & newAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
     static void restoreUpdateWidget(
         const TizenAppId & oldAppId,
@@ -168,7 +168,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     static DbWidgetHandle registerWidgetInfo(
         const TizenAppId & widgetName,
         const WidgetRegisterInfo &regInfo,
-        const IWacSecurity &wacSecurity,
+        const IWidgetSecurity &widgetSecurity,
         const DPL::Optional<DbWidgetHandle> handle =
             DPL::Optional<DbWidgetHandle>());
     static void registerWidgetExtendedInfo(
@@ -203,7 +203,7 @@ class WidgetDAO : public WidgetDAOReadOnly
         const WidgetRegisterInfo &regInfo);
     static void registerWidgetCertificates(
         DbWidgetHandle widgetHandle,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
     static void registerCertificatesChains(
         DbWidgetHandle widgetHandle,
         CertificateSource certificateSource,
@@ -231,7 +231,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetInternal(
         const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity,
+        const IWidgetSecurity &widgetSecurity,
         const DPL::Optional<DbWidgetHandle> handle =
             DPL::Optional<DbWidgetHandle>());
     static void unregisterWidgetInternal(

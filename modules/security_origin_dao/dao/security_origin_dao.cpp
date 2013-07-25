@@ -83,7 +83,7 @@ void checkDatabase(std::string databasePath)
         struct stat buffer;
         if (stat(databasePath.c_str(), &buffer) != 0) {
             //Create fresh database
-            LogInfo("Creating database " << databasePath);
+            LogDebug("Creating database " << databasePath);
 
             std::fstream file;
             file.open(SECURITY_ORIGIN_DB_SQL_PATH, std::ios_base::in);
@@ -228,6 +228,10 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
             SECURITY_ORIGIN_DB_UPDATE(update,
                                       SecurityOriginInfo,
                                       &m_securityOriginDBInterface);
+            update->Where(And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.feature),
+                                    Equals<SecurityOriginInfo::scheme>(securityOriginData.origin.scheme)),
+                                    Equals<SecurityOriginInfo::host>(securityOriginData.origin.host)),
+                                    Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
             update->Values(row);
             update->Execute();
         } else {
@@ -246,7 +250,7 @@ void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &security
 void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature,
                                                        bool isOnlyAllowedLocalOrigin)
 {
-    Origin origin(DPL::FromUTF8String("file"),
+    Origin origin(DPL::FromUTF8String("file"), //TODO: this breaks app:// scheme code -> no case for app scheme
                   DPL::FromUTF8String(""),
                   0);
     if (!isOnlyAllowedLocalOrigin) {
