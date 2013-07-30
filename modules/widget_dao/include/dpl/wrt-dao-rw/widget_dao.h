@@ -126,9 +126,6 @@ class WidgetDAO : public WidgetDAOReadOnly
      */
     static void unregisterWidget(const TizenAppId & tzAppId);
 
-    static void unregisterWidget(WrtDB::DbWidgetHandle handle) __attribute__((
-                                                                                 deprecated));
-
     /* This method removes widget property
      */
     void removeProperty(const PropertyDAOReadOnly::WidgetPropertyKey &key);

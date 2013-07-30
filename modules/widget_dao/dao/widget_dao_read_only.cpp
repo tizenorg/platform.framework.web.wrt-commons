@@ -176,6 +176,27 @@ TizenPkgId getTizenPkgIdByHandle(const DbWidgetHandle handle)
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
+
+TizenPkgId getTizenPkgIdByAppId(const TizenAppId tzAppid)
+{
+    LogDebug("Getting TizenPkgId by TizenAppId: " << tzAppid);
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::tizen_appid>(tzAppid));
+        WidgetInfo::Select::RowList rowList = select->GetRowList();
+
+        if (rowList.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Failed to get widget by tizen appId");
+        }
+        TizenPkgId tzPkgid = rowList.front().Get_tizen_pkgid();
+
+        return tzPkgid;
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed get pkgId")
+}
 } // namespace
 
 IWidgetSecurity::~IWidgetSecurity()
@@ -262,6 +283,16 @@ TizenAppId WidgetDAOReadOnly::getTzAppId(const TizenPkgId tzPkgid)
 TizenPkgId WidgetDAOReadOnly::getTzPkgId() const
 {
     return getTizenPkgIdByHandle(m_widgetHandle);
+}
+
+TizenPkgId WidgetDAOReadOnly::getTzPkgId(const DbWidgetHandle handle)
+{
+    return getTizenPkgIdByHandle(handle);
+}
+
+TizenPkgId WidgetDAOReadOnly::getTzPkgId(const TizenAppId tzAppid)
+{
+    return getTizenPkgIdByAppId(tzAppid);
 }
 
 PropertyDAOReadOnly::WidgetPropertyKeyList

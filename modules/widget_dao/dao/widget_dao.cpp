@@ -869,25 +869,6 @@ void WidgetDAO::unregisterWidget(const TizenAppId & tzAppId)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to unregister widget")
 }
 
-void WidgetDAO::unregisterWidget(WrtDB::DbWidgetHandle handle)
-{
-    LogDebug("Unregistering widget from DB. Handle: " << handle);
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        ScopedTransaction transaction(&WrtDatabase::interface());
-
-        // Delete from table Widget Info
-        WRT_DB_DELETE(del, WidgetInfo, &WrtDatabase::interface())
-        del->Where(Equals<WidgetInfo::app_id>(handle));
-        del->Execute();
-
-        transaction.Commit();
-    }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to unregister widget")
-}
-
 void WidgetDAO::unregisterWidgetInternal(
     const TizenAppId & tzAppId)
 {
