@@ -920,7 +920,9 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
                           tizenAppId), "Widget is not registered");
 
     //success full update
-    WidgetDAO::registerOrUpdateWidget(tizenAppId, regInfo2, sec);
+    WidgetDAO::updateTizenAppId(tizenAppId, L"backup");
+    WidgetDAO::registerWidget(tizenAppId, regInfo2, sec);
+    WidgetDAO::unregisterWidget(L"backup");
     RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(
                           tizenAppId), "Widget is not reregistered");
     WidgetDAO dao(tizenAppId);
@@ -928,6 +930,7 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
         *dao.getVersion() == L"1.1", "Data widget was not updated");
     RUNNER_ASSERT_MSG(
         *dao.getAuthorName() == L"BBB", "Data widget was not updated");
+
 
     WidgetDAO::unregisterWidget(tizenAppId);
 }
