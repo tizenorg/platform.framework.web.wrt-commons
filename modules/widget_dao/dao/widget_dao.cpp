@@ -239,6 +239,39 @@ TizenAppId WidgetDAO::registerWidgetGeneratePkgId(
     return tzAppId;
 }
 
+void WidgetDAO::updateTizenAppId(
+    const TizenAppId & fromAppId,
+    const TizenAppId & toAppId)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        ScopedTransaction transaction(&WrtDatabase::interface());
+        if (!isWidgetInstalled(fromAppId)) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Cannot find widget. tzAppId: " << fromAppId);
+        }
+
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::tizen_appid>(fromAppId));
+
+        WidgetInfo::Row row = select->GetSingleRow();
+
+        //WidgetInfo::Row row;
+        row.Set_tizen_appid(toAppId);
+
+        WRT_DB_UPDATE(update, WidgetInfo, &WrtDatabase::interface())
+        update->Where(Equals<WidgetInfo::tizen_appid>(fromAppId));
+        update->Values(row);
+        update->Execute();
+
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to update appid")
+}
+
 void WidgetDAO::registerWidgetInternal(
     const TizenAppId & tzAppId,
     const WidgetRegisterInfo &widgetRegInfo,

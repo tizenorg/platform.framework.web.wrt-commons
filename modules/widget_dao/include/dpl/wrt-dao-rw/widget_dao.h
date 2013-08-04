@@ -87,6 +87,9 @@ class WidgetDAO : public WidgetDAOReadOnly
         const WidgetRegisterInfo &pWidgetRegisterInfo,
         const IWidgetSecurity &widgetSecurity);
 
+    static void updateTizenAppId(const TizenAppId & fromAppId,
+                                 const TizenAppId & toAppId);
+
     /**
      * This method re-registers the widget information to the DB when it is
      * installed.
@@ -103,7 +106,7 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerOrUpdateWidget(
         const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWidgetSecurity &widgetSecurity);
+        const IWidgetSecurity &widgetSecurity) __attribute__((deprecated));
 
     /* This method backup widget information and update new widget information
      * for restore widget information
@@ -112,11 +115,11 @@ class WidgetDAO : public WidgetDAOReadOnly
         const TizenAppId & oldAppId,
         const TizenAppId & newAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWidgetSecurity &widgetSecurity);
+        const IWidgetSecurity &widgetSecurity) __attribute__((deprecated));
 
     static void restoreUpdateWidget(
         const TizenAppId & oldAppId,
-        const TizenAppId & newAppId);
+        const TizenAppId & newAppId) __attribute__((deprecated));
 
     /**
      * This method removes a widget's information from EmDB.
@@ -236,7 +239,7 @@ class WidgetDAO : public WidgetDAOReadOnly
 
     static void updateWidgetAppIdInternal(
         const TizenAppId & fromAppId,
-        const TizenAppId & toAppId);
+        const TizenAppId & toAppId) __attribute__((deprecated));
 
     static void insertAppControlInfo(DbWidgetHandle handle,
                                              DPL::String src,
