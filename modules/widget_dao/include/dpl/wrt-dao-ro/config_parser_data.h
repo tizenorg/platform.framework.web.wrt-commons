@@ -160,11 +160,13 @@ class ConfigParserData
     struct AppControlInfo
     {
         enum class Disposition {
-            WINDOW = 0,
-            INLINE
+            UNDEFINE = 0,
+            WINDOW   = 1,
+            INLINE   = 2
         };
         AppControlInfo(const DPL::String& operation) :
             m_operation(operation),
+            m_disposition(Disposition::UNDEFINE),
             m_index(0)
         {}
         DPL::String m_src;
