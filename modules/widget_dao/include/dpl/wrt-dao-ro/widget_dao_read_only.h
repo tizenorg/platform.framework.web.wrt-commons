@@ -334,6 +334,8 @@ class WidgetDAOReadOnly
      */
 
     TizenPkgId getTzPkgId() const;
+    static TizenPkgId getTzPkgId(const DbWidgetHandle handle);
+    static TizenPkgId getTzPkgId(const TizenAppId tzAppid);
 
     /**
      * This method returns the root directory of widget resource.
@@ -601,15 +603,6 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     static DbWidgetDAOReadOnlyList getWidgetList();
-
-    /**
-     * This method removes a widget's information from EmDB.
-     *
-     * @see RegisterWidget()
-     * @param[in] widgetHandle    widget's app id
-     * @return true if succeed, false if fail.
-     */
-    static void unregisterWidget(DbWidgetHandle widgetHandle);
 
     /**
      * This method gets author's infomation of a widget which is parsed from

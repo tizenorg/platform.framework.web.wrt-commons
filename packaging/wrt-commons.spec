@@ -1,7 +1,7 @@
 #git:framework/web/wrt-commons
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.139
+Version:    0.2.145
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
@@ -23,10 +23,7 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  pkgconfig(cryptsvc)
-BuildRequires:  pkgconfig(dukgenerator)
 BuildRequires:  pkgconfig(minizip)
-Requires: libcryptsvc
 
 %description
 Wrt common library
@@ -53,6 +50,11 @@ Wrt common library development headers
 %endif
 
 %build
+%if 0%{?tizen_build_binary_release_type_eng}
+export CFLAGS="$CFLAGS -DTIZEN_ENGINEER_MODE"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_ENGINEER_MODE"
+export FFLAGS="$FFLAGS -DTIZEN_ENGINEER_MODE"
+%endif
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
