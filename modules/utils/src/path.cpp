@@ -20,9 +20,7 @@
  */
 
 #include "dpl/utils/path.h"
-
 #include <dpl/utils/wrt_utility.h>
-
 #include <dpl/scoped_free.h>
 #include <dpl/errno_string.h>
 #include <dpl/file_input.h>
@@ -30,12 +28,20 @@
 #include <dpl/copy.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
+#include <dpl/wrt-dao-ro/global_config.h>
+
 #include <unistd.h>
-#include <sys/stat.h>
+#include <ftw.h>
+#include <sys/time.h>
 
 namespace DPL {
 
 namespace Utils {
+
+namespace {
+const char * const TEMPORARY_PATH_POSTFIX = "temp";
+const mode_t TEMPORARY_PATH_MODE = 0775;
+} // namespace
 
 Path::Iterator::Iterator() //end iterator by default
 {
@@ -372,7 +378,8 @@ bool Path::hasExtension(const std::string& extension) const
 void MakeDir(const Path & path, mode_t mode)
 {
     path.RootGuard();
-    if(!WrtUtilMakeDir(path.Fullpath(), mode)) ThrowMsg(Path::OperationFailed, "Cannot make directory");
+    if(!WrtUtilMakeDir(path.Fullpath(), mode))
+        ThrowMsg(Path::OperationFailed, "Cannot make directory");
 }
 
 void MakeEmptyFile(const Path & path)
@@ -405,8 +412,7 @@ void Remove(const Path & path)
 bool TryRemove(const Path & path)
 {
     path.RootGuard();
-    if(!WrtUtilRemove(path.Fullpath())) return false;
-    return true;
+    return WrtUtilRemove(path.Fullpath());
 }
 
 void Rename(const Path & from, const Path & to)
@@ -494,6 +500,25 @@ void CopyDir(const Path & from, const Path & to)
             Throw(Path::OperationFailed);
         }
     }
+}
+
+Path CreateTempPath(const Path & basePath)
+{
+    LogDebug("Step: Creating temporary path");
+
+    // Temporary path
+    Path tempPath = basePath;
+    tempPath /= WrtDB::GlobalConfig::GetTmpDirPath();
+
+    timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned long long nr = (static_cast<unsigned long long>(tv.tv_sec) * 1000000ULL + static_cast<unsigned long long>(tv.tv_usec));
+    std::stringstream relPath;
+    relPath << TEMPORARY_PATH_POSTFIX << "_" << nr;
+    tempPath /= relPath.str();
+
+    MakeDir(tempPath, TEMPORARY_PATH_MODE);
+    return tempPath;
 }
 
 bool Exists(const Path & path)

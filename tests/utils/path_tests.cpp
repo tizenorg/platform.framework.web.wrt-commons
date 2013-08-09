@@ -923,6 +923,24 @@ RUNNER_TEST(path_has_extension_test)
     RUNNER_ASSERT_MSG(!path6.hasExtension(".JS"),
             "Wrong argument in hasExtension() function");
 
-    RUNNER_ASSERT_MSG(path3.hasExtension(""), "Extension length should be 0");
-    RUNNER_ASSERT_MSG(path4.hasExtension(""), "There should be no extension");
+    RUNNER_ASSERT_MSG(!path3.hasExtension(""), "Extension length is 0");
+
+    RUNNER_ASSERT_MSG(!path4.hasExtension(""), "Not a directory");
+}
+
+/*
+Name: path_create_temp_dir
+Description: tests if temp dir was created
+Expected: temp dir exists
+*/
+RUNNER_TEST(path_create_temp_dir)
+{
+    Path p1 = CreateTempPath(Path("/usr/tmp/"));
+    Path p2 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
+    Path p3 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
+
+    RUNNER_ASSERT_MSG(p1.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p2.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p3.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p2.Fullpath() != p3.Fullpath(), "Each temp path should be unique due to having tv_usec in dir name.");
 }

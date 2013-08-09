@@ -226,6 +226,7 @@ void CopyFile(const Path & from, const Path & to);
  */
 void CopyDir(const Path & from, const Path & to);
 
+Path CreateTempPath(const Path & path);
 }
 
 }
