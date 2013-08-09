@@ -192,6 +192,7 @@ SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
 SET(TARGET_CERTIFICATE_DAO_LIB "wrt-commons-certificate-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
 SET(TARGET_I18N_DAO_RO_LIB "wrt-commons-i18n-dao-ro")
+SET(TARGET_WIDGET_INTERFACE_DAO_LIB "wrt-commons-widget-interface-dao")
 
 macro(configure_and_install_pkg PKG_FILE)
     CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)

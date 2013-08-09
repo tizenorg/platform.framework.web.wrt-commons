@@ -37,14 +37,6 @@ inline const char* GetWrtDatabaseFilePath()
 }
 
 /**
- * WRT origin widget interface database path
- */
-inline const char* GetWrtWidgetInterfaceDatabaseFilePath()
-{
-    return "/usr/share/wrt-plugins-common/widget_interface_db.sql";
-}
-
-/**
  * WRT device plugin path
  */
 inline const char* GetDevicePluginPath()
@@ -247,14 +239,6 @@ inline const char* GetCookieDatabaseFile()
     return ".cookie.db";
 }
 
-/**
- * widget interface database file name
- */
-inline const char* GetWidgetInterfaceDatabaseFile()
-{
-    return ".widget_interface.db";
-}
-
 inline const char* GetTmpDirPath()
 {
     return "/tmp";
@@ -302,6 +286,11 @@ inline const char* GetNPRuntimePluginsPath()
 #else
     return "plugins/x86";
 #endif
+}
+
+inline const char* GetBackupDatabaseSuffix()
+{
+    return ".backup";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB
