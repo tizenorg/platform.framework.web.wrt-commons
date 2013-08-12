@@ -359,8 +359,9 @@ namespace AppControlPrefix {
 struct WidgetAppControl
 {
     enum class Disposition {
-        WINDOW = 0,
-        INLINE
+        UNDEFINE = 0,
+        WINDOW   = 1,
+        INLINE   = 2
     };
 
     DPL::String src;       /* start uri */
