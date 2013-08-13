@@ -14,69 +14,38 @@
  *    limitations under the License.
  */
 /*
- * @file        test_runner_child.h
- * @author      Bartlomiej Grzelewski (b.grzelewski@samsung.com)
+ * @file        test_runner_multiprocess.h
+ * @author      Marcin Niesluchowski (m.niesluchow@samsung.com)
  * @version     1.0
- * @brief       This file is the header file of test runner
+ * @brief       This file is the header file of multiprocess test runner
  */
-#ifndef DPL_TEST_RUNNER_CHILD_H
-#define DPL_TEST_RUNNER_CHILD_H
+#ifndef DPL_TEST_RUNNER_MULTIPROCESS_H
+#define DPL_TEST_RUNNER_MULTIPROCESS_H
 
-#include <dpl/test/test_runner.h>
+#include <dpl/test/test_runner_child.h>
 
 namespace DPL {
 namespace Test {
 
-class PipeWrapper : DPL::Noncopyable
+class SimplePipeWrapper :
+        public PipeWrapper
 {
   public:
-    enum Usage {
-        READONLY,
-        WRITEONLY
-    };
+    SimplePipeWrapper();
 
-    enum Status {
-        SUCCESS,
-        TIMEOUT,
-        ERROR
-    };
+    virtual ~SimplePipeWrapper();
 
-    PipeWrapper();
-
-    bool isReady();
-
-    void setUsage(Usage usage);
-
-    virtual ~PipeWrapper();
-
-    Status send(int code, std::string &message);
-
-    Status receive(int &code, std::string &data, time_t deadline);
-
-    void closeAll();
-
-  protected:
-
-    std::string toBinaryString(int data);
-
-    void closeHelp(int desc);
-
-    Status writeHelp(const void *buffer, int size);
-
-    Status readHelp(void *buf, int size, time_t deadline);
-
-    static const int PIPE_CLOSED = -1;
-
-    int m_pipefd[2];
+    Status send(std::string &message);
+    Status receive(std::string &data, bool &empty, time_t deadline);
 };
 
-void RunChildProc(TestRunner::TestCase procChild);
+void RunMultiProc(TestRunner::TestCase procMulti);
 } // namespace Test
 } // namespace DPL
 
-#define RUNNER_CHILD_TEST(Proc)                                                      \
+#define RUNNER_MULTIPROCESS_TEST(Proc)                                               \
     void Proc();                                                                     \
-    void Proc##Child();                                                              \
+    void Proc##Multi();                                                              \
     static int Static##Proc##Init()                                                  \
     {                                                                                \
         DPL::Test::TestRunnerSingleton::Instance().RegisterTest(#Proc, &Proc);       \
@@ -84,8 +53,8 @@ void RunChildProc(TestRunner::TestCase procChild);
     }                                                                                \
     const int DPL_UNUSED Static##Proc##InitVar = Static##Proc##Init();               \
     void Proc(){                                                                     \
-        DPL::Test::RunChildProc(&Proc##Child);                                       \
+        DPL::Test::RunMultiProc(&Proc##Multi);                                       \
     }                                                                                \
-    void Proc##Child()
+    void Proc##Multi()
 
-#endif // DPL_TEST_RUNNER_CHILD_H
+#endif // DPL_TEST_RUNNER_MULTIPROCESS_H

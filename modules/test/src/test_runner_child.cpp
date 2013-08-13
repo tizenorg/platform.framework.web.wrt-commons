@@ -45,8 +45,6 @@
 #include <dpl/utils/wrt_global_settings.h>
 
 namespace {
-const int PIPE_CLOSED = -1;
-
 const int CHILD_TEST_FAIL    = 0;
 const int CHILD_TEST_PASS    = 1;
 const int CHILD_TEST_IGNORED = 2;
@@ -76,188 +74,172 @@ end:
 
 namespace DPL {
 namespace Test {
-class PipeWrapper : DPL::Noncopyable
+
+PipeWrapper::PipeWrapper()
 {
-  public:
-    enum Usage {
-        READONLY,
-        WRITEONLY
-    };
-
-    enum Status {
-        SUCCESS,
-        TIMEOUT,
-        ERROR
-    };
-
-    PipeWrapper()
-    {
-        if (-1 == pipe(m_pipefd)) {
-            m_pipefd[0] = PIPE_CLOSED;
-            m_pipefd[1] = PIPE_CLOSED;
-        }
+    if (-1 == pipe(m_pipefd)) {
+        m_pipefd[0] = PIPE_CLOSED;
+        m_pipefd[1] = PIPE_CLOSED;
     }
+}
 
-    bool isReady()
-    {
-        return m_pipefd[0] != PIPE_CLOSED || m_pipefd[1] != PIPE_CLOSED;
-    }
+PipeWrapper::~PipeWrapper()
+{
+    closeHelp(0);
+    closeHelp(1);
+}
 
-    void setUsage(Usage usage)
-    {
-        if (usage == READONLY) {
-            closeHelp(1);
-        }
-        if (usage == WRITEONLY) {
-            closeHelp(0);
-        }
-    }
-    ~PipeWrapper()
-    {
-        closeHelp(0);
+bool PipeWrapper::isReady()
+{
+    return m_pipefd[0] != PIPE_CLOSED || m_pipefd[1] != PIPE_CLOSED;
+}
+
+void PipeWrapper::setUsage(Usage usage)
+{
+    if (usage == READONLY) {
         closeHelp(1);
     }
+    if (usage == WRITEONLY) {
+        closeHelp(0);
+    }
+}
 
-    Status send(int code, std::string &message)
-    {
-        if (m_pipefd[1] == PIPE_CLOSED) {
-            return ERROR;
-        }
-
-        std::ostringstream output;
-        output << toBinaryString(code);
-        output << toBinaryString(static_cast<int>(message.size()));
-        output << message;
-
-        std::string binary = output.str();
-        int size = binary.size();
-
-        if ((writeHelp(&size,
-                       sizeof(int)) == ERROR) ||
-            (writeHelp(binary.c_str(), size) == ERROR))
-        {
-            return ERROR;
-        }
-        return SUCCESS;
+PipeWrapper::Status PipeWrapper::send(int code, std::string &message)
+{
+    if (m_pipefd[1] == PIPE_CLOSED) {
+        return ERROR;
     }
 
-    Status receive(int &code, std::string &data, time_t deadline)
+    std::ostringstream output;
+    output << toBinaryString(code);
+    output << toBinaryString(static_cast<int>(message.size()));
+    output << message;
+
+    std::string binary = output.str();
+    int size = binary.size();
+
+    if ((writeHelp(&size,
+                   sizeof(int)) == ERROR) ||
+        (writeHelp(binary.c_str(), size) == ERROR))
     {
-        if (m_pipefd[0] == PIPE_CLOSED) {
-            return ERROR;
-        }
+        return ERROR;
+    }
+    return SUCCESS;
+}
 
-        int size;
-        Status ret;
+PipeWrapper::Status PipeWrapper::receive(int &code, std::string &data, time_t deadline)
+{
+    if (m_pipefd[0] == PIPE_CLOSED) {
+        return ERROR;
+    }
 
-        if ((ret = readHelp(&size, sizeof(int), deadline)) != SUCCESS) {
-            return ret;
-        }
+    int size;
+    Status ret;
 
-        std::vector<char> buffer;
+    if ((ret = readHelp(&size, sizeof(int), deadline)) != SUCCESS) {
+        return ret;
+    }
+
+    std::vector<char> buffer;
+    buffer.resize(size);
+
+    if ((ret = readHelp(&buffer[0], size, deadline)) != SUCCESS) {
+        return ret;
+    }
+
+    try {
+        DPL::BinaryQueue queue;
+        queue.AppendCopy(&buffer[0], size);
+
+        queue.FlattenConsume(&code, sizeof(int));
+        queue.FlattenConsume(&size, sizeof(int));
+
         buffer.resize(size);
 
-        if ((ret = readHelp(&buffer[0], size, deadline)) != SUCCESS) {
-            return ret;
+        queue.FlattenConsume(&buffer[0], size);
+        data.assign(buffer.begin(), buffer.end());
+    } catch (DPL::BinaryQueue::Exception::Base &e) {
+        return ERROR;
+    }
+    return SUCCESS;
+}
+
+void PipeWrapper::closeAll()
+{
+    closeHelp(0);
+    closeHelp(1);
+}
+
+std::string PipeWrapper::toBinaryString(int data)
+{
+    char buffer[sizeof(int)];
+    memcpy(buffer, &data, sizeof(int));
+    return std::string(buffer, buffer + sizeof(int));
+}
+
+void PipeWrapper::closeHelp(int desc)
+{
+    if (m_pipefd[desc] != PIPE_CLOSED) {
+        TEMP_FAILURE_RETRY(close(m_pipefd[desc]));
+        m_pipefd[desc] = PIPE_CLOSED;
+    }
+}
+
+PipeWrapper::Status PipeWrapper::writeHelp(const void *buffer, int size)
+{
+    int ready = 0;
+    const char *p = static_cast<const char *>(buffer);
+    while (ready != size) {
+        int ret = write(m_pipefd[1], &p[ready], size - ready);
+
+        if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
+            continue;
         }
 
-        try {
-            DPL::BinaryQueue queue;
-            queue.AppendCopy(&buffer[0], size);
-
-            queue.FlattenConsume(&code, sizeof(int));
-            queue.FlattenConsume(&size, sizeof(int));
-
-            buffer.resize(size);
-
-            queue.FlattenConsume(&buffer[0], size);
-            data.assign(buffer.begin(), buffer.end());
-        } catch (DPL::BinaryQueue::Exception::Base &e) {
+        if (ret == -1) {
+            closeHelp(1);
             return ERROR;
         }
-        return SUCCESS;
-    }
 
-    void closeAll()
-    {
-        closeHelp(0);
-        closeHelp(1);
+        ready += ret;
     }
+    return SUCCESS;
+}
 
-  private:
-    std::string toBinaryString(int data)
-    {
-        char buffer[sizeof(int)];
-        memcpy(buffer, &data, sizeof(int));
-        return std::string(buffer, buffer + sizeof(int));
-    }
+PipeWrapper::Status PipeWrapper::readHelp(void *buf, int size, time_t deadline)
+{
+    int ready = 0;
+    char *buffer = static_cast<char*>(buf);
+    while (ready != size) {
+        time_t wait = deadline - time(0);
+        wait = wait < 1 ? 1 : wait;
+        pollfd fds = { m_pipefd[0], POLLIN, 0 };
 
-    void closeHelp(int desc)
-    {
-        if (m_pipefd[desc] != PIPE_CLOSED) {
-            TEMP_FAILURE_RETRY(close(m_pipefd[desc]));
-            m_pipefd[desc] = PIPE_CLOSED;
+        int pollReturn = poll(&fds, 1, wait * 1000);
+
+        if (pollReturn == 0) {
+            return TIMEOUT; // Timeout
         }
-    }
 
-    Status writeHelp(const void *buffer, int size)
-    {
-        int ready = 0;
-        const char *p = static_cast<const char *>(buffer);
-        while (ready != size) {
-            int ret = write(m_pipefd[1], &p[ready], size - ready);
-
-            if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
-                continue;
-            }
-
-            if (ret == -1) {
-                closeHelp(1);
-                return ERROR;
-            }
-
-            ready += ret;
+        if (pollReturn < -1) {
+            return ERROR;
         }
-        return SUCCESS;
-    }
 
-    Status readHelp(void *buf, int size, time_t deadline)
-    {
-        int ready = 0;
-        char *buffer = static_cast<char*>(buf);
-        while (ready != size) {
-            time_t wait = deadline - time(0);
-            wait = wait < 1 ? 1 : wait;
-            pollfd fds = { m_pipefd[0], POLLIN, 0 };
+        int ret = read(m_pipefd[0], &buffer[ready], size - ready);
 
-            int pollReturn = poll(&fds, 1, wait * 1000);
-
-            if (pollReturn == 0) {
-                return TIMEOUT; // Timeout
-            }
-
-            if (pollReturn < -1) {
-                return ERROR;
-            }
-
-            int ret = read(m_pipefd[0], &buffer[ready], size - ready);
-
-            if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
-                continue;
-            }
-
-            if (ret == -1 || ret == 0) {
-                closeHelp(0);
-                return ERROR;
-            }
-
-            ready += ret;
+        if (ret == -1 && (errno == EAGAIN || errno == EINTR)) {
+            continue;
         }
-        return SUCCESS;
-    }
 
-    int m_pipefd[2];
-};
+        if (ret == -1 || ret == 0) {
+            closeHelp(0);
+            return ERROR;
+        }
+
+        ready += ret;
+    }
+    return SUCCESS;
+}
 
 void RunChildProc(TestRunner::TestCase procChild)
 {
