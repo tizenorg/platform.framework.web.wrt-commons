@@ -21,6 +21,7 @@
 INCLUDE(FindPkgConfig)
 PKG_CHECK_MODULES(SYS_EFL_TEST_ENGINE
   appcore-efl
+  libxml-2.0
   REQUIRED)
 
 

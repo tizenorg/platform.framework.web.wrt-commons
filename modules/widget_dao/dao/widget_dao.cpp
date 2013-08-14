@@ -717,11 +717,11 @@ void WidgetDAO::registerAppControl(DbWidgetHandle widgetHandle,
     // appControlList
     FOREACH(appControl_it, widgetConfigurationInfo.appControlList)
     {
-        DPL::String src       = appControl_it->m_src;
+        DPL::String src = appControl_it->m_src;
         DPL::String operation = appControl_it->m_operation;
-        unsigned index        = appControl_it->m_index;
-        unsigned disposition  = appControl_it->m_disposition ==
-            ConfigParserData::AppControlInfo::Disposition::INLINE ? 1 : 0;
+        unsigned index = appControl_it->m_index;
+        unsigned disposition =
+            static_cast<unsigned>(appControl_it->m_disposition);
 
         if (!appControl_it->m_uriList.empty())
         {

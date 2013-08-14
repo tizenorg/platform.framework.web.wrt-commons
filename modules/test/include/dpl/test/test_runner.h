@@ -97,6 +97,10 @@ class TestRunner
     void InvalidArgs(const std::string& message = "Invalid arguments!");
     void Usage();
 
+    bool filterGroupsByXmls(const std::vector<std::string> & files);
+    bool filterByXML(std::map<std::string, bool> & casesMap);
+    void normalizeXMLTag(std::string& str, const std::string& testcase);
+
     enum Status { FAILED, IGNORED, PASS };
 
     Status RunTestCase(const TestCaseStruct& testCase);

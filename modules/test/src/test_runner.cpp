@@ -37,8 +37,27 @@
 #include <cstdlib>
 #include <dpl/utils/wrt_global_settings.h>
 
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include <dpl/singleton_impl.h>
 IMPLEMENT_SINGLETON(DPL::Test::TestRunner)
+
+namespace {
+
+std::string getXMLNode(xmlNodePtr node)
+{
+    std::string ret;
+    xmlChar * value = xmlNodeGetContent(node);
+    ret = std::string(reinterpret_cast<char*>(value));
+    xmlFree(value);
+    return ret;
+}
+
+}
+
 
 namespace DPL {
 namespace Test {
@@ -87,6 +106,143 @@ void TestRunner::RegisterTest(const char *testName, TestCase proc)
 void TestRunner::InitGroup(const char* name)
 {
     m_currentGroup = name;
+}
+
+void TestRunner::normalizeXMLTag(std::string& str, const std::string& testcase)
+{
+    //Add testcase if missing
+    std::string::size_type pos = str.find(testcase);
+    if(pos != 0)
+    {
+        str = testcase + "_" + str;
+    }
+
+    //dpl test runner cannot have '-' character in name so it have to be replaced
+    // for TCT case to make comparision works
+    std::replace(str.begin(), str.end(), '-', '_');
+}
+
+bool TestRunner::filterGroupsByXmls(const std::vector<std::string> & files)
+{
+    DECLARE_EXCEPTION_TYPE(DPL::Exception, XMLError)
+
+    const std::string idPath = "/test_definition/suite/set/testcase/@id";
+
+    bool success = true;
+    std::map<std::string, bool> casesMap;
+
+    std::string testsuite;
+    if(!m_testGroups.empty())
+    {
+        for(TestCaseGroupMap::const_iterator cit = m_testGroups.begin(); cit != m_testGroups.end(); ++cit)
+        {
+            if(!cit->second.empty())
+            {
+                for(TestCaseStructList::const_iterator cj = cit->second.begin(); cj != cit->second.end(); ++cj)
+                {
+                    std::string name = cj->name;
+                    std::string::size_type st = name.find('_');
+                    if(st != std::string::npos)
+                    {
+                        name = name.substr(0, st);
+                        testsuite = name;
+                        break;
+                    }
+                }
+                if(!testsuite.empty()) break;
+            }
+        }
+    }
+
+    xmlInitParser();
+    LIBXML_TEST_VERSION
+    xmlXPathInit();
+
+    Try
+    {
+        FOREACH(file, files)
+        {
+            xmlDocPtr doc;
+            xmlXPathContextPtr xpathCtx;
+
+            doc = xmlReadFile(file->c_str(), NULL, 0);
+            if (doc == NULL) {
+                ThrowMsg(XMLError, "File Problem");
+            } else {
+                //context
+                xpathCtx = xmlXPathNewContext(doc);
+                if (xpathCtx == NULL) {
+                    ThrowMsg(XMLError,
+                             "Error: unable to create new XPath context\n");
+                }
+                xpathCtx->node = xmlDocGetRootElement(doc);
+            }
+
+            std::string result;
+            xmlXPathObjectPtr xpathObject;
+            //get requested node's values
+            xpathObject = xmlXPathEvalExpression(BAD_CAST idPath.c_str(), xpathCtx);
+            if (xpathObject == NULL)
+            {
+                ThrowMsg(XMLError, "XPath evaluation failure: " << idPath);
+            }
+            xmlNodeSetPtr nodes = xpathObject->nodesetval;
+            unsigned size = (nodes) ? nodes->nodeNr : 0;
+            LogDebug("Found " << size << " nodes matching xpath");
+            for(unsigned i = 0; i < size; ++i)
+            {
+                LogPedantic("Type: " << nodes->nodeTab[i]->type);
+                if (nodes->nodeTab[i]->type == XML_ATTRIBUTE_NODE) {
+                    xmlNodePtr curNode = nodes->nodeTab[i];
+                    result = getXMLNode(curNode);
+                    LogPedantic("Result: " << result);
+                    normalizeXMLTag(result, testsuite);
+                    casesMap.insert(make_pair(result, false));
+                }
+            }
+            //Cleanup of XPath data
+            xmlXPathFreeObject(xpathObject);
+            xmlXPathFreeContext(xpathCtx);
+            xmlFreeDoc(doc);
+        }
+    }
+    Catch(XMLError)
+    {
+        LogError("Libxml error: " << _rethrown_exception.DumpToString());
+        success = false;
+    }
+    xmlCleanupParser();
+
+    if(!filterByXML(casesMap))
+    {
+        success = false;
+    }
+
+    return success;
+}
+
+bool TestRunner::filterByXML(std::map<std::string, bool> & casesMap)
+{
+    FOREACH(group, m_testGroups) {
+        TestCaseStructList newList;
+        FOREACH(iterator, group->second)
+        {
+            if (casesMap.find(iterator->name) != casesMap.end()) {
+                casesMap[iterator->name] = true;
+                newList.push_back(*iterator);
+            }
+        }
+        group->second = newList;
+    }
+    FOREACH(cs, casesMap)
+    {
+        if(cs->second == false)
+        {
+            LogError("Cannot find testcase from XML file: " << cs->first);
+            return false;
+        }
+    }
+    return true;
 }
 
 TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
@@ -156,6 +312,11 @@ void TestRunner::RunTests()
                       collector.second->Start();
                   });
 
+    unsigned count = 0;
+    FOREACH(group, m_testGroups) {
+        count += group->second.size();
+    }
+    fprintf(stderr, "%sFound %d testcases...%s\n", GREEN_BEGIN, count, GREEN_END);
     fprintf(stderr, "%s%s%s\n", GREEN_BEGIN, "Running tests...", GREEN_END);
     FOREACH(group, m_testGroups) {
         TestCaseStructList list = group->second;
@@ -265,6 +426,10 @@ void TestRunner::Usage()
     fprintf(stderr, "  --runignored\t Run also ignored tests\n");
     fprintf(stderr, "  --list\t Show a list of Test IDs\n");
     fprintf(stderr, "  --listgroups\t Show a list of Test Group names \n");
+    fprintf(stderr, "  --only-from-xml=<xml file>\t Run only testcases specified in XML file \n"
+                    "       XML name is taken from attribute id=\"part1_part2\" as whole.\n"
+                    "       If part1 is not found (no _) then it is implicitily "
+                           "set according to suite part1 from binary tests\n");
     fprintf(
         stderr,
         "  --listingroup=<group name>\t Show a list of Test IDS in one group\n");
@@ -316,6 +481,8 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
     args.erase(args.begin());
 
     bool showHelp = false;
+    bool justList = false;
+    std::vector<std::string> xmlFiles;
 
     TestResultsCollectorBasePtr currentCollector;
 
@@ -332,6 +499,7 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         const std::string listGroupsCmd = "--listgroups";
         const std::string listInGroup = "--listingroup=";
         const std::string allowChildLogs = "--allowchildlogs";
+        const std::string onlyFromXML = "--only-from-xml=";
 
         if (currentCollector) {
             if (currentCollector->ParseCollectorSpecificArg(arg)) {
@@ -376,12 +544,7 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
         } else if (arg == runIgnored) {
             m_runIgnored = true;
         } else if (arg == listCmd) {
-            FOREACH(group, m_testGroups) {
-                FOREACH(test, group->second) {
-                    printf("ID:%s:%s\n", group->first.c_str(), test->name.c_str());
-                }
-            }
-            return 0;
+            justList = true;
         } else if (arg == listGroupsCmd) {
             FOREACH(group, m_testGroups) {
                 printf("GR:%s\n", group->first.c_str());
@@ -443,11 +606,50 @@ int TestRunner::ExecTestRunner(const ArgsList& value)
                 }
                 group->second = newList;
             }
+        } else if(arg.find(onlyFromXML) == 0) {
+            arg.erase(0, onlyFromXML.length());
+            if (arg.length() == 0) {
+                InvalidArgs();
+                Usage();
+                return -1;
+            }
+
+            if (arg[0] == '\'' && arg[arg.length() - 1] == '\'') {
+                arg.erase(0);
+                arg.erase(arg.length() - 1);
+            }
+
+            if (arg.length() == 0) {
+                InvalidArgs();
+                Usage();
+                return -1;
+            }
+
+            xmlFiles.push_back(arg);
         } else {
             InvalidArgs();
             Usage();
             return -1;
         }
+    }
+
+    if(!xmlFiles.empty())
+    {
+        if(!filterGroupsByXmls(xmlFiles))
+        {
+            fprintf(stderr, "XML file is not correct\n");
+            return 0;
+        }
+    }
+
+    if(justList)
+    {
+        FOREACH(group, m_testGroups) {
+            FOREACH(test, group->second) {
+                printf("ID:%s:%s\n", group->first.c_str(), test->name.c_str());
+            }
+        }
+        return 0;
     }
 
     currentCollector.reset();
