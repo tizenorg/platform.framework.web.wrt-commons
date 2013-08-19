@@ -116,6 +116,11 @@ public:
      * @return full path
      */
     std::string Fullpath() const;
+    /**
+     * @brief Extension
+     * @return extension
+     */
+    std::string Extension() const;
 
     bool Exists() const;
     bool IsDir() const;

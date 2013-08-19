@@ -163,6 +163,23 @@ std::string Path::Fullpath() const
     return std::string ("/") + ret;
 }
 
+std::string Path::Extension() const
+{
+    if(m_parts.empty()) return "";
+
+    const std::string& last = *--m_parts.end();
+
+    std::string::size_type pos = last.find_last_of(".");
+    if(pos != std::string::npos)
+    {
+        return last.substr(pos + 1);
+    }
+    else
+    {
+        return "";
+    }
+}
+
 //foreach
 Path::Iterator Path::begin() const
 {
@@ -340,23 +357,16 @@ bool Path::isSubPath(const Path & other) const
 
 bool Path::hasExtension(const std::string& extension) const
 {
-    LogDebug("Looking for extension " << extension << " in: " << this->Filename());
+    LogPedantic("Looking for extension " << extension);
 
-    size_t extLen = extension.length();
-
-    if(m_parts.empty()) return false;
-    if(extLen == 0) return false;
-
-    const std::string& last = *--m_parts.end();
-    size_t lastLen = last.length();
-
-    if(lastLen < (1 + extLen)) return false;
-
-    const char last_tmp = last[ lastLen - (1 + extLen) ];
-    if(last_tmp != '.') return false;
-
-    if(last.substr(lastLen - extLen) != extension) return false;
-    return true;
+    if(Extension() == extension)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void MakeDir(const Path & path, mode_t mode)

@@ -862,6 +862,36 @@ Expected: Proper recognition of extensions
 */
 RUNNER_TEST(path_extension_test)
 {
+    Path path1("/path/to/file.dot");
+    Path path2("/path/to/file..dot");
+    Path path3("/path/to/file..dot.");
+    Path path4("/path/to/file..dot.dot");
+    Path path5("/path/to.dot/file");
+    Path path6("./path/to/file");
+    Path path7("./path/to/file");
+    Path path8("/path/../file.xml");
+    Path path9("/path/../file.XML");
+    Path path10("/path/../file.myfileextension");
+
+    RUNNER_ASSERT(path1.Extension() == "dot");
+    RUNNER_ASSERT(path2.Extension() == "dot");
+    RUNNER_ASSERT(path3.Extension() == "");
+    RUNNER_ASSERT(path4.Extension() == "dot");
+    RUNNER_ASSERT(path5.Extension() == "");
+    RUNNER_ASSERT(path6.Extension() == "");
+    RUNNER_ASSERT(path7.Extension() == "");
+    RUNNER_ASSERT(path8.Extension() == "xml");
+    RUNNER_ASSERT(path9.Extension() != "xml");
+    RUNNER_ASSERT(path10.Extension() == "myfileextension");
+}
+
+/*
+Name: path_has_extension_test
+Description: Tests if file extension is correct
+Expected: Proper recognition of extensions
+*/
+RUNNER_TEST(path_has_extension_test)
+{
 
     Path dirTest = Path("extension");
 
@@ -893,7 +923,6 @@ RUNNER_TEST(path_extension_test)
     RUNNER_ASSERT_MSG(!path6.hasExtension(".JS"),
             "Wrong argument in hasExtension() function");
 
-    RUNNER_ASSERT_MSG(!path3.hasExtension(""), "Extension length is 0");
-
-    RUNNER_ASSERT_MSG(!path4.hasExtension(""), "Not a directory");
+    RUNNER_ASSERT_MSG(path3.hasExtension(""), "Extension length should be 0");
+    RUNNER_ASSERT_MSG(path4.hasExtension(""), "There should be no extension");
 }
