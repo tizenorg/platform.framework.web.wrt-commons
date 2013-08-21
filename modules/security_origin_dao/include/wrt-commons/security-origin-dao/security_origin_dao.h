@@ -42,20 +42,27 @@ class SecurityOriginDAO
     explicit SecurityOriginDAO(const WrtDB::TizenPkgId &pkgName);
     virtual ~SecurityOriginDAO();
     SecurityOriginDataList getSecurityOriginDataList();
-    Result getResult(const SecurityOriginData &securityOriginData);
-    bool isReadOnly(const SecurityOriginData &securityOriginData);
-    void setSecurityOriginData(const SecurityOriginData &securityOriginData,
+    Result getResult(const SecurityOriginData &data);
+    bool isReadOnly(const SecurityOriginData &data);
+    void setSecurityOriginData(const SecurityOriginData &data,
                                const Result result,
                                const bool readOnly = false);
     void setPrivilegeSecurityOriginData(const WrtDB::Feature feature,
                                         bool isOnlyAllowedLocalOrigin = true);
-    void removeSecurityOriginData(const SecurityOriginData &securityOriginData);
+    void removeSecurityOriginData(const SecurityOriginData &data);
     void removeSecurityOriginData(const Result result);
 
   private:
-    std::string m_securityOriginDBPath;
-    DPL::DB::ThreadDatabaseSupport m_securityOriginDBInterface;
-    bool hasResult(const SecurityOriginData &securityOriginData);
+    std::string m_dbPath;
+    DPL::DB::ThreadDatabaseSupport m_dbInterface;
+
+    bool hasResult(const SecurityOriginData &data);
+    void insertData(const SecurityOriginData &data,
+                    const Result result,
+                    const bool readOnly);
+    void updateData(const SecurityOriginData &data,
+                    const Result result,
+                    const bool readOnly);
 };
 
 typedef std::shared_ptr<SecurityOriginDAO> SecurityOriginDAOPtr;
