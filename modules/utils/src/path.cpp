@@ -215,6 +215,30 @@ bool Path::IsFile() const
     return S_ISREG(tmp.st_mode);
 }
 
+bool Path::ExistsAndIsFile() const
+{
+    bool flag = false;
+    Try
+    {
+        flag = this->IsFile();
+    } Catch (Path::NotExists) {
+        LogPedantic(*this << "is not a file.");
+    }
+    return flag;
+}
+
+bool Path::ExistsAndIsDir() const
+{
+    bool flag = false;
+    Try
+    {
+        flag = this->IsDir();
+    } Catch (Path::NotExists) {
+        LogPedantic(*this << "is not a directory.");
+    }
+    return flag;
+}
+
 bool Path::IsSymlink() const
 {
     struct stat tmp;

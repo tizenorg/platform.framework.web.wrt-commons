@@ -102,6 +102,26 @@ RUNNER_TEST(path_mkfile_exists)
 }
 
 /*
+Name: path_exists_and_is_file_or_dir
+Description: test for checking for existence of directory or file
+Expected: success
+*/
+RUNNER_TEST(path_exists_and_is_file_or_dir)
+{
+    DPL::ScopedDir sd(rootTest);
+
+    Path file = Path(rootTest) / "testfile.txt";
+    MakeEmptyFile(file);
+    RUNNER_ASSERT_MSG(file.ExistsAndIsFile(), "File should exist");
+    RUNNER_ASSERT_MSG(!file.ExistsAndIsDir(), "It should not be a directory");
+
+    Path dir = Path(rootTest) / "testdir";
+    MakeDir(dir);
+    RUNNER_ASSERT_MSG(dir.ExistsAndIsDir(), "Directory should exist");
+    RUNNER_ASSERT_MSG(!dir.ExistsAndIsFile(), "Is should not be a file");
+}
+
+/*
 Name: path_mkfile_invalid_path
 Description: tries to create file in not exisitng directory
 Expected: failure at creation

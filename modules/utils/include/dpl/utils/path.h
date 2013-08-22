@@ -120,6 +120,8 @@ public:
     bool Exists() const;
     bool IsDir() const;
     bool IsFile() const;
+    bool ExistsAndIsFile() const;
+    bool ExistsAndIsDir() const;
     bool IsSymlink() const;
     std::size_t Size() const;
     /**
