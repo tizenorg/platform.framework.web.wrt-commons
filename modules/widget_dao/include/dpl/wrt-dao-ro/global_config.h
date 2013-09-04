@@ -292,6 +292,21 @@ inline const char* GetBackupDatabaseSuffix()
 {
     return ".backup";
 }
+
+inline const char* GetManifestPath()
+{
+    return "/opt/share/packages";
+}
+
+inline const char* GetPreloadManifestPath()
+{
+    return "/usr/share/packages";
+}
+
+inline const char* GetRecoveryStatusPath()
+{
+    return "/usr/share/packages/.recovery/wgt";
+}
 } // namespace GlobalConfig
 } // namespace WrtDB
 

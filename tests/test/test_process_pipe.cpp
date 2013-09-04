@@ -58,7 +58,7 @@ RUNNER_TEST(ProcessPipe_echo)
     npp.Close();
 
     char buffer[100] = "";
-    result.FlattenConsume(buffer, 99);
+    result.FlattenConsume(buffer, std::min(result.Size(), sizeof(buffer)));
 
     RUNNER_ASSERT_MSG(strcmp(buffer, "Test echo text\nAnd new line\n") == 0, "Echoed text in not equal");
 }
@@ -113,7 +113,7 @@ RUNNER_TEST(ProcessPipe_pipeerror_pipe)
     readAll(npp, result);
     npp.Close();
     char buffer[100] = "";
-    result.FlattenConsume(buffer, 99);
+    result.FlattenConsume(buffer, std::min(result.Size(), sizeof(buffer)));
 
     RUNNER_ASSERT_MSG(strcmp(buffer, "ls: cannot access /nonexistingdirectory: No such file or directory\n") == 0, "Ls error text in not equal");
 }

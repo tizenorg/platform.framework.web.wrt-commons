@@ -23,6 +23,7 @@ SET(TARGET_NAME "wrt-commons-tests-test")
 # Set DPL tests sources
 SET(DPL_TESTS_UTIL_SOURCES
     ${TESTS_DIR}/test/main.cpp
+    ${TESTS_DIR}/test/runner_multiprocess.cpp
     ${TESTS_DIR}/test/runner_child.cpp
     ${TESTS_DIR}/test/test_process_pipe.cpp
 )

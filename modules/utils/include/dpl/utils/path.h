@@ -116,10 +116,17 @@ public:
      * @return full path
      */
     std::string Fullpath() const;
+    /**
+     * @brief Extension
+     * @return extension
+     */
+    std::string Extension() const;
 
     bool Exists() const;
     bool IsDir() const;
     bool IsFile() const;
+    bool ExistsAndIsFile() const;
+    bool ExistsAndIsDir() const;
     bool IsSymlink() const;
     std::size_t Size() const;
     /**
