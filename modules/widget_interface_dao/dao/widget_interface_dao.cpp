@@ -24,6 +24,7 @@
 #include <sstream>
 #include <fstream>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <dpl/db/sql_connection.h>
 #include <dpl/log/log.h>
 #include <dpl/foreach.h>
