@@ -105,6 +105,7 @@ class ZipInput :
     size_t m_numberOfFiles;
     size_t m_globalCommentSize;
     std::string m_globalComment;
+    size_t m_totalUncompressedSize;
 
     // At least cache handles
     typedef std::vector<FileInfo> FileInfoList;
@@ -158,6 +159,7 @@ class ZipInput :
      * @return Global archive comment
      */
     const std::string &GetGlobalComment() const;
+    size_t GetTotalUncompressedSize() const;
 };
 } // namespace DPL
 

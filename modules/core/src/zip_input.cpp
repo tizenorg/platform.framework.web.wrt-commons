@@ -293,7 +293,8 @@ ZipInput::ZipInput(const std::string &fileName) :
     m_device(NULL),
     m_numberOfFiles(0),
     m_globalComment(),
-    m_fileInfos()
+    m_fileInfos(),
+    m_totalUncompressedSize(0)
 {
     LogPedantic("Zip input file: " << fileName);
 
@@ -451,6 +452,7 @@ void ZipInput::ReadInfos(void *masterFile)
                 static_cast<off64_t>(fileInfo.uncompressed_size)
                 )
             );
+        m_totalUncompressedSize += static_cast<size_t>(fileInfo.uncompressed_size);
 
         // If this is not the last file, go to next one
         if (i != m_numberOfFiles - 1) {
@@ -626,5 +628,10 @@ const std::string &ZipInput::GetGlobalComment() const
 bool ZipInput::empty() const
 {
     return m_fileInfos.empty();
+}
+
+size_t ZipInput::GetTotalUncompressedSize() const
+{
+    return m_totalUncompressedSize;
 }
 } // namespace DPL
