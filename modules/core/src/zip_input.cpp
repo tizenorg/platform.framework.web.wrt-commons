@@ -544,7 +544,7 @@ ZipInput::File::File(class Device *device, FileHandle handle)
 
         // Some errror occured
         ThrowMsg(ZipInput::Exception::OpenFileFailed,
-                 "Failed to open zip file");
+                 "Failed to seek into zip file");
     }
 
     // Open current file for reading
