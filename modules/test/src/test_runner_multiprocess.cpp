@@ -27,6 +27,7 @@
 #include <poll.h>
 #include <limits.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 namespace {
 
