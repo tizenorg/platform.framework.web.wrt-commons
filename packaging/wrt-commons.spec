@@ -68,7 +68,7 @@ make %{?jobs:-j%jobs}
 
 %install
 mkdir -p %{buildroot}/usr/share/license
-cp %{name} %{buildroot}/usr/share/license/
+cp LICENSE %{buildroot}/usr/share/license/%{name}
 %make_install
 
 %clean
