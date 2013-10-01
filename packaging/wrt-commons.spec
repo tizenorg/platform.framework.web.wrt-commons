@@ -81,29 +81,32 @@ mkdir -p /opt/share/widget/exec
 mkdir -p /opt/share/widget/data/Public
 mkdir -p /usr/lib/wrt-plugins
 
-if [ -z ${2} ]; then
-    echo "This is new install of wrt-commons"
-    echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-    /usr/bin/wrt_commons_reset_db.sh
-else
-    # Find out old and new version of databases
-    WRT_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt.db ".tables" | grep "DB_VERSION_"`
-    WRT_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
-    echo "OLD wrt database version ${WRT_OLD_DB_VERSION}"
-    echo "NEW wrt database version ${WRT_NEW_DB_VERSION}"
+#Don't reset DB when install on QEMU (during other packages building witch GBS)
+if [ -z "$EMULATOR_ARCHS" ]; then
+    if [ -z ${2} ]; then
+        echo "This is new install of wrt-commons"
+        echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+        /usr/bin/wrt_commons_reset_db.sh
+    else
+        # Find out old and new version of databases
+        WRT_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt.db ".tables" | grep "DB_VERSION_"`
+        WRT_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
+        echo "OLD wrt database version ${WRT_OLD_DB_VERSION}"
+        echo "NEW wrt database version ${WRT_NEW_DB_VERSION}"
 
-    if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} ]
-    then
-        if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} ]
+        if [ ${WRT_OLD_DB_VERSION} -a ${WRT_NEW_DB_VERSION} ]
         then
-            echo "Equal database detected so db installation ignored"
+            if [ ${WRT_NEW_DB_VERSION} = ${WRT_OLD_DB_VERSION} ]
+            then
+                echo "Equal database detected so db installation ignored"
+            else
+                echo "Calling /usr/bin/wrt_commons_reset_db.sh"
+                /usr/bin/wrt_commons_reset_db.sh
+            fi
         else
             echo "Calling /usr/bin/wrt_commons_reset_db.sh"
             /usr/bin/wrt_commons_reset_db.sh
         fi
-    else
-        echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-        /usr/bin/wrt_commons_reset_db.sh
     fi
 fi
 
