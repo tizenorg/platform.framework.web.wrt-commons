@@ -1,0 +1,17 @@
+SQL(
+    PRAGMA foreign_keys = ON;
+    BEGIN TRANSACTION;
+)
+
+CREATE_TABLE(Properties)
+    COLUMN_NOT_NULL(key,      TEXT,)
+    COLUMN_NOT_NULL(value,    TEXT,)
+    COLUMN_NOT_NULL(readonly, INTEGER, check(readonly between 0 and 1))
+    COLUMN_NOT_NULL(configxml, INTEGER, check(readonly between 0 and 1) DEFAULT 0)
+
+    TABLE_CONSTRAINTS(unique(key))
+CREATE_TABLE_END()
+
+SQL(
+    COMMIT;
+)

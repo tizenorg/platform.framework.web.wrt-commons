@@ -20,7 +20,6 @@
  * @brief    This file contains the definition of security origin dao class.
  */
 
-#include <wrt-commons/security-origin-dao/security_origin_database.h>
 #include <wrt-commons/security-origin-dao/security_origin_dao.h>
 #include <wrt-commons/security-origin-dao/security_origin_dao_types.h>
 #include <orm_generator_security_origin.h>
@@ -47,6 +46,23 @@ using namespace WrtDB;
         ReThrowMsg(SecurityOriginDAO::Exception::DatabaseError, \
                    message);                            \
     }
+
+// database connection
+#define SECURITY_ORIGIN_DB_INTERNAL(tlsCommand, InternalType, interface) \
+    InternalType tlsCommand(interface);
+#define SECURITY_ORIGIN_DB_SELECT(name, type, interface) \
+    SECURITY_ORIGIN_DB_INTERNAL(name, type::Select, interface)
+#define SECURITY_ORIGIN_DB_INSERT(name, type, interface) \
+    SECURITY_ORIGIN_DB_INTERNAL(name, type::Insert, interface)
+#define SECURITY_ORIGIN_DB_UPDATE(name, type, interface) \
+    SECURITY_ORIGIN_DB_INTERNAL(name, type::Update, interface)
+#define SECURITY_ORIGIN_DB_DELETE(name, type, interface) \
+    SECURITY_ORIGIN_DB_INTERNAL(name, type::Delete, interface)
+
+typedef DPL::DB::ORM::security_origin::SecurityOriginInfo::Row
+    SecurityOriginInfoRow;
+typedef DPL::DB::ORM::security_origin::SecurityOriginInfo::Select::RowList
+    SecurityOriginInfoRowList;
 
 namespace {
 DPL::DB::SqlConnection::Flag::Option SECURITY_ORIGIN_DB_OPTION =
@@ -83,7 +99,7 @@ void checkDatabase(std::string databasePath)
         struct stat buffer;
         if (stat(databasePath.c_str(), &buffer) != 0) {
             //Create fresh database
-            LogInfo("Creating database " << databasePath);
+            LogDebug("Creating database " << databasePath);
 
             std::fstream file;
             file.open(SECURITY_ORIGIN_DB_SQL_PATH, std::ios_base::in);
@@ -101,40 +117,40 @@ void checkDatabase(std::string databasePath)
                                        SECURITY_ORIGIN_DB_TYPE,
                                        SECURITY_ORIGIN_DB_OPTION);
             con.ExecCommand(ssBuffer.str().c_str());
-        }
 
-        if(chown(databasePath.c_str(),
-                 WEB_APPLICATION_UID,
-                 WEB_APPLICATION_GUID) != 0)
-        {
-            ThrowMsg(SecurityOriginDAO::Exception::DatabaseError,
-                 "Fail to change uid/guid");
-        }
-        std::string databaseJournal =
-            databasePath + SECURITY_DATABASE_JOURNAL_FILENAME;
-        if(chown(databaseJournal.c_str(),
-                 WEB_APPLICATION_UID,
-                 WEB_APPLICATION_GUID) != 0)
-        {
-            ThrowMsg(SecurityOriginDAO::Exception::DatabaseError,
-                 "Fail to change uid/guid");
+            if(chown(databasePath.c_str(),
+                     WEB_APPLICATION_UID,
+                     WEB_APPLICATION_GUID) != 0)
+            {
+                ThrowMsg(SecurityOriginDAO::Exception::DatabaseError,
+                     "Fail to change uid/guid");
+            }
+            std::string databaseJournal =
+                databasePath + SECURITY_DATABASE_JOURNAL_FILENAME;
+            if(chown(databaseJournal.c_str(),
+                     WEB_APPLICATION_UID,
+                     WEB_APPLICATION_GUID) != 0)
+            {
+                ThrowMsg(SecurityOriginDAO::Exception::DatabaseError,
+                     "Fail to change uid/guid");
+            }
         }
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to get database Path")
 }
-}
+} // namespace SecurityOriginDB
 
 SecurityOriginDAO::SecurityOriginDAO(const WrtDB::TizenPkgId &pkgName) :
-    m_securityOriginDBPath(createDatabasePath(pkgName)),
-    m_securityOriginDBInterface(m_securityOriginDBPath, SECURITY_ORIGIN_DB_TYPE)
+    m_dbPath(createDatabasePath(pkgName)),
+    m_dbInterface(m_dbPath, SECURITY_ORIGIN_DB_TYPE)
 {
-    checkDatabase(m_securityOriginDBPath);
-    m_securityOriginDBInterface.AttachToThread(SECURITY_ORIGIN_DB_OPTION);
+    checkDatabase(m_dbPath);
+    m_dbInterface.AttachToThread(SECURITY_ORIGIN_DB_OPTION);
 }
 
 SecurityOriginDAO::~SecurityOriginDAO()
 {
-    m_securityOriginDBInterface.DetachFromThread();
+    m_dbInterface.DetachFromThread();
 }
 
 SecurityOriginDataList SecurityOriginDAO::getSecurityOriginDataList(void)
@@ -142,11 +158,9 @@ SecurityOriginDataList SecurityOriginDAO::getSecurityOriginDataList(void)
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         SecurityOriginDataList list;
-        SECURITY_ORIGIN_DB_SELECT(select,
-                                  SecurityOriginInfo,
-                                  &m_securityOriginDBInterface);
+        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_dbInterface);
         typedef std::list<SecurityOriginInfo::Row> RowList;
-        RowList rowList = select->GetRowList();
+        RowList rowList = select.GetRowList();
 
         FOREACH(it, rowList) {
             Origin origin(it->Get_scheme(), it->Get_host(), it->Get_port());
@@ -160,92 +174,62 @@ SecurityOriginDataList SecurityOriginDAO::getSecurityOriginDataList(void)
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed to get data  list")
 }
 
-Result SecurityOriginDAO::getResult(
-    const SecurityOriginData &securityOriginData)
+Result SecurityOriginDAO::getResult(const SecurityOriginData &data)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        SECURITY_ORIGIN_DB_SELECT(select,
-                                  SecurityOriginInfo,
-                                  &m_securityOriginDBInterface);
-        select->Where(
-            And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.
-                                                                feature),
-                        Equals<SecurityOriginInfo::scheme>(securityOriginData.
-                                                               origin.scheme)),
-                    Equals<SecurityOriginInfo::host>(securityOriginData.origin.
-                                                         host)),
-                Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
-        SecurityOriginInfo::Select::RowList rows = select->GetRowList();
-
+        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_dbInterface);
+        Equals<SecurityOriginInfo::feature> eFeature(data.feature);
+        Equals<SecurityOriginInfo::scheme> eScheme(data.origin.scheme);
+        Equals<SecurityOriginInfo::host> eHost(data.origin.host);
+        Equals<SecurityOriginInfo::port> ePort(data.origin.port);
+        select.Where(And(And(And(eFeature, eScheme), eHost), ePort));
+        SecurityOriginInfoRowList rows = select.GetRowList();
         if (rows.empty()) {
             return RESULT_UNKNOWN;
         }
-        SecurityOriginInfo::Row row = rows.front();
+        SecurityOriginInfoRow row = rows.front();
         return static_cast<Result>(row.Get_result());
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END(
-        "Failed to get result for security origin")
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("getResult error")
 }
 
-bool SecurityOriginDAO::isReadOnly(const SecurityOriginData &securityOriginData)
+bool SecurityOriginDAO::isReadOnly(const SecurityOriginData &data)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_securityOriginDBInterface);
-        select->Where(
-            And(And(And(Equals<SecurityOriginInfo::feature>(securityOriginData.feature),
-                        Equals<SecurityOriginInfo::scheme>(securityOriginData.origin.scheme)),
-                    Equals<SecurityOriginInfo::host>(securityOriginData.origin.host)),
-                Equals<SecurityOriginInfo::port>(securityOriginData.origin.port)));
-        SecurityOriginInfo::Select::RowList rows = select->GetRowList();
-
+        SECURITY_ORIGIN_DB_SELECT(select, SecurityOriginInfo, &m_dbInterface);
+        Equals<SecurityOriginInfo::feature> eFeature(data.feature);
+        Equals<SecurityOriginInfo::scheme> eScheme(data.origin.scheme);
+        Equals<SecurityOriginInfo::host> eHost(data.origin.host);
+        Equals<SecurityOriginInfo::port> ePort(data.origin.port);
+        select.Where(And(And(And(eFeature, eScheme), eHost), ePort));
+        SecurityOriginInfoRowList rows = select.GetRowList();
         if (rows.empty()) {
             return RESULT_UNKNOWN;
         }
-        SecurityOriginInfo::Row row = rows.front();
+        SecurityOriginInfoRow row = rows.front();
         return row.Get_readonly() ? true : false;
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to get readonly property")
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("isReadOnly error")
 }
 
-void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &securityOriginData,
+void SecurityOriginDAO::setSecurityOriginData(const SecurityOriginData &data,
                                               const Result result,
                                               const bool readOnly)
 {
-    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
-    {
-        ScopedTransaction transaction(&m_securityOriginDBInterface);
-        SecurityOriginInfo::Row row;
-        row.Set_feature(securityOriginData.feature);
-        row.Set_scheme(securityOriginData.origin.scheme);
-        row.Set_host(securityOriginData.origin.host);
-        row.Set_port(securityOriginData.origin.port);
-        row.Set_result(result);
-        row.Set_readonly(readOnly ? 1 : 0);
-
-        if (true == hasResult(securityOriginData)) {
-            SECURITY_ORIGIN_DB_UPDATE(update,
-                                      SecurityOriginInfo,
-                                      &m_securityOriginDBInterface);
-            update->Values(row);
-            update->Execute();
-        } else {
-            SECURITY_ORIGIN_DB_INSERT(
-                insert,
-                SecurityOriginInfo,
-                &m_securityOriginDBInterface);
-            insert->Values(row);
-            insert->Execute();
-        }
-        transaction.Commit();
+    if (true == hasResult(data)) {
+        updateData(data, result, readOnly);
+    } else {
+        insertData(data, result, readOnly);
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
 }
 
-void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature,
-                                                       bool isOnlyAllowedLocalOrigin)
+void SecurityOriginDAO::setPrivilegeSecurityOriginData(
+    const Feature feature,
+    bool isOnlyAllowedLocalOrigin)
 {
+    //TODO: this breaks app:// scheme code -> no case for app scheme
     Origin origin(DPL::FromUTF8String("file"),
                   DPL::FromUTF8String(""),
                   0);
@@ -257,53 +241,97 @@ void SecurityOriginDAO::setPrivilegeSecurityOriginData(const Feature feature,
 }
 
 void SecurityOriginDAO::removeSecurityOriginData(
-    const SecurityOriginData &securityOriginData)
+    const SecurityOriginData &data)
 {
+    if (false == hasResult(data)) {
+        // There is no data
+        return;
+    }
+
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&m_securityOriginDBInterface);
-
-        if (true == hasResult(securityOriginData)) {
-            SECURITY_ORIGIN_DB_DELETE(del,
-                                      SecurityOriginInfo,
-                                      &m_securityOriginDBInterface)
-            del->Where(
-                And(And(And(Equals<SecurityOriginInfo::feature>(
-                                securityOriginData.feature),
-                            Equals<SecurityOriginInfo::scheme>(
-                                securityOriginData.origin.scheme)),
-                        Equals<SecurityOriginInfo::host>(securityOriginData.
-                                                             origin.host)),
-                    Equals<SecurityOriginInfo::port>(securityOriginData.origin.
-                                                         port)));
-            del->Execute();
-            transaction.Commit();
-        }
+        ScopedTransaction transaction(&m_dbInterface);
+        SECURITY_ORIGIN_DB_DELETE(del, SecurityOriginInfo, &m_dbInterface)
+        Equals<SecurityOriginInfo::feature> eFeature(data.feature);
+        Equals<SecurityOriginInfo::scheme> eScheme(data.origin.scheme);
+        Equals<SecurityOriginInfo::host> eHost(data.origin.host);
+        Equals<SecurityOriginInfo::port> ePort(data.origin.port);
+        del.Where(And(And(And(eFeature, eScheme), eHost), ePort));
+        del.Execute();
+        transaction.Commit();
     }
-    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to set security origin data")
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to remove security origin data")
 }
 
 void SecurityOriginDAO::removeSecurityOriginData(const Result result)
 {
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
-        ScopedTransaction transaction(&m_securityOriginDBInterface);
-        SECURITY_ORIGIN_DB_DELETE(del,
-                                  SecurityOriginInfo,
-                                  &m_securityOriginDBInterface)
-        del->Where(Equals<SecurityOriginInfo::result>(result));
-        del->Execute();
+        ScopedTransaction transaction(&m_dbInterface);
+        SECURITY_ORIGIN_DB_DELETE(del, SecurityOriginInfo, &m_dbInterface)
+        del.Where(Equals<SecurityOriginInfo::result>(result));
+        del.Execute();
         transaction.Commit();
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to remove data by result")
 }
 
-bool SecurityOriginDAO::hasResult(const SecurityOriginData &securityOriginData)
+bool SecurityOriginDAO::hasResult(const SecurityOriginData &data)
 {
-    Result res = getResult(securityOriginData);
-    return (res != RESULT_UNKNOWN);
+    Result ret = getResult(data);
+    return (ret != RESULT_UNKNOWN);
 }
 
+void SecurityOriginDAO::insertData(const SecurityOriginData &data,
+                                   const Result result,
+                                   const bool readOnly)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        SecurityOriginInfoRow row;
+        row.Set_feature(data.feature);
+        row.Set_scheme(data.origin.scheme);
+        row.Set_host(data.origin.host);
+        row.Set_port(data.origin.port);
+        row.Set_result(result);
+        row.Set_readonly(readOnly ? 1 : 0);
+
+        ScopedTransaction transaction(&m_dbInterface);
+        SECURITY_ORIGIN_DB_INSERT(insert, SecurityOriginInfo, &m_dbInterface);
+        insert.Values(row);
+        insert.Execute();
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to insert")
+}
+
+void SecurityOriginDAO::updateData(const SecurityOriginData &data,
+                                   const Result result,
+                                   const bool readOnly)
+{
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        SecurityOriginInfoRow row;
+        row.Set_feature(data.feature);
+        row.Set_scheme(data.origin.scheme);
+        row.Set_host(data.origin.host);
+        row.Set_port(data.origin.port);
+        row.Set_result(result);
+        row.Set_readonly(readOnly ? 1 : 0);
+
+        ScopedTransaction transaction(&m_dbInterface);
+        SECURITY_ORIGIN_DB_UPDATE(update, SecurityOriginInfo, &m_dbInterface);
+        Equals<SecurityOriginInfo::feature> eFeature(data.feature);
+        Equals<SecurityOriginInfo::scheme> eScheme(data.origin.scheme);
+        Equals<SecurityOriginInfo::host> eHost(data.origin.host);
+        Equals<SecurityOriginInfo::port> ePort(data.origin.port);
+        update.Where(And(And(And(eFeature, eScheme), eHost), ePort));
+        update.Values(row);
+        update.Execute();
+        transaction.Commit();
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Fail to update")
+}
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
 #undef SQL_CONNECTION_EXCEPTION_HANDLER_END
 } // namespace SecurityOriginDB

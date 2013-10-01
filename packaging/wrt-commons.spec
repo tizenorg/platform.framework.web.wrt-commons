@@ -1,6 +1,6 @@
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.119
+Version:    0.2.153
 Release:    1
 Group:      System/Libraries
 License:    Apache-2.0
@@ -22,12 +22,7 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
-BuildRequires:  pkgconfig(cryptsvc)
-BuildRequires:  pkgconfig(dukgenerator)
 BuildRequires:  pkgconfig(minizip)
-BuildRequires:  libcryptsvc-devel
-BuildRequires:  dukgenerator
-Requires: libcryptsvc
 
 %description
 Wrt common library
@@ -49,14 +44,30 @@ cp %{SOURCE1001} .
     %define with_tests 1
 %endif
 
+%define with_child 0
+%if "%{WITH_CHILD}" == "ON" || "%{WITH_CHILD}" == "Y" || "%{WITH_CHILD}" == "YES" || "%{WITH_CHILD}" == "TRUE" || "%{WITH_CHILD}" == "1"
+    %define with_child 1
+%endif
+
 %build
-%cmake . -DVERSION=%{version} \
+%if 0%{?tizen_build_binary_release_type_eng}
+export CFLAGS="$CFLAGS -DTIZEN_ENGINEER_MODE"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_ENGINEER_MODE"
+export FFLAGS="$FFLAGS -DTIZEN_ENGINEER_MODE"
+%endif
+
+export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
+
+cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
-        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS}
+        %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS} \
+        %{?WITH_CHILD:-DWITH_CHILD=%WITH_CHILD}
 make %{?jobs:-j%jobs}
 
 %install
+mkdir -p %{buildroot}/usr/share/license
+cp LICENSE %{buildroot}/usr/share/license/%{name}
 %make_install
 
 
@@ -119,6 +130,12 @@ else
 fi
 
 # Set Smack label for db files
+chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
+chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
+chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db
+chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db-journal
+chsmack -a 'wrt-commons::db_wrt_i18n' /opt/usr/dbspace/.wrt_i18n.db
+chsmack -a 'wrt-commons::db_wrt_i18n' /opt/usr/dbspace/.wrt_i18n.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 

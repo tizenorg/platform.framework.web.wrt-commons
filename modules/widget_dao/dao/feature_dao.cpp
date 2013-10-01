@@ -52,7 +52,7 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
 
         //register feature
         {
-            LogInfo("    |-- Registering feature " << feature.m_name);
+            LogDebug("    |-- Registering feature " << feature.m_name);
 
             FeaturesList::Row row;
             row.Set_FeatureName(DPL::FromUTF8String(feature.m_name));
@@ -73,7 +73,7 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
             int deviceCapID;
 
             if (FeatureDAOReadOnly::isDeviceCapabilityInstalled(*itdev)) {
-                LogInfo("    |    |--DeviceCap " << *itdev <<
+                LogDebug("    |    |--DeviceCap " << *itdev <<
                         " already installed!");
 
                 WRT_DB_SELECT(select,
@@ -86,7 +86,7 @@ FeatureHandle RegisterFeature(const PluginMetafileData::Feature &feature,
                 deviceCapID =
                     select->GetSingleValue<DeviceCapabilities::DeviceCapID>();
             } else {
-                LogInfo("    |    |--Register DeviceCap: " << *itdev);
+                LogDebug("    |    |--Register DeviceCap: " << *itdev);
 
                 DeviceCapabilities::Row row;
                 row.Set_DeviceCapName(DPL::FromUTF8String(*itdev));

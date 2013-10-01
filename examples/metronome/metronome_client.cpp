@@ -41,14 +41,14 @@ private:
         (void)event;
 
         // Heart beat
-        LogInfo("* Got metronome signal *");
+        LogDebug("* Got metronome signal *");
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent &event)
     {
         (void)event;
 
-        LogInfo("Connection closed");
+        LogDebug("Connection closed");
 
         // Must quit
         Quit();
@@ -58,7 +58,7 @@ private:
     {
         (void)event;
 
-        LogInfo("Connection broken");
+        LogDebug("Connection broken");
 
         // Must quit
         Quit();
@@ -67,7 +67,7 @@ private:
     virtual void OnEventReceived(const DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent &event)
     {
         // Save connection pointer
-        LogInfo("Connected to metronome server");
+        LogDebug("Connected to metronome server");
         m_rpcConnection.reset(event.GetArg1());
 
         // Attach event listeners
@@ -87,7 +87,7 @@ public:
         m_rpcClient.Open("127.0.0.1", 12345);
 
         // Started
-        LogInfo("Metronome client started");
+        LogDebug("Metronome client started");
      }
 
     virtual ~MetronomeClientApplication()

@@ -1,11 +1,12 @@
 prefix=/usr
 exec_prefix=${prefix}
-libdir=@LIB_INSTALL_DIR@
-includedir=${prefix}/include
 
-Name: dpl-encryption
-Description: DPL UTILS - EFL based
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: wrt-commons-i18n-dao-ro
+Description: wrt-commons-i18n-dao-ro
+
 Version: @VERSION@
 Requires: dpl-efl
-Libs: -L${libdir} -ldpl-encryption
+Libs: -lwrt-commons-i18n-dao-ro -L${libdir}
 Cflags: -I${includedir}/dpl-efl

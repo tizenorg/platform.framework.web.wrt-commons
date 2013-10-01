@@ -160,11 +160,13 @@ class ConfigParserData
     struct AppControlInfo
     {
         enum class Disposition {
-            WINDOW = 0,
-            INLINE
+            UNDEFINE = 0,
+            WINDOW   = 1,
+            INLINE   = 2
         };
         AppControlInfo(const DPL::String& operation) :
             m_operation(operation),
+            m_disposition(Disposition::UNDEFINE),
             m_index(0)
         {}
         DPL::String m_src;
@@ -180,11 +182,18 @@ class ConfigParserData
 
     typedef std::list<AppControlInfo> AppControlInfoList;
 
-    typedef std::list<std::pair<DPL::String, DPL::String> > BoxSizeList;
-
     struct LiveboxInfo
     {
         LiveboxInfo() { }
+
+        struct BoxSize
+        {
+            DPL::String m_size;
+            DPL::String m_preview;
+            DPL::String m_useDecoration;
+        };
+        typedef BoxSize BoxSizeInfo;
+        typedef std::list<BoxSizeInfo> BoxSizeList;
 
         struct BoxContent
         {
@@ -199,7 +208,9 @@ class ConfigParserData
         };
         typedef BoxContent BoxContentInfo;
 
-        DPL::String m_label;
+        typedef std::list<std::pair<DPL::String, DPL::String> > BoxLabelList;
+
+        BoxLabelList m_label;
         DPL::String m_icon;
         DPL::String m_liveboxId;
         DPL::String m_primary;
@@ -256,13 +267,13 @@ class ConfigParserData
 
     struct Metadata
     {
-        Metadata(const DPL::String& _key,
-                 const DPL::String& _value) :
+        Metadata(const DPL::OptionalString& _key,
+                 const DPL::OptionalString& _value) :
             key(_key),
             value(_value)
         {}
-        DPL::String key;
-        DPL::String value;
+        DPL::OptionalString key;
+        DPL::OptionalString value;
 
         bool operator==(const Metadata&) const;
         bool operator!=(const Metadata&) const;
@@ -313,6 +324,7 @@ class ConfigParserData
     DPL::OptionalString startFile;
     DPL::OptionalString startFileEncoding;
     DPL::OptionalString startFileContentType;
+    DPL::OptionalString startFileNamespace;
     IconsList iconsList;
 
     // tizen id / required platform min version for TIZEN webapp
@@ -321,6 +333,7 @@ class ConfigParserData
     DPL::OptionalString tizenAppId;
 
     // allow-navigation
+    bool allowNavigationEncountered;
     AllowNavigationInfoList allowNavigationInfoList;
 
     //csp polic for widget
@@ -351,6 +364,7 @@ class ConfigParserData
         backSupported(false),
         accessNetwork(false),
         startFileEncountered(false),
+        allowNavigationEncountered(false),
         securityModelVersion(SecurityModelVersion::SECURITY_MODEL_V1)
     {}
 };

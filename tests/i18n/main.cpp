@@ -13,7 +13,16 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+/**
+ * @file        main.cpp
+ * @author      Zbigniew Kostrzewa (z.kostrzewa@samsung.com)
+ * @version     1.0
+ * @brief       This file is the implementation file of main.
+ */
 
-#include <wrt-commons/security-origin-dao/security_origin_database.h>
+#include <dpl/test/test_runner.h>
 
-DPL::Mutex g_securityOriginDBQueriesMutex;
+int main(int argc, char *argv[])
+{
+    return DPL::Test::TestRunnerSingleton::Instance().ExecTestRunner(argc, argv);
+}

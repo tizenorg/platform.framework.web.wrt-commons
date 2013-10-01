@@ -32,20 +32,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-bool GlobalDAOReadOnly::GetDeveloperMode()
-{
-    LogDebug("Getting Developer mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::developer_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get developer mode");
-    }
-}
 
 bool GlobalDAOReadOnly::GetSecureByDefault()
 {
@@ -53,75 +39,6 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
     using namespace DPL::DB::ORM::wrt;
     WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
     return select->GetSingleValue<GlobalProperties::secure_by_default>();
-}
-
-bool GlobalDAOReadOnly::getComplianceMode()
-{
-    LogDebug("Getting compliance mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::compliance_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance mode");
-    }
-}
-
-std::string GlobalDAOReadOnly::getComplianceFakeImei()
-{
-    LogDebug("Getting compliance fake IMEI");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        DPL::Optional<DPL::String> result =
-            select->GetSingleValue<GlobalProperties::compliance_fake_imei>();
-        if (!result) {
-            return std::string();
-        }
-        return DPL::ToUTF8String(*result);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance fake IMEI");
-    }
-}
-
-std::string GlobalDAOReadOnly::getComplianceFakeMeid()
-{
-    LogDebug("Getting compliance fake MEID");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        DPL::Optional<DPL::String> result =
-            select->GetSingleValue<GlobalProperties::compliance_fake_meid>();
-        if (!result) {
-            return std::string();
-        }
-        return DPL::ToUTF8String(*result);
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get compliance fake MEID");
-    }
-}
-
-bool GlobalDAOReadOnly::IsValidSubTag(const DPL::String& tag, int type)
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, iana_records, &WrtDatabase::interface())
-    select->Where(Equals<iana_records::SUBTAG>(tag));
-    auto row = select->GetRowList();
-    if (row.empty() || row.front().Get_TYPE() != type) {
-        return false;
-    } else {
-        return true;
-    }
 }
 
 GlobalDAOReadOnly::NetworkAccessMode
@@ -242,7 +159,7 @@ WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
             whiteURI.strIRI = i->Get_uri();
             whiteURI.bSubDomains = i->Get_subdomain_access();
             resultList.push_back(whiteURI);
-            LogInfo("[uri] : " << whiteURI.strIRI <<
+            LogDebug("[uri] : " << whiteURI.strIRI <<
                     ", [subdomain] : " << whiteURI.bSubDomains);
         }
         return resultList;

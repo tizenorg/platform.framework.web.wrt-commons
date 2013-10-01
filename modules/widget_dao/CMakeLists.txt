@@ -5,9 +5,7 @@ ADD_CUSTOM_COMMAND(
    COMMAND ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/gen_db_md5.sh
    ARGS ${CMAKE_BINARY_DIR}/modules/widget_dao/database_checksum.h
         ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/wrt_db
-        ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/iana_db
    DEPENDS ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/wrt_db
-        ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/iana_db
         ${CMAKE_SOURCE_DIR}/modules/widget_dao/orm/gen_db_md5.sh
    COMMENT "Generating WRT database checksum"
    )
@@ -16,7 +14,7 @@ ADD_CUSTOM_COMMAND( OUTPUT .wrt.db
    COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/.wrt.db
    COMMAND gcc -Wall -include ${CMAKE_BINARY_DIR}/modules/widget_dao/database_checksum.h -I${PROJECT_SOURCE_DIR}/modules/db/include -I${PROJECT_SOURCE_DIR}/modules/widget_dao/orm -E ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/wrt_db_sql_generator.h | grep --invert-match "^#" > ${CMAKE_CURRENT_BINARY_DIR}/wrt_db.sql
    COMMAND sqlite3 ${CMAKE_CURRENT_BINARY_DIR}/.wrt.db ".read ${CMAKE_CURRENT_BINARY_DIR}/wrt_db.sql" || rm -f ${CMAKE_CURRENT_BINARY_DIR}/.wrt.db
-   DEPENDS ${CMAKE_BINARY_DIR}/modules/widget_dao/database_checksum.h ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/wrt_db_sql_generator.h ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/wrt_db ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/iana_db
+   DEPENDS ${CMAKE_BINARY_DIR}/modules/widget_dao/database_checksum.h ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/wrt_db_sql_generator.h ${PROJECT_SOURCE_DIR}/modules/widget_dao/orm/wrt_db
    )
  
 ADD_CUSTOM_COMMAND( OUTPUT .wrt.db-journal
@@ -127,7 +125,6 @@ INSTALL(FILES
     include/dpl/wrt-dao-ro/plugin_dao_read_only.h
     include/dpl/wrt-dao-ro/property_dao_read_only.h
     include/dpl/wrt-dao-ro/widget_config.h
-    include/dpl/wrt-dao-ro/vconf_config.h
     include/dpl/wrt-dao-ro/widget_dao_read_only.h
     include/dpl/wrt-dao-ro/wrt_db_types.h
     include/dpl/wrt-dao-ro/WrtDatabase.h

@@ -12,27 +12,29 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-#
-# @file        config.cmake
-# @author      Soyoung Kim(sy037.kim@samsung.com)
+# @file        CMakeLists.txt
+# @author      Zbigniew Kostrzewa (z.kostrzewa@samsung.com)
 # @version     1.0
 # @brief
 #
 
-SET(DPL_ENCRYPTION_SOURCES
-    ${PROJECT_SOURCE_DIR}/modules/encryption/src/resource_encryption.cpp
-    ${PROJECT_SOURCE_DIR}/modules/encryption/src/resource_decryption.cpp
-    PARENT_SCOPE
+#
+# Test files
+#
+# Define all DPL tests sources.
+# Runner is responsible for runnint it all and
+# generating proper output files
+#
+
+SET(TARGET_NAME "wrt-commons-tests-i18n")
+
+# Set DPL tests sources
+SET(DPL_TESTS_I18N_SOURCES
+    ${TESTS_DIR}/i18n/main.cpp
+    ${TESTS_DIR}/i18n/test_i18n_dao_read_only.cpp
 )
 
-
-SET(DPL_ENCRYPTION_HEADERS
-    ${PROJECT_SOURCE_DIR}/modules/encryption/include/dpl/encryption/resource_encryption.h
-    ${PROJECT_SOURCE_DIR}/modules/encryption/include/dpl/encryption/resource_decryption.h
-    PARENT_SCOPE
-)
-
-SET(DPL_ENCRYPTION_INCLUDE_DIR
-    ${PROJECT_SOURCE_DIR}/modules/encryption/include
-    PARENT_SCOPE
-)
+#include subdirectory
+WRT_TEST_ADD_INTERNAL_DEPENDENCIES(${TARGET_NAME} ${TARGET_I18N_DAO_RO_LIB})
+WRT_TEST_BUILD(${TARGET_NAME} ${DPL_TESTS_I18N_SOURCES})
+WRT_TEST_INSTALL(${TARGET_NAME})

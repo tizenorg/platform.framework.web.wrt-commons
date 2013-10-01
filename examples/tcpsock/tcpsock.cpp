@@ -41,7 +41,7 @@ private:
     virtual void OnEventReceived(const DPL::AbstractSocketEvents::ConnectedEvent &event)
     {
         (void)event;
-        LogInfo("Connected!");
+        LogDebug("Connected!");
 
         // Send request
         DPL::BinaryQueue data;
@@ -53,7 +53,7 @@ private:
     virtual void OnEventReceived(const DPL::AbstractSocketEvents::ReadEvent &event)
     {
         (void)event;
-        LogInfo("Read!");
+        LogDebug("Read!");
 
         DPL::BinaryQueueAutoPtr data = m_socket.Read(100); // Bad: DLOG cannot log more than about 450 bytes...
 
@@ -61,7 +61,7 @@ private:
 
         if (data->Empty())
         {
-            LogInfo("Connection closed!");
+            LogDebug("Connection closed!");
             m_socket.Close();
 
             // Done
@@ -82,7 +82,7 @@ public:
     MyApplication(int argc, char **argv)
         : Application(argc, argv, "tcpsock")
     {
-        LogInfo("CTOR!");
+        LogDebug("CTOR!");
 
         // Add listeners
         m_socket.DPL::EventSupport<DPL::AbstractSocketEvents::ConnectedEvent>::AddListener(this);
@@ -90,13 +90,13 @@ public:
 
         // Connect
         m_socket.Open();
-        LogInfo("Connecting...");
+        LogDebug("Connecting...");
         m_socket.Connect(DPL::Address("en.wikipedia.org", 80));
     }
 
     virtual ~MyApplication()
     {
-        LogInfo("DTOR!");
+        LogDebug("DTOR!");
 
         // Remove listeners
         m_socket.DPL::EventSupport<DPL::AbstractSocketEvents::ConnectedEvent>::RemoveListener(this);

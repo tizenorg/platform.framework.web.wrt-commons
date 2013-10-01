@@ -175,9 +175,30 @@ TizenPkgId getTizenPkgIdByHandle(const DbWidgetHandle handle)
     }
     SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed in getHandle")
 }
+
+TizenPkgId getTizenPkgIdByAppId(const TizenAppId tzAppid)
+{
+    LogDebug("Getting TizenPkgId by TizenAppId: " << tzAppid);
+
+    SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
+    {
+        WRT_DB_SELECT(select, WidgetInfo, &WrtDatabase::interface())
+        select->Where(Equals<WidgetInfo::tizen_appid>(tzAppid));
+        WidgetInfo::Select::RowList rowList = select->GetRowList();
+
+        if (rowList.empty()) {
+            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
+                     "Failed to get widget by tizen appId");
+        }
+        TizenPkgId tzPkgid = rowList.front().Get_tizen_pkgid();
+
+        return tzPkgid;
+    }
+    SQL_CONNECTION_EXCEPTION_HANDLER_END("Failed get pkgId")
+}
 } // namespace
 
-IWacSecurity::~IWacSecurity()
+IWidgetSecurity::~IWidgetSecurity()
 {}
 
 WidgetDAOReadOnly::WidgetDAOReadOnly(DbWidgetHandle widgetHandle) :
@@ -261,6 +282,16 @@ TizenAppId WidgetDAOReadOnly::getTzAppId(const TizenPkgId tzPkgid)
 TizenPkgId WidgetDAOReadOnly::getTzPkgId() const
 {
     return getTizenPkgIdByHandle(m_widgetHandle);
+}
+
+TizenPkgId WidgetDAOReadOnly::getTzPkgId(const DbWidgetHandle handle)
+{
+    return getTizenPkgIdByHandle(handle);
+}
+
+TizenPkgId WidgetDAOReadOnly::getTzPkgId(const TizenAppId tzAppid)
+{
+    return getTizenPkgIdByAppId(tzAppid);
 }
 
 PropertyDAOReadOnly::WidgetPropertyKeyList
@@ -641,16 +672,6 @@ bool WidgetDAOReadOnly::isRecognized() const
     return static_cast<bool>(*result);
 }
 
-bool WidgetDAOReadOnly::isWacSigned() const
-{
-    WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
-    DPL::OptionalInt result = row.Get_wac_signed();
-    if (result.IsNull()) {
-        return false;
-    }
-    return static_cast<bool>(*result);
-}
-
 bool WidgetDAOReadOnly::isDistributorSigned() const
 {
     WidgetInfoRow row = getWidgetInfoRow(m_widgetHandle);
@@ -666,26 +687,6 @@ bool WidgetDAOReadOnly::isTrusted() const
     // SP-2100
     // widget with verified distributor signature is trusted
     return isDistributorSigned();
-}
-
-bool WidgetDAOReadOnly::isTestWidget() const
-{
-    Try {
-        WRT_DB_SELECT(select, WidgetExtendedInfo, &WrtDatabase::interface())
-        select->Where(Equals<WidgetExtendedInfo::app_id>(m_widgetHandle));
-
-        WidgetExtendedInfo::Select::RowList rows = select->GetRowList();
-        if (rows.empty()) {
-            ThrowMsg(WidgetDAOReadOnly::Exception::WidgetNotExist,
-                     "Cannot find widget. Handle: " << m_widgetHandle);
-        }
-
-        return static_cast<bool>(rows.front().Get_test_widget());
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(WidgetDAOReadOnly::Exception::DatabaseError,
-                   "Failed to check IsTestWidget");
-    }
 }
 
 DPL::OptionalString WidgetDAOReadOnly::getCspPolicy() const
@@ -1228,14 +1229,6 @@ SettingsType WidgetDAOReadOnly::getWebDatabaseUsage(void) const
     WidgetSecuritySettingsRow row =
         getWidgetSecuritySettingsRow(m_widgetHandle);
     DPL::OptionalInt result = row.Get_web_database_usage();
-    return static_cast<SettingsType>(*result);
-}
-
-SettingsType WidgetDAOReadOnly::getFileSystemUsage(void) const
-{
-    WidgetSecuritySettingsRow row =
-        getWidgetSecuritySettingsRow(m_widgetHandle);
-    DPL::OptionalInt result = row.Get_file_system_usage();
     return static_cast<SettingsType>(*result);
 }
 

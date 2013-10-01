@@ -20,6 +20,7 @@
  * @brief       This file is the implementation scoped directory
  */
 #include <dpl/scoped_dir.h>
+#include <dpl/errno_string.h>
 #include <dpl/log/log.h>
 
 #include <fts.h>
@@ -98,7 +99,12 @@ ScopedDir::ScopedDir(const std::string & str, mode_t mode) : BaseType(str)
 {
     if(!str.empty())
     {
-        mkdir(str.c_str(), mode);
+        if (mkdir(str.c_str(), mode) == -1)
+        {
+            std::string errstr = DPL::GetErrnoString();
+            LogError("Error while creating directory: " << str
+                     << " [" << errstr << "]");
+        }
     }
 }
 

@@ -1,0 +1,5 @@
+DATABASE_START(widget_interface)
+
+#include "widget_interface_db"
+
+DATABASE_END()

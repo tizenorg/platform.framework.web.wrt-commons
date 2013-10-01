@@ -29,15 +29,7 @@ namespace WrtDB {
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
-    static void SetDeveloperMode(bool mode);
-
     static void SetSecureByDefault(bool secureByDefault);
-
-    static void setComplianceMode(bool mode);
-
-    static void setComplianceFakeImei(const std::string &imei);
-
-    static void setComplianceFakeMeid(const std::string &meid);
 
     static void AddWhiteURI(const std::string &value, bool subDomain);
 

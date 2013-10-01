@@ -157,7 +157,6 @@ struct WidgetRegisterInfo
     WidgetRegisterInfo() :
         webAppType(APP_TYPE_UNKNOWN),
         signatureType(SIGNATURE_TYPE_UNIDENTIFIED),
-        isTestWidget(0),
         configInfo(),
         packagingType(PKG_TYPE_UNKNOWN)
     {}
@@ -169,7 +168,6 @@ struct WidgetRegisterInfo
     std::string shareHref;
     std::string baseFolder;
     WidgetSignatureType signatureType;
-    int isTestWidget;
     ConfigParserData configInfo;
     LocalizationData localizationData;
 
@@ -184,18 +182,16 @@ struct WidgetRegisterInfo
 };
 
 typedef std::list<std::string> CertificateChainList;
-class IWacSecurity
+class IWidgetSecurity
 {
   public:
-    virtual ~IWacSecurity();
+    virtual ~IWidgetSecurity();
 
     virtual const WidgetCertificateDataList& getCertificateList() const = 0;
 
     virtual bool isRecognized() const = 0;
 
     virtual bool isDistributorSigned() const = 0;
-
-    virtual bool isWacSigned() const = 0;
 
     virtual void getCertificateChainList(CertificateChainList& list,
                                          CertificateSource source) const = 0;
@@ -338,6 +334,8 @@ class WidgetDAOReadOnly
      */
 
     TizenPkgId getTzPkgId() const;
+    static TizenPkgId getTzPkgId(const DbWidgetHandle handle);
+    static TizenPkgId getTzPkgId(const TizenAppId tzAppid);
 
     /**
      * This method returns the root directory of widget resource.
@@ -456,12 +454,6 @@ class WidgetDAOReadOnly
      * WAC 2.0 extension
      * @return
      */
-    bool isWacSigned() const;
-
-    /**
-     * WAC 2.0 extension
-     * @return
-     */
     bool isDistributorSigned() const;
 
     /**
@@ -469,12 +461,6 @@ class WidgetDAOReadOnly
      * @return trusted status
      */
     bool isTrusted() const;
-
-    /**
-     * WAC 2.0 extension
-     * @return is WAC test widget
-     */
-    bool isTestWidget() const;
 
     /**
      * This method returns window mode of widget.
@@ -617,15 +603,6 @@ class WidgetDAOReadOnly
      *  DB table.
      */
     static DbWidgetDAOReadOnlyList getWidgetList();
-
-    /**
-     * This method removes a widget's information from EmDB.
-     *
-     * @see RegisterWidget()
-     * @param[in] widgetHandle    widget's app id
-     * @return true if succeed, false if fail.
-     */
-    static void unregisterWidget(DbWidgetHandle widgetHandle);
 
     /**
      * This method gets author's infomation of a widget which is parsed from
@@ -811,7 +788,6 @@ class WidgetDAOReadOnly
     SettingsType getGeolocationUsage() const;
     SettingsType getWebNotificationUsage() const;
     SettingsType getWebDatabaseUsage() const;
-    SettingsType getFileSystemUsage() const;
 
     /**
      * This method returns widget's installed path

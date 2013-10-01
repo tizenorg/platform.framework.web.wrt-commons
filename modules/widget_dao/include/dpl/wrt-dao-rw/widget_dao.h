@@ -61,16 +61,16 @@ class WidgetDAO : public WidgetDAOReadOnly
      * @param[in] TizenAppId Widget app id that will be registered.
      * @param[in] pWidgetRegisterInfo    Specified the widget's information
      * needed to be registered.
-     * @param[in] wacSecurity   Widget's security certificates.
+     * @param[in] widgetSecurity   Widget's security certificates.
      */
     static void registerWidget(
         const TizenAppId& tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
     static DbWidgetHandle registerWidget(
         const WidgetRegisterInfo &pWidgetRegisterInfo,
-        const IWacSecurity &wacSecurity) __attribute__((deprecated));
+        const IWidgetSecurity &widgetSecurity) __attribute__((deprecated));
 
     /**
      * @brief registerWidgetGenerateTizenId Registers widget with auto-generated
@@ -80,44 +80,15 @@ class WidgetDAO : public WidgetDAOReadOnly
      * Function is not thread-safe.
      *
      * @param pWidgetRegisterInfo registeration information
-     * @param wacSecurity Widget's security certificates.
+     * @param widgetSecurity Widget's security certificates.
      * @return tzAppId generated
      */
     static TizenAppId registerWidgetGeneratePkgId(
         const WidgetRegisterInfo &pWidgetRegisterInfo,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
 
-    /**
-     * This method re-registers the widget information to the DB when it is
-     * installed.
-     *
-     * It performs unregistration and new registration of widget in db in one
-     * transaction.
-     *
-     * @see WidgetRegisterInfo
-     * @param[in] tzAppId  Widget tizen app id that will be registered.
-     * @param[in] pWidgetRegisterInfo    Specified the widget's information
-     * needed to be registered.
-     * @param[in] wacSecurity   Widget's security certificates.
-     */
-    static void registerOrUpdateWidget(
-        const TizenAppId & tzAppId,
-        const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
-
-    /* This method backup widget information and update new widget information
-     * for restore widget information
-     */
-    static void backupAndUpdateWidget(
-        const TizenAppId & oldAppId,
-        const TizenAppId & newAppId,
-        const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity);
-
-    static void restoreUpdateWidget(
-        const TizenAppId & oldAppId,
-        const TizenAppId & newAppId);
-
+    static void updateTizenAppId(const TizenAppId & fromAppId,
+                                 const TizenAppId & toAppId);
     /**
      * This method removes a widget's information from EmDB.
      *
@@ -125,9 +96,6 @@ class WidgetDAO : public WidgetDAOReadOnly
      * @param[in] tzAppId widgets name to be unregistered
      */
     static void unregisterWidget(const TizenAppId & tzAppId);
-
-    static void unregisterWidget(WrtDB::DbWidgetHandle handle) __attribute__((
-                                                                                 deprecated));
 
     /* This method removes widget property
      */
@@ -162,14 +130,13 @@ class WidgetDAO : public WidgetDAOReadOnly
     void setGeolocationUsage(const SettingsType value);
     void setWebNotificationUsage(const SettingsType value);
     void setWebDatabaseUsage(const SettingsType value);
-    void setFileSystemUsage(const SettingsType value);
 
   private:
     //Methods used during widget registering
     static DbWidgetHandle registerWidgetInfo(
         const TizenAppId & widgetName,
         const WidgetRegisterInfo &regInfo,
-        const IWacSecurity &wacSecurity,
+        const IWidgetSecurity &widgetSecurity,
         const DPL::Optional<DbWidgetHandle> handle =
             DPL::Optional<DbWidgetHandle>());
     static void registerWidgetExtendedInfo(
@@ -204,7 +171,7 @@ class WidgetDAO : public WidgetDAOReadOnly
         const WidgetRegisterInfo &regInfo);
     static void registerWidgetCertificates(
         DbWidgetHandle widgetHandle,
-        const IWacSecurity &wacSecurity);
+        const IWidgetSecurity &widgetSecurity);
     static void registerCertificatesChains(
         DbWidgetHandle widgetHandle,
         CertificateSource certificateSource,
@@ -232,23 +199,17 @@ class WidgetDAO : public WidgetDAOReadOnly
     static void registerWidgetInternal(
         const TizenAppId & tzAppId,
         const WidgetRegisterInfo &widgetRegInfo,
-        const IWacSecurity &wacSecurity,
+        const IWidgetSecurity &widgetSecurity,
         const DPL::Optional<DbWidgetHandle> handle =
             DPL::Optional<DbWidgetHandle>());
-    static void unregisterWidgetInternal(
-        const TizenAppId & tzAppId);
-
-    static void updateWidgetAppIdInternal(
-        const TizenAppId & fromAppId,
-        const TizenAppId & toAppId);
-
+    static void unregisterWidgetInternal(const TizenAppId & tzAppId);
     static void insertAppControlInfo(DbWidgetHandle handle,
-                                             DPL::String src,
-                                             DPL::String operation,
-                                             DPL::String uri,
-                                             DPL::String mime,
-                                             unsigned index,
-                                             unsigned disposition);
+                                     DPL::String src,
+                                     DPL::String operation,
+                                     DPL::String uri,
+                                     DPL::String mime,
+                                     unsigned index,
+                                     unsigned disposition);
 };
 } // namespace WrtDB
 

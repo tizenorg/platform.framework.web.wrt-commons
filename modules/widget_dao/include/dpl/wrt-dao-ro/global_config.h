@@ -37,14 +37,6 @@ inline const char* GetWrtDatabaseFilePath()
 }
 
 /**
- * WRT origin widget interface database path
- */
-inline const char* GetWrtWidgetInterfaceDatabaseFilePath()
-{
-    return "/usr/share/wrt-plugins-common/widget_interface_db.sql";
-}
-
-/**
  * WRT device plugin path
  */
 inline const char* GetDevicePluginPath()
@@ -125,11 +117,11 @@ inline const char* GetWidgetPrivateStoragePath()
 }
 
 /**
- * widgets share directory path
+ * widgets private temp data path
  */
-inline const char* GetWidgetSharePath()
+inline const char* GetWidgetPrivateTempStoragePath()
 {
-    return "share";
+    return "tmp";
 }
 
 /**
@@ -168,11 +160,6 @@ inline const char* GetSignatureXmlSchema()
 {
     //TODO please rename, this filename is not descriptive enough
     return "/usr/share/wrt-engine/schema.xsd";
-}
-
-inline const char* GetWAC20TestRootCAFilePath()
-{
-    return "/usr/share/wrt-engine/WAC2.0TestRootCA.cert";
 }
 
 /**
@@ -252,27 +239,14 @@ inline const char* GetCookieDatabaseFile()
     return ".cookie.db";
 }
 
-/**
- * widget interface database file name
- */
-inline const char* GetWidgetInterfaceDatabaseFile()
-{
-    return ".widget_interface.db";
-}
-
 inline const char* GetTmpDirPath()
 {
     return "/tmp";
 }
 
-inline const char* GetWACVersion()
-{
-    return "2.0";
-}
-
 inline const char* GetTizenVersion()
 {
-    return "2.1";
+    return "2.2";
 }
 
 inline const char* GetShareDirectoryPath()
@@ -285,34 +259,53 @@ inline const char* GetTempInstallInfoPath()
     return "/opt/share/widget/temp_info";
 }
 
-inline const char* GetVconfKeyPrefixPath()
+inline const char* GetWidgetSharedPath()
 {
-    return "file/private";
+    return "/shared";
 }
 
-inline const char* GetVconfKeyPopupUsagePath()
+inline const char* GetWidgetDataPath()
 {
-    return "/popup_usage";
+    return "/data";
 }
 
-inline const char* GetVconfKeyGeolocationUsagePath()
+inline const char* GetWidgetTrustedPath()
 {
-    return "/geolocation_usage";
+    return "/trusted";
 }
 
-inline const char* GetVconfKeyWebNotificationUsagePath()
+inline const char* GetWidgetResPath()
 {
-    return "/web_notification_usage";
+    return "/res";
 }
 
-inline const char* GetVconfKeyWebDatabaseUsagePath()
+inline const char* GetNPRuntimePluginsPath()
 {
-    return "/web_database_usage";
+#ifdef __arm__
+    return "plugins/arm";
+#else
+    return "plugins/x86";
+#endif
 }
 
-inline const char* GetVconfKeyMemorySavingModePath()
+inline const char* GetBackupDatabaseSuffix()
 {
-    return "/memory_saving_mode";
+    return ".backup";
+}
+
+inline const char* GetManifestPath()
+{
+    return "/opt/share/packages";
+}
+
+inline const char* GetPreloadManifestPath()
+{
+    return "/usr/share/packages";
+}
+
+inline const char* GetRecoveryStatusPath()
+{
+    return "/usr/share/packages/.recovery/wgt";
 }
 } // namespace GlobalConfig
 } // namespace WrtDB

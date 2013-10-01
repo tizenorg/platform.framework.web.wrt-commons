@@ -26,6 +26,50 @@
 
 namespace DPL {
 namespace Test {
+
+class PipeWrapper : DPL::Noncopyable
+{
+  public:
+    enum Usage {
+        READONLY,
+        WRITEONLY
+    };
+
+    enum Status {
+        SUCCESS,
+        TIMEOUT,
+        ERROR
+    };
+
+    PipeWrapper();
+
+    bool isReady();
+
+    void setUsage(Usage usage);
+
+    virtual ~PipeWrapper();
+
+    Status send(int code, std::string &message);
+
+    Status receive(int &code, std::string &data, time_t deadline);
+
+    void closeAll();
+
+  protected:
+
+    std::string toBinaryString(int data);
+
+    void closeHelp(int desc);
+
+    Status writeHelp(const void *buffer, int size);
+
+    Status readHelp(void *buf, int size, time_t deadline);
+
+    static const int PIPE_CLOSED = -1;
+
+    int m_pipefd[2];
+};
+
 void RunChildProc(TestRunner::TestCase procChild);
 } // namespace Test
 } // namespace DPL

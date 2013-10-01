@@ -46,6 +46,7 @@ ELSE(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
 ENDIF(DPL_LOG AND NOT CMAKE_BUILD_TYPE MATCHES "profiling")
 
 OPTION(WITH_TESTS "Build tests" OFF)
+OPTION(WITH_CHILD "Build additional test subdirectory. WITH_TEST must be ON" OFF)
 
 # Compiler flags
 SET(CMAKE_C_FLAGS_PROFILING    "-O2")
@@ -108,6 +109,7 @@ MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX})
 MESSAGE(STATUS "CMAKE_AR: " ${CMAKE_AR})
 MESSAGE(STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB})
 MESSAGE(STATUS "WITH_TESTS: " ${WITH_TESTS})
+MESSAGE(STATUS "WITH_CHILD: " ${WITH_CHILD})
 MESSAGE(STATUS "========================================")
 
 # Compiler flags
@@ -189,7 +191,8 @@ SET(TARGET_CUSTOM_HANDLER_DAO_RO_LIB "wrt-commons-custom-handler-dao-ro")
 SET(TARGET_SECURITY_ORIGIN_DAO_LIB "wrt-commons-security-origin-dao")
 SET(TARGET_CERTIFICATE_DAO_LIB "wrt-commons-certificate-dao")
 SET(TARGET_DPL_UTILS_EFL "lib${PROJECT_NAME}-utils-efl")
-SET(TARGET_DPL_ENCRYPTION "lib${PROJECT_NAME}-encryption")
+SET(TARGET_I18N_DAO_RO_LIB "wrt-commons-i18n-dao-ro")
+SET(TARGET_WIDGET_INTERFACE_DAO_LIB "wrt-commons-widget-interface-dao")
 
 macro(configure_and_install_pkg PKG_FILE)
     CONFIGURE_FILE(${PKG_FILE}.in ${PKG_FILE} @ONLY)

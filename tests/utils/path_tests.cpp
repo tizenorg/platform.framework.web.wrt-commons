@@ -102,6 +102,26 @@ RUNNER_TEST(path_mkfile_exists)
 }
 
 /*
+Name: path_exists_and_is_file_or_dir
+Description: test for checking for existence of directory or file
+Expected: success
+*/
+RUNNER_TEST(path_exists_and_is_file_or_dir)
+{
+    DPL::ScopedDir sd(rootTest);
+
+    Path file = Path(rootTest) / "testfile.txt";
+    MakeEmptyFile(file);
+    RUNNER_ASSERT_MSG(file.ExistsAndIsFile(), "File should exist");
+    RUNNER_ASSERT_MSG(!file.ExistsAndIsDir(), "It should not be a directory");
+
+    Path dir = Path(rootTest) / "testdir";
+    MakeDir(dir);
+    RUNNER_ASSERT_MSG(dir.ExistsAndIsDir(), "Directory should exist");
+    RUNNER_ASSERT_MSG(!dir.ExistsAndIsFile(), "Is should not be a file");
+}
+
+/*
 Name: path_mkfile_invalid_path
 Description: tries to create file in not exisitng directory
 Expected: failure at creation
@@ -833,4 +853,94 @@ RUNNER_TEST(path_iterator_copy_constructor)
     ++(*iter2);
     RUNNER_ASSERT_MSG(*iter2 == dirTest.end(), "Iterator is in broken state");
     iter2.reset();
+}
+
+/*
+Name: path_extension_test
+Description: Tests if file extension is correct
+Expected: Proper recognition of extensions
+*/
+RUNNER_TEST(path_extension_test)
+{
+    Path path1("/path/to/file.dot");
+    Path path2("/path/to/file..dot");
+    Path path3("/path/to/file..dot.");
+    Path path4("/path/to/file..dot.dot");
+    Path path5("/path/to.dot/file");
+    Path path6("./path/to/file");
+    Path path7("./path/to/file");
+    Path path8("/path/../file.xml");
+    Path path9("/path/../file.XML");
+    Path path10("/path/../file.myfileextension");
+
+    RUNNER_ASSERT(path1.Extension() == "dot");
+    RUNNER_ASSERT(path2.Extension() == "dot");
+    RUNNER_ASSERT(path3.Extension() == "");
+    RUNNER_ASSERT(path4.Extension() == "dot");
+    RUNNER_ASSERT(path5.Extension() == "");
+    RUNNER_ASSERT(path6.Extension() == "");
+    RUNNER_ASSERT(path7.Extension() == "");
+    RUNNER_ASSERT(path8.Extension() == "xml");
+    RUNNER_ASSERT(path9.Extension() != "xml");
+    RUNNER_ASSERT(path10.Extension() == "myfileextension");
+}
+
+/*
+Name: path_has_extension_test
+Description: Tests if file extension is correct
+Expected: Proper recognition of extensions
+*/
+RUNNER_TEST(path_has_extension_test)
+{
+
+    Path dirTest = Path("extension");
+
+    Path path1 = dirTest / "file1.XML";
+    Path path2 = dirTest / "file2.JPG";
+    Path path3 = dirTest / "file3.";
+    Path path4 = dirTest / "file4";
+    Path path5 = dirTest / "file5.HTML";
+    Path path6 = dirTest / "file6.JS";
+    Path path7 = dirTest / "file7.VERY_VERY_LONG_EXTENSION";
+    Path path8 = dirTest / "file8.VERY.VERY.LONG.EXTENSION.WITH.DOTS";
+
+    RUNNER_ASSERT_MSG(path1.hasExtension("XML"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path2.hasExtension("JPG"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path5.hasExtension("HTML"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path6.hasExtension("JS"), "Problem with comparison");
+    RUNNER_ASSERT_MSG(path7.hasExtension("VERY_VERY_LONG_EXTENSION"),
+            "Problem with comparison");
+    RUNNER_ASSERT_MSG(path8.hasExtension("DOTS"), "Problem with comparison");
+
+    RUNNER_ASSERT_MSG(!path1.hasExtension(".XML"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path1.hasExtension("MXL"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path2.hasExtension(".JPG"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path5.hasExtension(".HTML"),
+            "Wrong argument in hasExtension() function");
+    RUNNER_ASSERT_MSG(!path6.hasExtension(".JS"),
+            "Wrong argument in hasExtension() function");
+
+    RUNNER_ASSERT_MSG(!path3.hasExtension(""), "Extension length is 0");
+
+    RUNNER_ASSERT_MSG(!path4.hasExtension(""), "Not a directory");
+}
+
+/*
+Name: path_create_temp_dir
+Description: tests if temp dir was created
+Expected: temp dir exists
+*/
+RUNNER_TEST(path_create_temp_dir)
+{
+    Path p1 = CreateTempPath(Path("/usr/tmp/"));
+    Path p2 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
+    Path p3 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
+
+    RUNNER_ASSERT_MSG(p1.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p2.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p3.Exists(), "Temp dir doesn't exists");
+    RUNNER_ASSERT_MSG(p2.Fullpath() != p3.Fullpath(), "Each temp path should be unique due to having tv_usec in dir name.");
 }

@@ -103,7 +103,7 @@ private:
     {
         (void)event;
 
-        LogInfo("Connection closed");
+        LogDebug("Connection closed");
 
         // Remove connection from list
         RemoveConnection(static_cast<DPL::AbstractRPCConnection *>(event.GetSender()));
@@ -113,7 +113,7 @@ private:
     {
         (void)event;
 
-        LogInfo("Connection broken");
+        LogDebug("Connection broken");
 
         // Remove connection from list
         RemoveConnection(static_cast<DPL::AbstractRPCConnection *>(event.GetSender()));
@@ -122,7 +122,7 @@ private:
     virtual void OnEventReceived(const DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent &event)
     {
         // Save connection pointer
-        LogInfo("New connection");
+        LogDebug("New connection");
 
         // Add nre connection to list
         AddConnection(event.GetArg1());
@@ -145,7 +145,7 @@ public:
         DPL::ControllerEventHandler<SignalEvent>::PostTimedEvent(SignalEvent(), HEART_BEAT_INTERVAL);
 
         // Started
-        LogInfo("Metronome server started");
+        LogDebug("Metronome server started");
      }
 
     virtual ~MetronomeServerApplication()

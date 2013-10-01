@@ -43,6 +43,7 @@ const std::set<DPL::String>& MimeTypeUtils::getMimeTypesSupportedForStartFile()
     if (set.empty()) {
         set.insert(s("text/html"));
         set.insert(s("application/xhtml+xml"));
+        set.insert(s("image/svg+xml"));
     }
     return set;
 }

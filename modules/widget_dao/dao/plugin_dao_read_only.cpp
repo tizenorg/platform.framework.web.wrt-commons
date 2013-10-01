@@ -154,6 +154,35 @@ PluginHandleList PluginDAOReadOnly::getPluginHandleList()
     }
 }
 
+PluginHandleList PluginDAOReadOnly::getRootPluginHandleList()
+{
+    LogDebug("Getting root plugin handle list.");
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        WRT_DB_SELECT(select, PluginProperties, &WrtDatabase::interface())
+        PluginHandleList handleList = select->GetValueList<PluginProperties::PluginPropertiesId>();
+
+        WRT_DB_SELECT(select_2nd, PluginDependencies, &WrtDatabase::interface())
+        PluginDependencies::Select::RowList dependenciesRows = select_2nd->GetRowList();
+
+        if (!dependenciesRows.empty())
+        {
+            FOREACH(it, dependenciesRows)
+            {
+                handleList.remove(it->Get_PluginPropertiesId());
+            }
+        }
+
+        return handleList;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(PluginDAOReadOnly::Exception::DatabaseError,
+                   "Failed in getRootPluginHandleList");
+    }
+}
+
 DbPluginHandle PluginDAOReadOnly::getPluginHandle() const
 {
     return m_pluginHandle;
@@ -239,6 +268,35 @@ DbPluginHandle PluginDAOReadOnly::getPluginHandleForImplementedObject(
             LogWarning("PluginHandle for object not found");
         }
         return pluginHandle;
+    }
+    Catch(DPL::DB::SqlConnection::Exception::Base) {
+        ReThrowMsg(PluginDAOReadOnly::Exception::DatabaseError,
+                   "Failed in GetPluginHandleForImplementedObject");
+    }
+}
+
+ImplementedObjectsList PluginDAOReadOnly::getImplementedObjects()
+{
+    LogDebug("getImplementedObjects");
+
+    Try
+    {
+        ImplementedObjectsList objectList;
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        WRT_DB_SELECT(select, PluginImplementedObjects, &WrtDatabase::interface())
+        std::list<DPL::String> valueList = select->GetValueList<PluginImplementedObjects::PluginObject>();
+
+        if (!valueList.empty()) {
+            FOREACH(it, valueList)
+            {
+                objectList.push_back(DPL::ToUTF8String(*it));
+            }
+        } else {
+            LogWarning("PluginHandle for object not found");
+        }
+        return objectList;
     }
     Catch(DPL::DB::SqlConnection::Exception::Base) {
         ReThrowMsg(PluginDAOReadOnly::Exception::DatabaseError,

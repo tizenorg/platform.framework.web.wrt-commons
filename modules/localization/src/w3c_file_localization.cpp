@@ -117,6 +117,185 @@ DPL::Optional<DPL::String> GetFilePathInWidgetPackageInternal(
 }
 
 namespace W3CFileLocalization {
+static bool isExistFileCached(const std::string& path)
+{
+    static std::map<std::string, bool> pathCache;
+
+    // is cached?
+    if (pathCache.find(path) == pathCache.end())
+    {
+        struct stat buf;
+
+        if (0 == stat(path.c_str(), &buf))
+        {
+            pathCache[path] = true;
+
+            return true;
+        }
+        else
+        {
+            pathCache[path] = false;
+
+            return false;
+        }
+    }
+
+    return pathCache[path];
+}
+
+std::string getFilePathInWidgetPackageFromUrl(const std::string &tzAppId, const std::string &url)
+{
+    const std::string SCHEME_FILE   = "file://";
+    const std::string SCHEME_WIDGET = "widget://";
+    const std::string SCHEM_APP     = "app://";
+    const std::string LOCALE_PATH   = "locales/";
+    const std::string DOUBLE_ROOT   = "//";
+
+    static std::string          lastTzAppId;
+    static WidgetDAOReadOnlyPtr dao;
+    static std::string          srcPath;
+
+    std::string workingUrl = url;
+    bool        found = false;
+
+    // Dao caching
+    if (lastTzAppId != tzAppId)
+    {
+        lastTzAppId = tzAppId;
+        dao.reset(new WidgetDAOReadOnly(DPL::FromUTF8String(tzAppId)));
+        srcPath = DPL::ToUTF8String(dao->getPath());
+    }
+
+    // backup suffix string
+    std::string backupSuffix;
+    size_t pos = workingUrl.find_first_of("#?");
+
+    if (pos != std::string::npos)
+    {
+        backupSuffix = workingUrl.substr(pos);
+        workingUrl.resize(pos);
+    }
+
+    // make basis path
+    if (workingUrl.compare(0, SCHEME_WIDGET.length(), SCHEME_WIDGET) == 0)
+    {
+        // remove "widget://"
+        workingUrl.erase(0, SCHEME_WIDGET.length());
+    }
+    else if (workingUrl.compare(0, SCHEME_FILE.length(), SCHEME_FILE) == 0)
+    {
+        // remove "file://"
+        workingUrl.erase(0, SCHEME_FILE.length());
+
+        // exception handling for "//"
+        if (workingUrl.compare(0, DOUBLE_ROOT.length(), DOUBLE_ROOT) == 0)
+        {
+            workingUrl.erase(0, 1);
+            LogDebug("workingUrl: " << workingUrl);
+        }
+
+        // remove src path
+        if (workingUrl.compare(0, srcPath.length(), srcPath) == 0)
+        {
+            workingUrl.erase(0, srcPath.length());
+        }
+
+        // remove locale path
+        if (workingUrl.compare(0, LOCALE_PATH.length(), LOCALE_PATH) == 0)
+        {
+            workingUrl.erase(0, LOCALE_PATH.length());
+
+            pos = workingUrl.find_first_of('/');
+
+            if (pos != std::string::npos && pos > 0)
+            {
+                workingUrl.erase(0, pos+1);
+            }
+        }
+    }
+    else if (workingUrl.compare(0, SCHEM_APP.length(), SCHEM_APP) == 0)
+    {
+        // remove "app://"
+        workingUrl.erase(0, SCHEM_APP.length());
+
+        // remove tizen app id
+        if (workingUrl.compare(0, tzAppId.length(), tzAppId) == 0)
+        {
+            workingUrl.erase(0, tzAppId.length());
+        }
+        else
+        {
+            LogError("Tizen id does not match, ignoring");
+            return "";
+        }
+    }
+
+    // remove '/' token
+    if (!workingUrl.empty() && workingUrl[0] == '/')
+    {
+        workingUrl.erase(0, 1);
+    }
+
+    if (!workingUrl.empty() && workingUrl[workingUrl.length()-1] == '/') {
+        workingUrl.erase(workingUrl.length()-1, 1);
+    }
+
+    if (workingUrl.empty())
+    {
+        LogError("URL Localization Error!");
+        return "";
+    }
+
+    const LanguageTags& ltags = LanguageTagsProviderSingleton::Instance().getLanguageTags();
+
+    FOREACH(it, ltags)
+    {
+        std::string path = srcPath;
+
+        if (!it->empty())
+        {
+            path += LOCALE_PATH;
+
+            if (isExistFileCached(path) == false)
+            {
+                continue;
+            }
+
+            path += DPL::ToUTF8String(*it) + "/";
+
+            if (isExistFileCached(path) == false)
+            {
+                continue;
+            }
+        }
+
+        path += workingUrl;
+
+        if (isExistFileCached(path) == true)
+        {
+            found = true;
+            workingUrl = path;
+            break;
+        }
+    }
+
+    // restore suffix string
+    if (!found)
+    {
+        // return empty string
+        workingUrl = "";
+    }
+    else
+    {
+        if (!backupSuffix.empty())
+        {
+            workingUrl += backupSuffix;
+        }
+    }
+
+    return workingUrl;
+}
+
 DPL::Optional<DPL::String> getFilePathInWidgetPackageFromUrl(
     DbWidgetHandle widgetHandle,
     const DPL::String &url)

@@ -38,6 +38,7 @@ SET(DPL_CORE_SOURCES
     ${PROJECT_SOURCE_DIR}/modules/core/src/file_input.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/file_output.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/lexical_cast.cpp
+    ${PROJECT_SOURCE_DIR}/modules/core/src/mutable_task_list.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/mutex.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_base_pipe.cpp
     ${PROJECT_SOURCE_DIR}/modules/core/src/named_output_pipe.cpp
@@ -98,6 +99,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/foreach.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/generic_event.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/lexical_cast.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/mutable_task_list.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/mutex.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/named_base_pipe.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/named_input_pipe.h
@@ -110,6 +112,7 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/preprocessor.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/read_write_mutex.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/recursive_mutex.h
+    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scope_guard.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_resource.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_array.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/scoped_close.h

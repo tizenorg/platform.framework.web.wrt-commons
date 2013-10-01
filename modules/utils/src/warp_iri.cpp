@@ -41,8 +41,8 @@ namespace {
 // hard drive. What's why we cannot check any iri with file schema.
 
 const char *IRI_IGNORED_SCHEME[] = { "file://", "widget://", "app://", "tel:",
-                                     "sms:", "mmsto:", "mailto:", "data:", "blob:",
-                                     0 };
+                                     "sms:", "smsto:", "mmsto:", "mailto:", "data:", "blob:",
+                                     "tizen-service:", 0 };
 
 const DPL::String SCHEMA_HTTP = DPL::FromUTF8String("http");
 const DPL::String SCHEMA_HTTPS = DPL::FromUTF8String("https");

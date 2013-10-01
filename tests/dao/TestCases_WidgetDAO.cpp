@@ -36,13 +36,12 @@
 using namespace WrtDB;
 
 namespace {
-class WacSecurityMock : public WrtDB::IWacSecurity
+class WacSecurityMock : public WrtDB::IWidgetSecurity
 {
   public:
     WacSecurityMock() :
         mRecognized(false),
-        mDistributorSigned(false),
-        mWacSigned(false)
+        mDistributorSigned(false)
     {}
 
     virtual const WidgetCertificateDataList& getCertificateList() const
@@ -57,10 +56,6 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     virtual bool isDistributorSigned() const
     {
         return mDistributorSigned;
-    }
-    virtual bool isWacSigned() const
-    {
-        return mWacSigned;
     }
     virtual void getCertificateChainList(CertificateChainList& /*lst*/) const {}
     virtual void getCertificateChainList(CertificateChainList& /*lst*/,
@@ -79,10 +74,6 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     {
         mDistributorSigned = distributorSigned;
     }
-    void setWacSigned(bool wacSigned)
-    {
-        mWacSigned = wacSigned;
-    }
 
   private:
     WrtDB::WidgetCertificateDataList mList;
@@ -91,11 +82,10 @@ class WacSecurityMock : public WrtDB::IWacSecurity
     // known distribuor
     bool mDistributorSigned;
     // distributor is wac
-    bool mWacSigned;
 };
 
 TizenAppId _registerWidget(const WidgetRegisterInfo& regInfo,
-                           const IWacSecurity& sec,
+                           const IWidgetSecurity& sec,
                            int line)
 {
     TizenAppId tizenAppId;
@@ -565,9 +555,6 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     RUNNER_ASSERT_MSG(
         dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
         "WebDatabaseUsage is not deafult on");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage is not deafult on");
 
     dao.setSecurityPopupUsage(WrtDB::SETTINGS_TYPE_OFF);
     RUNNER_ASSERT_MSG(
@@ -582,9 +569,6 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     RUNNER_ASSERT_MSG(
         dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
         "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage - wrong value");
 
     dao.setGeolocationUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
     RUNNER_ASSERT_MSG(
@@ -599,9 +583,6 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     RUNNER_ASSERT_MSG(
         dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
         "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage - wrong value");
 
     dao.setWebNotificationUsage(WrtDB::SETTINGS_TYPE_OFF);
     RUNNER_ASSERT_MSG(
@@ -616,9 +597,6 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     RUNNER_ASSERT_MSG(
         dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ON,
         "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage - wrong value");
 
     dao.setWebDatabaseUsage(WrtDB::SETTINGS_TYPE_ALWAYS_ASK);
     RUNNER_ASSERT_MSG(
@@ -633,43 +611,6 @@ RUNNER_TEST(widget_dao_test_register_widget_security_settings)
     RUNNER_ASSERT_MSG(
         dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
         "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage - wrong value");
-
-    dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_OFF);
-    RUNNER_ASSERT_MSG(
-        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
-        "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
-        "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
-        "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
-        "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_OFF,
-        "FileSystemUsage - wrong value");
-
-    dao.setFileSystemUsage(WrtDB::SETTINGS_TYPE_ON);
-    RUNNER_ASSERT_MSG(
-        dao.getSecurityPopupUsage() == WrtDB::SETTINGS_TYPE_OFF,
-        "SecurityPopupUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getGeolocationUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
-        "GeolocationUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getWebNotificationUsage() == WrtDB::SETTINGS_TYPE_OFF,
-        "WebNotificationUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getWebDatabaseUsage() == WrtDB::SETTINGS_TYPE_ALWAYS_ASK,
-        "WebDatabaseUsage - wrong value");
-    RUNNER_ASSERT_MSG(
-        dao.getFileSystemUsage() == WrtDB::SETTINGS_TYPE_ON,
-        "FileSystemUsage - wrong value");
 }
 
 /*
@@ -832,6 +773,92 @@ RUNNER_TEST(widget_dao_test_register_widget_certificates)
 }
 
 /*
+ * Name: widget_dao_test_register_widget_privileges
+ * Description: Tests registration of widget privileges
+ */
+RUNNER_TEST(widget_dao_test_register_widget_privileges)
+{
+
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+
+    ConfigParserData::PrivilegeList& privilegeList =
+            regInfo.configInfo.privilegeList;
+    privilegeList.insert(DPL::FromUTF8String("name"));
+    privilegeList.insert(DPL::FromUTF8String("name2"));
+
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+    WidgetDAO dao(tizenAppId);
+
+    WrtDB::PrivilegeList privListFromDB;
+    privListFromDB = dao.getWidgetPrivilege();
+
+    RUNNER_ASSERT(privilegeList.size() == privListFromDB.size());
+
+    auto privListIt = privilegeList.begin();
+    auto privDBIt = privListFromDB.begin();
+    for(; privListIt != privilegeList.end() && privDBIt != privListFromDB.end();
+            ++privListIt, ++privDBIt)
+    {
+        RUNNER_ASSERT(*privDBIt == privListIt->name);
+    }
+}
+
+/*
+ * Name: widget_dao_test_register_app_control
+ * Description: Tests app control
+ */
+RUNNER_TEST(widget_dao_test_register_app_control)
+{
+    WacSecurityMock sec;
+    WidgetRegisterInfo regInfo;
+
+    ConfigParserData::AppControlInfo appControl(DPL::FromUTF8String("operation"));
+    appControl.m_disposition
+            = ConfigParserData::AppControlInfo::Disposition::WINDOW;
+    appControl.m_mimeList.insert(DPL::FromUTF8String("mime"));
+    appControl.m_src = DPL::FromUTF8String("src");
+    appControl.m_uriList.insert(DPL::FromUTF8String("uri"));
+
+    ConfigParserData::AppControlInfoList& appControlListRef
+            = regInfo.configInfo.appControlList;
+    appControlListRef.push_back(appControl);
+
+    TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
+
+    WidgetDAO dao(tizenAppId);
+
+    WrtDB::WidgetAppControlList appControlInfoListDB;
+    dao.getAppControlList(appControlInfoListDB);
+    RUNNER_ASSERT(appControlInfoListDB.size() == appControlListRef.size());
+    auto appDBIt = appControlInfoListDB.begin();
+    auto appRefIt = appControlListRef.begin();
+
+    for (;appDBIt != appControlInfoListDB.end()
+            && appRefIt != appControlListRef.end();
+            ++appDBIt, ++appRefIt)
+    {
+        RUNNER_ASSERT((WidgetAppControl::Disposition)
+                appRefIt->m_disposition == appDBIt->disposition);
+        RUNNER_ASSERT(appRefIt->m_index == appDBIt->index);
+        RUNNER_ASSERT(appRefIt->m_operation == appDBIt->operation);
+        RUNNER_ASSERT(appRefIt->m_src == appDBIt->src);
+        for(auto it = appRefIt->m_mimeList.begin();
+                it != appRefIt->m_mimeList.end();
+                ++it)
+        {
+            RUNNER_ASSERT((*it) == appDBIt->mime);
+        }
+        for(auto it = appRefIt->m_uriList.begin();
+                it != appRefIt->m_uriList.end();
+                ++it)
+        {
+            RUNNER_ASSERT((*it) == appDBIt->uri);
+        }
+    }
+}
+
+/*
  * Name: widget_dao_test_is_widget_installed
  * Description: Tests checking if widgets are installed
  * Expected: installed widgets should be stated as installed
@@ -893,7 +920,9 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
                           tizenAppId), "Widget is not registered");
 
     //success full update
-    WidgetDAO::registerOrUpdateWidget(tizenAppId, regInfo2, sec);
+    WidgetDAO::updateTizenAppId(tizenAppId, L"backup");
+    WidgetDAO::registerWidget(tizenAppId, regInfo2, sec);
+    WidgetDAO::unregisterWidget(L"backup");
     RUNNER_ASSERT_MSG(WidgetDAO::isWidgetInstalled(
                           tizenAppId), "Widget is not reregistered");
     WidgetDAO dao(tizenAppId);
@@ -901,6 +930,7 @@ RUNNER_TEST(widget_dao_test_register_or_update_widget)
         *dao.getVersion() == L"1.1", "Data widget was not updated");
     RUNNER_ASSERT_MSG(
         *dao.getAuthorName() == L"BBB", "Data widget was not updated");
+
 
     WidgetDAO::unregisterWidget(tizenAppId);
 }
@@ -1049,11 +1079,9 @@ RUNNER_TEST(widget_dao_test_wac_security)
 
         RUNNER_ASSERT(!dao.isDistributorSigned());
         RUNNER_ASSERT(!dao.isRecognized());
-        RUNNER_ASSERT(!dao.isWacSigned());
     }
     sec.setDistributorSigned(true);
     sec.setRecognized(true);
-    sec.setWacSigned(true);
     {
         // register widget
         TizenAppId tizenAppId = REGISTER_WIDGET(regInfo, sec);
@@ -1061,7 +1089,6 @@ RUNNER_TEST(widget_dao_test_wac_security)
 
         RUNNER_ASSERT(dao.isDistributorSigned());
         RUNNER_ASSERT(dao.isRecognized());
-        RUNNER_ASSERT(dao.isWacSigned());
     }
 }
 

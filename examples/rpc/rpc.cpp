@@ -47,43 +47,43 @@ private:
     {
         (void)event;
 
-        LogInfo("CLIENT: AsyncCallEvent received");
+        LogDebug("CLIENT: AsyncCallEvent received");
 
         int value;
         event.GetArg0().ConsumeArg(value);
-        LogInfo("CLIENT: Result from server: " << value);
+        LogDebug("CLIENT: Result from server: " << value);
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent &event)
     {
         (void)event;
-        LogInfo("CLIENT: ConnectionClosedEvent received");
+        LogDebug("CLIENT: ConnectionClosedEvent received");
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent &event)
     {
         (void)event;
-        LogInfo("CLIENT: ConnectionBrokenEvent received");
+        LogDebug("CLIENT: ConnectionBrokenEvent received");
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent &event)
     {
         // Save connection pointer
-        LogInfo("CLIENT: Acquiring new connection");
+        LogDebug("CLIENT: Acquiring new connection");
         m_rpcConnection.reset(event.GetArg1());
 
         // Attach listener to new connection
-        LogInfo("CLIENT: Attaching connection event listeners");
+        LogDebug("CLIENT: Attaching connection event listeners");
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::AddListener(this);
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent>::AddListener(this);
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::AddListener(this);
 
-        LogInfo("CLIENT: Connection established");
+        LogDebug("CLIENT: Connection established");
 
         // Emit RPC function call
         DPL::RPCFunction proc;
         proc.AppendArg((int)1111);
-        LogInfo("CLIENT: Calling RPC function");
+        LogDebug("CLIENT: Calling RPC function");
         m_rpcConnection->AsyncCall(proc);
     }
 
@@ -97,35 +97,35 @@ public:
     virtual int ThreadEntry()
     {
         // Attach RPC listeners
-        LogInfo("CLIENT: Attaching connection established event");
+        LogDebug("CLIENT: Attaching connection established event");
         m_rpcClient.DPL::EventSupport<DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent>::AddListener(this);
 
         // Open connection to server
-        LogInfo("CLIENT: Opening connection to RPC");
+        LogDebug("CLIENT: Opening connection to RPC");
         m_rpcClient.Open(RPC_NAME);
 
         // Start message loop
-        LogInfo("CLIENT: Starting thread event loop");
+        LogDebug("CLIENT: Starting thread event loop");
         int ret = Exec();
 
         // Detach RPC listeners
         if (m_rpcConnection.get())
         {
-            LogInfo("CLIENT: Detaching RPC connection events");
+            LogDebug("CLIENT: Detaching RPC connection events");
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::RemoveListener(this);
 
-            LogInfo("CLIENT: Resetting connection");
+            LogDebug("CLIENT: Resetting connection");
             m_rpcConnection.reset();
         }
 
         // Detach RPC client listener
-        LogInfo("CLIENT: Detaching connection established event");
+        LogDebug("CLIENT: Detaching connection established event");
         m_rpcClient.DPL::EventSupport<DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent>::RemoveListener(this);
 
         // Close RPC
-        LogInfo("CLIENT: Closing RPC client");
+        LogDebug("CLIENT: Closing RPC client");
         m_rpcClient.CloseAll();
 
         // Done
@@ -168,61 +168,61 @@ private:
     {
         (void)event;
 
-        LogInfo("SERVER: AsyncCallEvent received");
+        LogDebug("SERVER: AsyncCallEvent received");
 
         int value;
         event.GetArg0().ConsumeArg(value);
-        LogInfo("SERVER: Result from client: " << value);
+        LogDebug("SERVER: Result from client: " << value);
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent &event)
     {
         (void)event;
 
-        LogInfo("SERVER: ConnectionClosedEvent received");
+        LogDebug("SERVER: ConnectionClosedEvent received");
 
         // Close RPC now
-        LogInfo("SERVER: Closing RPC connection on event...");
+        LogDebug("SERVER: Closing RPC connection on event...");
 
         // Detach RPC connection listeners
         if (m_rpcConnection.get())
         {
-            LogInfo("SERVER: Detaching connection events");
+            LogDebug("SERVER: Detaching connection events");
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent>::RemoveListener(this);
             m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::RemoveListener(this);
         }
-        LogInfo("SERVER: RPC connection closed");
+        LogDebug("SERVER: RPC connection closed");
 
-        LogInfo("SERVER: Closing RPC on event...");
+        LogDebug("SERVER: Closing RPC on event...");
         m_rpcServer.CloseAll();
-        LogInfo("SERVER: RPC closed");
+        LogDebug("SERVER: RPC closed");
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent &event)
     {
         (void)event;
-        LogInfo("SERVER: ConnectionBrokenEvent received");
+        LogDebug("SERVER: ConnectionBrokenEvent received");
     }
 
     virtual void OnEventReceived(const DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent &event)
     {
         // Save connection pointer
-        LogInfo("SERVER: Acquiring RPC connection");
+        LogDebug("SERVER: Acquiring RPC connection");
         m_rpcConnection.reset(event.GetArg1());
 
         // Attach event listeners
-        LogInfo("SERVER: Attaching connection listeners");
+        LogDebug("SERVER: Attaching connection listeners");
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::AsyncCallEvent>::AddListener(this);
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionClosedEvent>::AddListener(this);
         m_rpcConnection->DPL::EventSupport<DPL::AbstractRPCConnectionEvents::ConnectionBrokenEvent>::AddListener(this);
 
-        LogInfo("SERVER: Connection established");
+        LogDebug("SERVER: Connection established");
 
         // Emit RPC function call
         DPL::RPCFunction proc;
         proc.AppendArg((int)2222);
-        LogInfo("SERVER: Calling RPC function");
+        LogDebug("SERVER: Calling RPC function");
         m_rpcConnection->AsyncCall(proc);
     }
 
@@ -231,23 +231,23 @@ public:
         : Application(argc, argv, "rpc")
     {
         // Attach RPC server listeners
-        LogInfo("SERVER: Attaching connection established event");
+        LogDebug("SERVER: Attaching connection established event");
         m_rpcServer.DPL::EventSupport<DPL::AbstractRPCConnectorEvents::ConnectionEstablishedEvent>::AddListener(this);
 
         // Self touch
-        LogInfo("SERVER: Touching controller");
+        LogDebug("SERVER: Touching controller");
         Touch();
 
         // Open RPC server
-        LogInfo("SERVER: Opening server RPC");
+        LogDebug("SERVER: Opening server RPC");
         m_rpcServer.Open(RPC_NAME);
 
         // Run RPC client in thread
-        LogInfo("SERVER: Starting RPC client thread");
+        LogDebug("SERVER: Starting RPC client thread");
         m_thread.Run();
 
         // Quit application automatically in few seconds
-        LogInfo("SERVER: Sending control timed events");
+        LogDebug("SERVER: Sending control timed events");
         DPL::ControllerEventHandler<CloseThreadEvent>::PostTimedEvent(CloseThreadEvent(), 2);
         DPL::ControllerEventHandler<QuitEvent>::PostTimedEvent(QuitEvent(), 3);
     }
@@ -255,11 +255,11 @@ public:
     virtual ~MyApplication()
     {
         // Quit thread
-        LogInfo("SERVER: Quitting thread");
+        LogDebug("SERVER: Quitting thread");
         m_thread.Quit();
 
         // Close RPC server
-        LogInfo("SERVER: Closing RPC server");
+        LogDebug("SERVER: Closing RPC server");
         m_rpcServer.CloseAll();
 
         // Detach RPC server listener
@@ -269,7 +269,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-    LogInfo("Starting");
+    LogDebug("Starting");
     MyApplication app(argc, argv);
     return app.Exec();
 }
