@@ -58,7 +58,7 @@ export FFLAGS="$FFLAGS -DTIZEN_ENGINEER_MODE"
 
 export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
 
-cmake . -DVERSION=%{version} \
+%cmake . -DVERSION=%{version} \
         -DDPL_LOG="OFF"      \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
         %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS} \
@@ -66,8 +66,6 @@ cmake . -DVERSION=%{version} \
 make %{?jobs:-j%jobs}
 
 %install
-mkdir -p %{buildroot}/usr/share/license
-cp LICENSE %{buildroot}/usr/share/license/%{name}
 %make_install
 
 
