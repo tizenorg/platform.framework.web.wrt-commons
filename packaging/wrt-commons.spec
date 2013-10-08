@@ -137,8 +137,8 @@ chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
 chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
 chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db
 chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db-journal
-chsmack -a 'wrt-commons::db_wrt_i18n' /opt/usr/dbspace/.wrt_i18n.db
-chsmack -a 'wrt-commons::db_wrt_i18n' /opt/usr/dbspace/.wrt_i18n.db-journal
+chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db
+chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 
