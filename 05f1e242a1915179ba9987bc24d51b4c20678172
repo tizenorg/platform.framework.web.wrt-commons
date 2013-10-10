@@ -1,0 +1,10 @@
+Code-Review-1: Soo-Hyun Choi <s.choi@hackerslab.eu>
+Code-Review+1: Patrick McCarty <patrick.mccarty@linux.intel.com>
+Verified+1: Baptiste DURAND <baptiste.durand@eurogiciel.fr>
+Code-Review+2: Hoseon LEE <hoseon46.lee@samsung.com>
+Verified+1: Hoseon LEE <hoseon46.lee@samsung.com>
+Submitted-by: Hoseon LEE <hoseon46.lee@samsung.com>
+Submitted-at: Thu, 10 Oct 2013 04:09:14 -0700
+Reviewed-on: https://review.tizen.org/gerrit/10587
+Project: platform/framework/web/wrt-commons
+Branch: refs/heads/tizen
