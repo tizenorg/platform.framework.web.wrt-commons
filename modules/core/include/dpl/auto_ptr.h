@@ -27,6 +27,8 @@
 #include <set>
 #include <string>
 
+#include <dpl/availability.h>
+
 namespace DPL {
 /*
  * base deleter func
@@ -48,7 +50,7 @@ template <typename T>
 class AutoPtr
 {
   public:
-    AutoPtr(T *ptr) :
+    DPL_DEPRECATED_WITH_MESSAGE("use std::unique_ptr or std::shared_ptr") AutoPtr(T *ptr) :
         m_data(ptr)
     {}
 
