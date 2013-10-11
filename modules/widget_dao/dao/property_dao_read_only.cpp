@@ -74,6 +74,23 @@ void convertWidgetPropertyKeyList(const ORMWidgetPropertyKeyList& propKeyList,
         keyList.push_back(*it);
     }
 }
+
+WidgetPreferenceList GetPropertyListRows(DbWidgetHandle widgetHandle)
+{
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
+            select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
+        ORMWidgetPreferenceList ormPrefList = select->GetRowList();
+        WidgetPreferenceList prefList;
+        convertWidgetPreferenceRow(ormPrefList, prefList);
+        return prefList;
+    }Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(Exception::DatabaseError,
+                "Failure during getting property list");
+    }
+}
 }
 
 //deprecated
@@ -130,24 +147,6 @@ WidgetPropertyKeyList GetPropertyKeyList(TizenAppId tzAppid)
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(Exception::DatabaseError,
                    "Failure during getting propertykey list");
-    }
-}
-
-
-WidgetPreferenceList GetPropertyListRows(DbWidgetHandle widgetHandle)
-{
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetPreference, &WrtDatabase::interface())
-            select->Where(Equals<WidgetPreference::app_id>(widgetHandle));
-        ORMWidgetPreferenceList ormPrefList = select->GetRowList();
-        WidgetPreferenceList prefList;
-        convertWidgetPreferenceRow(ormPrefList, prefList);
-        return prefList;
-    }Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(Exception::DatabaseError,
-                "Failure during getting property list");
     }
 }
 
