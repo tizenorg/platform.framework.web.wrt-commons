@@ -20,11 +20,11 @@
  */
 #include <stddef.h>
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
 #include <dpl/utils/warp_iri.h>
 #include <dpl/string.h>
-#include <dpl/auto_ptr.h>
 #include <dpl/foreach.h>
 #include <idna.h>
 #include <istream>
@@ -49,13 +49,6 @@ const DPL::String SCHEMA_HTTPS = DPL::FromUTF8String("https");
 const DPL::String SCHEMA_FTP = DPL::FromUTF8String("ftp");
 } // namespace anonymous
 
-// This will create AutoPtr deleter for iri_struct.
-// Deleter must be in the same namespace as definition of AutoPtr.
-
-namespace DPL {
-DECLARE_DELETER(iri_struct, iri_destroy)
-} // namespace DPL
-
 WarpIRI::WarpIRI() :
     m_domain(false),
     m_port(UNKNOWN_PORT),
@@ -79,8 +72,7 @@ void WarpIRI::set(const char *p_iri,
     if (strcmp(p_iri, "*") == 0) {
         return;
     }
-
-    DPL::AutoPtr<iri_struct> iri(iri_parse(p_iri));
+    std::unique_ptr<iri_struct, decltype(&iri_destroy)> iri(iri_parse(p_iri), iri_destroy);
 
     if (!iri.get()) {
         LogError("Error in iri_parse!");
