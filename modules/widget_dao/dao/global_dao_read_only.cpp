@@ -57,30 +57,6 @@ GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
     }
 }
 
-//user agent strings are stored in db...
-//and it is configurable for test in development.
-DPL::String GlobalDAOReadOnly::GetUserAgentValue(const DPL::String &key)
-{
-    LogDebug("Get User Agent Value : " << key);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, UserAgents, &WrtDatabase::interface())
-        select->Where(Equals<UserAgents::key_name>(key));
-        DPL::Optional<DPL::String> agent =
-            select->GetSingleValue<UserAgents::key_value>();
-        if (agent.IsNull()) {
-            return DPL::FromUTF8String("");
-        } else {
-            return *agent;
-        }
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get user agent string");
-    }
-}
-
 DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     const DPL::String &apifeature)
 {

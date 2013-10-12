@@ -37,10 +37,6 @@ namespace WrtDB {
 typedef std::list<DPL::String> WidgetPackageList;
 typedef std::set<DPL::String> DeviceCapabilitySet;
 
-//#ifdef USE_BROWSER_SETTING
-//typedef DPL::DB::ORM::wrt::UserAgents::key_value::ColumnType UserAgent;
-//#endif //USE_BROWSER_SETTING
-
 class GlobalDAOReadOnly
 {
   public:
@@ -73,8 +69,6 @@ class GlobalDAOReadOnly
      * @return Access mode for home network.
      */
     static NetworkAccessMode GetRoamingDataUsage() DPL_DEPRECATED;
-
-    static DPL::String GetUserAgentValue(const DPL::String &key) DPL_DEPRECATED;
 
     /**
      * This method returns set of device capabilities used by apifeature.
