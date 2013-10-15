@@ -24,4 +24,7 @@
 #define DPL_DEPRECATED __attribute__((deprecated))
 #define DPL_DEPRECATED_WITH_MESSAGE(msg) __attribute__((deprecated(msg)))
 
+#define DPL_UNUSED __attribute__((unused))
+#define DPL_UNUSED_PARAM(variable) (void)variable
+
 #endif // DPL_AVAILABILITY_H
