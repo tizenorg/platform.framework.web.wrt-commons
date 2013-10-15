@@ -23,34 +23,35 @@
 #ifndef WRT_SRC_CONFIGURATION_GLOBAL_DAO_H_
 #define WRT_SRC_CONFIGURATION_GLOBAL_DAO_H_
 
+#include <dpl/availability.h>
 #include <dpl/wrt-dao-ro/global_dao_read_only.h>
 
 namespace WrtDB {
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
-    static void SetSecureByDefault(bool secureByDefault);
+    static void SetSecureByDefault(bool secureByDefault) DPL_DEPRECATED;
 
-    static void AddWhiteURI(const std::string &value, bool subDomain);
+    static void AddWhiteURI(const std::string &value, bool subDomain) DPL_DEPRECATED;
 
-    static void RemoveWhiteURI(const std::string &uri);
-
-    /**
-     * This method changes network access mode while roaming is enabled.
-     *
-     */
-    static void SetHomeNetworkDataUsage(NetworkAccessMode newMode);
+    static void RemoveWhiteURI(const std::string &uri) DPL_DEPRECATED;
 
     /**
      * This method changes network access mode while roaming is enabled.
      *
      */
-    static void SetRoamingDataUsage(NetworkAccessMode newMode);
+    static void SetHomeNetworkDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
 
-    static void SetCookieSharingMode(bool mode);
+    /**
+     * This method changes network access mode while roaming is enabled.
+     *
+     */
+    static void SetRoamingDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
+
+    static void SetCookieSharingMode(bool mode) DPL_DEPRECATED;
 
   private:
-    GlobalDAO()
+    DPL_DEPRECATED GlobalDAO()
     {}
 };
 } // namespace WrtDB

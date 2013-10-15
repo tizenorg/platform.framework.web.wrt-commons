@@ -27,6 +27,7 @@
 #include <set>
 #include <string>
 
+#include <dpl/availability.h>
 #include <dpl/string.h>
 #include <dpl/exception.h>
 
@@ -55,11 +56,11 @@ class GlobalDAOReadOnly
 
   public:
 
-    static bool GetSecureByDefault();
+    static bool GetSecureByDefault() DPL_DEPRECATED;
 
-    static WidgetAccessInfoList GetWhiteURIList();
+    static WidgetAccessInfoList GetWhiteURIList() DPL_DEPRECATED;
 
-    static bool GetCookieSharingMode();
+    static bool GetCookieSharingMode() DPL_DEPRECATED;
 
     enum NetworkAccessMode
     {
@@ -73,16 +74,16 @@ class GlobalDAOReadOnly
      *
      * @return Access mode for home network.
      */
-    static NetworkAccessMode GetHomeNetworkDataUsage();
+    static NetworkAccessMode GetHomeNetworkDataUsage() DPL_DEPRECATED;
 
     /**
      * This method returns network access mode while roaming is enabled.
      *
      * @return Access mode for home network.
      */
-    static NetworkAccessMode GetRoamingDataUsage();
+    static NetworkAccessMode GetRoamingDataUsage() DPL_DEPRECATED;
 
-    static DPL::String GetUserAgentValue(const DPL::String &key);
+    static DPL::String GetUserAgentValue(const DPL::String &key) DPL_DEPRECATED;
 
     /**
      * This method returns set of device capabilities used by apifeature.
