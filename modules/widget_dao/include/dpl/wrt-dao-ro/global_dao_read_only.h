@@ -52,7 +52,6 @@ class GlobalDAOReadOnly
 
   public:
 
-    static bool GetSecureByDefault() DPL_DEPRECATED;
 
     static bool GetCookieSharingMode() DPL_DEPRECATED;
 

@@ -32,15 +32,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
-bool GlobalDAOReadOnly::GetSecureByDefault()
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-    return select->GetSingleValue<GlobalProperties::secure_by_default>();
-}
-
 GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
 {
     LogDebug("Getting roaming network data usage");

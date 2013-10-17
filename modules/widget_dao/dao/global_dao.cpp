@@ -29,24 +29,6 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
-void GlobalDAO::SetSecureByDefault(bool secure)
-{
-    //If secure == true -> widget does not need to be signed
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_secure_by_default(secure);
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update secureByDefault");
-    }
-}
-
 void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
 {
     LogDebug("updating roaming network data usage to:" << newMode);
