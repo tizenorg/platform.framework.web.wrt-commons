@@ -36,12 +36,6 @@ class GlobalDAO : public GlobalDAOReadOnly
      * This method changes network access mode while roaming is enabled.
      *
      */
-    static void SetHomeNetworkDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
-
-    /**
-     * This method changes network access mode while roaming is enabled.
-     *
-     */
     static void SetRoamingDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
 
     static void SetCookieSharingMode(bool mode) DPL_DEPRECATED;

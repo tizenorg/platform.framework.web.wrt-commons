@@ -68,13 +68,6 @@ class GlobalDAOReadOnly
     };
 
     /**
-     * This method returns network access mode for home network.
-     *
-     * @return Access mode for home network.
-     */
-    static NetworkAccessMode GetHomeNetworkDataUsage() DPL_DEPRECATED;
-
-    /**
      * This method returns network access mode while roaming is enabled.
      *
      * @return Access mode for home network.

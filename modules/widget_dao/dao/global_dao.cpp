@@ -47,25 +47,6 @@ void GlobalDAO::SetSecureByDefault(bool secure)
     }
 }
 
-void GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::NetworkAccessMode newMode)
-{
-    LogDebug("updating home network data usage to:" << newMode);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_home_network_data_usage(static_cast<int>(newMode));
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update home network data usage");
-    }
-}
-
 void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
 {
     LogDebug("updating roaming network data usage to:" << newMode);

@@ -41,24 +41,6 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
     return select->GetSingleValue<GlobalProperties::secure_by_default>();
 }
 
-GlobalDAOReadOnly::NetworkAccessMode
-GlobalDAOReadOnly::GetHomeNetworkDataUsage()
-{
-    LogDebug("Getting home network data usage");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return static_cast<GlobalDAOReadOnly::NetworkAccessMode>(
-                   select->GetSingleValue<
-                       GlobalProperties::home_network_data_usage>());
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get home network data usage");
-    }
-}
-
 GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
 {
     LogDebug("Getting roaming network data usage");
