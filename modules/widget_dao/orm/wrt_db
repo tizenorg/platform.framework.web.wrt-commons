@@ -335,11 +335,6 @@ CREATE_TABLE(AppControlInfo)
     )
 CREATE_TABLE_END()
 
-CREATE_TABLE(WidgetWhiteURIList)
-    COLUMN_NOT_NULL(uri,        VARCHAR(65536), primary key)
-    COLUMN_NOT_NULL(subdomain_access,    INT,        CHECK(subdomain_access between 0 and 1))
-CREATE_TABLE_END()
-
 CREATE_TABLE(EncryptedResourceList)
     COLUMN_NOT_NULL(app_id,         INT,)
     COLUMN_NOT_NULL(resource,       TEXT,)
@@ -349,12 +344,6 @@ CREATE_TABLE(EncryptedResourceList)
         FOREIGN KEY (app_id) REFERENCES WidgetInfo (app_id) ON DELETE CASCADE
     )
 CREATE_TABLE_END()
-
-SQL(
-    INSERT INTO WidgetWhiteURIList VALUES("http://samsung.com", 1);
-    INSERT INTO WidgetWhiteURIList VALUES("http://orange.fr", 1);
-    INSERT INTO WidgetWhiteURIList VALUES("http://orange.co.uk", 1);
-)
 
 /*TODO: It will be removed when user agent is fixed. User agent MUST be configurable in development...*/
 CREATE_TABLE(UserAgents)

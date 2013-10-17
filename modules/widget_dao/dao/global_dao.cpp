@@ -85,46 +85,6 @@ void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
     }
 }
 
-void GlobalDAO::AddWhiteURI(const std::string &uri, bool subDomain)
-{
-    LogDebug("Add White URI : " << uri);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WidgetWhiteURIList::Row row;
-        row.Set_uri(DPL::FromASCIIString(uri));
-        row.Set_subdomain_access(static_cast<int>(subDomain));
-        wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-
-        WRT_DB_INSERT(insert, WidgetWhiteURIList, &WrtDatabase::interface())
-
-        insert->Values(row);
-        insert->Execute();
-        transaction.Commit();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to add white URI");
-    }
-}
-
-void GlobalDAO::RemoveWhiteURI(const std::string &uri)
-{
-    LogDebug("Remove White URI : " << uri);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        WRT_DB_DELETE(deleteFrom, WidgetWhiteURIList, &WrtDatabase::interface())
-        deleteFrom->Where(Equals<WidgetWhiteURIList::uri>(DPL::FromASCIIString(
-                                                              uri)));
-        deleteFrom->Execute();
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to removed white URI from AdultBlackList");
-    }
-}
-
 void GlobalDAO::SetCookieSharingMode(bool mode)
 {
     LogDebug("updating Cookie Sharing mode to:" << mode);

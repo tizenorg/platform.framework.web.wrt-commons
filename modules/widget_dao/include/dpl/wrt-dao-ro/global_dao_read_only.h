@@ -58,8 +58,6 @@ class GlobalDAOReadOnly
 
     static bool GetSecureByDefault() DPL_DEPRECATED;
 
-    static WidgetAccessInfoList GetWhiteURIList() DPL_DEPRECATED;
-
     static bool GetCookieSharingMode() DPL_DEPRECATED;
 
     enum NetworkAccessMode

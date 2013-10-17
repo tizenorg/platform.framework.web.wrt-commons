@@ -32,10 +32,6 @@ class GlobalDAO : public GlobalDAOReadOnly
   public:
     static void SetSecureByDefault(bool secureByDefault) DPL_DEPRECATED;
 
-    static void AddWhiteURI(const std::string &value, bool subDomain) DPL_DEPRECATED;
-
-    static void RemoveWhiteURI(const std::string &uri) DPL_DEPRECATED;
-
     /**
      * This method changes network access mode while roaming is enabled.
      *

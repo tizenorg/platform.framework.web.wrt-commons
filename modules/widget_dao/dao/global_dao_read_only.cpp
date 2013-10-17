@@ -142,33 +142,6 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     }
 }
 
-WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
-{
-    LogDebug("Getting WhiteURIList.");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetWhiteURIList, &WrtDatabase::interface())
-
-        WidgetAccessInfoList resultList;
-        typedef std::list<WidgetWhiteURIList::Row> RowList;
-        RowList list = select->GetRowList();
-
-        for (RowList::iterator i = list.begin(); i != list.end(); ++i) {
-            WidgetAccessInfo whiteURI;
-            whiteURI.strIRI = i->Get_uri();
-            whiteURI.bSubDomains = i->Get_subdomain_access();
-            resultList.push_back(whiteURI);
-            LogDebug("[uri] : " << whiteURI.strIRI <<
-                    ", [subdomain] : " << whiteURI.bSubDomains);
-        }
-        return resultList;
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get whiteURI list");
-    }
-}
-
 bool GlobalDAOReadOnly::GetCookieSharingMode()
 {
     LogDebug("Getting Cookie Sharing mode");
