@@ -91,18 +91,4 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     }
 }
 
-bool GlobalDAOReadOnly::GetCookieSharingMode()
-{
-    LogDebug("Getting Cookie Sharing mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::cookie_sharing_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get Cookie Sharing mode");
-    }
-}
 } // namespace WrtDB

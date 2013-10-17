@@ -4,7 +4,6 @@ SQL(
 )
 CREATE_TABLE(GlobalProperties)
     COLUMN_NOT_NULL(roaming_data_usage,      TINYINT,      DEFAULT 1)
-    COLUMN_NOT_NULL(cookie_sharing_mode,          INT,          DEFAULT 0)
 CREATE_TABLE_END()
 
 SQL(

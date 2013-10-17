@@ -53,7 +53,6 @@ class GlobalDAOReadOnly
   public:
 
 
-    static bool GetCookieSharingMode() DPL_DEPRECATED;
 
     enum NetworkAccessMode
     {

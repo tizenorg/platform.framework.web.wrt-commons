@@ -36,8 +36,6 @@ class GlobalDAO : public GlobalDAOReadOnly
      */
     static void SetRoamingDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
 
-    static void SetCookieSharingMode(bool mode) DPL_DEPRECATED;
-
   private:
     DPL_DEPRECATED GlobalDAO()
     {}

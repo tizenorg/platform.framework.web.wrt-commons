@@ -48,22 +48,4 @@ void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
     }
 }
 
-void GlobalDAO::SetCookieSharingMode(bool mode)
-{
-    LogDebug("updating Cookie Sharing mode to:" << mode);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_cookie_sharing_mode(mode);
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update Cookie Sharing Mode");
-    }
-}
 } // namespace WrtDB
