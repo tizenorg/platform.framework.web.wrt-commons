@@ -295,7 +295,7 @@ inline const char* GetBackupDatabaseSuffix()
 
 inline const char* GetManifestPath()
 {
-    return "/opt/share/packages";
+    return "/usr/share/packages";
 }
 
 inline const char* GetPreloadManifestPath()
