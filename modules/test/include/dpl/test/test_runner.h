@@ -24,7 +24,7 @@
 #define DPL_TEST_RUNNER_H
 
 #include <dpl/singleton.h>
-#include <dpl/unused.h>
+#include <dpl/availability.h>
 #include <dpl/atomic.h>
 #include <dpl/test/test_results_collector.h>
 #include <sstream>

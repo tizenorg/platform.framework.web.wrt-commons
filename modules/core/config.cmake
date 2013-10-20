@@ -84,7 +84,6 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/apply.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/assert.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/atomic.h
-    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/auto_ptr.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/availability.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/binary_queue.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/bool_operator.h
