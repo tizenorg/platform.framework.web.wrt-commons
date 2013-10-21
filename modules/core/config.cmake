@@ -136,7 +136,6 @@ SET(DPL_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/thread.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/type_list.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/union_cast.h
-    ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/unused.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/workaround.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/zip_input.h
     ${PROJECT_SOURCE_DIR}/modules/core/include/dpl/application.h

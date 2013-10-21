@@ -127,7 +127,9 @@ void WidgetInterfaceDAO::copyPropertiesFromWrtDatabase()
     SQL_CONNECTION_EXCEPTION_HANDLER_BEGIN
     {
         WrtDB::PropertyDAOReadOnly::WidgetPreferenceList existing =
-            WrtDB::PropertyDAOReadOnly::GetPropertyList(m_widgetHandle);
+            WrtDB::PropertyDAOReadOnly::GetPropertyList(
+                    WrtDB::WidgetDAOReadOnly::getTzAppId(m_widgetHandle)
+        );
 
         //save all properties read from config.xml
         FOREACH(prop, existing) {

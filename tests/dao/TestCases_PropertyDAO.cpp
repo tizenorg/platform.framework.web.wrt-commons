@@ -81,9 +81,6 @@ RUNNER_TEST(property_dao_get_lists)
             PropertyDAOReadOnly::WidgetPreferenceList prefs_tid =
                     PropertyDAOReadOnly::GetPropertyList(it->tappid);
             RUNNER_ASSERT(prefs_tid.size() == it->nrow);
-            PropertyDAOReadOnly::WidgetPreferenceList prefs_aid =
-                    PropertyDAOReadOnly::GetPropertyList(it->whandleid);
-            RUNNER_ASSERT(prefs_aid.size() == it->nrow);
         }
     }
     { //property key list
@@ -137,19 +134,6 @@ RUNNER_TEST(property_dao_get_list_exceptions)
         Try{
             PropertyDAOReadOnly::WidgetPreferenceList prefs =
                     PropertyDAOReadOnly::GetPropertyList(app_id_non_exists);
-        } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist)
-        {
-            assert_flag=false;
-        }
-        RUNNER_ASSERT_MSG(!(assert_flag),"Error, value doesn't make exception");
-    }
-    {
-        bool assert_flag;
-        DbWidgetHandle handle_non_exist(2010);
-        assert_flag=true;
-        Try{
-            PropertyDAOReadOnly::WidgetPreferenceList prefs =
-                    PropertyDAOReadOnly::GetPropertyList(handle_non_exist);
         } Catch(WidgetDAOReadOnly::Exception::WidgetNotExist)
         {
             assert_flag=false;
