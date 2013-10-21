@@ -72,10 +72,10 @@ class GlobalDAOReadOnly
      * This method returns set of device capabilities used by apifeature.
      */
     static DeviceCapabilitySet GetDeviceCapability(
-        const DPL::String &apifeature);
+        const DPL::String &apifeature) DPL_DEPRECATED_WITH_MESSAGE("Use FeatureDAOReadOnly::GetDeviceCapability");
 
   protected:
-    GlobalDAOReadOnly()
+    DPL_DEPRECATED GlobalDAOReadOnly()
     {}
 };
 } // namespace WrtDB
