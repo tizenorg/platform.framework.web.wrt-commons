@@ -1,7 +1,7 @@
 #git:framework/web/wrt-commons
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.160
+Version:    0.2.161
 Release:    1
 Group:      Development/Libraries
 License:    Apache License, Version 2.0
