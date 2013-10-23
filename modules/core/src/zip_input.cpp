@@ -293,8 +293,8 @@ ZipInput::ZipInput(const std::string &fileName) :
     m_device(NULL),
     m_numberOfFiles(0),
     m_globalComment(),
-    m_fileInfos(),
-    m_totalUncompressedSize(0)
+    m_totalUncompressedSize(0),
+    m_fileInfos()
 {
     LogPedantic("Zip input file: " << fileName);
 

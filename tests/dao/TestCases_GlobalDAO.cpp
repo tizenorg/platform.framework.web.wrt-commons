@@ -39,33 +39,6 @@ const DPL::String widgetPackage5(L"widgetpackage5");
 RUNNER_TEST_GROUP_INIT(DAO)
 
 /*
- * Name: home_network_data_usage
- * Description: tests if HomeNetworkDataUsage is correctly set and get
- * Expected: received developer shoudl match the one was set
- */
-RUNNER_TEST(home_network_data_usage)
-{
-    GlobalDAO::NetworkAccessMode original =
-        GlobalDAO::GetHomeNetworkDataUsage();
-
-    GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::CONNECT_AUTOMATICALLY);
-    RUNNER_ASSERT_MSG(GlobalDAO::CONNECT_AUTOMATICALLY ==
-                      GlobalDAO::GetHomeNetworkDataUsage(), "Value not updated");
-
-    GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::ALWAYS_ASK);
-    RUNNER_ASSERT_MSG(GlobalDAO::ALWAYS_ASK ==
-                      GlobalDAO::GetHomeNetworkDataUsage(), "Value not updated");
-
-    GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::NEVER_CONNECT);
-    RUNNER_ASSERT_MSG(GlobalDAO::NEVER_CONNECT ==
-                      GlobalDAO::GetHomeNetworkDataUsage(), "Value not updated");
-
-    GlobalDAO::SetHomeNetworkDataUsage(original);
-    RUNNER_ASSERT_MSG(original == GlobalDAO::GetHomeNetworkDataUsage(),
-                      "Value not updated");
-}
-
-/*
  * Name: roaming_data_usage
  * Description: tests if RoamingDataUsage is correctly set and get
  * Expected: received developer shoudl match the one was set

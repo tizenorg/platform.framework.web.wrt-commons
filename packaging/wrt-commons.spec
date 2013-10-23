@@ -1,6 +1,6 @@
 Name:       wrt-commons
 Summary:    Wrt common library
-Version:    0.2.158
+Version:    0.2.160
 Release:    1
 Group:      System/Libraries
 License:    Apache-2.0

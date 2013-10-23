@@ -47,25 +47,6 @@ void GlobalDAO::SetSecureByDefault(bool secure)
     }
 }
 
-void GlobalDAO::SetHomeNetworkDataUsage(GlobalDAO::NetworkAccessMode newMode)
-{
-    LogDebug("updating home network data usage to:" << newMode);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        GlobalProperties::Row row;
-        row.Set_home_network_data_usage(static_cast<int>(newMode));
-
-        WRT_DB_UPDATE(update, GlobalProperties, &WrtDatabase::interface())
-        update->Values(row);
-        update->Execute();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to update home network data usage");
-    }
-}
-
 void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
 {
     LogDebug("updating roaming network data usage to:" << newMode);
@@ -82,46 +63,6 @@ void GlobalDAO::SetRoamingDataUsage(GlobalDAO::NetworkAccessMode newMode)
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAO::Exception::DatabaseError,
                    "Failed to update roaming network data usage");
-    }
-}
-
-void GlobalDAO::AddWhiteURI(const std::string &uri, bool subDomain)
-{
-    LogDebug("Add White URI : " << uri);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WidgetWhiteURIList::Row row;
-        row.Set_uri(DPL::FromASCIIString(uri));
-        row.Set_subdomain_access(static_cast<int>(subDomain));
-        wrt::ScopedTransaction transaction(&WrtDatabase::interface());
-
-        WRT_DB_INSERT(insert, WidgetWhiteURIList, &WrtDatabase::interface())
-
-        insert->Values(row);
-        insert->Execute();
-        transaction.Commit();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to add white URI");
-    }
-}
-
-void GlobalDAO::RemoveWhiteURI(const std::string &uri)
-{
-    LogDebug("Remove White URI : " << uri);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-
-        WRT_DB_DELETE(deleteFrom, WidgetWhiteURIList, &WrtDatabase::interface())
-        deleteFrom->Where(Equals<WidgetWhiteURIList::uri>(DPL::FromASCIIString(
-                                                              uri)));
-        deleteFrom->Execute();
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAO::Exception::DatabaseError,
-                   "Failed to removed white URI from AdultBlackList");
     }
 }
 

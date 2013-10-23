@@ -41,24 +41,6 @@ bool GlobalDAOReadOnly::GetSecureByDefault()
     return select->GetSingleValue<GlobalProperties::secure_by_default>();
 }
 
-GlobalDAOReadOnly::NetworkAccessMode
-GlobalDAOReadOnly::GetHomeNetworkDataUsage()
-{
-    LogDebug("Getting home network data usage");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return static_cast<GlobalDAOReadOnly::NetworkAccessMode>(
-                   select->GetSingleValue<
-                       GlobalProperties::home_network_data_usage>());
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get home network data usage");
-    }
-}
-
 GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
 {
     LogDebug("Getting roaming network data usage");
@@ -139,33 +121,6 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     } Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to update roaming network data usage");
-    }
-}
-
-WidgetAccessInfoList GlobalDAOReadOnly::GetWhiteURIList()
-{
-    LogDebug("Getting WhiteURIList.");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, WidgetWhiteURIList, &WrtDatabase::interface())
-
-        WidgetAccessInfoList resultList;
-        typedef std::list<WidgetWhiteURIList::Row> RowList;
-        RowList list = select->GetRowList();
-
-        for (RowList::iterator i = list.begin(); i != list.end(); ++i) {
-            WidgetAccessInfo whiteURI;
-            whiteURI.strIRI = i->Get_uri();
-            whiteURI.bSubDomains = i->Get_subdomain_access();
-            resultList.push_back(whiteURI);
-            LogDebug("[uri] : " << whiteURI.strIRI <<
-                    ", [subdomain] : " << whiteURI.bSubDomains);
-        }
-        return resultList;
-    } Catch(DPL::DB::SqlConnection::Exception::Base) {
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get whiteURI list");
     }
 }
 
