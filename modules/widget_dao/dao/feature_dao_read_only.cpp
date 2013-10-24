@@ -370,6 +370,49 @@ FeatureDAOReadOnly::GetDevCapWithFeatureHandle()
     }
 }
 
+DeviceCapabilitySet FeatureDAOReadOnly::GetDeviceCapability(
+    const DPL::String &apifeature)
+{
+    // This could be done with one simply sql query but support for join is
+    // needed in orm.
+    Try {
+        using namespace DPL::DB::ORM;
+        using namespace DPL::DB::ORM::wrt;
+
+        int featureUUID;
+        FeatureDeviceCapProxy::Select::RowList rows;
+        DeviceCapabilitySet result;
+
+        {
+            WRT_DB_SELECT(select, FeaturesList, &WrtDatabase::interface())
+            select->Where(Equals<FeaturesList::FeatureName>(apifeature));
+            featureUUID = select->GetSingleValue<FeaturesList::FeatureUUID>();
+        }
+
+        {
+            WRT_DB_SELECT(select,
+                          FeatureDeviceCapProxy,
+                          &WrtDatabase::interface())
+            select->Where(Equals<FeatureDeviceCapProxy::FeatureUUID>(
+                              featureUUID));
+            rows = select->GetRowList();
+        }
+
+        FOREACH(it, rows){
+            WRT_DB_SELECT(select, DeviceCapabilities, &WrtDatabase::interface())
+            select->Where(Equals<DeviceCapabilities::DeviceCapID>(
+                              it->Get_DeviceCapID()));
+            result.insert(select->
+                              GetSingleValue<DeviceCapabilities::DeviceCapName>());
+        }
+
+        return result;
+    } Catch(DPL::DB::SqlConnection::Exception::Base){
+        ReThrowMsg(FeatureDAOReadOnly::Exception::DatabaseError,
+                   "Failed to get device capability");
+    }
+}
+
 FeatureDAOReadOnly::FeatureMap
 FeatureDAOReadOnly::GetFeatures(const std::list<std::string>& featureNames)
 {

@@ -32,15 +32,6 @@
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 
 namespace WrtDB {
-
-bool GlobalDAOReadOnly::GetSecureByDefault()
-{
-    using namespace DPL::DB::ORM;
-    using namespace DPL::DB::ORM::wrt;
-    WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-    return select->GetSingleValue<GlobalProperties::secure_by_default>();
-}
-
 GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
 {
     LogDebug("Getting roaming network data usage");
@@ -54,30 +45,6 @@ GlobalDAOReadOnly::NetworkAccessMode GlobalDAOReadOnly::GetRoamingDataUsage()
     Catch(DPL::DB::SqlConnection::Exception::Base){
         ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
                    "Failed to get roaming network data usage");
-    }
-}
-
-//user agent strings are stored in db...
-//and it is configurable for test in development.
-DPL::String GlobalDAOReadOnly::GetUserAgentValue(const DPL::String &key)
-{
-    LogDebug("Get User Agent Value : " << key);
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, UserAgents, &WrtDatabase::interface())
-        select->Where(Equals<UserAgents::key_name>(key));
-        DPL::Optional<DPL::String> agent =
-            select->GetSingleValue<UserAgents::key_value>();
-        if (agent.IsNull()) {
-            return DPL::FromUTF8String("");
-        } else {
-            return *agent;
-        }
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get user agent string");
     }
 }
 
@@ -124,18 +91,4 @@ DeviceCapabilitySet GlobalDAOReadOnly::GetDeviceCapability(
     }
 }
 
-bool GlobalDAOReadOnly::GetCookieSharingMode()
-{
-    LogDebug("Getting Cookie Sharing mode");
-    Try {
-        using namespace DPL::DB::ORM;
-        using namespace DPL::DB::ORM::wrt;
-        WRT_DB_SELECT(select, GlobalProperties, &WrtDatabase::interface())
-        return select->GetSingleValue<GlobalProperties::cookie_sharing_mode>();
-    }
-    Catch(DPL::DB::SqlConnection::Exception::Base){
-        ReThrowMsg(GlobalDAOReadOnly::Exception::DatabaseError,
-                   "Failed to get Cookie Sharing mode");
-    }
-}
 } // namespace WrtDB
