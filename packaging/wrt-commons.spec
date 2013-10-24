@@ -130,13 +130,16 @@ else
     cp /usr/var/lib/dbus/machine-id /var/lib/dbus/
 fi
 
-# Set Smack label for db files
-chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
-chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
-chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db
-chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db-journal
-chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db
-chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db-journal
+# Until the Tizen 3.0 smack domains have been defined, all
+# files must use floor or else the system will fall on its face.
+# Reenable the following using whatever ends up being the accepted
+# domain structure once that has been established.
+# chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db
+# chsmack -a 'wrt-commons::db_wrt' /opt/dbspace/.wrt.db-journal
+# chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db
+# chsmack -a 'wrt-commons::db_wrt' /opt/usr/dbspace/.wrt_custom_handler.db-journal
+# chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db
+# chsmack -a '*' /opt/usr/dbspace/.wrt_i18n.db-journal
 
 echo "[WRT] wrt-commons postinst done ..."
 

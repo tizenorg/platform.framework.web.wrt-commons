@@ -37,17 +37,20 @@ function create_db {
 
     pkill -9 security-serv
 
-    # restore smack label
-    if [ -n "$DB_LABEL" ]
-    then
-        chsmack -a "$DB_LABEL" $dbpath.$name.db
-    fi
-
-    # restore smack label
-    if [ -n "$JOURNAL_LABEL" ]
-    then
-        chsmack -a "$JOURNAL_LABEL" $dbpath.$name.db-journal
-    fi
+    # The Tizen 3.0 smack domains have not been estableshed yet,
+    # which requires all files to be set for floor.  Once the
+    # tizen security team is defined a domain structure then 
+    # the following can be reenabled using the appropriate names
+    ## restore smack label
+    #if [ -n "$DB_LABEL" ]
+    #then
+    #    chsmack -a "$DB_LABEL" $dbpath.$name.db
+    #fi
+    ## restore smack label
+    #if [ -n "$JOURNAL_LABEL" ]
+    #then
+    #    chsmack -a "$JOURNAL_LABEL" $dbpath.$name.db-journal
+    #fi
 }
 
 for name in wrt
