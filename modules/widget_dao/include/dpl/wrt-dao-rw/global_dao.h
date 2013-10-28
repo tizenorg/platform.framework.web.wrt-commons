@@ -30,15 +30,11 @@ namespace WrtDB {
 class GlobalDAO : public GlobalDAOReadOnly
 {
   public:
-    static void SetSecureByDefault(bool secureByDefault) DPL_DEPRECATED;
-
     /**
      * This method changes network access mode while roaming is enabled.
      *
      */
     static void SetRoamingDataUsage(NetworkAccessMode newMode) DPL_DEPRECATED;
-
-    static void SetCookieSharingMode(bool mode) DPL_DEPRECATED;
 
   private:
     DPL_DEPRECATED GlobalDAO()

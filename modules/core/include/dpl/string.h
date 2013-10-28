@@ -133,6 +133,23 @@ typename ForwardIterator::value_type Join(ForwardIterator begin, ForwardIterator
     return std::accumulate(++begin, end, *init, func);
 }
 
+template<class StringType> void TrimLeft(StringType & obj, typename StringType::const_pointer separators)
+{
+    obj.erase(0, obj.find_first_not_of(separators));
+}
+
+template<class StringType> void TrimRight(StringType & obj, typename StringType::const_pointer separators)
+{
+    obj.erase(obj.find_last_not_of(separators)+1);
+}
+
+template<class StringType> void Trim(StringType & obj, typename StringType::const_pointer separators)
+{
+    TrimLeft(obj, separators);
+    TrimRight(obj, separators);
+}
+
+
 } //namespace DPL
 
 std::ostream& operator<<(std::ostream& aStream, const DPL::String& aString);

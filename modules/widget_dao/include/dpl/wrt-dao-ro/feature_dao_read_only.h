@@ -32,6 +32,9 @@
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 
 namespace WrtDB {
+// TODO: Move to feature_model.h
+typedef std::set<DPL::String> DeviceCapabilitySet;
+
 class FeatureDAOReadOnly
 {
   public:
@@ -46,6 +49,7 @@ class FeatureDAOReadOnly
         DECLARE_EXCEPTION_TYPE(Base, FeatureNotExist)
     };
 
+    // TODO: Move to feature_model.h
     typedef std::set<std::string> DeviceCapabilitiesList;
     typedef std::multimap<FeatureHandle, std::string> DeviceCapabilitiesMap;
     typedef std::map<FeatureHandle, std::string> NameMap;
@@ -72,6 +76,7 @@ class FeatureDAOReadOnly
 
     static NameMap                 GetNames();
     static DeviceCapabilitiesMap   GetDevCapWithFeatureHandle();
+    static DeviceCapabilitySet GetDeviceCapability(const DPL::String &apifeature);
 
     static FeatureMap GetFeatures(const std::list<std::string>& featureNames);
 
