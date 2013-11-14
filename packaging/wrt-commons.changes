@@ -1,3 +1,6 @@
+* Thu Nov 14 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20131112.015203@5035e69
+- Fix build for x64 arch : Remove hardcoded library path
+
 * Mon May 20 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20130520.103517@f203c87
 - Fix WRT Runtimes Change post section : call wrt_common_create_cleandb.sh
 - Fix WRT Runtime : SQL Issue , remove transaction around CHECK_WIDGET_EXISTENCE + Force transaction BEGIN IMEDIATE + Try catch
