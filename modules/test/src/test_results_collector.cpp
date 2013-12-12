@@ -21,6 +21,7 @@
  */
 #include <cstddef>
 #include <dpl/test/test_results_collector.h>
+#include <dpl/availability.h>
 #include <dpl/colors.h>
 #include <dpl/assert.h>
 #include <dpl/foreach.h>
@@ -37,6 +38,19 @@
 
 #define GREEN_RESULT_OK "[%s%s%s]\n", BOLD_GREEN_BEGIN, "   OK   ", \
     BOLD_GREEN_END
+#define GREEN_RESULT_OK_TIME "[%s%s%s] [elapsed: %0.3fms]\n", BOLD_GREEN_BEGIN, \
+    "   OK   ", BOLD_GREEN_END
+#define GREEN_RESULT_OK_TIME_MAX(elapsed, max) \
+    "[%s%s%s] %s[elapsed: %0.3fms, expected < %0.3fms]%s\n", BOLD_GREEN_BEGIN, \
+    "   OK   ", BOLD_GREEN_END, BOLD_GREEN_BEGIN, elapsed, max, BOLD_GREEN_END
+#define GREEN_RESULT_OK_TIME_TOO_LONG(elapsed, max) \
+    "[%s%s%s] %s[elapsed: %0.3fms, expected < %0.3fms]%s\n", BOLD_GREEN_BEGIN, \
+    "   OK   ", BOLD_GREEN_END, BOLD_RED_BEGIN, elapsed, max, BOLD_RED_END
+
+// Get duration as a fraction of millisecond (max precision is 1 microsecond)
+#define GET_MILLISECONDS_DOUBLE(performanceTime) \
+    ((static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>\
+    (performanceTime).count()))/1000.0)
 
 namespace DPL {
 namespace Test {
@@ -146,7 +160,10 @@ class ConsoleCollector :
     virtual void CollectResult(const std::string& id,
                                const std::string& /*description*/,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "")
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = true,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero())
     {
         using namespace DPL::Colors::Text;
         std::string tmp = "'" + id + "' ...";
@@ -154,6 +171,24 @@ class ConsoleCollector :
         printf("Running test case %-60s", tmp.c_str());
         switch (status) {
         case TestResultsCollectorBase::FailStatus::NONE:
+            if (isPerformanceTest) {
+                if (performanceMaxTime <= std::chrono::microseconds::zero()) {
+                    printf(GREEN_RESULT_OK_TIME,
+                            GET_MILLISECONDS_DOUBLE(performanceTime));
+                    break;
+                }
+                else {
+                    if (performanceTime > performanceMaxTime)
+                        printf(GREEN_RESULT_OK_TIME_TOO_LONG(
+                                GET_MILLISECONDS_DOUBLE(performanceTime),
+                                GET_MILLISECONDS_DOUBLE(performanceMaxTime)));
+                    else
+                        printf(GREEN_RESULT_OK_TIME_MAX(
+                                GET_MILLISECONDS_DOUBLE(performanceTime),
+                                GET_MILLISECONDS_DOUBLE(performanceMaxTime)));
+                    break;
+                }
+            }
             printf(GREEN_RESULT_OK);
             break;
         case TestResultsCollectorBase::FailStatus::FAILED:
@@ -319,7 +354,10 @@ class HtmlCollector :
     virtual void CollectResult(const std::string& id,
                                const std::string& /*description*/,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "")
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = false,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero())
     {
         using namespace DPL::Colors::Html;
         std::string tmp = "'" + id + "' ...";
@@ -327,6 +365,23 @@ class HtmlCollector :
         fprintf(m_fp.Get(), "Running test case %-100s", tmp.c_str());
         switch (status) {
         case TestResultsCollectorBase::FailStatus::NONE:
+            if (isPerformanceTest) {
+                if (performanceMaxTime <= std::chrono::microseconds::zero()) {
+                    fprintf(m_fp.Get(), GREEN_RESULT_OK_TIME,
+                            GET_MILLISECONDS_DOUBLE(performanceTime));
+                    break;
+                } else {
+                    if (performanceTime > performanceMaxTime)
+                        fprintf(m_fp.Get(), GREEN_RESULT_OK_TIME_TOO_LONG(
+                                GET_MILLISECONDS_DOUBLE(performanceTime),
+                                GET_MILLISECONDS_DOUBLE(performanceMaxTime)));
+                    else
+                        fprintf(m_fp.Get(), GREEN_RESULT_OK_TIME_MAX(
+                                GET_MILLISECONDS_DOUBLE(performanceTime),
+                                GET_MILLISECONDS_DOUBLE(performanceMaxTime)));
+                    break;
+                }
+            }
             fprintf(m_fp.Get(), GREEN_RESULT_OK);
             break;
         case TestResultsCollectorBase::FailStatus::FAILED:
@@ -510,7 +565,10 @@ class XmlCollector :
     virtual void CollectResult(const std::string& id,
                                const std::string& /*description*/,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "")
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = false,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero())
     {
         m_resultBuffer.erase();
         m_resultBuffer.append("\t\t<testcase name=\"");
@@ -518,6 +576,27 @@ class XmlCollector :
         m_resultBuffer.append("\"");
         switch (status) {
         case TestResultsCollectorBase::FailStatus::NONE:
+            if (isPerformanceTest) {
+                if (performanceMaxTime <= std::chrono::microseconds::zero()) {
+                    m_resultBuffer.append(" status=\"OK\" time=\"");
+                    std::ostringstream ostr;
+                    ostr << performanceTime.count();
+                    m_resultBuffer.append(ostr.str());
+                    m_resultBuffer.append("\"/>\n");
+                    break;
+                } else {
+                    m_resultBuffer.append(" status=\"OK\" time=\"");
+                    std::ostringstream ostr;
+                    ostr << performanceTime.count();
+                    m_resultBuffer.append(ostr.str());
+                    m_resultBuffer.append("\" time_expected=\"");
+                    ostr.str("");
+                    ostr << performanceMaxTime.count();
+                    m_resultBuffer.append(ostr.str());
+                    m_resultBuffer.append("\"/>\n");
+                    break;
+                }
+            }
             m_resultBuffer.append(" status=\"OK\"/>\n");
             break;
         case TestResultsCollectorBase::FailStatus::FAILED:
@@ -763,7 +842,7 @@ class CSVCollector :
 
     virtual void Start()
     {
-        printf("GROUP;ID;RESULT;REASON\n");
+        printf("GROUP;ID;RESULT;REASON;ELAPSED [s];EXPECTED [s]\n");
     }
 
     virtual void CollectCurrentTestGroupName(const std::string& name)
@@ -774,11 +853,27 @@ class CSVCollector :
     virtual void CollectResult(const std::string& id,
                                const std::string& /*description*/,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "")
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = false,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero())
     {
         std::string statusMsg = "";
         switch (status) {
-        case TestResultsCollectorBase::FailStatus::NONE: statusMsg = "OK";
+        case TestResultsCollectorBase::FailStatus::NONE:
+            statusMsg = "OK";
+            if (isPerformanceTest) {
+                statusMsg.append(";;");
+                std::ostringstream ostr;
+                ostr << performanceTime.count();
+                statusMsg.append(ostr.str());
+                if (performanceMaxTime <= std::chrono::microseconds::zero()) {
+                    statusMsg.append(";");
+                    ostr.str("");
+                    ostr << performanceMaxTime.count();
+                    statusMsg.append(ostr.str());
+                }
+            }
             break;
         case TestResultsCollectorBase::FailStatus::FAILED: statusMsg = "FAILED";
             break;
@@ -856,8 +951,16 @@ class TAPCollector :
     virtual void CollectResult(const std::string& id,
                                const std::string& description,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "")
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = false,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero())
     {
+        /* Remove unused variable warning */
+        DPL_UNUSED_PARAM(isPerformanceTest);
+        DPL_UNUSED_PARAM(performanceTime);
+        DPL_UNUSED_PARAM(performanceMaxTime);
+
         m_testIndex++;
         switch (status) {
         case TestResultsCollectorBase::FailStatus::NONE:
