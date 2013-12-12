@@ -27,6 +27,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <chrono>
 #include <string>
 #include <memory>
 
@@ -68,7 +69,10 @@ class TestResultsCollectorBase :
     virtual void CollectResult(const std::string& id,
                                const std::string& description,
                                const FailStatus::Type status = FailStatus::NONE,
-                               const std::string& reason = "") = 0;
+                               const std::string& reason = "",
+                               const bool& isPerformanceTest = false,
+                               const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds{0},
+                               const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds{0}) = 0;
     virtual std::string CollectorSpecificHelp() const
     {
         return "";
