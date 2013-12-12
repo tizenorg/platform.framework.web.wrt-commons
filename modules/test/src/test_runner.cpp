@@ -247,6 +247,7 @@ bool TestRunner::filterByXML(std::map<std::string, bool> & casesMap)
 
 TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
 {
+    setCurrentTestCase(&(const_cast<TestCaseStruct &>(testCase)));
     try {
         testCase.proc();
     } catch (const TestFailed &e) {
@@ -255,6 +256,8 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
                       "",
                       TestResultsCollectorBase::FailStatus::FAILED,
                       e.GetMessage());
+
+        setCurrentTestCase(NULL);
         return FAILED;
     } catch (const Ignored &e) {
         if (m_runIgnored) {
@@ -265,6 +268,7 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
                           e.GetMessage());
         }
 
+        setCurrentTestCase(NULL);
         return IGNORED;
     } catch (const DPL::Exception &e) {
         // DPL exception failure
@@ -273,6 +277,7 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
                       TestResultsCollectorBase::FailStatus::INTERNAL,
                       "DPL exception:" + e.GetMessage());
 
+        setCurrentTestCase(NULL);
         return FAILED;
     } catch (const std::exception &) {
         // std exception failure
@@ -281,6 +286,7 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
                       TestResultsCollectorBase::FailStatus::INTERNAL,
                       "std exception");
 
+        setCurrentTestCase(NULL);
         return FAILED;
     } catch (...) {
         // Unknown exception failure
@@ -289,12 +295,18 @@ TestRunner::Status TestRunner::RunTestCase(const TestCaseStruct& testCase)
                       TestResultsCollectorBase::FailStatus::INTERNAL,
                       "unknown exception");
 
+        setCurrentTestCase(NULL);
         return FAILED;
     }
 
     CollectResult(testCase.name,
                   "",
-                  TestResultsCollectorBase::FailStatus::NONE);
+                  TestResultsCollectorBase::FailStatus::NONE,
+                  "",
+                  testCase.m_isPerformanceTest,
+                  testCase.m_performanceTestDurationTime,
+                  testCase.m_performanceMaxTime);
+    setCurrentTestCase(NULL);
 
     // Everything OK
     return PASS;
@@ -362,11 +374,77 @@ void TestRunner::RunTests()
     fprintf(stderr, "%s%s%s\n\n", GREEN_BEGIN, "Finished", GREEN_END);
 }
 
+TestRunner::TestCaseStruct *TestRunner::getCurrentTestCase()
+{
+    return m_currentTestCase;
+}
+
+void TestRunner::setCurrentTestCase(TestCaseStruct* testCase)
+{
+    m_currentTestCase = testCase;
+}
+
+void TestRunner::beginPerformanceTestTime(std::chrono::system_clock::duration maxTimeInMicroseconds)
+{
+    TestCaseStruct* testCase = getCurrentTestCase();
+    if (!testCase)
+        return;
+
+    testCase->m_isPerformanceTest = true;
+    testCase->m_performanceMaxTime = maxTimeInMicroseconds;
+    testCase->m_performanceTestStartTime = std::chrono::system_clock::now();
+
+    // Set result to 0 microseconds. Display 0ms result when end macro is missing.
+    testCase->m_performanceTestDurationTime = std::chrono::microseconds{0};
+}
+
+void TestRunner::endPerformanceTestTime()
+{
+    TestCaseStruct* testCase = getCurrentTestCase();
+    if (!testCase)
+        return;
+
+    testCase->m_performanceTestDurationTime = std::chrono::system_clock::now() -
+            testCase->m_performanceTestStartTime;
+}
+
+void TestRunner::getCurrentTestCasePerformanceResult(bool& isPerformanceTest,
+                                                     std::chrono::system_clock::duration& result,
+                                                     std::chrono::system_clock::duration& resultMax)
+{
+    TestCaseStruct* testCase = getCurrentTestCase();
+    if (!testCase || !(testCase->m_isPerformanceTest)){
+        isPerformanceTest = false;
+        return;
+    }
+
+    isPerformanceTest = testCase->m_isPerformanceTest;
+    result = testCase->m_performanceTestDurationTime;
+    resultMax = testCase->m_performanceMaxTime;
+}
+
+void TestRunner::setCurrentTestCasePerformanceResult(bool isPerformanceTest,
+                                                     std::chrono::system_clock::duration result,
+                                                     std::chrono::system_clock::duration resultMax)
+{
+    TestCaseStruct* testCase = getCurrentTestCase();
+    if (!testCase)
+        return;
+
+    testCase->m_isPerformanceTest = isPerformanceTest;
+    testCase->m_performanceTestDurationTime = result;
+    testCase->m_performanceMaxTime = resultMax;
+}
+
+
 void TestRunner::CollectResult(
     const std::string& id,
     const std::string& description,
     const TestResultsCollectorBase::FailStatus::Type status,
-    const std::string& reason)
+    const std::string& reason,
+    const bool& isPerformanceTest,
+    const std::chrono::system_clock::duration& performanceTestDurationTime,
+    const std::chrono::system_clock::duration& performanceMaxTime)
 {
     std::for_each(m_collectors.begin(),
                   m_collectors.end(),
@@ -375,7 +453,10 @@ void TestRunner::CollectResult(
                       collector.second->CollectResult(id,
                                                       description,
                                                       status,
-                                                      reason);
+                                                      reason,
+                                                      isPerformanceTest,
+                                                      performanceTestDurationTime,
+                                                      performanceMaxTime);
                   });
 }
 
