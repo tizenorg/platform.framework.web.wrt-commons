@@ -49,6 +49,9 @@ const int CHILD_TEST_FAIL    = 0;
 const int CHILD_TEST_PASS    = 1;
 const int CHILD_TEST_IGNORED = 2;
 
+const int MSG_TYPE_MESSAGE   = 0; // sizeof(Message) + Message
+const int MSG_TYPE_PERF_TIME = 1; // perfTime + maxTime
+
 int closeOutput() {
     int devnull;
     int retcode = -1;
@@ -112,6 +115,7 @@ PipeWrapper::Status PipeWrapper::send(int code, std::string &message)
 
     std::ostringstream output;
     output << toBinaryString(code);
+    output << toBinaryString(MSG_TYPE_MESSAGE);
     output << toBinaryString(static_cast<int>(message.size()));
     output << message;
 
@@ -127,7 +131,38 @@ PipeWrapper::Status PipeWrapper::send(int code, std::string &message)
     return SUCCESS;
 }
 
-PipeWrapper::Status PipeWrapper::receive(int &code, std::string &data, time_t deadline)
+PipeWrapper::Status PipeWrapper::sendTime(int code,
+                                          std::chrono::system_clock::duration time,
+                                          std::chrono::system_clock::duration timeMax)
+{
+    if (m_pipefd[1] == PIPE_CLOSED) {
+        return ERROR;
+    }
+
+    std::ostringstream output;
+    output << toBinaryString(code);
+    output << toBinaryString(MSG_TYPE_PERF_TIME);
+    output << toBinaryString(time);
+    output << toBinaryString(timeMax);
+
+    std::string binary = output.str();
+    int size = binary.size();
+
+    if ((writeHelp(&size,
+                   sizeof(int)) == ERROR) ||
+        (writeHelp(binary.c_str(), size) == ERROR))
+    {
+        return ERROR;
+    }
+    return SUCCESS;
+}
+
+PipeWrapper::Status PipeWrapper::receive(int &code,
+                                         int &msgType,
+                                         std::string &data,
+                                         std::chrono::system_clock::duration &time,
+                                         std::chrono::system_clock::duration &timeMax,
+                                         time_t deadline)
 {
     if (m_pipefd[0] == PIPE_CLOSED) {
         return ERROR;
@@ -152,12 +187,24 @@ PipeWrapper::Status PipeWrapper::receive(int &code, std::string &data, time_t de
         queue.AppendCopy(&buffer[0], size);
 
         queue.FlattenConsume(&code, sizeof(int));
-        queue.FlattenConsume(&size, sizeof(int));
+        queue.FlattenConsume(&msgType, sizeof(int));
 
-        buffer.resize(size);
+        switch (msgType) {
+        case MSG_TYPE_MESSAGE:
+            queue.FlattenConsume(&size, sizeof(int));
 
-        queue.FlattenConsume(&buffer[0], size);
-        data.assign(buffer.begin(), buffer.end());
+            buffer.resize(size);
+
+            queue.FlattenConsume(&buffer[0], size);
+            data.assign(buffer.begin(), buffer.end());
+            break;
+        case MSG_TYPE_PERF_TIME:
+            queue.FlattenConsume(&time, sizeof(std::chrono::system_clock::duration));
+            queue.FlattenConsume(&timeMax, sizeof(std::chrono::system_clock::duration));
+            break;
+        default:
+            return ERROR;
+        }
     } catch (DPL::BinaryQueue::Exception::Base &e) {
         return ERROR;
     }
@@ -175,6 +222,13 @@ std::string PipeWrapper::toBinaryString(int data)
     char buffer[sizeof(int)];
     memcpy(buffer, &data, sizeof(int));
     return std::string(buffer, buffer + sizeof(int));
+}
+
+std::string PipeWrapper::toBinaryString(std::chrono::system_clock::duration data)
+{
+    char buffer[sizeof(std::chrono::system_clock::duration)];
+    memcpy(buffer, &data, sizeof(std::chrono::system_clock::duration));
+    return std::string(buffer, buffer + sizeof(std::chrono::system_clock::duration));
 }
 
 void PipeWrapper::closeHelp(int desc)
@@ -259,9 +313,12 @@ void RunChildProc(TestRunner::TestCase procChild)
         pipe.setUsage(PipeWrapper::READONLY);
 
         int code;
+        int msgType;
+        std::chrono::system_clock::duration time_m;
+        std::chrono::system_clock::duration timeMax_m;
         std::string message;
 
-        int pipeReturn = pipe.receive(code, message, time(0) + 10);
+        int pipeReturn = pipe.receive(code, msgType, message, time_m, timeMax_m, time(0) + 10);
 
         if (pipeReturn != PipeWrapper::SUCCESS) { // Timeout or reading error
             pipe.closeAll();
@@ -279,6 +336,12 @@ void RunChildProc(TestRunner::TestCase procChild)
             throw TestRunner::TestFailed("Reading pipe error");
         }
 
+        if (code == CHILD_TEST_PASS && msgType == MSG_TYPE_PERF_TIME) {
+            DPL::Test::TestRunnerSingleton::Instance().setCurrentTestCasePerformanceResult(true,
+                                                                                           time_m,
+                                                                                           timeMax_m);
+        }
+
         if (code == CHILD_TEST_FAIL) {
             throw TestRunner::TestFailed(message);
         } else if (code == CHILD_TEST_IGNORED) {
@@ -292,6 +355,9 @@ void RunChildProc(TestRunner::TestCase procChild)
 
         int code = CHILD_TEST_PASS;
         std::string msg;
+        bool isPerformanceTest;
+        std::chrono::system_clock::duration time_m;
+        std::chrono::system_clock::duration timeMax_m;
 
         bool allowLogs = TestRunnerSingleton::Instance().GetAllowChildLogs();
 
@@ -319,7 +385,17 @@ void RunChildProc(TestRunner::TestCase procChild)
             closeOutput();
         }
 
-        pipe.send(code, msg);
+        DPL::Test::TestRunnerSingleton::Instance().getCurrentTestCasePerformanceResult(isPerformanceTest,
+                                                                                       time_m,
+                                                                                       timeMax_m);
+
+        if (code == CHILD_TEST_PASS && isPerformanceTest){
+            pipe.sendTime(code,
+                    time_m,
+                    timeMax_m);
+        } else {
+            pipe.send(code, msg);
+        }
     }
 }
 } // namespace Test

@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <chrono>
 #include <list>
 #include <set>
 #include <map>
@@ -47,9 +48,19 @@ class TestRunner
 
   public:
     TestRunner() :
-        m_terminate(false)
+        m_currentTestCase(NULL)
+      , m_terminate(false)
       , m_allowChildLogs(false)
     {}
+
+    void beginPerformanceTestTime(std::chrono::system_clock::duration maxTimeInMicroseconds);
+    void endPerformanceTestTime();
+    void getCurrentTestCasePerformanceResult(bool& isPerformanceTest,
+                                             std::chrono::system_clock::duration& result,
+                                             std::chrono::system_clock::duration& resultMax);
+    void setCurrentTestCasePerformanceResult(bool isPerformanceTest,
+                                             std::chrono::system_clock::duration result,
+                                             std::chrono::system_clock::duration resultMax);
 
     typedef void (*TestCase)();
 
@@ -58,6 +69,11 @@ class TestRunner
     {
         std::string name;
         TestCase proc;
+
+        bool m_isPerformanceTest;
+        std::chrono::system_clock::time_point m_performanceTestStartTime;
+        std::chrono::system_clock::duration m_performanceTestDurationTime;
+        std::chrono::system_clock::duration m_performanceMaxTime;
 
         bool operator <(const TestCaseStruct &other) const
         {
@@ -71,13 +87,16 @@ class TestRunner
 
         TestCaseStruct(const std::string &n, TestCase p) :
             name(n),
-            proc(p)
+            proc(p),
+            m_isPerformanceTest(false)
         {}
     };
 
     typedef std::list<TestCaseStruct> TestCaseStructList;
     typedef std::map<std::string, TestCaseStructList> TestCaseGroupMap;
     TestCaseGroupMap m_testGroups;
+
+    TestCaseStruct * m_currentTestCase;
 
     typedef std::set<std::string> SelectedTestNameSet;
     SelectedTestNameSet m_selectedTestNamesSet;
@@ -105,13 +124,19 @@ class TestRunner
 
     Status RunTestCase(const TestCaseStruct& testCase);
 
+    void setCurrentTestCase(TestCaseStruct* testCase);
+    TestCaseStruct *getCurrentTestCase();
+
     void RunTests();
 
     void CollectResult(const std::string& id,
                        const std::string& description,
                        const TestResultsCollectorBase::FailStatus::Type status
                            = TestResultsCollectorBase::FailStatus::NONE,
-                       const std::string& reason = std::string());
+                       const std::string& reason = std::string(),
+                       const bool& isPerformanceTest = false,
+                       const std::chrono::system_clock::duration& performanceTime = std::chrono::microseconds::zero(),
+                       const std::chrono::system_clock::duration& performanceMaxTime = std::chrono::microseconds::zero());
 
   public:
     class TestFailed
@@ -225,5 +250,33 @@ typedef DPL::Singleton<TestRunner> TestRunnerSingleton;
                                          throw DPL::Test::TestRunner::Ignored( \
                                                    assertMsg.str()); \
 } while (0)
+
+/*
+ * Use these macros to do the time measurement. The first macro will start time measurement,
+ * the second will gather the result. These macros can be used only once per test-case.
+ * The result of time measurement will be displayed only if the test will pass.
+ * Notice that these macros will work only if will be used in parent process. If these
+ * macros will be used in child process then there will be no time measure results printed.
+ * This macro in multiprocess tests has effect only if used in parent process. This macro
+ * used in child process in multiprocess test has no effect.
+ * The precision of measurement is 1 microsecond - the smallest time value that can be
+ * measured is 0.000001s.
+ * The time measure results will be printed only specific output format:
+ *     - text
+ *     - html
+ *     - xml
+ *     - csv
+ * In TAP format performance result will not be displayed.
+ */
+#define RUNNER_PERF_TEST_BEGIN(maxTime)                                        \
+    do {                                                                       \
+        DPL::Test::TestRunnerSingleton::Instance().beginPerformanceTestTime(   \
+                std::chrono::microseconds{static_cast<long long int>(maxTime*1000000.0)}); \
+    } while (0)
+
+#define RUNNER_PERF_TEST_END()                                                \
+    do {                                                                      \
+        DPL::Test::TestRunnerSingleton::Instance().endPerformanceTestTime();  \
+    } while (0)
 
 #endif // DPL_TEST_RUNNER_H
