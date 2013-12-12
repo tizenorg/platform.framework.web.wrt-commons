@@ -14,7 +14,9 @@
 #    limitations under the License.
 #
 
-rm -rf /opt/share/widget/system/*
+source /etc/tizen-platform.conf
+
+rm -rf $TZ_SYS_RW_WIDGET/system/*
 uninstall_widgets=1
 if [ "$1" == "--old" ]
 then
@@ -22,12 +24,12 @@ then
     uninstall_widgets=0
 fi
 #Removing of widget desktop icons
-WIDGET_EXEC_PATH=/opt/usr/apps/
-WIDGET_PRELOAD_EXEC_PATH=/usr/apps/
-WIDGET_DESKTOP_PATH=/opt/share/applications/
-SMACK_RULES_PATH=/etc/smack/accesses.d/
-WRT_DB=/opt/dbspace/.wrt.db
-PLUGINS_INSTALLATION_REQUIRED_PATH=/opt/share/widget/
+WIDGET_EXEC_PATH=$TZ_USER_APP/
+WIDGET_PRELOAD_EXEC_PATH=$TZ_SYS_RO_APP/
+WIDGET_DESKTOP_PATH=$TZ_SYS_RW_DESKTOP_APP/
+SMACK_RULES_PATH=$TZ_SYS_SMACK/accesses.d/
+WRT_DB=$TZ_SYS_DB/.wrt.db
+PLUGINS_INSTALLATION_REQUIRED_PATH=$TZ_SYS_RW_WIDGET/
 PLUGINS_INSTALLATION_REQUIRED=plugin-installation-required
 
 if [ -f ${WRT_DB} ]

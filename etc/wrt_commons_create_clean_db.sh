@@ -14,8 +14,10 @@
 #    limitations under the License.
 #
 
-DB_PATH=/opt/dbspace/
-DB_USER_PATH=/opt/usr/dbspace/
+source /etc/tizen-platform.conf
+
+DB_PATH=$TZ_SYS_DB/
+DB_USER_PATH=$TZ_USER_DB/
 
 function create_db {
     name=$1
@@ -30,8 +32,8 @@ function create_db {
     SQL=".read /usr/share/wrt-engine/"$name"_db.sql"
     sqlite3 $dbpath.$name.db "$SQL"
     touch $dbpath.$name.db-journal
-    chown 0:6026 $dbpath.$name.db
-    chown 0:6026 $dbpath.$name.db-journal
+    chown 0:db_wrt $dbpath.$name.db
+    chown 0:db_wrt $dbpath.$name.db-journal
     chmod 660 $dbpath.$name.db
     chmod 660 $dbpath.$name.db-journal
 

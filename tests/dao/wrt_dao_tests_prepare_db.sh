@@ -14,7 +14,9 @@
 #    limitations under the License.
 #
 
-WRT_DB=/opt/dbspace/.wrt.db
+source /etc/tizen-platform.conf
+
+WRT_DB=$TZ_SYS_DB/.wrt.db
 WRT_DB_BCK=/tmp/wrt.db_backup
 
 if [ "x$1" == "xstart" ]; then

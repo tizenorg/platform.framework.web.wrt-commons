@@ -37,6 +37,7 @@ PKG_CHECK_MODULES(WRT_DAO_DEPS
     appcore-efl
     libxml-2.0
     openssl
+    libtzplatform-config
     REQUIRED)
 
 set(WRT_DAO_RO_SOURCES

@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <unistd.h>
+#include <tzplatform_config.h>
 
 using namespace DPL::DB::ORM;
 using namespace DPL::DB::ORM::security_origin;
@@ -74,8 +75,8 @@ const char* const SECURITY_ORIGIN_DB_SQL_PATH =
     "/usr/share/wrt-engine/security_origin_db.sql";
 const char* const SECURITY_DATABASE_JOURNAL_FILENAME = "-journal";
 
-const int WEB_APPLICATION_UID = 5000;
-const int WEB_APPLICATION_GUID = 5000;
+const int WEB_APPLICATION_UID = tzplatform_getuid(TZ_USER_NAME);
+const int WEB_APPLICATION_GUID = tzplatform_getgid(TZ_SYS_USER_GROUP);
 
 std::string createDatabasePath(const WrtDB::TizenPkgId &pkgName)
 {

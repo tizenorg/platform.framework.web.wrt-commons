@@ -29,6 +29,7 @@
 #include <dpl/test/test_runner.h>
 #include <dpl/utils/wrt_utility.h>
 #include <dpl/log/log.h>
+#include <tzplatform_config.h>
 
 RUNNER_TEST_GROUP_INIT(DPL_WRT_UTILITY)
 
@@ -99,7 +100,7 @@ RUNNER_TEST(wrt_utility_WrtUtilMakeDir_PermissionError)
         char *buffer = new char[bufsize];
         struct passwd p;
         struct passwd *result = NULL;
-        int return_value = getpwnam_r("app", &p, buffer, bufsize, &result);
+        int return_value = getpwnam_r(tzplatform_getenv(TZ_USER_NAME), &p, buffer, bufsize, &result);
         delete[] buffer;
 
         if (return_value != 0 || !result) {

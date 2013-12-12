@@ -31,6 +31,7 @@
 #include <dpl/binary_queue.h>
 #include <dpl/file_input.h>
 #include <dpl/file_output.h>
+#include <tzplatform_config.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -936,8 +937,8 @@ Expected: temp dir exists
 RUNNER_TEST(path_create_temp_dir)
 {
     Path p1 = CreateTempPath(Path("/usr/tmp/"));
-    Path p2 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
-    Path p3 = CreateTempPath(Path("/opt/usr/apps/tmp/"));
+    Path p2 = CreateTempPath(Path(tzplatform_mkpath(TZ_USER_APP,"tmp/")));
+    Path p3 = CreateTempPath(Path(tzplatform_mkpath(TZ_USER_APP,"tmp/")));
 
     RUNNER_ASSERT_MSG(p1.Exists(), "Temp dir doesn't exists");
     RUNNER_ASSERT_MSG(p2.Exists(), "Temp dir doesn't exists");

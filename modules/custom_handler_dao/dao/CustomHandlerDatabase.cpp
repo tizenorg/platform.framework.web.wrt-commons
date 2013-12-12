@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 #include <wrt-commons/custom-handler-dao-ro/CustomHandlerDatabase.h>
+#include <tzplatform_config.h>
 
 namespace CustomHandlerDB {
 namespace Interface {
 namespace {
-const char* CustomHandler_DB_DATABASE = "/opt/usr/dbspace/.wrt_custom_handler.db";
+const char* CustomHandler_DB_DATABASE = tzplatform_mkpath(TZ_USER_DB,".wrt_custom_handler.db");
 DPL::DB::SqlConnection::Flag::Type CustomHandler_DB_FLAGS =
     DPL::DB::SqlConnection::Flag::UseLucene;
 }

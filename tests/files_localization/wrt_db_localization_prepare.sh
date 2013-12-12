@@ -17,11 +17,13 @@
 
 set -e
 
+source /etc/tizen-platform.conf
+
 trap 'echo "Script failed"; exit 1' ERR
 
-WRT_DB=/opt/dbspace/.wrt.db
+WRT_DB=$TZ_SYS_DB/.wrt.db
 WRT_DB_BCK=/tmp/wrt.db_backup
-WIDGET_INSTALL_PATH=/opt/usr/apps
+WIDGET_INSTALL_PATH=$TZ_USER_APP
 
 case $1 in
     start)
@@ -35,8 +37,8 @@ case $1 in
 
         sqlite3 $WRT_DB "${INS_ALL_WIDGET} VALUES(1, 'tizenid201')";
         sqlite3 $WRT_DB "${INS_ALL_WIDGET} VALUES(2, 'tizenid202')";
-        sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(1, '/opt/share/widget/tests/localization/widget1')";
-        sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(2, '/opt/share/widget/tests/localization/widget2')";
+        sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(1, '${TZ_SYS_RW_WIDGET}/tests/localization/widget1')";
+        sqlite3 $WRT_DB "${INS_ALL_WIDGETEXT} VALUES(2, '${TZ_SYS_RW_WIDGET}/tests/localization/widget2')";
         exit 0
         ;;
     stop)

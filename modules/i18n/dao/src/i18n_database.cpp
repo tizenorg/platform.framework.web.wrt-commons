@@ -14,12 +14,13 @@
  *    limitations under the License.
  */
 #include <wrt-commons/i18n-dao-ro/i18n_database.h>
+#include <tzplatform_config.h>
 
 namespace I18n {
 namespace DB {
 namespace Interface {
 namespace {
-const char* const I18N_DB_FILE_PATH = "/opt/usr/dbspace/.wrt_i18n.db";
+const char* const I18N_DB_FILE_PATH = tzplatform_mkpath(TZ_USER_DB,".wrt_i18n.db");
 
 DPL::DB::SqlConnection::Flag::Type I18N_DB_FLAGS =
     DPL::DB::SqlConnection::Flag::UseLucene;

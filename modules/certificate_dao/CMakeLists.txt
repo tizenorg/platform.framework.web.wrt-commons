@@ -21,6 +21,7 @@ INCLUDE(FindPkgConfig)
 
 PKG_CHECK_MODULES(CERTIFICATE_DAO_DEPS
     glib-2.0
+    libtzplatform-config
     REQUIRED)
 
 SET(CERTIFICATE_DAO_INCLUDE_DIRS

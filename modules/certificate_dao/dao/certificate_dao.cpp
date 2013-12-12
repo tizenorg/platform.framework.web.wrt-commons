@@ -31,6 +31,7 @@
 #include <dpl/wrt-dao-ro/global_config.h>
 #include <dpl/wrt-dao-ro/common_dao_types.h>
 #include <sys/stat.h>
+#include <tzplatform_config.h>
 #include <fstream>
 /* GCC versions 4.7 had changes to the C++ standard. It
  * no longer includes <unistd.h> to remove namespace pollution.
@@ -60,8 +61,8 @@ const char* const CERTIFICATE_DB_SQL_PATH =
     "/usr/share/wrt-engine/certificate_db.sql";
 const char* const CERTIFICATE_DATABASE_JOURNAL_FILENAME = "-journal";
 
-const int WEB_APPLICATION_UID = 5000;
-const int WEB_APPLICATION_GUID = 5000;
+const int WEB_APPLICATION_UID = tzplatform_getuid(TZ_USER_NAME);
+const int WEB_APPLICATION_GUID = tzplatform_getgid(TZ_SYS_USER_GROUP);
 
 std::string createDatabasePath(const WrtDB::TizenPkgId &pkgName)
 {

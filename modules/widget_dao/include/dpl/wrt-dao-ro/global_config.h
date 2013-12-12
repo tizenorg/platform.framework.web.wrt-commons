@@ -25,6 +25,7 @@
 
 #include <string>
 #include <list>
+#include <tzplatform_config.h>
 
 namespace WrtDB {
 namespace GlobalConfig {
@@ -33,7 +34,7 @@ namespace GlobalConfig {
  */
 inline const char* GetWrtDatabaseFilePath()
 {
-    return "/opt/dbspace/.wrt.db";
+    return tzplatform_mkpath(TZ_SYS_DB,".wrt.db");
 }
 
 /**
@@ -49,7 +50,7 @@ inline const char* GetDevicePluginPath()
  */
 inline const char* GetUserInstalledWidgetPath()
 {
-    return "/opt/usr/apps";
+    return  tzplatform_getenv(TZ_USER_APP);
 }
 
 /**
@@ -57,7 +58,7 @@ inline const char* GetUserInstalledWidgetPath()
  */
 inline const char* GetUserPreloadedWidgetPath()
 {
-    return "/usr/apps";
+    return tzplatform_getenv(TZ_SYS_RO_APP);
 }
 
 /**
@@ -65,7 +66,7 @@ inline const char* GetUserPreloadedWidgetPath()
  */
 inline const char* GetWidgetUserDataPath()
 {
-    return "/opt/usr/apps";
+    return tzplatform_getenv(TZ_USER_APP);
 }
 
 /**
@@ -81,7 +82,7 @@ inline const char* GetWidgetSrcPath()
  */
 inline const char* GetPublicVirtualRootPath()
 {
-    return "/opt/share/widget/data/Public";
+    return tzplatform_mkpath(TZ_SYS_RW_WIDGET,"data/Public");
 }
 
 /**
@@ -97,7 +98,7 @@ inline const char* GetWidgetLocalStoragePath()
  */
 inline const char* GetTestsDataPath()
 {
-    return "/opt/share/widget/tests";
+    return  tzplatform_mkpath(TZ_SYS_RW_WIDGET,"tests");
 }
 
 /**
@@ -129,7 +130,7 @@ inline const char* GetWidgetPrivateTempStoragePath()
  */
 inline const char* GetUserWidgetDesktopPath()
 {
-    return "/opt/share/applications";
+    return tzplatform_getenv(TZ_SYS_RW_DESKTOP_APP);
 }
 
 /**
@@ -137,7 +138,7 @@ inline const char* GetUserWidgetDesktopPath()
  */
 inline const char* GetWrtClientExec()
 {
-    return "/usr/bin/wrt-client";
+    return  tzplatform_mkpath(TZ_SYS_BIN,"wrt-client");
 }
 
 /**
@@ -145,7 +146,7 @@ inline const char* GetWrtClientExec()
  */
 inline const char* GetUserWidgetDesktopIconPath()
 {
-    return "/opt/share/icons/default/small";
+    return tzplatform_mkpath(TZ_SYS_SHARE,"icons/default/small");
 }
 
 /**
@@ -153,13 +154,13 @@ inline const char* GetUserWidgetDesktopIconPath()
  */
 inline const char* GetUserWidgetDefaultIconFile()
 {
-    return "/usr/share/wrt-engine/wrt_widget_default_icon.png";
+    return tzplatform_mkpath(TZ_SYS_RO_WRT_ENGINE,"wrt_widget_default_icon.png");
 }
 
 inline const char* GetSignatureXmlSchema()
 {
     //TODO please rename, this filename is not descriptive enough
-    return "/usr/share/wrt-engine/schema.xsd";
+    return  tzplatform_mkpath(TZ_SYS_RO_WRT_ENGINE,"schema.xsd");
 }
 
 /**
@@ -209,7 +210,7 @@ inline const char* GetPluginSuffix()
  */
 inline const char* GetPluginInstallInitializerName()
 {
-    return "/opt/share/widget/plugin-installation-required";
+    return tzplatform_mkpath(TZ_SYS_RW_WIDGET,"plugin-installation-required");
 }
 
 /**
@@ -218,17 +219,17 @@ inline const char* GetPluginInstallInitializerName()
 
 inline const char* GetFingerprintListFile()
 {
-    return "/usr/share/wrt-engine/fingerprint_list.xml";
+    return tzplatform_mkpath(TZ_SYS_RO_WRT_ENGINE,"fingerprint_list.xml");
 }
 
 inline const char* GetFingerprintListSchema()
 {
-    return "/usr/share/wrt-engine/fingerprint_list.xsd";
+    return tzplatform_mkpath(TZ_SYS_RO_WRT_ENGINE,"fingerprint_list.xsd");
 }
 
 inline const char* GetVCoreDatabaseFilePath()
 {
-    return "/opt/dbspace/.cert_svc_vcore.db";
+    return tzplatform_mkpath(TZ_SYS_DB,".cert_svc_vcore.db");
 }
 
 /**
@@ -251,12 +252,12 @@ inline const char* GetTizenVersion()
 
 inline const char* GetShareDirectoryPath()
 {
-    return "/opt/share";
+    return tzplatform_getenv(TZ_SYS_SHARE);
 }
 
 inline const char* GetTempInstallInfoPath()
 {
-    return "/opt/share/widget/temp_info";
+    return tzplatform_mkpath(TZ_SYS_RW_WIDGET,"temp_info");
 }
 
 inline const char* GetWidgetSharedPath()
@@ -295,17 +296,17 @@ inline const char* GetBackupDatabaseSuffix()
 
 inline const char* GetManifestPath()
 {
-    return "/opt/share/packages";
+    return tzplatform_getenv(TZ_SYS_RW_PACKAGES);
 }
 
 inline const char* GetPreloadManifestPath()
 {
-    return "/usr/share/packages";
+    return tzplatform_getenv(TZ_SYS_RO_PACKAGES);
 }
 
 inline const char* GetRecoveryStatusPath()
 {
-    return "/usr/share/packages/.recovery/wgt";
+    return tzplatform_mkpath(TZ_SYS_RO_PACKAGES,".recovery/wgt");
 }
 } // namespace GlobalConfig
 } // namespace WrtDB

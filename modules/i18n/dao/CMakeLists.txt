@@ -26,6 +26,11 @@ ADD_CUSTOM_TARGET(${TARGET_I18N_DAO_DB} ALL DEPENDS .wrt_i18n.db .wrt_i18n.db-jo
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/wrt_i18n_db.sql DESTINATION share/wrt-engine/)
 
 ###############################################################################
+INCLUDE(FindPkgConfig)
+
+PKG_CHECK_MODULES(I18N_DAO_DEPS
+    libtzplatform-config
+    REQUIRED)
 
 SET(I18N_DAO_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/modules/i18n/dao/include

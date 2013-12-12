@@ -33,6 +33,7 @@
 #include <dpl/wrt-dao-ro/widget_dao_read_only.h>
 #include <dpl/wrt-dao-ro/WrtDatabase.h>
 #include <dpl/wrt-dao-ro/widget_config.h>
+#include <tzplatform_config.h>
 #include "orm_generator_widget_interface.h"
 
 namespace WidgetInterfaceDB {
@@ -59,8 +60,8 @@ const char* const DATABASE_FILE_PATH =
     "/usr/share/wrt-engine/widget_interface_db.sql";
 const char* const DATABASE_JOURNAL_FILENAME = "-journal";
 
-const int APP_UID = 5000;
-const int APP_GUID = 5000;
+const int APP_UID = tzplatform_getuid(TZ_USER_NAME);
+const int APP_GUID = tzplatform_getgid(TZ_SYS_USER_GROUP);
 } // anonymous namespace
 
 WidgetInterfaceDAO::WidgetInterfaceDAO(int widgetHandle) :

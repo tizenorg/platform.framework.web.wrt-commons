@@ -17,6 +17,11 @@
 # @version     1.0
 # @brief
 #
+INCLUDE(FindPkgConfig)
+
+PKG_CHECK_MODULES(DPL_TESTS_UTIL_DEPS
+    libtzplatform-config
+    REQUIRED)
 
 SET(TARGET_NAME "wrt-commons-tests-utils")
 

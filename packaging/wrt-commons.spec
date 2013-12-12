@@ -24,7 +24,8 @@ BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(libiri)
 BuildRequires:  pkgconfig(libidn)
 BuildRequires:  pkgconfig(minizip)
-
+BuildRequires:  pkgconfig(libtzplatform-config)
+Requires:       libtzplatform-config
 %description
 Wrt common library
 
@@ -79,10 +80,10 @@ make %{?jobs:-j%jobs}
 
 %post 
 /sbin/ldconfig
-mkdir -p /opt/share/widget/system
-mkdir -p /opt/share/widget/user
-mkdir -p /opt/share/widget/exec
-mkdir -p /opt/share/widget/data/Public
+mkdir -p ${TZ_SYS_RW_WIDGET}/system
+mkdir -p ${TZ_SYS_RW_WIDGET}/user
+mkdir -p ${TZ_SYS_RW_WIDGET}/exec
+mkdir -p ${TZ_SYS_RW_WIDGET}/data/Public
 mkdir -p %{_libdir}/wrt-plugins
 
 #Don't reset DB when install on QEMU (during other packages building witch GBS)
@@ -90,11 +91,11 @@ if [ -z "$EMULATOR_ARCHS" ]; then
     if [ -z ${2} ]; then
         echo "This is new install of wrt-commons"
         echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-        /usr/bin/wrt_commons_reset_db.sh
+        %{_bindir}/wrt_commons_reset_db.sh
     else
         # Find out old and new version of databases
-        WRT_OLD_DB_VERSION=`sqlite3 /opt/dbspace/.wrt.db ".tables" | grep "DB_VERSION_"`
-        WRT_NEW_DB_VERSION=`cat /usr/share/wrt-engine/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
+        WRT_OLD_DB_VERSION=`sqlite3 %{TZ_SYS_DB}/.wrt.db ".tables" | grep "DB_VERSION_"`
+        WRT_NEW_DB_VERSION=`cat %{TZ_SYS_RO_WRT_ENGINE}/wrt_db.sql | tr '[:blank:]' '\n' | grep DB_VERSION_`
         echo "OLD wrt database version ${WRT_OLD_DB_VERSION}"
         echo "NEW wrt database version ${WRT_NEW_DB_VERSION}"
 
@@ -105,17 +106,17 @@ if [ -z "$EMULATOR_ARCHS" ]; then
                 echo "Equal database detected so db installation ignored"
             else
                 echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-                /usr/bin/wrt_commons_reset_db.sh
+                %{_bindir}/wrt_commons_reset_db.sh
             fi
         else
             echo "Calling /usr/bin/wrt_commons_reset_db.sh"
-            /usr/bin/wrt_commons_reset_db.sh
+            %{_bindir}/wrt_commons_reset_db.sh
         fi
     fi
 fi
 
-mkdir -p /usr/etc/ace
-mkdir -p /usr/apps/org.tizen.policy
+mkdir -p %{TZ_SYS_ACE_CONF}
+mkdir -p %{TZ_SYS_RO_APP}/org.tizen.policy
 
 # DBUS services fix
 # WARNING: THIS IS TEMPORARY SOLUTION, AS THIS SHOULD NOT BE OUR
@@ -161,8 +162,8 @@ echo "[WRT] wrt-commons postinst done ..."
     %attr(755,root,root) %{_bindir}/wrt_dao_tests_prepare_db.sh
     %attr(755,root,root) %{_bindir}/wrt_db_localization_prepare.sh
     %{_datadir}/dbus-1/services/org.tizen.DBusTestService.service
-    /opt/share/wrt/wrt-commons/tests/*
-    /opt/share/widget/tests/localization/*
+    %{TZ_SYS_SHARE}/wrt/wrt-commons/tests/*
+    %{TZ_SYS_RW_WIDGET}/tests/localization/*
 %endif
 
 %files devel
