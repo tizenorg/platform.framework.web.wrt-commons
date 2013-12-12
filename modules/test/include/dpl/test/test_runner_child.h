@@ -50,14 +50,23 @@ class PipeWrapper : DPL::Noncopyable
     virtual ~PipeWrapper();
 
     Status send(int code, std::string &message);
+    Status sendTime(int code,
+                    std::chrono::system_clock::duration time,
+                    std::chrono::system_clock::duration timeMax);
 
-    Status receive(int &code, std::string &data, time_t deadline);
+    Status receive(int &code,
+                   int &msgType,
+                   std::string &data,
+                   std::chrono::system_clock::duration &time,
+                   std::chrono::system_clock::duration &timeMax,
+                   time_t deadline);
 
     void closeAll();
 
   protected:
 
     std::string toBinaryString(int data);
+    std::string toBinaryString(std::chrono::system_clock::duration data);
 
     void closeHelp(int desc);
 
