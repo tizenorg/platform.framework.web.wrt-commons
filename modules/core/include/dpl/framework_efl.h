@@ -22,4 +22,3 @@
 #pragma GCC system_header
 #include <Ecore.h>
 #include <Elementary.h>
-#include <Ecore_X.h>
