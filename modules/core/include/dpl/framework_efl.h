@@ -22,4 +22,7 @@
 #pragma GCC system_header
 #include <Ecore.h>
 #include <Elementary.h>
+
+#ifdef X11
 #include <Ecore_X.h>
+#endif
