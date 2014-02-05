@@ -1,3 +1,4 @@
+%bcond_with x
 Name:       wrt-commons
 Summary:    Wrt common library
 Version:    0.2.160
@@ -62,6 +63,11 @@ export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--hash-style=both -Wl,--as-needed"
         -DDPL_LOG="OFF"      \
         -DCMAKE_BUILD_TYPE=%{?build_type:%build_type} \
         %{?WITH_TESTS:-DWITH_TESTS=%WITH_TESTS} \
+%if %{with x}
+         -DX11_SUPPORT=On \
+%else
+         -DX11_SUPPORT=Off \
+%endif
         %{?WITH_CHILD:-DWITH_CHILD=%WITH_CHILD}
 make %{?jobs:-j%jobs}
 
