@@ -9,6 +9,9 @@ Source0:    %{name}-%{version}.tar.gz
 Source1001: 	wrt-commons.manifest
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(ecore)
+%if %{with x}
+BuildRequires:  pkgconfig(ecore-x)
+%endif
 BuildRequires:  pkgconfig(appcore-efl)
 BuildRequires:  pkgconfig(libssl)
 BuildRequires:  pkgconfig(sqlite3)
